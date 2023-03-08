@@ -13,12 +13,10 @@ export type RegisterParams = {
 }
 
 export type UserDataType = {
-  id: number
   role: string
   email: string
   fullName: string
   username: string
-  password: string
   avatar?: string | null
 }
 
@@ -30,4 +28,5 @@ export type AuthValuesType = {
   setUser: (value: UserDataType | null) => void
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void
+  currUser: () => Promise<UserDataType | null> // Check AWS currentSession
 }

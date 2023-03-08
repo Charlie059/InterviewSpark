@@ -4,14 +4,44 @@ import { createContext, useEffect, useState, ReactNode } from 'react'
 // ** Next Import
 import { useRouter } from 'next/router'
 
-// ** Axios
-import axios from 'axios'
-
-// ** Config
-import authConfig from 'src/configs/auth'
-
 // ** Types
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
+
+// ** Aws-amplify
+import { Auth } from 'aws-amplify'
+
+// ** Logger
+import Log from '../middleware/loggerMiddleware'
+
+const handleCurrUser = async (): Promise<UserDataType | null> => {
+  try {
+    const currentSession = await Auth.currentSession()
+
+    if (currentSession.isValid()) {
+      const userInfo = await Auth.currentUserInfo()
+      Log.info(userInfo)
+
+      // Check if Auth return empty
+      if (Object.keys(userInfo).length === 0) return null
+
+      //TODO Add user detail
+      const user: UserDataType = {
+        role: 'admin',
+        fullName: 'XG',
+        username: 'XG',
+        email: 'xg73@duke.edu'
+      }
+
+      return user
+    } else {
+      return null
+    }
+  } catch (error) {
+    Log.info('Error getting session')
+
+    return null
+  }
+}
 
 // ** Defaults
 const defaultProvider: AuthValuesType = {
@@ -21,7 +51,8 @@ const defaultProvider: AuthValuesType = {
   setLoading: () => Boolean,
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
-  register: () => Promise.resolve()
+  register: () => Promise.resolve(),
+  currUser: handleCurrUser
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -39,79 +70,97 @@ const AuthProvider = ({ children }: Props) => {
   const router = useRouter()
 
   useEffect(() => {
-    const initAuth = async (): Promise<void> => {
-      const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)!
-      if (storedToken) {
+    const initAuth = async () => {
+      Log.info('AuthProvider')
+
+      // Check if there is a valid session in the browser.
+      const session = await Auth.currentSession()
+
+      if (session.isValid()) {
+        // If there is a session, set the loading state to true and get the current authenticated user.
         setLoading(true)
-        await axios
-          .get(authConfig.meEndpoint, {
-            headers: {
-              Authorization: storedToken
-            }
-          })
-          .then(async response => {
-            setLoading(false)
-            setUser({ ...response.data.userData })
-          })
-          .catch(() => {
-            localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
-            setUser(null)
-            setLoading(false)
-            if (authConfig.onTokenExpiration === 'logout' && !router.pathname.includes('login')) {
-              router.replace('/login')
-            }
-          })
+
+        const user = await handleCurrUser()
+        if (user) {
+          // Set the loading state to false and the user data to the local state.
+          setLoading(false)
+          setUser({ ...user })
+        } else {
+          // If there is no user, set the loading state to false.
+          setLoading(false)
+          setUser(null)
+        }
       } else {
+        // If there is no session, set the loading state to false.
         setLoading(false)
+        setUser(null)
       }
     }
 
-    initAuth()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    initAuth().catch(err => {
+      Log.info(err)
+      setLoading(false)
+    })
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.loginEndpoint, params)
-      .then(async response => {
-        params.rememberMe
-          ? window.localStorage.setItem(authConfig.storageTokenKeyName, response.data.accessToken)
-          : null
-        const returnUrl = router.query.returnUrl
+    // Use the `Auth.signIn` method to sign in the user with the provided username and password.
+    Auth.signIn(params.email, params.password)
+      .then(async userData => {
+        //TODO Check unconfirmed user
+        //TODO Add user detail
+        const user: UserDataType = {
+          role: 'admin',
+          fullName: 'XG',
+          username: 'XG',
+          email: 'xg73@duke.edu'
+        }
+        setUser({ ...user })
+        Log.info(userData)
 
-        setUser({ ...response.data.userData })
-        params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response.data.userData)) : null
-
-        const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-
+        // Get the return URL from the router query, if it exists, and redirect the user to the specified URL or to the root URL if no return URL was specified.
+        const redirectURL = router.query.returnUrl || '/'
         router.replace(redirectURL as string)
       })
-
       .catch(err => {
-        if (errorCallback) errorCallback(err)
+        errorCallback ? errorCallback(err) : null
+        Log.info(err)
       })
   }
 
   const handleLogout = () => {
-    setUser(null)
-    window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    router.push('/login')
+    // Use the Auth.signOut method to sign out the current user.
+    Auth.signOut()
+      .then(() => {
+        // Set the user to null
+        setUser(null)
+
+        // Redirect the user to the login page.
+        router.push('/login')
+      })
+      .catch(err => {
+        Log.info(err)
+      })
   }
 
-  const handleRegister = (params: RegisterParams, errorCallback?: ErrCallbackType) => {
-    axios
-      .post(authConfig.registerEndpoint, params)
-      .then(res => {
-        if (res.data.error) {
-          if (errorCallback) errorCallback(res.data.error)
-        } else {
-          handleLogin({ email: params.email, password: params.password })
+  const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
+    // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
+    console.log(params)
+    try {
+      const { user } = await Auth.signUp({
+        password: params.password,
+        username: params.email,
+        attributes: {
+          email: params.email
         }
       })
-      .catch((err: { [key: string]: string }) => (errorCallback ? errorCallback(err) : null))
+      console.log(user)
+    } catch (err) {
+      // If an error occurred, throw it so it can be handled by the caller.
+
+      //errorCallback ? errorCallback(err) : null
+      throw err
+    }
   }
 
   const values = {
@@ -121,7 +170,8 @@ const AuthProvider = ({ children }: Props) => {
     setLoading,
     login: handleLogin,
     logout: handleLogout,
-    register: handleRegister
+    register: handleRegister,
+    currUser: handleCurrUser
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
