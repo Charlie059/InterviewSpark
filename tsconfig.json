@@ -31,7 +31,8 @@
   },
   "include": [
     "src",
-    "declaration.d.ts"
+    "declaration.d.ts",
+    "styles/authCodeInputStyle.css.d.ts"
   ],
   "exclude": [
     "node_modules"

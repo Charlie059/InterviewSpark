@@ -154,12 +154,11 @@ const AuthProvider = ({ children }: Props) => {
           email: params.email
         }
       })
-      console.log(user)
-    } catch (err) {
+      console.log('Verify email sent', user)
+    } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
-
-      //errorCallback ? errorCallback(err) : null
-      throw err
+      errorCallback ? errorCallback(err) : null
+      console.log(err)
     }
   }
 

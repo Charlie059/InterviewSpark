@@ -23,9 +23,12 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Hooks
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useState } from 'react'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import { Auth } from 'aws-amplify'
+import router from 'next/router'
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -83,13 +86,28 @@ const ForgotPassword = () => {
   // ** Hooks
   const theme = useTheme()
   const { settings } = useSettings()
+  const [email, setEmail] = useState('')
 
   // ** Vars
   const { skin } = settings
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
+    try {
+      console.log(e)
+      await Auth.forgotPassword(email)
+
+      // setSuccessMessage('Password reset instructions sent to your email!')
+      // setErrorMessage('')
+      router.push({
+        pathname: '/password-reset-validation',
+        query: { email }
+      })
+    } catch (error) {
+      // setErrorMessage(error.message)
+      // setSuccessMessage('')
+    }
   }
 
   const imageSource =
@@ -211,7 +229,13 @@ const ForgotPassword = () => {
               </Typography>
             </Box>
             <form noValidate autoComplete='off' onSubmit={handleSubmit}>
-              <TextField autoFocus type='email' label='Email' sx={{ display: 'flex', mb: 4 }} />
+              <TextField
+                autoFocus
+                type='email'
+                label='Email'
+                onChange={e => setEmail(e.target.value)}
+                sx={{ display: 'flex', mb: 4 }}
+              />
               <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 5.25 }}>
                 Send reset link
               </Button>
