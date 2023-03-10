@@ -123,7 +123,7 @@ const Register = ({ onRegister }: Props) => {
   // ** Vars
   const { skin } = settings
   const schema = yup.object().shape({
-    password: yup.string().min(5).required(),
+    password: yup.string().min(8).required(),
     username: yup.string().min(3).required(),
     email: yup.string().email().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms')

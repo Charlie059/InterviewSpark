@@ -107,7 +107,6 @@ const AuthProvider = ({ children }: Props) => {
     // Use the `Auth.signIn` method to sign in the user with the provided username and password.
     Auth.signIn(params.email, params.password)
       .then(async userData => {
-        //TODO Check unconfirmed user
         //TODO Add user detail
         const user: UserDataType = {
           role: 'admin',

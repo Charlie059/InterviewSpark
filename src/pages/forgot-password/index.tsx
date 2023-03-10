@@ -29,6 +29,7 @@ import { useState } from 'react'
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { Auth } from 'aws-amplify'
 import router from 'next/router'
+import Alert from '@mui/material/Alert'
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -87,6 +88,7 @@ const ForgotPassword = () => {
   const theme = useTheme()
   const { settings } = useSettings()
   const [email, setEmail] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   // ** Vars
   const { skin } = settings
@@ -97,16 +99,14 @@ const ForgotPassword = () => {
     try {
       console.log(e)
       await Auth.forgotPassword(email)
-
-      // setSuccessMessage('Password reset instructions sent to your email!')
-      // setErrorMessage('')
+      setErrorMessage('')
       router.push({
         pathname: '/password-reset-validation',
         query: { email }
       })
     } catch (error) {
-      // setErrorMessage(error.message)
-      // setSuccessMessage('')
+      setErrorMessage('Error resetting password, please try again')
+      console.log(error)
     }
   }
 
@@ -245,6 +245,13 @@ const ForgotPassword = () => {
                   <span>Back to login</span>
                 </LinkStyled>
               </Typography>
+              {errorMessage && (
+                <Box sx={{ width: '100%', mt: 3 }}>
+                  <Alert severity='error' sx={{ width: '100%' }}>
+                    {errorMessage}
+                  </Alert>
+                </Box>
+              )}
             </form>
           </BoxWrapper>
         </Box>

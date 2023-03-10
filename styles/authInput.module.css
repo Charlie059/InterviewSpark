@@ -23,12 +23,12 @@
 }
 
 .input {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   padding: 0;
-  font-size: 17px;
+  font-size: 19px;
   text-align: center;
-  margin-right: 7px;
+  margin-right: 8px;
   text-transform: uppercase;
   color: #494949;
   font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
