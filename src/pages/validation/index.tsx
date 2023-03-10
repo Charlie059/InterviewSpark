@@ -10,6 +10,7 @@ import styles from 'styles/authInput.module.css'
 
 // ** MUI Components
 import Box, { BoxProps } from '@mui/material/Box'
+import { Button } from '@mui/material'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { styled, useTheme } from '@mui/material/styles'
 import Typography, { TypographyProps } from '@mui/material/Typography'
@@ -98,6 +99,19 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
   }
 
   // TODO add a resend code button and functionality
+  async function resendCode() {
+    try {
+      console.log(username)
+      await Auth.resendSignUp(username)
+
+      // resend code if the user is not comfirmed.
+      setError(null)
+      setSuccess('Verification code resent successfully!')
+    } catch (err) {
+      setError('Error resending verification code')
+      console.log('Error resending verification code', err)
+    }
+  }
 
   return (
     <Box className='content-center'>
@@ -136,6 +150,11 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
                           inputClassName={styles.input}
                         />
                         <br />
+
+                        <Button variant='contained' onClick={resendCode}>
+                          Resend Code
+                        </Button>
+
                         {error !== null && <Alert severity='error'>{error}</Alert>}
                         {success !== null && <Alert severity='success'>{success}</Alert>}
                       </div>
