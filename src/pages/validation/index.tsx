@@ -98,7 +98,6 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
     }
   }
 
-  // TODO add a resend code button and functionality
   async function resendCode() {
     try {
       console.log(username)
@@ -150,10 +149,16 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
                           inputClassName={styles.input}
                         />
                         <br />
-
-                        <Button variant='contained' onClick={resendCode}>
-                          Resend Code
-                        </Button>
+                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                          <Typography variant='body2'>Click </Typography>
+                          <span>&nbsp;</span>
+                          <Typography component='a' href='#' onClick={resendCode} variant='body2'>
+                            Here
+                          </Typography>
+                          <span>&nbsp;</span>
+                          <Typography variant='body2'>to resend verification code.</Typography>
+                        </div>
+                        <br />
 
                         {error !== null && <Alert severity='error'>{error}</Alert>}
                         {success !== null && <Alert severity='success'>{success}</Alert>}

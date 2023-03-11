@@ -76,7 +76,11 @@ export default function PasswordResetValidation() {
 
   // ** Vars
   const schema = yup.object().shape({
-    password: yup.string().min(8).required()
+    //have a minimum of 6 characters and a maximum of 128 characters
+    //Your users must create a password that Contains at least 1 of the following types of characters.
+    // numbers, special character, uppercase, lowercase.
+
+    password: yup.string().min(6).required()
   })
 
   const defaultValues = {
@@ -111,7 +115,19 @@ export default function PasswordResetValidation() {
     }
   }
 
-  // TODO add a resend code button and functionality
+  async function resendCode() {
+    try {
+      console.log(email as string)
+      await Auth.forgotPassword(email as string)
+
+      // resend code if the user is not comfirmed.
+      setSuccess('Verification code successfully sent')
+      console.log('verification code resent')
+    } catch (err) {
+      setError('code', { message: 'Error resending verification code' })
+      console.log('Error resending verification code', err)
+    }
+  }
 
   return (
     <Box className='content-center'>
@@ -150,6 +166,16 @@ export default function PasswordResetValidation() {
                               containerClassName={styles.container}
                               inputClassName={styles.input}
                             />
+                            <br />
+                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                              <Typography variant='body2'>Click </Typography>
+                              <span>&nbsp;</span>
+                              <Typography component='a' href='#' onClick={resendCode} variant='body2'>
+                                Here
+                              </Typography>
+                              <span>&nbsp;</span>
+                              <Typography variant='body2'>to resend verification code.</Typography>
+                            </div>
                             <br />
                             <Typography variant='body2'>
                               Please enter the new password you would like to use for your account.
