@@ -1,6 +1,6 @@
 {
   "auth": {
-    "hirebeatjobseeker3a26fbef": {
+    "HireBeatJobSeeker": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -9,14 +9,19 @@
           "SMS"
         ],
         "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [],
+          "passwordPolicyCharacters": [
+            "REQUIRES_LOWERCASE",
+            "REQUIRES_NUMBERS"
+          ],
           "passwordPolicyMinLength": 8
         },
         "signupAttributes": [
           "EMAIL"
         ],
         "socialProviders": [],
-        "usernameAttributes": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
         "verificationMechanisms": [
           "EMAIL"
         ]

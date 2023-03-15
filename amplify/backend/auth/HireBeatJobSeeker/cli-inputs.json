@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "hirebeatjobseeker3a26fbef_identitypool_3a26fbef",
+    "identityPoolName": "testAuthIdentityPool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "hirebe3a26fbef",
-    "userPoolName": "hirebeatjobseeker3a26fbef_userpool_3a26fbef",
+    "resourceNameTruncated": "hirebe18977e53",
+    "userPoolName": "HireBeatJobSeeker",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -14,11 +14,14 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Your verification code",
-    "emailVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Verification code: {####}",
+    "emailVerificationMessage": "Verification code: {####}",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
-    "passwordPolicyCharacters": [],
+    "passwordPolicyCharacters": [
+      "Requires Lowercase",
+      "Requires Numbers"
+    ],
     "requiredAttributes": [
       "email"
     ],
@@ -27,14 +30,21 @@
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "hirebe3a26fbef_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "HireBe18977e53_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "3a26fbef",
-    "resourceName": "hirebeatjobseeker3a26fbef",
+    "sharedId": "18977e53",
+    "resourceName": "HireBeatJobSeeker",
     "authSelections": "identityPoolAndUserPool",
-    "useDefault": "manual",
-    "userPoolGroupList": [],
     "serviceName": "Cognito",
+    "usernameAttributes": [
+      "email"
+    ],
+    "useDefault": "manual",
+    "userPoolGroups": false,
+    "userPoolGroupList": [],
+    "adminQueries": false,
+    "thirdPartyAuth": false,
+    "authProviders": [],
     "usernameCaseSensitive": false,
     "useEnabledMfas": true,
     "authRoleArn": {
@@ -51,10 +61,6 @@
     },
     "breakCircularDependency": true,
     "dependsOn": [],
-    "userPoolGroups": false,
-    "adminQueries": false,
-    "thirdPartyAuth": false,
-    "authProviders": [],
     "hostedUI": false
   }
 }
