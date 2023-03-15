@@ -1,20 +1,15 @@
 {
-  "staging": {
+  "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-amplify5ed5a2bb69d54-staging-54911-authRole",
-      "UnauthRoleArn": "arn:aws:iam::359892679219:role/amplify-amplify5ed5a2bb69d54-staging-54911-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::359892679219:role/amplify-amplify5ed5a2bb69d54-staging-54911-authRole",
+      "AuthRoleName": "amplify-hirebeatjobseeker-dev-62943-authRole",
+      "UnauthRoleArn": "arn:aws:iam::414369595544:role/amplify-hirebeatjobseeker-dev-62943-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::414369595544:role/amplify-hirebeatjobseeker-dev-62943-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-amplify5ed5a2bb69d54-staging-54911-deployment",
-      "UnauthRoleName": "amplify-amplify5ed5a2bb69d54-staging-54911-unauthRole",
-      "StackName": "amplify-amplify5ed5a2bb69d54-staging-54911",
-      "StackId": "arn:aws:cloudformation:us-east-1:359892679219:stack/amplify-amplify5ed5a2bb69d54-staging-54911/1c512750-c2f5-11ed-b503-0e1db3fb3101",
-      "AmplifyAppId": "d35qc838pctx5c"
-    },
-    "categories": {
-      "auth": {
-        "HireBeatJobSeeker": {}
-      }
+      "DeploymentBucketName": "amplify-hirebeatjobseeker-dev-62943-deployment",
+      "UnauthRoleName": "amplify-hirebeatjobseeker-dev-62943-unauthRole",
+      "StackName": "amplify-hirebeatjobseeker-dev-62943",
+      "StackId": "arn:aws:cloudformation:us-east-1:414369595544:stack/amplify-hirebeatjobseeker-dev-62943/c626af70-c2fa-11ed-8455-0e4c9c34efdb",
+      "AmplifyAppId": "d3af0s7sp6217g"
     }
   }
 }
