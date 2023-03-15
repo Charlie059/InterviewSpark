@@ -10,6 +10,11 @@
       "StackName": "amplify-hirebeatjobseeker-dev-62943",
       "StackId": "arn:aws:cloudformation:us-east-1:414369595544:stack/amplify-hirebeatjobseeker-dev-62943/c626af70-c2fa-11ed-8455-0e4c9c34efdb",
       "AmplifyAppId": "d3af0s7sp6217g"
+    },
+    "categories": {
+      "auth": {
+        "HireBeatJobSeeker": {}
+      }
     }
   }
 }
