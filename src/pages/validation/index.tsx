@@ -149,7 +149,15 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
                           inputClassName={styles.input}
                         />
                         <br />
-                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '100%'
+                          }}
+                        >
                           <Typography variant='body2'>Click </Typography>
                           <span>&nbsp;</span>
                           <Typography component='a' href='#' onClick={resendCode} variant='body2'>
@@ -158,6 +166,7 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
                           <span>&nbsp;</span>
                           <Typography variant='body2'>to resend verification code.</Typography>
                         </div>
+
                         <br />
 
                         {error !== null && <Alert severity='error'>{error}</Alert>}

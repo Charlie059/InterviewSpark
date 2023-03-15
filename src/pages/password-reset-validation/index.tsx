@@ -167,7 +167,15 @@ export default function PasswordResetValidation() {
                               inputClassName={styles.input}
                             />
                             <br />
-                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                height: '100%'
+                              }}
+                            >
                               <Typography variant='body2'>Click </Typography>
                               <span>&nbsp;</span>
                               <Typography component='a' href='#' onClick={resendCode} variant='body2'>
@@ -176,6 +184,7 @@ export default function PasswordResetValidation() {
                               <span>&nbsp;</span>
                               <Typography variant='body2'>to resend verification code.</Typography>
                             </div>
+
                             <br />
                             <Typography variant='body2'>
                               Please enter the new password you would like to use for your account.
