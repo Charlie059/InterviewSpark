@@ -57,7 +57,3 @@ For more information about using the HireBeat Job Seeker with AWS Amplify, check
 ## Support
 
 If you run into any issues while using the HireBeat Job Seeker, you can contact the project team for support. You can also submit bug reports and feature requests through the project's GitHub repository.
-
-## License
-
-The HireBeat Job Seeker is released under the MIT License. See the [LICENSE](https://github.com/Charlie059/HireBeat_JobSeeker/blob/main/LICENSE) file for more information.
