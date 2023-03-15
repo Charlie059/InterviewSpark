@@ -3,10 +3,10 @@
 
 const awsmobile = {
     "aws_project_region": "us-east-1",
-    "aws_cognito_identity_pool_id": "us-east-1:41c13989-43eb-4410-9db4-473a33c280fc",
+    "aws_cognito_identity_pool_id": "us-east-1:e5f08e94-3147-4221-8269-9469b6fcc684",
     "aws_cognito_region": "us-east-1",
-    "aws_user_pools_id": "us-east-1_UO8nzmlEZ",
-    "aws_user_pools_web_client_id": "7d3rpjs839fnluj12l59dcvt4l",
+    "aws_user_pools_id": "us-east-1_cwn2a72Tx",
+    "aws_user_pools_web_client_id": "176b0d1fea4lbg879h9tt1jeov",
     "oauth": {},
     "aws_cognito_username_attributes": [
         "EMAIL"
@@ -23,7 +23,9 @@ const awsmobile = {
         "passwordPolicyMinLength": 8,
         "passwordPolicyCharacters": [
             "REQUIRES_LOWERCASE",
-            "REQUIRES_NUMBERS"
+            "REQUIRES_NUMBERS",
+            "REQUIRES_SYMBOLS",
+            "REQUIRES_UPPERCASE"
         ]
     },
     "aws_cognito_verification_mechanisms": [
