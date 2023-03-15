@@ -10,17 +10,10 @@ import styles from 'styles/authInput.module.css'
 
 // ** MUI Components
 import Box, { BoxProps } from '@mui/material/Box'
-import { Button } from '@mui/material'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { styled, useTheme } from '@mui/material/styles'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
-
-// ** Demo Imports
-import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-
-// ** Configs
-import themeConfig from 'src/configs/themeConfig'
 
 // ** Hooks
 import { useSettings } from 'src/@core/hooks/useSettings'
