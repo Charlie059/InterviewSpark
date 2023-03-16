@@ -1,0 +1,14 @@
+{
+  "resourceName": "HBS3",
+  "policyUUID": "5eea2fa1",
+  "bucketName": "hirebeatjobseeker16633a08004b4a3684aa2858697e53",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
