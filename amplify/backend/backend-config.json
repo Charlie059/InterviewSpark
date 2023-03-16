@@ -11,9 +11,7 @@
         "passwordProtectionSettings": {
           "passwordPolicyCharacters": [
             "REQUIRES_LOWERCASE",
-            "REQUIRES_NUMBERS",
-            "REQUIRES_SYMBOLS",
-            "REQUIRES_UPPERCASE"
+            "REQUIRES_NUMBERS"
           ],
           "passwordPolicyMinLength": 8
         },
@@ -30,14 +28,6 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
-    }
-  },
-  "function": {},
-  "storage": {
-    "s37dedbe84": {
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "S3"
     }
   }
 }

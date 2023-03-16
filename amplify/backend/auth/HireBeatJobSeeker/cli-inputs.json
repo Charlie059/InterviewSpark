@@ -3,7 +3,7 @@
   "cognitoConfig": {
     "identityPoolName": "testAuthIdentityPool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "hirebeeae5cade",
+    "resourceNameTruncated": "hirebeffb66167",
     "userPoolName": "HireBeatJobSeeker",
     "autoVerifiedAttributes": [
       "email"
@@ -14,15 +14,13 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Verification code: {####}",
-    "emailVerificationMessage": "Verification code: {####}",
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [
       "Requires Lowercase",
-      "Requires Numbers",
-      "Requires Symbols",
-      "Requires Uppercase"
+      "Requires Numbers"
     ],
     "requiredAttributes": [
       "email"
@@ -32,9 +30,9 @@
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "HireBeeae5cade_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "HireBeffb66167_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "eae5cade",
+    "sharedId": "ffb66167",
     "resourceName": "HireBeatJobSeeker",
     "authSelections": "identityPoolAndUserPool",
     "serviceName": "Cognito",

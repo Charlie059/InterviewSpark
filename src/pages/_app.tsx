@@ -10,8 +10,10 @@ import type { AppProps } from 'next/app'
 // * Amplify
 import { Amplify } from 'aws-amplify'
 import config from '../aws-exports'
+import appsync from '../configs/appsync'
 
 Amplify.configure(config)
+Amplify.configure(appsync)
 
 // ** Loader Import
 import NProgress from 'nprogress'
