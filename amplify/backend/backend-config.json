@@ -32,8 +32,9 @@
       "service": "Cognito"
     }
   },
+  "function": {},
   "storage": {
-    "HBS3": {
+    "s37dedbe84": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"

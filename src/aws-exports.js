@@ -35,7 +35,7 @@ const awsmobile = {
     "aws_appsync_region": "us-east-1",
     "aws_appsync_authenticationType": "API_KEY",
     "aws_appsync_apiKey": "da2-a3ltylbwszhyjbf4hqg2tk24qy",
-    "aws_user_files_s3_bucket": "hirebeatjobseeker16633a08004b4a3684aa2858697e5362943-dev",
+    "aws_user_files_s3_bucket": "hirebeatjobseeker928dbb43b6cd4b668423d45a7f338562943-dev",
     "aws_user_files_s3_bucket_region": "us-east-1"
 };
 
