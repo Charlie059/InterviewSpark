@@ -12,13 +12,17 @@ export type RegisterParams = {
   password: string
 }
 
-export type UserDataType = {
-  role: string
-  email: string
-  fullName: string
-  username: string
-  avatar?: string | null
-}
+export type UserDataType =
+  | {
+      __typename: 'User'
+      emailAddress: string
+      userRole: string
+      userName: string
+      hasProfile: boolean
+      allowPublishInterview: boolean
+    }
+  | null
+  | undefined
 
 export type AuthValuesType = {
   loading: boolean

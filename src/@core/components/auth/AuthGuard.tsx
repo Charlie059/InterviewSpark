@@ -7,9 +7,6 @@ import { useRouter } from 'next/router'
 // ** Hooks Import
 import { useAuth } from 'src/hooks/useAuth'
 
-// ** Logger
-import Log from '../../../middleware/loggerMiddleware'
-
 interface AuthGuardProps {
   children: ReactNode
   fallback: ReactElement | null
@@ -19,12 +16,11 @@ const AuthGuard = (props: AuthGuardProps) => {
   const { children, fallback } = props
   const auth = useAuth()
   const router = useRouter()
-  Log.info('AuthGuard')
+
   useEffect(
     () => {
       const getAuth = async () => {
         const userData = await auth.currUser()
-        console.log(userData)
         if (!router.isReady) return
 
         if (!userData) {

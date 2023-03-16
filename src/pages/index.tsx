@@ -28,10 +28,15 @@ const Home = () => {
       return
     }
 
-    if (auth.user && auth.user.role) {
-      const homeRoute = getHomeRoute(auth.user.role)
+    if (auth.user && auth.user.userRole === 'admin') {
+      const homeRoute = getHomeRoute(auth.user.userRole)
 
       // Redirect user to Home URL
+      router.replace(homeRoute)
+    } else if (auth.user && auth.user.userRole === 'Guest') {
+      const homeRoute = getHomeRoute('client')
+
+      // Redirect user to ACL URL
       router.replace(homeRoute)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

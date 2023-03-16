@@ -141,7 +141,7 @@ const Register = ({ onRegister }: Props) => {
   })
 
   const onSubmit = (data: FormData) => {
-    const { email, username, password } = data
+    const { username, email, password } = data
 
     let hasError = false
     register({ email, username, password }, err => {
@@ -168,7 +168,7 @@ const Register = ({ onRegister }: Props) => {
     })
 
     if (!hasError) {
-      onRegister(username)
+      onRegister(email)
       console.log('onSubmit', 'success')
     }
   }

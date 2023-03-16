@@ -13,24 +13,22 @@ import { Auth } from 'aws-amplify'
 // ** Logger
 import Log from '../middleware/loggerMiddleware'
 
+// ** Get user
+import { getUserData } from '../utils/getUser'
+import { addNewGuestUser } from 'src/utils/addNewGuestUser'
+
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
     const currentSession = await Auth.currentSession()
 
     if (currentSession.isValid()) {
       const userInfo = await Auth.currentUserInfo()
-      Log.info(userInfo)
 
       // Check if Auth return empty
       if (Object.keys(userInfo).length === 0) return null
 
-      //TODO Add user detail
-      const user: UserDataType = {
-        role: 'admin',
-        fullName: 'XG',
-        username: 'XG',
-        email: 'xg73@duke.edu'
-      }
+      const user = await getUserData(userInfo.attributes.email)
+      Log.info(user)
 
       return user
     } else {
@@ -107,15 +105,21 @@ const AuthProvider = ({ children }: Props) => {
     // Use the `Auth.signIn` method to sign in the user with the provided username and password.
     Auth.signIn(params.email, params.password)
       .then(async userData => {
+        const emailAddress = userData.attributes.email
+        console.log(emailAddress)
+
         //TODO Add user detail
-        const user: UserDataType = {
-          role: 'admin',
-          fullName: 'XG',
-          username: 'XG',
-          email: 'xg73@duke.edu'
+        const user = await getUserData(emailAddress)
+
+        setUser(user)
+        Log.info(user)
+
+        // if user is null, return error
+        if (!user) {
+          errorCallback ? errorCallback({ Error: 'User not found in database' }) : null
+
+          return
         }
-        setUser({ ...user })
-        Log.info(userData)
 
         // Get the return URL from the router query, if it exists, and redirect the user to the specified URL or to the root URL if no return URL was specified.
         const redirectURL = router.query.returnUrl || '/'
@@ -148,11 +152,11 @@ const AuthProvider = ({ children }: Props) => {
     try {
       const { user } = await Auth.signUp({
         password: params.password,
-        username: params.email,
-        attributes: {
-          email: params.email
-        }
+        username: params.email
       })
+
+      addNewGuestUser(params.email, params.username)
+
       console.log('Verify email sent', user)
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
