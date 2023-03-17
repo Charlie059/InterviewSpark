@@ -26,7 +26,7 @@ const ACLPage = () => {
           </CardContent>
         </Card>
       </Grid>
-      {ability?.can('read', 'analytics') ? (
+      {ability?.can('read', 'acl-page') ? (
         <Grid item md={6} xs={12}>
           <Card>
             <CardHeader title='Analytics' />
