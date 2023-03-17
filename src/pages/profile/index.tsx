@@ -94,4 +94,8 @@ const Profile = () => {
   )
 }
 
+Profile.acl = {
+  action: 'read',
+  subject: 'acl-page'
+}
 export default Profile
