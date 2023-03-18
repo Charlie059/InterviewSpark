@@ -55,9 +55,9 @@ const DiscussPage = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ marginBottom: '1rem' }}>
         <Grid item xs={12} md={8}>
-          <Box sx={{ display: 'flex', flexWrap: 'nowrap', overflow: 'hidden', paddingBottom: 1 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'nowrap', paddingBottom: 1 }}>
             {tags.map((tag, index) => (
               <Box key={index} sx={{ flex: '1 1 auto', marginRight: 1, marginBottom: 1 }}>
                 <TopicTag text={tag.name} imageUrl={tag.imageUrl} />
@@ -69,7 +69,8 @@ const DiscussPage = () => {
           <HotTopic />
         </Grid> */}
       </Grid>
-      <Grid container spacing={3}>
+
+      <Grid container spacing={3} sx={{ marginBottom: '.05rem' }}>
         <Grid item xs={15} sm={8}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <TextField

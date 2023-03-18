@@ -5,16 +5,12 @@ import Link from 'next/link'
 import IconButton from '@mui/material/IconButton'
 import Box, { BoxProps } from '@mui/material/Box'
 import { styled, useTheme } from '@mui/material/styles'
-import Typography, { TypographyProps } from '@mui/material/Typography'
 
 // ** Type Import
 import { LayoutProps } from 'src/@core/layouts/types'
 
 // ** Custom Icon Import
 import Icon from 'src/@core/components/icon'
-
-// ** Configs
-import themeConfig from 'src/configs/themeConfig'
 
 interface Props {
   navHover: boolean
@@ -38,12 +34,6 @@ const MenuHeaderWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   transition: 'padding .25s ease-in-out',
   minHeight: theme.mixins.toolbar.minHeight
 }))
-
-const HeaderTitle = styled(Typography)<TypographyProps>({
-  fontWeight: 700,
-  lineHeight: 1.2,
-  transition: 'opacity .25s ease-in-out, margin .25s ease-in-out'
-})
 
 const StyledLink = styled(Link)({
   display: 'flex',
@@ -69,7 +59,6 @@ const VerticalNavHeader = (props: Props) => {
   // ** Hooks & Vars
   const theme = useTheme()
   const { mode, direction, navCollapsed } = settings
-  const menuCollapsedStyles = navCollapsed && !navHover ? { opacity: 0 } : { opacity: 1 }
 
   const svgFillSecondary = () => {
     if (mode === 'semi-dark') {
@@ -128,79 +117,9 @@ const VerticalNavHeader = (props: Props) => {
         userNavMenuBranding(props)
       ) : (
         <StyledLink href='/'>
-          <svg width={40} fill='none' height={22} viewBox='0 0 268 150' xmlns='http://www.w3.org/2000/svg'>
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 195.571 0)'
-            />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fillOpacity='0.4'
-              fill='url(#paint0_linear_7821_79167)'
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 196.084 0)'
-            />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(0.865206 0.501417 -0.498585 0.866841 173.147 0)'
-            />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 94.1973 0)'
-            />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fillOpacity='0.4'
-              fill='url(#paint1_linear_7821_79167)'
-              transform='matrix(-0.865206 0.501417 0.498585 0.866841 94.1973 0)'
-            />
-            <rect
-              rx='25.1443'
-              width='50.2886'
-              height='143.953'
-              fill={theme.palette.primary.main}
-              transform='matrix(0.865206 0.501417 -0.498585 0.866841 71.7728 0)'
-            />
-            <defs>
-              <linearGradient
-                y1='0'
-                x1='25.1443'
-                x2='25.1443'
-                y2='143.953'
-                id='paint0_linear_7821_79167'
-                gradientUnits='userSpaceOnUse'
-              >
-                <stop />
-                <stop offset='1' stopOpacity='0' />
-              </linearGradient>
-              <linearGradient
-                y1='0'
-                x1='25.1443'
-                x2='25.1443'
-                y2='143.953'
-                id='paint1_linear_7821_79167'
-                gradientUnits='userSpaceOnUse'
-              >
-                <stop />
-                <stop offset='1' stopOpacity='0' />
-              </linearGradient>
-            </defs>
-          </svg>
-          <HeaderTitle variant='h6' sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 2 }) }}>
-            {themeConfig.templateName}
-          </HeaderTitle>
+          {navCollapsed && !navHover ? null : (
+            <img src='/images/pages/apple-touch-icon.png' alt='Logo' style={{ width: '55%', maxWidth: '400px' }} />
+          )}
         </StyledLink>
       )}
 
