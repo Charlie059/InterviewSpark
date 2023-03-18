@@ -67,7 +67,8 @@ function getFunctionName(): string {
   if (stack) {
     const functionName = stack[3].trim().split(' ')[1]
 
-    return functionName.substring(0, functionName.length - 1)
+    // return functionName.substring(0, functionName.length - 1)
+    return functionName ? functionName : ''
   } else {
     return ''
   }
