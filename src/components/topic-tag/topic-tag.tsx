@@ -18,33 +18,35 @@ const TopicTag = ({ text, imageUrl }: TopicTagProps) => {
         justifyContent: 'flex-start',
         alignItems: 'flex-end',
         position: 'relative',
-        width: '180px',
-        height: '80px',
-        margin: '6px',
+        width: '189px',
+        height: '110px',
+        margin: '1px',
         borderRadius: '9px',
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : 'white',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)' // Add this line for shadow effect
       }}
     >
       <img
         src={imageUrl}
         alt='My Image'
         style={{
-          width: '60%',
-          height: '100%',
+          width: '70%',
+          height: '60%',
           objectFit: 'cover',
           borderRadius: '12px',
-          marginLeft: '100px'
+          marginLeft: '65px'
         }}
       />
       <Typography
-        variant='subtitle1'
+        variant='h6'
         component='div'
         sx={{
           position: 'absolute',
           top: '8px',
           left: '16px',
-          color: theme.palette.text.primary
+          color: theme.palette.text.primary,
+          fontWeight: 250
         }}
       >
         {text}

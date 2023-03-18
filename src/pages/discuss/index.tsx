@@ -57,12 +57,12 @@ const DiscussPage = () => {
   return (
     <Box sx={{ padding: 2 }}>
       <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Grid item xs={8}>
+          <Box sx={{ display: 'flex', flexWrap: 'nowrap', paddingBottom: 1 }}>
             {tags.map((tag, index) => (
-              <Typography key={index} variant='h6' component='span' sx={{ marginRight: 1, marginBottom: 1 }}>
+              <Box key={index} sx={{ flex: '1 1 auto', marginRight: 1, marginBottom: 1 }}>
                 <TopicTag text={tag.name} imageUrl={tag.imageUrl} />
-              </Typography>
+              </Box>
             ))}
           </Box>
         </Grid>
