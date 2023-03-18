@@ -24,7 +24,11 @@ const TopicTag = ({ text, imageUrl }: TopicTagProps) => {
         borderRadius: '9px',
         backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.paper : 'white',
         overflow: 'hidden',
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)' // Add this line for shadow effect
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)', // Add this line for shadow effect
+        '@media (max-width: 600px)': {
+          width: '100%',
+          height: 'auto'
+        }
       }}
     >
       <img
@@ -46,7 +50,11 @@ const TopicTag = ({ text, imageUrl }: TopicTagProps) => {
           top: '8px',
           left: '16px',
           color: theme.palette.text.primary,
-          fontWeight: 250
+          fontWeight: 250,
+          fontSize: '1rem', // Add this line for responsive font size
+          '@media (max-width: 600px)': {
+            fontSize: '0.8rem' // Change the font size for small screens
+          }
         }}
       >
         {text}

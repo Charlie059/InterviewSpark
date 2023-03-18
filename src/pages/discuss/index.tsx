@@ -54,10 +54,10 @@ const DiscussPage = () => {
   }
 
   return (
-    <Box sx={{ padding: 2 }}>
+    <Grid container spacing={3}>
       <Grid container spacing={3}>
-        <Grid item xs={8}>
-          <Box sx={{ display: 'flex', flexWrap: 'nowrap', paddingBottom: 1 }}>
+        <Grid item xs={12} md={8}>
+          <Box sx={{ display: 'flex', flexWrap: 'nowrap', overflow: 'hidden', paddingBottom: 1 }}>
             {tags.map((tag, index) => (
               <Box key={index} sx={{ flex: '1 1 auto', marginRight: 1, marginBottom: 1 }}>
                 <TopicTag text={tag.name} imageUrl={tag.imageUrl} />
@@ -65,7 +65,11 @@ const DiscussPage = () => {
             ))}
           </Box>
         </Grid>
-
+        {/* <Grid item xs={12} md={4}>
+          <HotTopic />
+        </Grid> */}
+      </Grid>
+      <Grid container spacing={3}>
         <Grid item xs={15} sm={8}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <TextField
@@ -79,8 +83,6 @@ const DiscussPage = () => {
               }}
             />
 
-            {/* <Box sx={{ width: '10px', backgroundColor: 'transparent' }} /> */}
-
             <Button
               variant='contained'
               sx={{
@@ -93,36 +95,35 @@ const DiscussPage = () => {
                 height: '40px'
               }}
             >
-              🖊️&nbsp;New&nbsp;Post
+              🖊️&nbsp;New&nbsp;Post&nbsp;
             </Button>
           </Box>
         </Grid>
-
-        <Grid container item xs={12} spacing={3}>
-          <Grid item xs={12} md={8}>
-            {filteredTopics.map((topic: Topic) => (
-              <Paper key={topic.id} sx={{ marginBottom: 2, borderRadius: 2 }}>
-                <Post topic={topic} />
-              </Paper>
-            ))}
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-              <Pagination
-                count={totalPages}
-                page={activePage}
-                onChange={handlePageChange}
-                color='primary'
-                shape='rounded'
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <Box>
-              <HotTopic />
-            </Box>
-          </Grid>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={8}>
+          {filteredTopics.map((topic: Topic) => (
+            <Paper key={topic.id} sx={{ marginBottom: 2, borderRadius: 2 }}>
+              <Post topic={topic} />
+            </Paper>
+          ))}
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+            <Pagination
+              count={totalPages}
+              page={activePage}
+              onChange={handlePageChange}
+              color='primary'
+              shape='rounded'
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Box>
+            <HotTopic />
+          </Box>
         </Grid>
       </Grid>
-    </Box>
+    </Grid>
   )
 }
 
