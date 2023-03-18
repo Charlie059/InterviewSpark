@@ -6,19 +6,37 @@ const navigation = (): VerticalNavItemsType => {
     {
       title: 'Home',
       path: '/home',
-      icon: 'mdi:home-outline',
-    },
-    {
-      title: 'Second Page',
-      path: '/second-page',
-      icon: 'mdi:email-outline',
-    },
-    {
-      path: '/acl',
       action: 'read',
-      subject: 'acl-page',
-      title: 'Access Control',
-      icon: 'mdi:shield-outline',
+      subject: 'home-page',
+      icon: 'mdi:home-outline'
+    },
+    {
+      title: 'Discuss',
+      path: '/discuss',
+      action: 'read',
+      subject: 'discuss-page',
+      icon: 'mdi:forum-outline'
+    },
+    {
+      title: 'Interview',
+      path: '/interview',
+      action: 'read',
+      subject: 'interview-page',
+      icon: 'mdi:account-group-outline'
+    },
+    {
+      title: 'Learning',
+      path: '/learning',
+      action: 'read',
+      subject: 'learning-page',
+      icon: 'mdi:book-open-outline'
+    },
+    {
+      title: 'Profile',
+      path: '/profile',
+      action: 'read',
+      subject: 'profile-page',
+      icon: 'mdi:account-outline'
     }
   ]
 }

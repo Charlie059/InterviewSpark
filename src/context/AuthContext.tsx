@@ -155,6 +155,7 @@ const AuthProvider = ({ children }: Props) => {
         username: params.email
       })
 
+      // TODO error condition check
       addNewGuestUser(params.email, params.username)
 
       console.log('Verify email sent', user)
