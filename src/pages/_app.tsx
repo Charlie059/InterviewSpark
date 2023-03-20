@@ -22,6 +22,9 @@ import NProgress from 'nprogress'
 import { CacheProvider } from '@emotion/react'
 import type { EmotionCache } from '@emotion/cache'
 
+// ** Fake-DB Import
+import 'src/@fake-db'
+
 // ** Config Imports
 
 import { defaultACLObj } from 'src/configs/acl'

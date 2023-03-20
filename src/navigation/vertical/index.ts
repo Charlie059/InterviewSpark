@@ -33,7 +33,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Profile',
-      path: '/profile',
+      path: '/user-profile/profile/',
       action: 'read',
       subject: 'profile-page',
       icon: 'mdi:account-outline'
