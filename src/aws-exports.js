@@ -43,7 +43,11 @@ const awsmobile = {
         "EMAIL"
     ],
     "aws_user_files_s3_bucket": "hirebeatjobseeker1113247a97c74b96852b04e522510162908-staging",
-    "aws_user_files_s3_bucket_region": "us-east-1"
+    "aws_user_files_s3_bucket_region": "us-east-1",
+    "aws_appsync_graphqlEndpoint": "https://ojpvemcsazb2xez6czprp3udp4.appsync-api.us-east-1.amazonaws.com/graphql",
+    "aws_appsync_region": "us-east-1",
+    "aws_appsync_authenticationType": "API_KEY",
+    "aws_appsync_apiKey": "da2-a3ltylbwszhyjbf4hqg2tk24qy"
 };
 
 

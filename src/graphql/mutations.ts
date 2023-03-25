@@ -33,3 +33,37 @@ export const addProfileToUser = /* GraphQL */ `
     }
   }
 `;
+export const updateProfile = /* GraphQL */ `
+  mutation UpdateProfile(
+    $emailAddress: AWSEmail!
+    $input: updateUserProfileInput!
+  ) {
+    updateProfile(emailAddress: $emailAddress, input: $input) {
+      profileID
+      fName
+      lName
+      resumeURL
+      photoProfile
+      addressLine1
+      addressLine2
+      city
+      state
+      postalCode
+      country
+    }
+  }
+`;
+export const updateUserData = /* GraphQL */ `
+  mutation UpdateUserData(
+    $emailAddress: AWSEmail!
+    $input: updateUserDataInput!
+  ) {
+    updateUserData(emailAddress: $emailAddress, input: $input) {
+      emailAddress
+      userRole
+      userName
+      hasProfile
+      allowPublishInterview
+    }
+  }
+`;

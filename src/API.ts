@@ -39,6 +39,26 @@ export type Profile = {
   country?: string | null,
 };
 
+export type updateUserProfileInput = {
+  fName?: string | null,
+  lName?: string | null,
+  resumeURL?: string | null,
+  photoProfile?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postalCode?: string | null,
+  country?: string | null,
+};
+
+export type updateUserDataInput = {
+  userRole?: string | null,
+  userName?: string | null,
+  allowPublishInterview?: boolean | null,
+  hasProfile?: boolean | null,
+};
+
 export type AddNewGuestUserMutationVariables = {
   emailAddress: string,
   userName: string,
@@ -76,6 +96,44 @@ export type AddProfileToUserMutation = {
     state?: string | null,
     postalCode?: string | null,
     country?: string | null,
+  } | null,
+};
+
+export type UpdateProfileMutationVariables = {
+  emailAddress: string,
+  input: updateUserProfileInput,
+};
+
+export type UpdateProfileMutation = {
+  updateProfile?:  {
+    __typename: "Profile",
+    profileID?: string | null,
+    fName?: string | null,
+    lName?: string | null,
+    resumeURL?: string | null,
+    photoProfile?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postalCode?: string | null,
+    country?: string | null,
+  } | null,
+};
+
+export type UpdateUserDataMutationVariables = {
+  emailAddress: string,
+  input: updateUserDataInput,
+};
+
+export type UpdateUserDataMutation = {
+  updateUserData?:  {
+    __typename: "User",
+    emailAddress: string,
+    userRole: string,
+    userName: string,
+    hasProfile: boolean,
+    allowPublishInterview: boolean,
   } | null,
 };
 
