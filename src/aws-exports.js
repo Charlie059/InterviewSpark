@@ -24,9 +24,7 @@ const awsmobile = {
     "aws_cognito_username_attributes": [
         "EMAIL"
     ],
-    "aws_cognito_social_providers": [
-        "GOOGLE"
-    ],
+    "aws_cognito_social_providers": [],
     "aws_cognito_signup_attributes": [
         "EMAIL"
     ],
@@ -43,7 +41,9 @@ const awsmobile = {
     },
     "aws_cognito_verification_mechanisms": [
         "EMAIL"
-    ]
+    ],
+    "aws_user_files_s3_bucket": "hirebeatjobseeker1113247a97c74b96852b04e522510162908-staging",
+    "aws_user_files_s3_bucket_region": "us-east-1"
 };
 
 

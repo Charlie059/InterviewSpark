@@ -15,6 +15,9 @@
       "auth": {
         "hirebeatjobseeker3a26fbef": {},
         "HireBeatJobSeeker": {}
+      },
+      "storage": {
+        "s3162639c6": {}
       }
     }
   }
