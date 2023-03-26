@@ -33,37 +33,26 @@ export const addProfileToUser = /* GraphQL */ `
     }
   }
 `;
-export const updateProfile = /* GraphQL */ `
-  mutation UpdateProfile(
-    $emailAddress: AWSEmail!
-    $input: updateUserProfileInput!
+export const createNewInterview = /* GraphQL */ `
+  mutation CreateNewInterview(
+    $emailAddress: AWSEmail
+    $interviewID: String!
+    $questionID: String!
+    $interviewType: String!
+    $videoURL: AWSURL!
   ) {
-    updateProfile(emailAddress: $emailAddress, input: $input) {
-      profileID
-      fName
-      lName
-      resumeURL
-      photoProfile
-      addressLine1
-      addressLine2
-      city
-      state
-      postalCode
-      country
-    }
-  }
-`;
-export const updateUserData = /* GraphQL */ `
-  mutation UpdateUserData(
-    $emailAddress: AWSEmail!
-    $input: updateUserDataInput!
-  ) {
-    updateUserData(emailAddress: $emailAddress, input: $input) {
-      emailAddress
-      userRole
-      userName
-      hasProfile
-      allowPublishInterview
+    createNewInterview(
+      emailAddress: $emailAddress
+      interviewID: $interviewID
+      questionID: $questionID
+      interviewType: $interviewType
+      videoURL: $videoURL
+    ) {
+      questionID
+      interviewVideoURL
+      interviewType
+      interviewTime
+      interviewID
     }
   }
 `;
