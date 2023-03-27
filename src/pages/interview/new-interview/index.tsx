@@ -1,7 +1,8 @@
 import React, { useCallback, useRef, useState } from 'react'
 import Webcam from 'react-webcam'
 import { API, Storage, Auth, graphqlOperation } from 'aws-amplify'
-import { createNewInterview } from 'src/graphql/mutations'
+import { createInterviewWithQuestion, updateInterviewVideoKey } from 'src/graphql/mutations'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface RecordedChunks {
   data: Blob[]
@@ -12,6 +13,7 @@ function NewInterview() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const [capturing, setCapturing] = useState<boolean>(false)
   const [recordedChunks, setRecordedChunks] = useState<RecordedChunks>({ data: [] })
+  const auth = useAuth()
 
   const handleDataAvailable = useCallback(
     ({ data }: BlobEvent) => {
@@ -53,33 +55,43 @@ function NewInterview() {
         level: 'private'
       })
 
-      //TODO Not store the video URL in the database, but instead store file name and then use the file name to get the video URL from S3
-
-      // Get the video URL from S3
-      const videoURL = await Storage.get(uniqueFilename, { level: 'private' })
-
       // Call the createNewInterview GraphQL mutation with the required input parameters:
       // TODO: Replace these with the actual values
-      const emailAddress = 'xg73@duke.edu'
-      const interviewID = `INT${userId}-${timestamp}`
+
+      // Get current user's email address
+
+      const emailAddress = auth.user?.userEmailAddress
+      console.log(emailAddress)
       const questionID = '234' // Replace this with the actual question ID
-      const interviewType = 'BQ' // Replace this with the actual interview type
 
       const result = await API.graphql(
-        graphqlOperation(createNewInterview, {
+        graphqlOperation(createInterviewWithQuestion, {
           emailAddress,
-          interviewID,
-          questionID,
-          interviewType,
-          videoURL
+          questionID
         })
       )
 
-      console.log('New interview created:', result)
+      if ('data' in result) {
+        const interviewID = result.data.createInterviewWithQuestion.interviewID
 
-      setRecordedChunks({ data: [] })
+        // TODO: update interviewVideoKey
+        await API.graphql(
+          graphqlOperation(updateInterviewVideoKey, {
+            emailAddress: emailAddress,
+            interviewID: interviewID,
+            questionID: questionID,
+            interviewVideoKey: uniqueFilename
+          })
+        )
+
+        console.log('New interview created:', result)
+
+        setRecordedChunks({ data: [] })
+      } else {
+        // Handle the case where result does not have a 'data' property
+      }
     }
-  }, [recordedChunks])
+  }, [auth.user?.userEmailAddress, recordedChunks.data])
 
   return (
     <>

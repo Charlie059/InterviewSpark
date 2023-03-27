@@ -1,5 +1,5 @@
 projects:
-  HirebeatSync:
+  HireBeatAppSyncV3:
     schemaPath: src/graphql/schema.json
     includes:
       - src/graphql/**/*.ts
@@ -11,7 +11,7 @@ projects:
         generatedFileName: src/API.ts
         docsFilePath: src/graphql
         region: us-east-1
-        apiId: 2cs2plle2zc3vajpu2axzzgka4
+        apiId: ca3brabr3ncdxoq4lllh2ezxlu
         maxDepth: 2
 extensions:
   amplify:

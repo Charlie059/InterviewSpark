@@ -1,6 +1,9 @@
 // ** React Imports
 import { Ref, useState, forwardRef, ReactElement } from 'react'
 
+// ** Next Import
+import { useRouter } from 'next/router'
+
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
@@ -63,6 +66,8 @@ const TabLabel = (props: TabLabelProps) => {
 }
 
 const NewInterview = () => {
+  const router = useRouter()
+
   // ** States
   const [show, setShow] = useState<boolean>(false)
   const [activeTab, setActiveTab] = useState<string>('detailsTab')
@@ -70,6 +75,11 @@ const NewInterview = () => {
   const handleClose = () => {
     setShow(false)
     setActiveTab('detailsTab')
+  }
+
+  // Redirect to new interview page
+  const handleStartInterview = () => {
+    router.replace('/interview/new-interview')
   }
 
   return (
@@ -186,7 +196,7 @@ const NewInterview = () => {
           </Box>
           <Box sx={{ height: '10px' }}></Box>
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Button variant='contained' color='primary'>
+            <Button variant='contained' color='primary' onClick={handleStartInterview}>
               Start
             </Button>
           </Box>

@@ -15,11 +15,11 @@ export type RegisterParams = {
 export type UserDataType =
   | {
       __typename: 'User'
-      emailAddress: string
+      userEmailAddress: string
       userRole: string
       userName: string
       hasProfile: boolean
-      allowPublishInterview: boolean
+      allowPublicInterview: boolean
     }
   | null
   | undefined

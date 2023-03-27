@@ -2,14 +2,19 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const test_deactiveSubscription = /* GraphQL */ `
+  mutation Test_deactiveSubscription($id: String!) {
+    test_deactiveSubscription(id: $id)
+  }
+`;
 export const addNewGuestUser = /* GraphQL */ `
   mutation AddNewGuestUser($emailAddress: AWSEmail!, $userName: String!) {
     addNewGuestUser(emailAddress: $emailAddress, userName: $userName) {
-      emailAddress
+      userEmailAddress
       userRole
       userName
       hasProfile
-      allowPublishInterview
+      allowPublicInterview
     }
   }
 `;
@@ -19,40 +24,55 @@ export const addProfileToUser = /* GraphQL */ `
     $input: addUserProfileInput!
   ) {
     addProfileToUser(emailAddress: $emailAddress, input: $input) {
-      profileID
       fName
       lName
-      resumeURL
-      photoProfile
+      photoImgKey
+      coverImgKey
+      resumeKey
       addressLine1
       addressLine2
       city
       state
       postalCode
       country
+      joiningDate
+      contact
     }
   }
 `;
-export const createNewInterview = /* GraphQL */ `
-  mutation CreateNewInterview(
-    $emailAddress: AWSEmail
+export const createInterviewWithQuestion = /* GraphQL */ `
+  mutation CreateInterviewWithQuestion(
+    $emailAddress: AWSEmail!
+    $questionID: String!
+  ) {
+    createInterviewWithQuestion(
+      emailAddress: $emailAddress
+      questionID: $questionID
+    ) {
+      interviewID
+      interviewDateTime
+      interviewQuestionID
+      interviewVideoKey
+    }
+  }
+`;
+export const updateInterviewVideoKey = /* GraphQL */ `
+  mutation UpdateInterviewVideoKey(
+    $emailAddress: AWSEmail!
     $interviewID: String!
     $questionID: String!
-    $interviewType: String!
-    $videoURL: AWSURL!
+    $interviewVideoKey: String!
   ) {
-    createNewInterview(
+    updateInterviewVideoKey(
       emailAddress: $emailAddress
       interviewID: $interviewID
       questionID: $questionID
-      interviewType: $interviewType
-      videoURL: $videoURL
+      interviewVideoKey: $interviewVideoKey
     ) {
-      questionID
-      interviewVideoURL
-      interviewType
-      interviewTime
       interviewID
+      interviewDateTime
+      interviewQuestionID
+      interviewVideoKey
     }
   }
 `;

@@ -29,12 +29,12 @@ const Home = () => {
       return
     }
 
-    if (auth.user && auth.user.userRole === 'Admin') {
+    if (auth.user && auth.user.userRole === 'admin') {
       const homeRoute = getHomeRoute(auth.user.userRole)
 
       // Redirect user to Admin URL
       router.replace(homeRoute)
-    } else if (auth.user && auth.user.userRole === 'Guest') {
+    } else if (auth.user && auth.user.userRole === 'guest') {
       const homeRoute = getHomeRoute(auth.user.userRole)
 
       router.replace(homeRoute)

@@ -9,13 +9,14 @@ export const getUserData = async (emailAddress: string): Promise<UserDataType | 
 
     if (result.data.getUser) {
       const user = result.data.getUser
+      console.log(result)
 
       return {
         __typename: 'User',
         userRole: user.userRole,
-        emailAddress: user.emailAddress,
+        userEmailAddress: user.userEmailAddress,
         hasProfile: user.hasProfile,
-        allowPublishInterview: user.allowPublishInterview,
+        allowPublicInterview: user.allowPublicInterview,
         userName: user.userName
       }
     } else {
