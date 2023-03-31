@@ -18,6 +18,9 @@
       },
       "storage": {
         "s3162639c6": {}
+      },
+      "api": {
+        "hirebeatjobseeker": {}
       }
     }
   }

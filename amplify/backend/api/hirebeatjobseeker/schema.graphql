@@ -1,0 +1,108 @@
+type Education {
+  eduDegree: String
+  eduFieldStudy: String
+  eduSchool: String
+  eduStartDate: AWSDate
+  eduEndDate: AWSDate
+}
+
+type Educations {
+  educations: [Education]
+}
+
+type Interview {
+  interviewID: String
+  interviewDateTime: AWSDateTime
+  interviewQuestionID: String
+  interviewVideoKey: String
+}
+
+type InterviewList {
+  interviewList: [Interview]
+}
+
+type Mutation {
+  # This function is made for testing, it will create a new subscription to user and set to active and then set a lambda function to call Task Timer after 2 mins to set subscription inactive
+  test_deactiveSubscription(id: String!): String
+  # This function will add an initial guest user if the user does not exist
+  addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
+  # This function adds a Profile to an already existing user with no profile
+  addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
+  # This function will one question to the new Interview
+  createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+  # This function help update interview's interviewVideoKey with questionID
+  updateInterviewVideoKey(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    questionID: String!
+    interviewVideoKey: String!
+  ): Interview!
+}
+
+type Profile {
+  fName: String
+  lName: String
+  photoImgKey: AWSURL
+  coverImgKey: AWSURL
+  resumeKey: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  joiningDate: AWSDate
+  contact: AWSPhone
+}
+
+type Query {
+  getUser(emailAddress: AWSEmail!): User!
+  getProfile(emailAddress: AWSEmail!): Profile!
+  getWorkHistories(emailAddress: AWSEmail!): WorkHistories!
+  getEducations(emailAddress: AWSEmail!): Educations!
+  getInterviewList(emailAddress: AWSEmail!): InterviewList!
+  getInterviewListByID(emailAddress: AWSEmail!, interviewID: String!): InterviewList!
+  getInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview
+  getInterviewListThisMonth(emailAddress: AWSEmail!): InterviewList!
+}
+
+type User {
+  userEmailAddress: AWSEmail!
+  userRole: String!
+  userName: String!
+  hasProfile: Boolean!
+  allowPublicInterview: Boolean!
+}
+
+type WorkHistories {
+  workHistory: [WorkHistory]
+}
+
+type WorkHistory {
+  workHistoryJobTitle: String
+  workHistoryEmployer: String
+  workHistoryStartDate: AWSDate
+  workHistoryEndDate: AWSDate
+  workHistoryJobDescription: String
+}
+
+input addUserProfileInput {
+  fName: String
+  lName: String
+  photoImgKey: AWSURL
+  coverImgKey: AWSURL
+  resumeKey: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  joiningDate: AWSDate
+  contact: AWSPhone
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

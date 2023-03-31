@@ -90,7 +90,6 @@ export type Test_deactiveSubscriptionMutationVariables = {
 };
 
 export type Test_deactiveSubscriptionMutation = {
-  // This function is made for testing, it will create a new subscription to user and set to active and then set a lambda function to call Task Timer after 2 mins to set subscription inactive
   test_deactiveSubscription?: string | null,
 };
 
@@ -100,7 +99,6 @@ export type AddNewGuestUserMutationVariables = {
 };
 
 export type AddNewGuestUserMutation = {
-  // This function will add an initial guest user if the user does not exist
   addNewGuestUser?:  {
     __typename: "User",
     userEmailAddress: string,
@@ -117,7 +115,6 @@ export type AddProfileToUserMutationVariables = {
 };
 
 export type AddProfileToUserMutation = {
-  // This function adds a Profile to an already existing user with no profile
   addProfileToUser?:  {
     __typename: "Profile",
     fName?: string | null,
@@ -142,7 +139,6 @@ export type CreateInterviewWithQuestionMutationVariables = {
 };
 
 export type CreateInterviewWithQuestionMutation = {
-  // This function will one question to the new Interview
   createInterviewWithQuestion:  {
     __typename: "Interview",
     interviewID?: string | null,
@@ -160,7 +156,6 @@ export type UpdateInterviewVideoKeyMutationVariables = {
 };
 
 export type UpdateInterviewVideoKeyMutation = {
-  // This function help update interview's interviewVideoKey with questionID
   updateInterviewVideoKey:  {
     __typename: "Interview",
     interviewID?: string | null,
@@ -175,7 +170,6 @@ export type GetUserQueryVariables = {
 };
 
 export type GetUserQuery = {
-  // This function retrieves user information based on the provided email address. It returns a User object containing details about the user. If user not exist, it will return an error
   getUser:  {
     __typename: "User",
     userEmailAddress: string,
@@ -191,7 +185,6 @@ export type GetProfileQueryVariables = {
 };
 
 export type GetProfileQuery = {
-  // This query function will get user profile if user exist and profile exist
   getProfile:  {
     __typename: "Profile",
     fName?: string | null,
@@ -215,7 +208,6 @@ export type GetWorkHistoriesQueryVariables = {
 };
 
 export type GetWorkHistoriesQuery = {
-  // This query function will get user working histories if user exist and any working histories exist
   getWorkHistories:  {
     __typename: "WorkHistories",
     workHistory?:  Array< {
@@ -234,7 +226,6 @@ export type GetEducationsQueryVariables = {
 };
 
 export type GetEducationsQuery = {
-  // This query function will get user education histories if user exist and any education histories exist
   getEducations:  {
     __typename: "Educations",
     educations?:  Array< {
@@ -253,7 +244,6 @@ export type GetInterviewListQueryVariables = {
 };
 
 export type GetInterviewListQuery = {
-  // This query will get interview list with if user exist
   getInterviewList:  {
     __typename: "InterviewList",
     interviewList?:  Array< {
@@ -266,14 +256,13 @@ export type GetInterviewListQuery = {
   },
 };
 
-export type GetInterviewByIDQueryVariables = {
+export type GetInterviewListByIDQueryVariables = {
   emailAddress: string,
   interviewID: string,
 };
 
-export type GetInterviewByIDQuery = {
-  // This query will get all interview and questions with interviewID
-  getInterviewByID:  {
+export type GetInterviewListByIDQuery = {
+  getInterviewListByID:  {
     __typename: "InterviewList",
     interviewList?:  Array< {
       __typename: "Interview",
@@ -285,19 +274,35 @@ export type GetInterviewByIDQuery = {
   },
 };
 
-export type GetInterviewDataQueryVariables = {
+export type GetInterviewMetaDataQueryVariables = {
   emailAddress: string,
   interviewID: string,
   interviewQuestionID: string,
 };
 
-export type GetInterviewDataQuery = {
-  // This query will get one Interview#Question
-  getInterviewData?:  {
+export type GetInterviewMetaDataQuery = {
+  getInterviewMetaData?:  {
     __typename: "Interview",
     interviewID?: string | null,
     interviewDateTime?: string | null,
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
   } | null,
+};
+
+export type GetInterviewListThisMonthQueryVariables = {
+  emailAddress: string,
+};
+
+export type GetInterviewListThisMonthQuery = {
+  getInterviewListThisMonth:  {
+    __typename: "InterviewList",
+    interviewList?:  Array< {
+      __typename: "Interview",
+      interviewID?: string | null,
+      interviewDateTime?: string | null,
+      interviewQuestionID?: string | null,
+      interviewVideoKey?: string | null,
+    } | null > | null,
+  },
 };

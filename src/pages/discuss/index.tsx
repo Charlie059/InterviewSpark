@@ -65,9 +65,6 @@ const DiscussPage = () => {
             ))}
           </Box>
         </Grid>
-        {/* <Grid item xs={12} md={4}>
-          <HotTopic />
-        </Grid> */}
       </Grid>
 
       <Grid container spacing={3} sx={{ marginBottom: '.05rem' }}>
