@@ -103,15 +103,10 @@ export const getInterviewMetaData = /* GraphQL */ `
     }
   }
 `;
-export const getInterviewListThisMonth = /* GraphQL */ `
-  query GetInterviewListThisMonth($emailAddress: AWSEmail!) {
-    getInterviewListThisMonth(emailAddress: $emailAddress) {
-      interviewList {
-        interviewID
-        interviewDateTime
-        interviewQuestionID
-        interviewVideoKey
-      }
+export const getNumOfQuestion = /* GraphQL */ `
+  query GetNumOfQuestion {
+    getNumOfQuestion {
+      questionCount
     }
   }
 `;

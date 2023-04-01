@@ -1,7 +1,6 @@
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
-import { useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import CalendarHeatmap from '../react-calendar-heatmap/src'
@@ -14,11 +13,12 @@ import ReactApexcharts from 'src/@core/components/react-apexcharts'
 
 // ** Util Import
 import { Grid } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { API, graphqlOperation } from 'aws-amplify'
+import { useAuth } from 'src/hooks/useAuth'
+import { getInterviewList, getNumOfQuestion } from 'src/graphql/queries'
 
 const InterviewTotalSummaryCard = () => {
-  // ** Hook
-  const theme = useTheme()
-
   const options: ApexOptions = {
     chart: {
       sparkline: { enabled: true }
@@ -27,7 +27,7 @@ const InterviewTotalSummaryCard = () => {
     colors: ['#E66D57'],
     plotOptions: {
       radialBar: {
-        hollow: { size: '48%' },
+        hollow: { size: '55%' },
         track: {
           background: '#F2B5AA'
         },
@@ -57,6 +57,102 @@ const InterviewTotalSummaryCard = () => {
     }
   }
 
+  const auth = useAuth()
+
+  // Store the interview count data in the state
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [data, setData] = useState<number[]>([])
+  const [interviewTotalCount, setInterviewTotalCount] = useState<number>(0)
+  const [interviewHotMapData, setInterviewHotMapData] = useState<any>([])
+  const [totalQuestionUserDid, setTotalQuestionUserDid] = useState<number>(0)
+  const [totalQuestions, setTotalQuestions] = useState<number>(0)
+
+  const currentDate = new Date()
+
+  // Get the last day of the previous month
+  const lastMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0)
+
+  // Set the start date to the last day of the previous month
+  const startDate = lastMonthLastDay.toISOString().substring(0, 10)
+
+  // Set the end date to the last day of the current month
+  const endDate = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1).toString().padStart(2, '0') + '-31'
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Get the email address of the current user
+        const emailAddress = auth.user?.userEmailAddress
+
+        // Fetch the interview list for the user
+        const result = await API.graphql(
+          graphqlOperation(getInterviewList, {
+            emailAddress
+          })
+        )
+
+        if ('data' in result) {
+          // Get the list of interviews from the result data
+          const interviewList = result.data.getInterviewList.interviewList
+
+          // Filter out the interviews that are not from this month
+          const currentDate = new Date()
+          const filteredInterviews = interviewList.filter((interview: { interviewDateTime: string }) => {
+            const interviewDate = new Date(interview.interviewDateTime)
+
+            return (
+              interviewDate.getFullYear() === currentDate.getFullYear() &&
+              interviewDate.getMonth() === currentDate.getMonth()
+            )
+          })
+
+          // Count the number of interviews per day
+          const interviewCounts = Array.from({ length: currentDate.getDate() }, () => 0)
+          filteredInterviews.forEach((interview: { interviewDateTime: string }) => {
+            const interviewDate = new Date(interview.interviewDateTime)
+            const dayOfMonth = interviewDate.getDate()
+            interviewCounts[dayOfMonth - 1] += 1
+          })
+
+          // Mapping interviewCounts to the Date
+          const interviewHotMapData = interviewCounts.map((interviewCount, index) => {
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), index + 1)
+            const formattedDate = date.toISOString().substring(0, 10)
+
+            return { date: formattedDate, count: interviewCount }
+          })
+
+          // Use a hashSet to store the questionID
+          const questionIDSet = new Set()
+
+          // Iterate through the interview list and add the questionID to the hashSet
+          interviewList.forEach((interview: { questionID: string }) => {
+            questionIDSet.add(interview.questionID)
+          })
+
+          // Update the state with the interview count data
+
+          setData(filteredInterviews)
+          setInterviewTotalCount(interviewList.length)
+          setInterviewHotMapData(interviewHotMapData)
+          setTotalQuestionUserDid(questionIDSet.size)
+        }
+
+        // Fetch the total number of questions
+        const totalQuestionsResult = await API.graphql(graphqlOperation(getNumOfQuestion, {}))
+
+        if ('data' in totalQuestionsResult) {
+          setTotalQuestions(totalQuestionsResult.data.getNumOfQuestion.questionCount)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    // Fetch the data on component mount
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Card style={{ borderRadius: '25px', aspectRatio: '1', height: '220px' }}>
       <CardContent>
@@ -65,26 +161,42 @@ const InterviewTotalSummaryCard = () => {
             Total Practice
           </Typography>
         </Box>
-        <Typography variant='h5'>124</Typography>
+        <Typography variant='h5'>{interviewTotalCount}</Typography>
         <Grid container columns={12}>
           <Grid item md={8}>
-            <ReactApexcharts type='radialBar' height={150} series={[64.1]} options={options} />
+            <ReactApexcharts
+              type='radialBar'
+              height={140}
+              series={[(totalQuestionUserDid / totalQuestions) * 100]}
+              options={options}
+            />
           </Grid>
           <Grid item md={4}>
             <div style={{ width: '100%', paddingTop: 50, paddingLeft: 10 }}>
               <CalendarHeatmap
-                startDate={new Date('2015-12-31')}
-                endDate={new Date('2016-01-31')}
+                startDate={startDate}
+                endDate={endDate}
                 showMonthLabels={false}
                 gutterSize={5}
-                values={[
-                  { date: '2016-01-01', count: 12 },
-                  { date: '2016-01-22', count: 12222 },
-                  { date: '2016-01-30', count: 38 },
-                  { date: '2016-01-23', count: 38 }
-
-                  // ...and so on
-                ]}
+                values={interviewHotMapData}
+                classForValue={value => {
+                  switch (true) {
+                    case !value:
+                      return 'color-github-0'
+                    case value.count === 0:
+                      return 'color-github-0'
+                    case value.count === 1:
+                      return 'color-scale-1'
+                    case value.count === 2:
+                      return 'color-scale-2'
+                    case value.count > 2 && value.count < 10:
+                      return 'color-scale-3'
+                    case value.count >= 10:
+                      return 'color-scale-4'
+                    default:
+                      return ''
+                  }
+                }}
               />
             </div>
           </Grid>

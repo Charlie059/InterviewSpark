@@ -16,6 +16,7 @@ const InterviewUsageSummaryThisMonth = () => {
 
   // Store the interview count data in the state
   const [data, setData] = useState<number[]>([])
+  const [interviewTotalCount, setInterviewTotalCount] = useState<number>(0)
 
   const auth = useAuth()
 
@@ -36,7 +37,7 @@ const InterviewUsageSummaryThisMonth = () => {
           // Get the list of interviews from the result data
           const interviewList = result.data.getInterviewList.interviewList
 
-          // Filter out the interviews that are not from this month
+          // Filter out the interviews that are not from last 30 days
           const currentDate = new Date()
           const filteredInterviews = interviewList.filter((interview: { interviewDateTime: string }) => {
             const interviewDate = new Date(interview.interviewDateTime)
@@ -67,6 +68,8 @@ const InterviewUsageSummaryThisMonth = () => {
 
           // Update the state with the interview count data
           setData(interviewCountsSum)
+
+          setInterviewTotalCount(filteredInterviews.length)
         }
       } catch (error) {
         console.error(error)
@@ -130,7 +133,7 @@ const InterviewUsageSummaryThisMonth = () => {
           This Month
         </Typography>
         <Typography variant='body2'>Total Questions This Month</Typography>
-        <Typography variant='h5'>{data.length}</Typography>
+        <Typography variant='h5'>{interviewTotalCount}</Typography>
 
         <ReactApexcharts type='line' height={70} options={options} series={[{ data: data }]} />
       </CardContent>

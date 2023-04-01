@@ -11,13 +11,10 @@ import CardContent from '@mui/material/CardContent'
 // ** Third Party Imports
 import axios from 'axios'
 
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
 const ProfilePicture = styled('img')(({ theme }) => ({
   width: 120,
   height: 120,
-  borderRadius: theme.shape.borderRadius,
+  borderRadius: 35,
   border: `5px solid ${theme.palette.common.white}`,
   [theme.breakpoints.down('md')]: {
     marginBottom: theme.spacing(4)
@@ -44,8 +41,6 @@ const UserProfileHeader = () => {
     })
   }, [])
 
-  const designationIcon = data?.designationIcon || 'mdi:briefcase-outline'
-
   return data !== null ? (
     <Card
       sx={{
@@ -64,6 +59,7 @@ const UserProfileHeader = () => {
         }}
       >
         <ProfilePicture src={data.profileImg} alt='profile-picture' />
+
         <Box
           sx={{
             width: '100%',
@@ -85,19 +81,13 @@ const UserProfileHeader = () => {
                 justifyContent: ['center', 'flex-start']
               }}
             >
-              <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                <Icon icon={designationIcon} />
-                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.designation}</Typography>
-              </Box>
-              <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                <Icon icon='mdi:map-marker-outline' />
-                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.location}</Typography>
-              </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                <Icon icon='mdi:calendar-blank-outline' />
-                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>Joined {data.joiningDate}</Typography>
+                <Typography sx={{ color: 'text.secondary', fontWeight: 350 }}>
+                  Global Ranking: <span style={{ fontWeight: 'bold' }}>5,000</span>
+                </Typography>
               </Box>
             </Box>
+            <Box sx={{ height: 45 }}></Box>
           </Box>
         </Box>
       </CardContent>

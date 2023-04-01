@@ -85,6 +85,11 @@ export type InterviewList = {
   interviewList?:  Array<Interview | null > | null,
 };
 
+export type QuestionCount = {
+  __typename: "QuestionCount",
+  questionCount?: number | null,
+};
+
 export type Test_deactiveSubscriptionMutationVariables = {
   id: string,
 };
@@ -290,19 +295,9 @@ export type GetInterviewMetaDataQuery = {
   } | null,
 };
 
-export type GetInterviewListThisMonthQueryVariables = {
-  emailAddress: string,
-};
-
-export type GetInterviewListThisMonthQuery = {
-  getInterviewListThisMonth:  {
-    __typename: "InterviewList",
-    interviewList?:  Array< {
-      __typename: "Interview",
-      interviewID?: string | null,
-      interviewDateTime?: string | null,
-      interviewQuestionID?: string | null,
-      interviewVideoKey?: string | null,
-    } | null > | null,
+export type GetNumOfQuestionQuery = {
+  getNumOfQuestion:  {
+    __typename: "QuestionCount",
+    questionCount?: number | null,
   },
 };

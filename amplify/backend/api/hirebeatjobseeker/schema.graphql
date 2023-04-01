@@ -21,16 +21,161 @@ type InterviewList {
   interviewList: [Interview]
 }
 
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
 type Mutation {
-  # This function is made for testing, it will create a new subscription to user and set to active and then set a lambda function to call Task Timer after 2 mins to set subscription inactive
   test_deactiveSubscription(id: String!): String
-  # This function will add an initial guest user if the user does not exist
   addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
-  # This function adds a Profile to an already existing user with no profile
   addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
-  # This function will one question to the new Interview
   createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
-  # This function help update interview's interviewVideoKey with questionID
   updateInterviewVideoKey(
     emailAddress: AWSEmail!
     interviewID: String!
@@ -63,7 +208,19 @@ type Query {
   getInterviewList(emailAddress: AWSEmail!): InterviewList!
   getInterviewListByID(emailAddress: AWSEmail!, interviewID: String!): InterviewList!
   getInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview
-  getInterviewListThisMonth(emailAddress: AWSEmail!): InterviewList!
+  getNumOfQuestion: QuestionCount!
+}
+
+type Question {
+  GSI1PK: String
+  interviewQuestion: String
+  interviewQuestionSampleAns: String
+  interviewQuestionType: String
+  QuestionID: String
+}
+
+type QuestionCount {
+  questionCount: Int
 }
 
 type User {
@@ -100,9 +257,4 @@ input addUserProfileInput {
   country: String
   joiningDate: AWSDate
   contact: AWSPhone
-}
-
-schema {
-  query: Query
-  mutation: Mutation
 }

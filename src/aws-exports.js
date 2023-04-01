@@ -3,6 +3,10 @@
 
 const awsmobile = {
     "aws_project_region": "us-east-1",
+    "aws_appsync_graphqlEndpoint": "https://j5alda3dpzacrktfsiye5dysba.appsync-api.us-east-1.amazonaws.com/graphql",
+    "aws_appsync_region": "us-east-1",
+    "aws_appsync_authenticationType": "API_KEY",
+    "aws_appsync_apiKey": "da2-gwgd6k6tang7rbfdatudybmjze",
     "aws_cognito_identity_pool_id": "us-east-1:c8cedbc0-477f-45b0-ad30-83cffb5e77fb",
     "aws_cognito_region": "us-east-1",
     "aws_user_pools_id": "us-east-1_ndFPxkTt9",
@@ -30,11 +34,7 @@ const awsmobile = {
         "EMAIL"
     ],
     "aws_user_files_s3_bucket": "hirebeatjobseeker1113247a97c74b96852b04e522510162908-staging",
-    "aws_user_files_s3_bucket_region": "us-east-1",
-    "aws_appsync_graphqlEndpoint": "https://j5alda3dpzacrktfsiye5dysba.appsync-api.us-east-1.amazonaws.com/graphql",
-    "aws_appsync_region": "us-east-1",
-    "aws_appsync_authenticationType": "API_KEY",
-    "aws_appsync_apiKey": "da2-gwgd6k6tang7rbfdatudybmjze"
+    "aws_user_files_s3_bucket_region": "us-east-1"
 };
 
 
