@@ -79,11 +79,6 @@ function MockInterviewPage({ interviews }: MockInterviewPageProps) {
 
       // Reset time left
       setTimeLeft(30)
-
-      // Add a delay before starting the next recording
-      setTimeout(() => {
-        handleStartCaptureClick()
-      }, 500)
     }
   }, [recordedChunks.data, currentQuestionIndex, interviews, auth.user?.userEmailAddress, handleDataAvailable])
 
@@ -108,7 +103,7 @@ function MockInterviewPage({ interviews }: MockInterviewPageProps) {
   }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable])
 
   useEffect(() => {
-    let interval: number | undefined
+    let interval: NodeJS.Timeout | undefined
 
     if (capturing) {
       interval = setInterval(() => {
