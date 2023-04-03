@@ -6,7 +6,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 const Logo = () => {
   return (
     <Box display='flex'>
-      <Box sx={{ margin: 5 }}>
+      <Box sx={{ marginLeft: 25, marginTop: 10 }}>
         <img src='/images/HireBeat-Logo.png' alt='logo' width={160} />
       </Box>
       <Box flex={1} />

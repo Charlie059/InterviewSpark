@@ -106,6 +106,13 @@ export type Question = {
   QuestionID?: string | null,
 };
 
+export type PaginatedQuestionList = {
+  __typename: "PaginatedQuestionList",
+  questionList?:  Array<Question | null > | null,
+  nextToken?: string | null,
+  totalRecords?: number | null,
+};
+
 export type Test_deactiveSubscriptionMutationVariables = {
   id: string,
 };
@@ -334,5 +341,26 @@ export type GetQuestionMetaDataQuery = {
     interviewQuestionSampleAns?: string | null,
     interviewQuestionType?: string | null,
     QuestionID?: string | null,
+  },
+};
+
+export type GetQuestionListQueryVariables = {
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type GetQuestionListQuery = {
+  getQuestionList:  {
+    __typename: "PaginatedQuestionList",
+    questionList?:  Array< {
+      __typename: "Question",
+      GSI1PK?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionSampleAns?: string | null,
+      interviewQuestionType?: string | null,
+      QuestionID?: string | null,
+    } | null > | null,
+    nextToken?: string | null,
+    totalRecords?: number | null,
   },
 };

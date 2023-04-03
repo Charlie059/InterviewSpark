@@ -174,7 +174,7 @@ const InterviewList = () => {
           selectedRows={selectedRows}
           handleFilter={handleFilter}
           onDelete={handleDelete}
-          buttonText={'Next'}
+          buttonText={'New Interview'}
           buttonLink={'/interview/create-questions'}
         />
         <DataGrid

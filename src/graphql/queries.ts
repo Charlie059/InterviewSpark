@@ -131,3 +131,18 @@ export const getQuestionMetaData = /* GraphQL */ `
     }
   }
 `;
+export const getQuestionList = /* GraphQL */ `
+  query GetQuestionList($limit: Int, $nextToken: String) {
+    getQuestionList(limit: $limit, nextToken: $nextToken) {
+      questionList {
+        GSI1PK
+        interviewQuestion
+        interviewQuestionSampleAns
+        interviewQuestionType
+        QuestionID
+      }
+      nextToken
+      totalRecords
+    }
+  }
+`;

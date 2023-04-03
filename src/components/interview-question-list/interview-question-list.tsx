@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
 
-import { IconButton } from '@mui/material'
+import { Card, IconButton } from '@mui/material'
 
 import TableHeader from '../table-header/table-header'
 
@@ -17,19 +17,19 @@ interface InterviewQuestion {
 }
 
 interface Props {
-  newQuestion?: InterviewQuestion | null
+  interviewQuestions: InterviewQuestion[]
 }
 
-const InterviewQuestionList = ({ newQuestion }: Props) => {
-  const [interviewQuestion, setInterviewQuestion] = useState<InterviewQuestion[]>([])
+const InterviewQuestionList = (props: Props) => {
+  const { interviewQuestions } = props
 
   const [value, setValue] = useState<string>('')
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 100, hide: true },
-    { field: 'questionID', headerName: 'Question', width: 100 },
-    { field: 'interviewQuestion', headerName: 'Name', width: 300 },
+    { field: 'id', headerName: 'ID', hide: true },
+    { field: 'QuestionID', headerName: 'Question', width: 100 },
+    { field: 'interviewQuestion', headerName: 'Name', width: 220 },
     {
       field: 'difficulty',
       headerName: 'Difficulty',
@@ -75,14 +75,11 @@ const InterviewQuestionList = ({ newQuestion }: Props) => {
   }
 
   useEffect(() => {
-    if (newQuestion) {
-      console.log('New question added:', newQuestion)
-      setInterviewQuestion(prevState => [...prevState, newQuestion as InterviewQuestion])
-    }
-  }, [newQuestion])
+    console.log('interviewQuestions:', interviewQuestions)
+  }, [interviewQuestions])
 
   return (
-    <div>
+    <Card sx={{ width: 700, height: 530, marginLeft: 5, marginRight: 2, borderRadius: '20px' }}>
       <TableHeader
         value={value}
         selectedRows={selectedRows}
@@ -93,21 +90,21 @@ const InterviewQuestionList = ({ newQuestion }: Props) => {
       />
       <DataGrid
         autoHeight
-        rows={interviewQuestion}
+        rows={interviewQuestions}
         columns={columns.map(column => ({
           ...column,
           headerAlign: 'center', // Add this line to center the headerName
           align: 'center'
         }))}
-        pageSize={interviewQuestion.length} // Set pageSize to the length of interviewQuestion array
-        rowsPerPageOptions={[interviewQuestion.length]} // Set rowsPerPageOptions to the length of interviewQuestion array
+        pageSize={interviewQuestions.length} // Set pageSize to the length of interviewQuestion array
+        rowsPerPageOptions={[interviewQuestions.length]} // Set rowsPerPageOptions to the length of interviewQuestion array
         checkboxSelection
         disableSelectionOnClick
         onSelectionModelChange={rows => {
           setSelectedRows(rows)
         }}
       />
-    </div>
+    </Card>
   )
 }
 

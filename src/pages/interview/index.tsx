@@ -9,8 +9,6 @@ import InterviewProfileHeader from 'src/components/interview-profile-header/inte
 import InterviewPromotion from 'src/components/interview-promotion/interview-promotion'
 import InterviewTotalSummaryCard from 'src/components/interview-total-summary-card/interview-total-summary-card'
 
-import NewInterview from 'src/views/pages/dialog/new-interview'
-
 const InterviewPage = () => {
   return (
     <div>

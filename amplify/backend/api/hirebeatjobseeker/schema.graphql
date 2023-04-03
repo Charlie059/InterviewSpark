@@ -190,6 +190,12 @@ type PaginatedInterviewList {
   totalRecords: Int
 }
 
+type PaginatedQuestionList {
+  questionList: [Question]
+  nextToken: String
+  totalRecords: Int
+}
+
 type Profile {
   fName: String
   lName: String
@@ -216,6 +222,7 @@ type Query {
   getInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview!
   getNumOfQuestion: QuestionCount!
   getQuestionMetaData(questionID: String!): Question!
+  getQuestionList(limit: Int, nextToken: String): PaginatedQuestionList!
 }
 
 type Question {

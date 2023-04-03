@@ -1,31 +1,29 @@
-// ** Next Import
-import Link from 'next/link'
-
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
+
 import Select from '@mui/material/Select'
 import { GridRowId } from '@mui/x-data-grid'
-import MenuItem from '@mui/material/MenuItem'
+
 import TextField from '@mui/material/TextField'
+import { Typography } from '@mui/material'
 
 interface TableHeaderProps {
   value: string
   selectedRows: GridRowId[]
   handleFilter: (val: string) => void
-  onDelete: () => void
-  buttonText: string
-  buttonLink: string
 }
 
-const TableHeader = (props: TableHeaderProps) => {
+const QuestionListHeader = (props: TableHeaderProps) => {
   // ** Props
-  const { value, selectedRows, handleFilter, onDelete, buttonText, buttonLink } = props
+  const { value, selectedRows, handleFilter } = props
 
   return (
     <Box
       sx={{
-        p: 5,
+        paddingTop: 5,
+        paddingBottom: 2,
+        paddingLeft: 5,
+        paddingRight: 5,
         pb: 3,
         width: '100%',
         display: 'flex',
@@ -38,20 +36,14 @@ const TableHeader = (props: TableHeaderProps) => {
         size='small'
         displayEmpty
         defaultValue=''
-        sx={{ mr: 4, mb: 2 }}
+        sx={{ mr: 4, mb: 2, display: 'none' }}
         disabled={selectedRows && selectedRows.length === 0}
         renderValue={selected => (selected.length === 0 ? 'Actions' : selected)}
-        onChange={event => {
-          if (event.target.value === 'Delete') {
-            onDelete()
-          }
-        }}
-      >
-        <MenuItem disabled>Actions</MenuItem>
-        <MenuItem disabled value='Delete'>
-          Delete
-        </MenuItem>
-      </Select>
+      ></Select>
+
+      <Typography variant='subtitle1' sx={{ mb: 2.5, color: 'black' }}>
+        Problems
+      </Typography>
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
@@ -61,24 +53,9 @@ const TableHeader = (props: TableHeaderProps) => {
           sx={{ mr: 4, mb: 2, maxWidth: '180px' }}
           onChange={e => handleFilter(e.target.value)}
         />
-        <Button
-          sx={{
-            mb: 2,
-            textTransform: 'none',
-            backgroundColor: '#3888FF',
-            color: 'white',
-            borderRadius: 5,
-            fontSize: '12px'
-          }}
-          component={Link}
-          variant='contained'
-          href={buttonLink}
-        >
-          {buttonText} {/* Use buttonText prop */}
-        </Button>
       </Box>
     </Box>
   )
 }
 
-export default TableHeader
+export default QuestionListHeader
