@@ -37,7 +37,7 @@ const InterviewUsageSummaryThisMonth = () => {
           // Get the list of interviews from the result data
           const interviewList = result.data.getInterviewList.interviewList
 
-          // Filter out the interviews that are not from last 30 days
+          // Filter out the interviews that in this month
           const currentDate = new Date()
           const filteredInterviews = interviewList.filter((interview: { interviewDateTime: string }) => {
             const interviewDate = new Date(interview.interviewDateTime)

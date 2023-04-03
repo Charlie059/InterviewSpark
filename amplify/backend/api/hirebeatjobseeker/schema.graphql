@@ -184,6 +184,12 @@ type Mutation {
   ): Interview!
 }
 
+type PaginatedInterviewList {
+  interviewList: [Interview]
+  nextToken: String
+  totalRecords: Int
+}
+
 type Profile {
   fName: String
   lName: String
@@ -205,10 +211,11 @@ type Query {
   getProfile(emailAddress: AWSEmail!): Profile!
   getWorkHistories(emailAddress: AWSEmail!): WorkHistories!
   getEducations(emailAddress: AWSEmail!): Educations!
-  getInterviewList(emailAddress: AWSEmail!): InterviewList!
+  getInterviewList(emailAddress: AWSEmail!, limit: Int, nextToken: String): PaginatedInterviewList!
   getInterviewListByID(emailAddress: AWSEmail!, interviewID: String!): InterviewList!
-  getInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview
+  getInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview!
   getNumOfQuestion: QuestionCount!
+  getQuestionMetaData(questionID: String!): Question!
 }
 
 type Question {

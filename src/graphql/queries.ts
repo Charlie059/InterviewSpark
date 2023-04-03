@@ -59,14 +59,24 @@ export const getEducations = /* GraphQL */ `
   }
 `;
 export const getInterviewList = /* GraphQL */ `
-  query GetInterviewList($emailAddress: AWSEmail!) {
-    getInterviewList(emailAddress: $emailAddress) {
+  query GetInterviewList(
+    $emailAddress: AWSEmail!
+    $limit: Int
+    $nextToken: String
+  ) {
+    getInterviewList(
+      emailAddress: $emailAddress
+      limit: $limit
+      nextToken: $nextToken
+    ) {
       interviewList {
         interviewID
         interviewDateTime
         interviewQuestionID
         interviewVideoKey
       }
+      nextToken
+      totalRecords
     }
   }
 `;
@@ -107,6 +117,17 @@ export const getNumOfQuestion = /* GraphQL */ `
   query GetNumOfQuestion {
     getNumOfQuestion {
       questionCount
+    }
+  }
+`;
+export const getQuestionMetaData = /* GraphQL */ `
+  query GetQuestionMetaData($questionID: String!) {
+    getQuestionMetaData(questionID: $questionID) {
+      GSI1PK
+      interviewQuestion
+      interviewQuestionSampleAns
+      interviewQuestionType
+      QuestionID
     }
   }
 `;

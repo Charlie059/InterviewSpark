@@ -1,5 +1,6 @@
 // ** MUI Imports
 import { Box } from '@mui/material'
+import InterviewList from 'src/components/interview-list/interview-list'
 
 // import InterviewList from 'src/components/interview-list/interview-list'
 
@@ -13,18 +14,25 @@ import NewInterview from 'src/views/pages/dialog/new-interview'
 const InterviewPage = () => {
   return (
     <div>
-      <InterviewProfileHeader />
-      <Box sx={{ display: 'flex', marginRight: 5, flexWrap: 'nowrap', paddingBottom: 1, paddingRight: 20 }}>
-        <Box sx={{ marginLeft: 5, marginBottom: 1 }}>
-          <InterviewUsageSummaryThisMonth />
+      <div>
+        <InterviewProfileHeader />
+        <Box sx={{ display: 'flex', marginRight: 5, flexWrap: 'nowrap', paddingBottom: 1, paddingRight: 20 }}>
+          <Box sx={{ marginLeft: 5, marginBottom: 1 }}>
+            <InterviewUsageSummaryThisMonth />
+          </Box>
+          <Box sx={{ marginLeft: 5, marginRight: 5 }}>
+            <InterviewTotalSummaryCard />
+          </Box>
+          <Box sx={{ marginRight: 5 }}>
+            <InterviewPromotion />
+          </Box>
         </Box>
-        <Box sx={{ marginLeft: 5, marginRight: 5 }}>
-          <InterviewTotalSummaryCard />
+      </div>
+      <div>
+        <Box sx={{ marginTop: 5, marginLeft: 5, marginBottom: 1 }}>
+          <InterviewList />
         </Box>
-        <Box sx={{ marginRight: 5 }}>
-          <InterviewPromotion />
-        </Box>
-      </Box>
+      </div>
     </div>
   )
 }

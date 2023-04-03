@@ -5,6 +5,10 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Grid, { GridProps } from '@mui/material/Grid'
 import { styled, useTheme } from '@mui/material/styles'
+import { useAuth } from 'src/hooks/useAuth'
+import { useState, useEffect } from 'react'
+import { API, graphqlOperation } from 'aws-amplify'
+import { getInterviewList } from 'src/graphql/queries'
 
 // Styled Grid component
 const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
@@ -30,6 +34,64 @@ const Img = styled('img')(({ theme }) => ({
 const InterviewPromotion = () => {
   // ** Hook
   const theme = useTheme()
+  const auth = useAuth()
+  const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Get the email address of the current user
+        const emailAddress = auth.user?.userEmailAddress
+
+        // Fetch the interview list for the user
+        const result = await API.graphql(
+          graphqlOperation(getInterviewList, {
+            emailAddress
+          })
+        )
+
+        if ('data' in result) {
+          // Get the list of interviews from the result data
+          const interviewList = result.data.getInterviewList.interviewList
+
+          // Filter out the interviews that are in 30 days
+          const currentDate = new Date()
+
+          // Filter out the interviews that are in the last 30 days
+          const filteredInterviewsLast30Days = interviewList.filter((interview: { interviewDateTime: string }) => {
+            const interviewDate = new Date(interview.interviewDateTime)
+            const dateDifference = Math.abs(currentDate.getTime() - interviewDate.getTime())
+            const daysDifference = Math.ceil(dateDifference / (1000 * 60 * 60 * 24))
+
+            return daysDifference <= 30
+          })
+
+          // Filter out the interviews that happened between 30 to 60 days ago
+          const filteredInterviews30To60Days = interviewList.filter((interview: { interviewDateTime: string }) => {
+            const interviewDate = new Date(interview.interviewDateTime)
+            const dateDifference = Math.abs(currentDate.getTime() - interviewDate.getTime())
+            const daysDifference = Math.ceil(dateDifference / (1000 * 60 * 60 * 24))
+
+            return daysDifference > 30 && daysDifference <= 60
+          })
+
+          const last30DaysCount = filteredInterviewsLast30Days.length
+          const last30To60DaysCount = filteredInterviews30To60Days.length
+          const percentageIncrease =
+            last30To60DaysCount > 0
+              ? Math.round(((last30DaysCount - last30To60DaysCount) / last30To60DaysCount) * 100)
+              : 100
+
+          setPercentageIncrease(percentageIncrease)
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Card sx={{ position: 'relative' }} style={{ borderRadius: '25px', height: '220px', width: '580px' }}>
@@ -37,21 +99,18 @@ const InterviewPromotion = () => {
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>
             <Typography variant='h5' sx={{ mb: 4.5 }}>
-              Congratulations{' '}
+              Keep up the great work,{' '}
               <Box component='span' sx={{ fontWeight: 'bold' }}>
-                John
+                {auth.user?.userName}
               </Box>
-              ! 🎉
+              ! 🚀
             </Typography>
             <Typography variant='body2'>
-              You have done{' '}
+              Your interviews in the last 30 days have increased by{' '}
               <Box component='span' sx={{ fontWeight: 600 }}>
-                68%
-              </Box>{' '}
-              😎 more sales today.
-            </Typography>
-            <Typography sx={{ mb: 4.5 }} variant='body2'>
-              Check your new badge in your profile.
+                {percentageIncrease}%
+              </Box>
+              . Keep pushing forward! 💪
             </Typography>
           </Grid>
           <StyledGrid item xs={12} sm={6}>

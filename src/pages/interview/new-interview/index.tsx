@@ -73,9 +73,7 @@ function NewInterview() {
 
       if ('data' in result) {
         const interviewID = result.data.createInterviewWithQuestion.interviewID
-
-        // TODO: update interviewVideoKey
-        await API.graphql(
+        const updateResult = await API.graphql(
           graphqlOperation(updateInterviewVideoKey, {
             emailAddress: emailAddress,
             interviewID: interviewID,
@@ -84,14 +82,17 @@ function NewInterview() {
           })
         )
 
-        console.log('New interview created:', result)
+        console.log('Interview updated:', updateResult)
+
+        console.log('New interview created:', result, uniqueFilename)
 
         setRecordedChunks({ data: [] })
       } else {
         // Handle the case where result does not have a 'data' property
       }
     }
-  }, [auth.user?.userEmailAddress, recordedChunks.data])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recordedChunks.data])
 
   return (
     <>

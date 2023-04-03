@@ -27,7 +27,7 @@ const InterviewTotalSummaryCard = () => {
     colors: ['#E66D57'],
     plotOptions: {
       radialBar: {
-        hollow: { size: '55%' },
+        hollow: { size: '50%' },
         track: {
           background: '#F2B5AA'
         },
@@ -166,8 +166,8 @@ const InterviewTotalSummaryCard = () => {
           <Grid item md={8}>
             <ReactApexcharts
               type='radialBar'
-              height={140}
-              series={[(totalQuestionUserDid / totalQuestions) * 100]}
+              height={150}
+              series={totalQuestions && totalQuestionUserDid ? [(totalQuestionUserDid / totalQuestions) * 100] : [0]}
               options={options}
             />
           </Grid>

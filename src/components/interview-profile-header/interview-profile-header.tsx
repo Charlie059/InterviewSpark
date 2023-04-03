@@ -10,6 +10,7 @@ import CardContent from '@mui/material/CardContent'
 
 // ** Third Party Imports
 import axios from 'axios'
+import { useAuth } from 'src/hooks/useAuth'
 
 const ProfilePicture = styled('img')(({ theme }) => ({
   width: 120,
@@ -22,23 +23,29 @@ const ProfilePicture = styled('img')(({ theme }) => ({
 }))
 
 type ProfileHeaderType = {
-  fullName: string
-  coverImg: string
-  location: string
+  userName: string
+  globalRanking: string
   profileImg: string
-  joiningDate: string
-  designation: string
-  designationIcon?: string
 }
 
 const UserProfileHeader = () => {
+  const auth = useAuth()
+
   // ** State
   const [data, setData] = useState<ProfileHeaderType | null>(null)
 
   useEffect(() => {
-    axios.get('/pages/profile-header').then(response => {
-      setData(response.data)
+    const userName = auth.user?.userName
+
+    if (!userName) {
+      return
+    }
+    setData({
+      userName: userName,
+      globalRanking: '5,000',
+      profileImg: '/images/avatars/1.png'
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return data !== null ? (
@@ -72,7 +79,7 @@ const UserProfileHeader = () => {
         >
           <Box sx={{ mb: [6, 0], display: 'flex', flexDirection: 'column', alignItems: ['center', 'flex-start'] }}>
             <Typography variant='h5' sx={{ mb: 4, fontSize: '1.375rem' }}>
-              {data.fullName}
+              {data.userName}
             </Typography>
             <Box
               sx={{

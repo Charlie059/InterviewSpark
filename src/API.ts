@@ -80,6 +80,13 @@ export type Education = {
   eduEndDate?: string | null,
 };
 
+export type PaginatedInterviewList = {
+  __typename: "PaginatedInterviewList",
+  interviewList?:  Array<Interview | null > | null,
+  nextToken?: string | null,
+  totalRecords?: number | null,
+};
+
 export type InterviewList = {
   __typename: "InterviewList",
   interviewList?:  Array<Interview | null > | null,
@@ -88,6 +95,15 @@ export type InterviewList = {
 export type QuestionCount = {
   __typename: "QuestionCount",
   questionCount?: number | null,
+};
+
+export type Question = {
+  __typename: "Question",
+  GSI1PK?: string | null,
+  interviewQuestion?: string | null,
+  interviewQuestionSampleAns?: string | null,
+  interviewQuestionType?: string | null,
+  QuestionID?: string | null,
 };
 
 export type Test_deactiveSubscriptionMutationVariables = {
@@ -246,11 +262,13 @@ export type GetEducationsQuery = {
 
 export type GetInterviewListQueryVariables = {
   emailAddress: string,
+  limit?: number | null,
+  nextToken?: string | null,
 };
 
 export type GetInterviewListQuery = {
   getInterviewList:  {
-    __typename: "InterviewList",
+    __typename: "PaginatedInterviewList",
     interviewList?:  Array< {
       __typename: "Interview",
       interviewID?: string | null,
@@ -258,6 +276,8 @@ export type GetInterviewListQuery = {
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
     } | null > | null,
+    nextToken?: string | null,
+    totalRecords?: number | null,
   },
 };
 
@@ -286,18 +306,33 @@ export type GetInterviewMetaDataQueryVariables = {
 };
 
 export type GetInterviewMetaDataQuery = {
-  getInterviewMetaData?:  {
+  getInterviewMetaData:  {
     __typename: "Interview",
     interviewID?: string | null,
     interviewDateTime?: string | null,
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
-  } | null,
+  },
 };
 
 export type GetNumOfQuestionQuery = {
   getNumOfQuestion:  {
     __typename: "QuestionCount",
     questionCount?: number | null,
+  },
+};
+
+export type GetQuestionMetaDataQueryVariables = {
+  questionID: string,
+};
+
+export type GetQuestionMetaDataQuery = {
+  getQuestionMetaData:  {
+    __typename: "Question",
+    GSI1PK?: string | null,
+    interviewQuestion?: string | null,
+    interviewQuestionSampleAns?: string | null,
+    interviewQuestionType?: string | null,
+    QuestionID?: string | null,
   },
 };
