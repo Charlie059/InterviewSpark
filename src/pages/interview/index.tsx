@@ -2,7 +2,7 @@
 import { Box } from '@mui/material'
 import InterviewList from 'src/components/interview-list/interview-list'
 
-// import InterviewList from 'src/components/interview-list/interview-list'
+// import NewInterview from 'src/views/pages/dialog/new-interview'
 
 import InterviewUsageSummaryThisMonth from 'src/components/Interview-monthly-summary-card/Interview-monthly-summary-card'
 import InterviewProfileHeader from 'src/components/interview-profile-header/interview-profile-header'

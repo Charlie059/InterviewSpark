@@ -84,9 +84,11 @@ const InterviewTotalSummaryCard = () => {
         const emailAddress = auth.user?.userEmailAddress
 
         // Fetch the interview list for the user
+        // TODO: remove the limit
         const result = await API.graphql(
           graphqlOperation(getInterviewList, {
-            emailAddress
+            emailAddress,
+            limit: 1000
           })
         )
 

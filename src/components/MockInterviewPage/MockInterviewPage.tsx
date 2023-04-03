@@ -1,4 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useRef, useState, useEffect } from 'react'
+import Webcam from 'react-webcam'
+import { API, Storage, Auth, graphqlOperation } from 'aws-amplify'
+import { updateInterviewVideoKey } from 'src/graphql/mutations'
+import { useAuth } from 'src/hooks/useAuth'
+
+interface RecordedChunks {
+  data: Blob[]
+}
 
 interface Interview {
   interviewID: string
@@ -7,61 +15,135 @@ interface Interview {
   interviewVideoKey: string
 }
 
-interface Props {
+interface MockInterviewPageProps {
   interviews: Interview[]
 }
 
-const MockInterviewPage = (props: Props) => {
-  const { interviews } = props
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [timeRemaining, setTimeRemaining] = useState(30)
-  const [isRecording, setIsRecording] = useState(false)
+function MockInterviewPage({ interviews }: MockInterviewPageProps) {
+  const webcamRef = useRef<Webcam>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const [capturing, setCapturing] = useState<boolean>(false)
+  const [recordedChunks, setRecordedChunks] = useState<RecordedChunks>({ data: [] })
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
+  const [timeLeft, setTimeLeft] = useState(30)
+
+  const auth = useAuth()
+
+  const handleDataAvailable = useCallback(
+    ({ data }: BlobEvent) => {
+      if (data.size > 0) {
+        setRecordedChunks(prev => ({ data: [...prev.data, data] }))
+      }
+    },
+    [setRecordedChunks]
+  )
+
+  const handleUploadAndMoveToNextQuestion = useCallback(async () => {
+    // If the media recorder state is not 'inactive', then stop it
+    if (mediaRecorderRef.current?.state !== 'inactive') {
+      mediaRecorderRef.current?.stop()
+    }
+
+    console.log('handleUploadAndMoveToNextQuestion')
+    console.log('recordedChunks.data.length:', recordedChunks.data.length)
+    if (currentQuestionIndex < interviews.length) {
+      const currentUser = await Auth.currentAuthenticatedUser()
+      const userId = currentUser.attributes.sub
+      const timestamp = new Date().getTime()
+      const uniqueFilename = `${userId}-${timestamp}-interview.webm`
+
+      const blob = new Blob(recordedChunks.data, { type: 'video/webm' })
+      await Storage.put(uniqueFilename, blob, {
+        contentType: 'video/webm',
+        level: 'private'
+      })
+
+      const interview = interviews[currentQuestionIndex]
+
+      const emailAddress = auth.user?.userEmailAddress
+      const interviewID = interview.interviewID
+      const questionID = interview.interviewQuestionID
+
+      const updateResult = await API.graphql(
+        graphqlOperation(updateInterviewVideoKey, {
+          emailAddress: emailAddress,
+          interviewID: interviewID,
+          questionID: questionID,
+          interviewVideoKey: uniqueFilename
+        })
+      )
+
+      console.log('Interview updated:', updateResult)
+
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1)
+
+      // Reset time left
+      setTimeLeft(30)
+
+      // Add a delay before starting the next recording
+      setTimeout(() => {
+        handleStartCaptureClick()
+      }, 500)
+    }
+  }, [recordedChunks.data, currentQuestionIndex, interviews, auth.user?.userEmailAddress, handleDataAvailable])
+
+  const handleStartCaptureClick = useCallback(() => {
+    console.log('handleStartCaptureClick')
+    setCapturing(true)
+
+    // Reset the media recorder
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.removeEventListener('dataavailable', handleDataAvailable)
+    }
+    setRecordedChunks({ data: [] })
+
+    const mediaStream = webcamRef.current?.stream
+    if (mediaStream) {
+      mediaRecorderRef.current = new MediaRecorder(mediaStream, {
+        mimeType: 'video/webm'
+      })
+      mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
+      mediaRecorderRef.current.start(1000)
+    }
+  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable])
 
   useEffect(() => {
-    if (isRecording && timeRemaining > 0) {
-      const timer = setTimeout(() => {
-        setTimeRemaining(timeRemaining - 1)
+    let interval: number | undefined
+
+    if (capturing) {
+      interval = setInterval(() => {
+        setTimeLeft(prevTime => prevTime - 1)
       }, 1000)
-
-      return () => clearTimeout(timer)
-    } else if (isRecording && timeRemaining === 0) {
-      handleNextQuestion()
     }
-  }, [isRecording, timeRemaining])
 
-  const handleStartRecording = () => {
-    setIsRecording(true)
-  }
-
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < interviews.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
-      setTimeRemaining(30)
-    } else {
-      setIsRecording(false)
-      alert('Interview finished!')
+    if (timeLeft === 0 && capturing) {
+      handleUploadAndMoveToNextQuestion()
     }
-  }
 
-  const currentQuestion = interviews[currentQuestionIndex]
+    return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [capturing, timeLeft])
 
   return (
-    <div>
-      <h1>Mock Interview</h1>
-      <h2>Question {currentQuestionIndex + 1}</h2>
-      <p>{currentQuestion?.interviewQuestionID}</p>
-      <p>{currentQuestion?.interviewVideoKey}</p>
-      <p>{currentQuestion?.interviewDateTime}</p>
-      <h3>Time Remaining: {timeRemaining} seconds</h3>
-
-      {!isRecording ? (
-        <button onClick={handleStartRecording}>Start Recording</button>
-      ) : (
-        <button onClick={handleNextQuestion}>Next Question</button>
+    <>
+      <Webcam audio={true} muted={true} ref={webcamRef} />
+      {currentQuestionIndex < interviews.length && (
+        <>
+          <p>
+            Question {currentQuestionIndex + 1} of {interviews.length}:{' '}
+            {interviews[currentQuestionIndex].interviewDateTime}
+          </p>
+          <p>Time left: {timeLeft}s</p>
+          {capturing ? (
+            <>
+              <button onClick={handleUploadAndMoveToNextQuestion}>Finish Early</button>
+            </>
+          ) : (
+            <button onClick={handleStartCaptureClick}>Start Capture</button>
+          )}
+        </>
       )}
-
-      {currentQuestionIndex === interviews.length - 1 && !isRecording && <h3>Interview finished!</h3>}
-    </div>
+    </>
   )
 }
 

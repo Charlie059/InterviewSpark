@@ -27,11 +27,16 @@ const InterviewUsageSummaryThisMonth = () => {
         const emailAddress = auth.user?.userEmailAddress
 
         // Fetch the interview list for the user
+
+        // TODO: Change the limit
         const result = await API.graphql(
           graphqlOperation(getInterviewList, {
-            emailAddress
+            emailAddress,
+            limit: 10000
           })
         )
+
+        console.log(result)
 
         if ('data' in result) {
           // Get the list of interviews from the result data
