@@ -3452,6 +3452,11 @@
     "redux-thunk" "^2.4.1"
     "reselect" "^4.1.5"
 
+"@remix-run/router@1.5.0":
+  "integrity" "sha512-bkUDCp8o1MvFO+qxkODcbhSqRa6P2GXgrGZVpt0dCXNW2HCSCqYI0ZoAqEOSAjRWmmlKcYgFvN4B4S+zo/f8kg=="
+  "resolved" "https://registry.npmjs.org/@remix-run/router/-/router-1.5.0.tgz"
+  "version" "1.5.0"
+
 "@rushstack/eslint-patch@^1.1.3":
   "integrity" "sha512-sXo/qW2/pAcmT43VoRKOJbDOfV3cYpq3szSVfIThQXNt+E4DfKj361vaAt3c88U5tPUxzEswam7GW48PJqtKAg=="
   "resolved" "https://registry.npmjs.org/@rushstack/eslint-patch/-/eslint-patch-1.2.0.tgz"
@@ -7101,6 +7106,21 @@
   "version" "7.1.2"
   dependencies:
     "lodash" "^4.17.21"
+
+"react-router-dom@^6.10.0":
+  "integrity" "sha512-E5dfxRPuXKJqzwSe/qGcqdwa18QiWC6f3H3cWXM24qj4N0/beCIf/CWTipop2xm7mR0RCS99NnaqPNjHtrAzCg=="
+  "resolved" "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.10.0.tgz"
+  "version" "6.10.0"
+  dependencies:
+    "@remix-run/router" "1.5.0"
+    "react-router" "6.10.0"
+
+"react-router@6.10.0":
+  "integrity" "sha512-Nrg0BWpQqrC3ZFFkyewrflCud9dio9ME3ojHCF/WLsprJVzkq3q3UeEhMCAW1dobjeGbWgjNn/PVF6m46ANxXQ=="
+  "resolved" "https://registry.npmjs.org/react-router/-/react-router-6.10.0.tgz"
+  "version" "6.10.0"
+  dependencies:
+    "@remix-run/router" "1.5.0"
 
 "react-smooth@^2.0.1":
   "integrity" "sha512-Own9TA0GPPf3as4vSwFhDouVfXP15ie/wIHklhyKBH5AN6NFtdk0UpHBnonV11BtqDkAWlt40MOUc+5srmW7NA=="

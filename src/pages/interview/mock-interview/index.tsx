@@ -3,23 +3,22 @@ import Webcam from 'react-webcam'
 import { API, Storage, Auth, graphqlOperation } from 'aws-amplify'
 import { updateInterviewVideoKey } from 'src/graphql/mutations'
 import { useAuth } from 'src/hooks/useAuth'
+import { useRouter } from 'next/router'
 
 interface RecordedChunks {
   data: Blob[]
 }
 
-interface Interview {
-  interviewID: string
-  interviewDateTime: string
-  interviewQuestionID: string
-  interviewVideoKey: string
-}
+function MockInterviewPage() {
+  const router = useRouter()
+  const interviewsParam = router.query.interviews
+    ? Array.isArray(router.query.interviews)
+      ? router.query.interviews[0]
+      : router.query.interviews
+    : JSON.stringify([])
 
-interface MockInterviewPageProps {
-  interviews: Interview[]
-}
+  const interviews = JSON.parse(interviewsParam)
 
-function MockInterviewPage({ interviews }: MockInterviewPageProps) {
   const webcamRef = useRef<Webcam>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const [capturing, setCapturing] = useState<boolean>(false)
@@ -80,12 +79,11 @@ function MockInterviewPage({ interviews }: MockInterviewPageProps) {
       // Reset time left
       setTimeLeft(30)
 
-      // Add a delay before starting the next recording
       setTimeout(() => {
         handleStartCaptureClick()
       }, 500)
     }
-  }, [recordedChunks.data, currentQuestionIndex, interviews, auth.user?.userEmailAddress, handleDataAvailable])
+  }, [recordedChunks.data, currentQuestionIndex, auth.user?.userEmailAddress, handleDataAvailable])
 
   const handleStartCaptureClick = useCallback(() => {
     console.log('handleStartCaptureClick')

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Box, CardContent, Typography, Button, Card } from '@mui/material'
 import { ReactNode } from 'react'
+import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import {
   InterviewQuestionList,
@@ -9,10 +10,14 @@ import {
 import Logo from 'src/components/logo/logo'
 import InterviewQuestionSummary from 'src/components/interview-question-summary/interview-question-summary'
 import QuestionList from 'src/components/question-list/question-list'
+import router from 'next/router'
+import { API, graphqlOperation } from 'aws-amplify'
+import { createInterviewWithQuestion } from 'src/graphql/mutations'
 
 const CreateQuestionsPage = () => {
   const [interviewQuestions, setInterviewQuestions] = useState<InterviewQuestion[]>([])
   const [questionListSelectedRows, setQuestionListSelectedRows] = useState<InterviewQuestion[]>([])
+  const { user } = useAuth()
 
   const handleAddSelectedQuestions = () => {
     setInterviewQuestions(prevQuestions => [...prevQuestions, ...questionListSelectedRows])
@@ -22,6 +27,36 @@ const CreateQuestionsPage = () => {
     // If questionListSelectedRows changes, print it to the console
     console.log('questionListSelectedRows changed:', questionListSelectedRows)
   }, [questionListSelectedRows])
+
+  const handleNextButtonClick = async () => {
+    const emailAddress = user?.userEmailAddress || ''
+
+    const fetchedInterviews: any[] = []
+
+    for (const question of interviewQuestions) {
+      const questionID = question.id
+      const result = await API.graphql(
+        graphqlOperation(createInterviewWithQuestion, {
+          emailAddress,
+          questionID
+        })
+      )
+
+      if ('data' in result) {
+        fetchedInterviews.push(result.data.createInterviewWithQuestion)
+      } else {
+        // Handle the case where result does not have a 'data' property
+        console.error('Failed to create interview with question:', questionID)
+      }
+    }
+
+    const interviewsString = JSON.stringify(fetchedInterviews)
+
+    router.push({
+      pathname: '/interview/mock-interview',
+      query: { interviews: interviewsString }
+    })
+  }
 
   return (
     <div>
@@ -38,6 +73,7 @@ const CreateQuestionsPage = () => {
             <Button
               variant='contained'
               sx={{ backgroundColor: '#3888FF', color: 'white', borderRadius: 5, textTransform: 'none' }}
+              onClick={handleNextButtonClick}
             >
               Next
             </Button>
