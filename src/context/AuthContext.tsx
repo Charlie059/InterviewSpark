@@ -79,6 +79,8 @@ const AuthProvider = ({ children }: Props) => {
         setLoading(true)
 
         const user = await handleCurrUser()
+
+        console.log(user)
         if (user) {
           // Set the loading state to false and the user data to the local state.
           setLoading(false)

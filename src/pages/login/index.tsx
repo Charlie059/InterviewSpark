@@ -1,6 +1,7 @@
 // ** React Imports
 import { useState, ReactNode, MouseEvent } from 'react'
-
+import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth'
+import { Auth } from 'aws-amplify'
 // ** Next Imports
 import Link from 'next/link'
 
@@ -275,7 +276,7 @@ const LoginPage = () => {
                   href='/'
                   component={Link}
                   sx={{ color: '#db4437' }}
-                  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
+                  onClick={() => Auth.federatedSignIn({provider: CognitoHostedUIIdentityProvider.Google })}
                 >
                   <Icon icon='mdi:google' />
                 </IconButton>
