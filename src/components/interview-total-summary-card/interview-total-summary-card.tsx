@@ -127,8 +127,8 @@ const InterviewTotalSummaryCard = () => {
           const questionIDSet = new Set()
 
           // Iterate through the interview list and add the questionID to the hashSet
-          interviewList.forEach((interview: { questionID: string }) => {
-            questionIDSet.add(interview.questionID)
+          interviewList.forEach((interview: { interviewQuestionID: string }) => {
+            questionIDSet.add(interview.interviewQuestionID)
           })
 
           // Update the state with the interview count data

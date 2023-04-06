@@ -34,7 +34,7 @@ const CreateQuestionsPage = () => {
     const fetchedInterviews: any[] = []
 
     for (const question of interviewQuestions) {
-      const questionID = question.id
+      const questionID = question.QuestionID
       const result = await API.graphql(
         graphqlOperation(createInterviewWithQuestion, {
           emailAddress,
