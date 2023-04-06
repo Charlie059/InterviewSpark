@@ -20,7 +20,11 @@ const CreateQuestionsPage = () => {
   const { user } = useAuth()
 
   const handleAddSelectedQuestions = () => {
-    setInterviewQuestions(prevQuestions => [...prevQuestions, ...questionListSelectedRows])
+    // If questionListSelectedRows has elements which is repeated in interviewQuestions, remove them
+    const questionListSelectedRowsFiltered = questionListSelectedRows.filter(
+      question => !interviewQuestions.some(interviewQuestion => interviewQuestion.QuestionID === question.QuestionID)
+    )
+    setInterviewQuestions(prevQuestions => [...prevQuestions, ...questionListSelectedRowsFiltered])
   }
 
   useEffect(() => {
