@@ -79,9 +79,19 @@ function MockInterviewPage() {
       // Reset time left
       setTimeLeft(30)
 
-      setTimeout(() => {
-        handleStartCaptureClick()
-      }, 500)
+      if (currentQuestionIndex < interviews.length - 1) {
+        setTimeout(() => {
+          handleStartCaptureClick()
+        }, 500)
+      } else {
+        alert('You have completed all the mock interviews. Thank you!')
+
+        // Set the capturing state to false
+        setCapturing(false)
+
+        // Turn off the webcam and stop the media recorder
+        webcamRef.current?.stream?.getTracks().forEach(track => track.stop())
+      }
     }
   }, [recordedChunks.data, currentQuestionIndex, auth.user?.userEmailAddress, handleDataAvailable])
 

@@ -169,7 +169,11 @@ const InterviewTotalSummaryCard = () => {
             <ReactApexcharts
               type='radialBar'
               height={150}
-              series={totalQuestions && totalQuestionUserDid ? [(totalQuestionUserDid / totalQuestions) * 100] : [0]}
+              series={
+                totalQuestions && totalQuestionUserDid
+                  ? [Math.round((totalQuestionUserDid / totalQuestions) * 100)]
+                  : [0]
+              }
               options={options}
             />
           </Grid>
