@@ -77,15 +77,12 @@ function MockInterviewPage({ interviews }: MockInterviewPageProps) {
 
       setCurrentQuestionIndex(prevIndex => prevIndex + 1)
 
-      // Reset time left
+      // Reset the time and start capturing again
       setTimeLeft(30)
-
-      // Add a delay before starting the next recording
-      setTimeout(() => {
-        handleStartCaptureClick()
-      }, 500)
+      handleStartCaptureClick()
     }
-  }, [recordedChunks.data, currentQuestionIndex, interviews, auth.user?.userEmailAddress, handleDataAvailable])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleStartCaptureClick = useCallback(() => {
     console.log('handleStartCaptureClick')
@@ -105,7 +102,8 @@ function MockInterviewPage({ interviews }: MockInterviewPageProps) {
       mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
       mediaRecorderRef.current.start(1000)
     }
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     let interval: number | undefined

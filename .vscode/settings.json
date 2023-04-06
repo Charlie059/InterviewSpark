@@ -38,5 +38,6 @@
     "Customizer"
   ],
   "search-node-modules.path": "node_modules",
-  "markdown.extension.toc.updateOnSave": false
+  "markdown.extension.toc.updateOnSave": false,
+  "easycode.model": "gpt-4"
 }
