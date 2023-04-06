@@ -8,8 +8,6 @@ import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 
-// ** Third Party Imports
-import axios from 'axios'
 import { useAuth } from 'src/hooks/useAuth'
 
 const ProfilePicture = styled('img')(({ theme }) => ({

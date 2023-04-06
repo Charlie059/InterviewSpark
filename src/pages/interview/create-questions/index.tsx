@@ -27,11 +27,6 @@ const CreateQuestionsPage = () => {
     setInterviewQuestions(prevQuestions => [...prevQuestions, ...questionListSelectedRowsFiltered])
   }
 
-  useEffect(() => {
-    // If questionListSelectedRows changes, print it to the console
-    console.log('questionListSelectedRows changed:', questionListSelectedRows)
-  }, [questionListSelectedRows])
-
   const handleNextButtonClick = async () => {
     const emailAddress = user?.userEmailAddress || ''
 

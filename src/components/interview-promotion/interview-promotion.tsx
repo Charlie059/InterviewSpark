@@ -37,6 +37,12 @@ const InterviewPromotion = () => {
   const auth = useAuth()
   const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
 
+  // Determine the appropriate encouragement message
+  const encouragementMessage =
+    percentageIncrease >= 0
+      ? `Your interviews in the last 30 days have increased by ${percentageIncrease}%. Keep pushing forward! 💪`
+      : `Don't worry! It's not too late to bounce back. Stay positive and focused. You've got this! 💪`
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -99,22 +105,16 @@ const InterviewPromotion = () => {
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>
             <Typography variant='h5' sx={{ mb: 4.5 }}>
-              Keep up the great work,{' '}
+              {percentageIncrease >= 0 ? 'Keep up the great work,' : "It's okay,"}{' '}
               <Box component='span' sx={{ fontWeight: 'bold' }}>
                 {auth.user?.userName}
               </Box>
-              ! 🚀
+              {percentageIncrease >= 0 ? ' 🚀' : ' 🙌'}
             </Typography>
-            <Typography variant='body2'>
-              Your interviews in the last 30 days have increased by{' '}
-              <Box component='span' sx={{ fontWeight: 600 }}>
-                {percentageIncrease}%
-              </Box>
-              . Keep pushing forward! 💪
-            </Typography>
+            <Typography variant='body2'>{encouragementMessage}</Typography>
           </Grid>
           <StyledGrid item xs={12} sm={6}>
-            <Img alt='Congratulations John' src={`/images/cards/illustration-john-${theme.palette.mode}.png`} />
+            <Img alt='Encouragement Illustration' src={`/images/cards/illustration-john-${theme.palette.mode}.png`} />
           </StyledGrid>
         </Grid>
       </CardContent>
