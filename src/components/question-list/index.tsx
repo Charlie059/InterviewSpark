@@ -6,7 +6,7 @@ import { IconButton } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import QuestionListHeader from '../question-list-table-header/index'
-import { InterviewQuestion } from '../interview-question-list'
+import { InterviewQuestion } from '../interview-question-selection-result-list'
 import Log from 'src/middleware/loggerMiddleware'
 
 interface QuestionListProps {

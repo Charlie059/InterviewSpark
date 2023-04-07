@@ -3,7 +3,7 @@ import { Box, CardContent, Typography, Button, Card } from '@mui/material'
 import { ReactNode } from 'react'
 import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import { InterviewQuestionList, InterviewQuestion } from 'src/components/interview-question-list'
+import { InterviewQuestionList, InterviewQuestion } from 'src/components/interview-question-selection-result-list'
 import Logo from 'src/components/logo'
 import InterviewQuestionSummary from 'src/components/interview-question-summary'
 import QuestionList from 'src/components/question-list'
@@ -54,6 +54,10 @@ const CreateQuestionsPage = () => {
     })
   }
 
+  const handleDeleteInterviewInQuestionList = (id: number) => {
+    setInterviewQuestions(prevQuestions => prevQuestions.filter(question => question.id !== id))
+  }
+
   return (
     <div>
       <Logo />
@@ -82,7 +86,10 @@ const CreateQuestionsPage = () => {
           </Box>
         </Box>
         <Box display='flex' justifyContent='center'>
-          <InterviewQuestionList interviewQuestions={interviewQuestions} />
+          <InterviewQuestionList
+            interviewQuestions={interviewQuestions}
+            onDeleteInterview={handleDeleteInterviewInQuestionList}
+          />
           <Box>
             <Card sx={{ width: 435, height: 107, marginBottom: 3 }}>
               <InterviewQuestionSummary

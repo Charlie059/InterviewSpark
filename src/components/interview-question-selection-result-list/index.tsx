@@ -19,10 +19,11 @@ interface InterviewQuestion {
 
 interface Props {
   interviewQuestions: InterviewQuestion[]
+  onDeleteInterview: (id: number) => void
 }
 
 const InterviewQuestionList = (props: Props) => {
-  const { interviewQuestions } = props
+  const { interviewQuestions, onDeleteInterview } = props
 
   const [value, setValue] = useState<string>('')
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
@@ -57,6 +58,7 @@ const InterviewQuestionList = (props: Props) => {
           <IconButton
             color='secondary'
             onClick={() => {
+              onDeleteInterview(params.row.id)
               Log.info('Delete button clicked for interview ID:', params.row.interviewID)
             }}
           >
