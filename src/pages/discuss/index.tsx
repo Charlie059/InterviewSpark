@@ -4,12 +4,12 @@ import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import TextField from '@mui/material/TextField'
 import Paper from '@mui/material/Paper'
-import Post from 'src/components/post-overview/post-overview'
-import HotTopic from 'src/components/hot-topic/hot-topic'
+import Post from 'src/components/post-overview'
+import HotTopic from 'src/components/hot-topic'
 import Pagination from '@mui/lab/Pagination'
 import { generateFakeTopics } from 'src/@mock-data/posts'
 import Button from '@mui/material/Button'
-import TopicTag from 'src/components/topic-tag/topic-tag'
+import TopicTag from 'src/components/topic-tag'
 
 const tags = [
   {

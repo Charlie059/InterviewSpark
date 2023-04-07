@@ -2,6 +2,7 @@ import { GetUserQuery } from '../API'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUser } from '../graphql/queries'
 import { UserDataType } from '../context/types'
+import Log from 'src/middleware/loggerMiddleware'
 
 export const getUserData = async (emailAddress: string): Promise<UserDataType | null> => {
   try {
@@ -9,7 +10,7 @@ export const getUserData = async (emailAddress: string): Promise<UserDataType | 
 
     if (result.data.getUser) {
       const user = result.data.getUser
-      console.log(result)
+      Log.info('User data:', user)
 
       return {
         __typename: 'User',

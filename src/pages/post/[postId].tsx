@@ -2,10 +2,12 @@
 
 import React from 'react'
 import { useRouter } from 'next/router'
+import Log from 'src/middleware/loggerMiddleware'
 
 const PostDetail = () => {
   const router = useRouter()
   const { postId } = router.query
+  Log.info('PostDetail', postId)
 
   // Fetch post data using the postId here
 

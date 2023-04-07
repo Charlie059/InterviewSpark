@@ -27,6 +27,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 import { Auth } from 'aws-amplify'
 import { Button, FormControl, FormHelperText, IconButton, InputAdornment, OutlinedInput } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
+import Log from 'src/middleware/loggerMiddleware'
 
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
@@ -110,22 +111,20 @@ export default function PasswordResetValidation() {
       // if successful, redirect to login page
       router.push('/login')
     } catch (error) {
-      console.log('error submitting', error)
+      Log.error(error)
       setError('code', { message: 'Invalid code' })
     }
   }
 
   async function resendCode() {
     try {
-      console.log(email as string)
       await Auth.forgotPassword(email as string)
 
       // resend code if the user is not comfirmed.
       setSuccess('Verification code successfully sent')
-      console.log('verification code resent')
     } catch (err) {
       setError('code', { message: 'Error resending verification code' })
-      console.log('Error resending verification code', err)
+      Log.error(err)
     }
   }
 

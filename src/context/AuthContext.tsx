@@ -11,7 +11,7 @@ import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataT
 import { Auth } from 'aws-amplify'
 
 // ** Logger
-import Log from '../middleware/loggerMiddleware'
+import Log from 'src/middleware/loggerMiddleware'
 
 // ** Get user
 import { getUserData } from '../utils/getUser'
@@ -80,7 +80,7 @@ const AuthProvider = ({ children }: Props) => {
 
         const user = await handleCurrUser()
 
-        console.log(user)
+        Log.info(user)
         if (user) {
           // Set the loading state to false and the user data to the local state.
           setLoading(false)
@@ -108,9 +108,6 @@ const AuthProvider = ({ children }: Props) => {
     Auth.signIn(params.email, params.password)
       .then(async userData => {
         const emailAddress = userData.attributes.email
-        console.log(emailAddress)
-
-        //TODO Add user detail
         const user = await getUserData(emailAddress)
 
         setUser(user)
@@ -150,7 +147,6 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
-    console.log(params)
     try {
       const { user } = await Auth.signUp({
         password: params.password,
@@ -160,11 +156,11 @@ const AuthProvider = ({ children }: Props) => {
       // TODO error condition check
       addNewGuestUser(params.email, params.username)
 
-      console.log('Verify email sent', user)
+      Log.info('Verify email sent', user)
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
       errorCallback ? errorCallback(err) : null
-      console.log(err)
+      Log.error(err)
     }
   }
 

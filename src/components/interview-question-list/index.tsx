@@ -3,10 +3,11 @@ import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
 
 import { Card, IconButton } from '@mui/material'
 
-import TableHeader from '../table-header/table-header'
+import TableHeader from '../table-header'
 
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import Log from 'src/middleware/loggerMiddleware'
 
 interface InterviewQuestion {
   id: number
@@ -48,7 +49,7 @@ const InterviewQuestionList = (props: Props) => {
           <IconButton
             color='primary'
             onClick={() => {
-              console.log('View button clicked for interview ID:', params.row.interviewID)
+              Log.info('View button clicked for interview ID:', params.row.interviewID)
             }}
           >
             <VisibilityIcon color='disabled' />
@@ -56,7 +57,7 @@ const InterviewQuestionList = (props: Props) => {
           <IconButton
             color='secondary'
             onClick={() => {
-              console.log('Delete button clicked for interview ID:', params.row.interviewID)
+              Log.info('Delete button clicked for interview ID:', params.row.interviewID)
             }}
           >
             <DeleteIcon color='disabled' />
@@ -71,11 +72,11 @@ const InterviewQuestionList = (props: Props) => {
   }
 
   const handleDelete = () => {
-    console.log('Delete button clicked for interview IDs:', selectedRows)
+    Log.info('Delete button clicked for interview IDs:', selectedRows)
   }
 
   useEffect(() => {
-    console.log('interviewQuestions:', interviewQuestions)
+    Log.info('interviewQuestions:', interviewQuestions)
   }, [interviewQuestions])
 
   return (

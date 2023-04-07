@@ -30,6 +30,7 @@ import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import { Auth } from 'aws-amplify'
 import router from 'next/router'
 import Alert from '@mui/material/Alert'
+import Log from 'src/middleware/loggerMiddleware'
 
 // Styled Components
 const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -97,7 +98,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault()
     try {
-      console.log(e)
+      Log.info('Forgot password', e)
       await Auth.forgotPassword(email)
       setErrorMessage('')
       router.push({
@@ -106,7 +107,7 @@ const ForgotPassword = () => {
       })
     } catch (error) {
       setErrorMessage('Error resetting password, please try again')
-      console.log(error)
+      Log.error('Forgot password', error)
     }
   }
 

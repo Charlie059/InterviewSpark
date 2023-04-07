@@ -8,10 +8,12 @@ import { format } from 'date-fns'
 
 import { Card, IconButton } from '@mui/material'
 
-import TableHeader from '../table-header/table-header'
+import TableHeader from '../table-header'
 
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+
+import Log from 'src/middleware/loggerMiddleware'
 
 interface Interview {
   interviewID: string
@@ -62,7 +64,7 @@ const InterviewList = () => {
           <IconButton
             color='primary'
             onClick={() => {
-              console.log('View button clicked for interview ID:', params.row.interviewID)
+              Log.info('View button clicked for interview ID:', params.row.interviewID)
             }}
           >
             <VisibilityIcon color='disabled' />
@@ -70,7 +72,7 @@ const InterviewList = () => {
           <IconButton
             color='secondary'
             onClick={() => {
-              console.log('Delete button clicked for interview ID:', params.row.interviewID)
+              Log.info('Delete button clicked for interview ID:', params.row.interviewID)
             }}
           >
             <DeleteIcon color='disabled' />
@@ -85,7 +87,7 @@ const InterviewList = () => {
   }
 
   const handleDelete = () => {
-    console.log('Delete button clicked for interview IDs:', selectedRows)
+    Log.info('Delete button clicked for interview IDs:', selectedRows)
   }
 
   useEffect(() => {

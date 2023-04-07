@@ -20,6 +20,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import Log from 'src/middleware/loggerMiddleware'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -169,7 +170,7 @@ const Register = ({ onRegister }: Props) => {
 
     if (!hasError) {
       onRegister(email)
-      console.log('onSubmit', 'success')
+      Log.info('onSubmit', 'success')
     }
   }
 

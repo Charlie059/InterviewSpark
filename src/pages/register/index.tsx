@@ -1,4 +1,4 @@
-import Register from 'src/components/register/register'
+import Register from 'src/components/register'
 
 // ** Layout Import
 import BlankLayout from 'src/@core/layouts/BlankLayout'

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Logger
-import Log from '../../../middleware/loggerMiddleware'
+import Log from 'src/middleware/loggerMiddleware'
 
 interface GuestGuardProps {
   children: ReactNode

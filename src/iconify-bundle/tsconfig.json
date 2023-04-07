@@ -2,14 +2,11 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "CommonJS",
-    "declaration": true,
-    "declarationMap": false,
-    "sourceMap": false,
-    "composite": false,
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "importsNotUsedAsValues": "error"
+    "verbatimModuleSyntax": true,
+    "ignoreDeprecations": "5.0"
   }
 }

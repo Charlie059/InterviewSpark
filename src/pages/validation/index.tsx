@@ -18,6 +18,8 @@ import Alert from '@mui/material/Alert'
 // ** Hooks
 import { useSettings } from 'src/@core/hooks/useSettings'
 import { Auth } from 'aws-amplify'
+import Log from 'src/middleware/loggerMiddleware'
+import { log } from 'console'
 
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
@@ -65,7 +67,7 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
 
   const handleOnChange = async (res: string) => {
     setResult(res)
-    console.log(res)
+    Log.info('res', res)
 
     // If res length is 6, then submit the code
     if (res.length === 6) {
@@ -87,13 +89,13 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
       }, 2000)
     } catch (err) {
       setError('Error confirming sign up')
-      console.log('error confirming sign up', err)
+      Log.error('error confirming sign up', err)
     }
   }
 
   async function resendCode() {
     try {
-      console.log(username)
+      Log.info('resendCode', username)
       await Auth.resendSignUp(username)
 
       // resend code if the user is not comfirmed.
@@ -101,7 +103,7 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
       setSuccess('Verification code resent successfully!')
     } catch (err) {
       setError('Error resending verification code')
-      console.log('Error resending verification code', err)
+      Log.error('Error resending verification code', err)
     }
   }
 

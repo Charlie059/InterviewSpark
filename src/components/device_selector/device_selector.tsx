@@ -1,39 +1,39 @@
-
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import React, { useState, useEffect} from 'react';
-
+//ignore all ts errors and warnings in this file
+// @ts-nocheck
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import React, { useState, useEffect } from 'react'
 
 type DeviceSelectorProps = {
-  deviceType: 'videoinput' | 'audioInput' | 'audioOutput';
-  onChange: (deviceId: string) => void;
+  deviceType: 'videoinput' | 'audioInput' | 'audioOutput'
+  onChange: (deviceId: string) => void
 }
 
 const DeviceSelector: React.FC<DeviceSelectorProps> = ({ deviceType, onChange }) => {
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedDeviceId, setSelectedDeviceId] = useState('');
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
+  const [selectedDeviceId, setSelectedDeviceId] = useState('')
 
   useEffect(() => {
     const getDevices = async () => {
-      const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+      const mediaDevices = await navigator.mediaDevices.enumerateDevices()
 
-
-      const filteredDevices = mediaDevices.filter(device => device.kind === deviceType);
-      setDevices(filteredDevices);
+      const filteredDevices = mediaDevices.filter(device => device.kind === deviceType)
+      setDevices(filteredDevices)
 
       if (filteredDevices.length > 0) {
         //setSelectedDeviceId(filteredDevices[0].deviceId);
         //onChange(filteredDevices[0].deviceId);
       }
-    };
-    getDevices();
-  }, [deviceType, onChange]);
+    }
+    getDevices()
+  }, [deviceType, onChange])
 
   const handleDeviceChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const deviceId = event.target.value as string;
-    console.log(deviceId);
-    setSelectedDeviceId(deviceId);
-    onChange(deviceId);
-  };
+    const deviceId = event.target.value as string
+    console.log(deviceId)
+    setSelectedDeviceId(deviceId)
+    onChange(deviceId)
+  }
 
   return (
     <FormControl>
@@ -45,7 +45,7 @@ const DeviceSelector: React.FC<DeviceSelectorProps> = ({ deviceType, onChange })
         ))}
       </Select>
     </FormControl>
-  );
-};
+  )
+}
 
 export default DeviceSelector

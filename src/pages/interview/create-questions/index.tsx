@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Box, CardContent, Typography, Button, Card } from '@mui/material'
 import { ReactNode } from 'react'
 import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import {
-  InterviewQuestionList,
-  InterviewQuestion
-} from 'src/components/interview-question-list/interview-question-list'
-import Logo from 'src/components/logo/logo'
-import InterviewQuestionSummary from 'src/components/interview-question-summary/interview-question-summary'
-import QuestionList from 'src/components/question-list/question-list'
+import { InterviewQuestionList, InterviewQuestion } from 'src/components/interview-question-list'
+import Logo from 'src/components/logo'
+import InterviewQuestionSummary from 'src/components/interview-question-summary'
+import QuestionList from 'src/components/question-list'
 import router from 'next/router'
 import { API, graphqlOperation } from 'aws-amplify'
 import { createInterviewWithQuestion } from 'src/graphql/mutations'
@@ -71,7 +68,13 @@ const CreateQuestionsPage = () => {
           <Box sx={{ marginLeft: 180 }}>
             <Button
               variant='contained'
-              sx={{ backgroundColor: '#3888FF', color: 'white', borderRadius: 5, textTransform: 'none' }}
+              disabled={interviewQuestions.length === 0} // Add this line
+              sx={{
+                backgroundColor: interviewQuestions.length === 0 ? 'grey' : '#3888FF', // Update this line
+                color: 'white',
+                borderRadius: 5,
+                textTransform: 'none'
+              }}
               onClick={handleNextButtonClick}
             >
               Next

@@ -9,6 +9,7 @@ import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 import { useEffect, useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getInterviewList } from 'src/graphql/queries'
+import Log from 'src/middleware/loggerMiddleware'
 
 const InterviewUsageSummaryThisMonth = () => {
   // ** Hook
@@ -36,7 +37,7 @@ const InterviewUsageSummaryThisMonth = () => {
           })
         )
 
-        console.log(result)
+        Log.info(result)
 
         if ('data' in result) {
           // Get the list of interviews from the result data

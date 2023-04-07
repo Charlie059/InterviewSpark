@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid'
-
 import { getQuestionList } from 'src/graphql/queries'
-
 import { IconButton } from '@mui/material'
-
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-import QuestionListHeader from '../question-list-table-header/question-list-table-header'
-import { InterviewQuestion } from '../interview-question-list/interview-question-list'
-
-// interface Question {
-//   interviewQuestion: string
-//   interviewQuestionSampleAns: string
-//   interviewQuestionType: string
-//   QuestionID: string
-// }
+import QuestionListHeader from '../question-list-table-header/index'
+import { InterviewQuestion } from '../interview-question-list'
+import Log from 'src/middleware/loggerMiddleware'
 
 interface QuestionListProps {
   setSelectedRows: (rows: InterviewQuestion[]) => void
@@ -50,7 +41,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
           <IconButton
             color='primary'
             onClick={() => {
-              console.log('View button clicked for interview ID:', params.row.interviewID)
+              Log.info('View button clicked for interview ID:', params.row.interviewID)
             }}
           >
             <VisibilityIcon color='disabled' />
@@ -58,7 +49,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
           <IconButton
             color='secondary'
             onClick={() => {
-              console.log('Delete button clicked for interview ID:', params.row.interviewID)
+              Log.info('Delete button clicked for interview ID:', params.row.interviewID)
             }}
           >
             <DeleteIcon color='disabled' />

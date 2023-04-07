@@ -4,6 +4,7 @@ import { API, Storage, Auth, graphqlOperation } from 'aws-amplify'
 import { updateInterviewVideoKey } from 'src/graphql/mutations'
 import { useAuth } from 'src/hooks/useAuth'
 import { useRouter } from 'next/router'
+import Log from 'src/middleware/loggerMiddleware'
 
 interface RecordedChunks {
   data: Blob[]
@@ -37,66 +38,71 @@ function MockInterviewPage() {
     [setRecordedChunks]
   )
 
-  const handleUploadAndMoveToNextQuestion = useCallback(async () => {
+  const handleUploadAndMoveToNextQuestion = async () => {
     // If the media recorder state is not 'inactive', then stop it
     if (mediaRecorderRef.current?.state !== 'inactive') {
       mediaRecorderRef.current?.stop()
     }
 
-    console.log('handleUploadAndMoveToNextQuestion')
-    console.log('recordedChunks.data.length:', recordedChunks.data.length)
+    Log.info('handleUploadAndMoveToNextQuestion')
+    Log.info('recordedChunks.data.length:', recordedChunks.data.length)
+
     if (currentQuestionIndex < interviews.length) {
-      const currentUser = await Auth.currentAuthenticatedUser()
-      const userId = currentUser.attributes.sub
-      const timestamp = new Date().getTime()
-      const uniqueFilename = `${userId}-${timestamp}-interview.webm`
+      try {
+        const currentUser = await Auth.currentAuthenticatedUser()
+        const userId = currentUser.attributes.sub
+        const timestamp = new Date().getTime()
+        const uniqueFilename = `${userId}-${timestamp}-interview.webm`
 
-      const blob = new Blob(recordedChunks.data, { type: 'video/webm' })
-      await Storage.put(uniqueFilename, blob, {
-        contentType: 'video/webm',
-        level: 'private'
-      })
-
-      const interview = interviews[currentQuestionIndex]
-
-      const emailAddress = auth.user?.userEmailAddress
-      const interviewID = interview.interviewID
-      const questionID = interview.interviewQuestionID
-
-      const updateResult = await API.graphql(
-        graphqlOperation(updateInterviewVideoKey, {
-          emailAddress: emailAddress,
-          interviewID: interviewID,
-          questionID: questionID,
-          interviewVideoKey: uniqueFilename
+        const blob = new Blob(recordedChunks.data, { type: 'video/webm' })
+        await Storage.put(uniqueFilename, blob, {
+          contentType: 'video/webm',
+          level: 'private'
         })
-      )
 
-      console.log('Interview updated:', updateResult)
+        const interview = interviews[currentQuestionIndex]
 
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1)
+        const emailAddress = auth.user?.userEmailAddress
+        const interviewID = interview.interviewID
+        const questionID = interview.interviewQuestionID
 
-      // Reset time left
-      setTimeLeft(30)
+        const updateResult = await API.graphql(
+          graphqlOperation(updateInterviewVideoKey, {
+            emailAddress: emailAddress,
+            interviewID: interviewID,
+            questionID: questionID,
+            interviewVideoKey: uniqueFilename
+          })
+        )
 
-      if (currentQuestionIndex < interviews.length - 1) {
-        setTimeout(() => {
-          handleStartCaptureClick()
-        }, 500)
-      } else {
-        alert('You have completed all the mock interviews. Thank you!')
+        Log.info('Interview updated:', updateResult)
 
-        // Set the capturing state to false
-        setCapturing(false)
+        setCurrentQuestionIndex(prevIndex => prevIndex + 1)
 
-        // Turn off the webcam and stop the media recorder
-        webcamRef.current?.stream?.getTracks().forEach(track => track.stop())
+        // Reset time left
+        setTimeLeft(30)
+
+        if (currentQuestionIndex < interviews.length - 1) {
+          setTimeout(() => {
+            handleStartCaptureClick()
+          }, 500)
+        } else {
+          alert('You have completed all the mock interviews. Thank you!')
+
+          // Set the capturing state to false
+          setCapturing(false)
+
+          // Turn off the webcam and stop the media recorder
+          webcamRef.current?.stream?.getTracks().forEach(track => track.stop())
+        }
+      } catch (error) {
+        console.error(error)
       }
     }
-  }, [recordedChunks.data, currentQuestionIndex, auth.user?.userEmailAddress, handleDataAvailable])
+  }
 
-  const handleStartCaptureClick = useCallback(() => {
-    console.log('handleStartCaptureClick')
+  const handleStartCaptureClick = async () => {
+    Log.info('handleStartCaptureClick')
     setCapturing(true)
 
     // Reset the media recorder
@@ -113,10 +119,11 @@ function MockInterviewPage() {
       mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
       mediaRecorderRef.current.start(1000)
     }
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }
 
   useEffect(() => {
-    let interval: number | undefined
+    let interval: any | undefined
 
     if (capturing) {
       interval = setInterval(() => {
