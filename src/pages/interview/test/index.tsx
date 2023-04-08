@@ -25,6 +25,7 @@ const ChatGPTPage: React.FC = () => {
       const params: any = {
         OutputFormat: 'mp3',
         Text: res.data.text,
+
         TextType: 'text',
         Engine: 'neural',
         VoiceId: 'Aria',
