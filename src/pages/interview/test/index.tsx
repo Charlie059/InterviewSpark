@@ -1,37 +1,93 @@
-import React from 'react'
-import useTranscribe from 'src/hooks/useTranscribe'
+import React, { useState, useRef } from 'react'
+import axios from 'axios'
+import { Auth } from 'aws-amplify'
+import { Polly, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 
-interface SpeechToTextProps {
-  onTranscriptionData: (data: string) => void
-}
+const ChatGPTPage: React.FC = () => {
+  const [response, setResponse] = useState<string | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
-const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscriptionData }) => {
-  const { isRecording, transcribedText, language, setLanguage, handleStartRecording, handleStopRecording } =
-    useTranscribe()
+  const handleClick = async () => {
+    try {
+      const res = await axios.post('/api/chatgpt', {
+        message: 'Write a python version of bubble sort. Do not include example usage.'
+      })
+      console.log(res.data.text)
+      setResponse(res.data.text)
 
-  React.useEffect(() => {
-    if (typeof onTranscriptionData === 'function') {
-      onTranscriptionData(transcribedText)
+      const credentials = await Auth.currentCredentials()
+
+      const polly = new Polly({
+        region: 'us-east-1',
+        credentials: credentials
+      })
+
+      const params: any = {
+        OutputFormat: 'mp3',
+        Text: res.data.text,
+        TextType: 'text',
+        Engine: 'neural',
+        VoiceId: 'Aria',
+        SampleRate: '22050'
+      }
+
+      const data = await polly.send(new SynthesizeSpeechCommand(params))
+
+      console.log(data)
+
+      if (data.AudioStream && data.AudioStream instanceof ReadableStream) {
+        const reader = data.AudioStream.getReader()
+        const chunks: Uint8Array[] = []
+
+        const processStream = async (result: ReadableStreamReadResult<Uint8Array>) => {
+          if (result.done) {
+            const arrayBuffer = chunks.reduce((acc, chunk) => {
+              const tmp = new Uint8Array(acc.byteLength + chunk.byteLength)
+              tmp.set(new Uint8Array(acc), 0)
+              tmp.set(new Uint8Array(chunk), acc.byteLength)
+
+              return tmp.buffer
+            }, new ArrayBuffer(0))
+            const blob = new Blob([arrayBuffer], { type: 'audio/mp3' })
+            const url = URL.createObjectURL(blob)
+
+            if (audioRef.current) {
+              audioRef.current.src = url
+              audioRef.current.play()
+            }
+          } else {
+            chunks.push(result.value)
+            reader.read().then(processStream)
+          }
+        }
+
+        reader.read().then(processStream)
+      }
+    } catch (error) {
+      console.error('Error:', error)
     }
-  }, [onTranscriptionData, transcribedText])
+  }
+
+  const handleStop = () => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
+  }
 
   return (
     <div>
-      <h3>Transcription:</h3>
-      <p>{transcribedText}</p>
-      <div>
-        <label htmlFor='language'>Language:</label>
-        <select value={language} onChange={e => setLanguage(e.target.value)}>
-          <option value='en-US'>English (US)</option>
-          <option value='zh-CN'>Chinese (Simplified)</option>
-          {/* Add more language options here */}
-        </select>
-      </div>
-      <button onClick={isRecording ? handleStopRecording : handleStartRecording}>
-        {isRecording ? 'Stop Recording' : 'Start Recording'}
-      </button>
+      <h1>ChatGPT Page</h1>
+      <button onClick={handleClick}>Get ChatGPT Response</button>
+      <button onClick={handleStop}>Stop Playback</button>
+      {response && (
+        <div>
+          <h2>Response:</h2>
+          <p>{response}</p>
+        </div>
+      )}
+      <audio ref={audioRef} />
     </div>
   )
 }
 
-export default SpeechToText
+export default ChatGPTPage

@@ -47,6 +47,18 @@ function MockInterviewPage() {
     const text = transcribedText
     console.log('text', text)
 
+    // try {
+    //   const api = new ChatGPTAPI({
+    //     apiKey: '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',
+    //     debug: false
+    //   })
+
+    //   const prompt = 'Write a python version of bubble sort. Do not include example usage.'
+
+    //   const res = await api.sendMessage(prompt)
+    //   console.log(res.text)
+    // } catch (error) {}
+
     handleStopRecording()
 
     Log.info('handleUploadAndMoveToNextQuestion')
