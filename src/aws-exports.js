@@ -34,7 +34,18 @@ const awsmobile = {
         "EMAIL"
     ],
     "aws_user_files_s3_bucket": "hirebeatjobseeker1113247a97c74b96852b04e522510162908-staging",
-    "aws_user_files_s3_bucket_region": "us-east-1"
+    "aws_user_files_s3_bucket_region": "us-east-1",
+    "predictions": {
+        "convert": {
+            "transcription": {
+                "region": "us-east-1",
+                "proxy": false,
+                "defaults": {
+                    "language": "en-US"
+                }
+            }
+        }
+    }
 };
 
 

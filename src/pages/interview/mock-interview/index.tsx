@@ -1,10 +1,12 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react'
+import React, { useCallback, useRef, useState, useEffect, ReactNode } from 'react'
 import Webcam from 'react-webcam'
 import { API, Storage, Auth, graphqlOperation } from 'aws-amplify'
 import { updateInterviewVideoKey } from 'src/graphql/mutations'
 import { useAuth } from 'src/hooks/useAuth'
 import { useRouter } from 'next/router'
 import Log from 'src/middleware/loggerMiddleware'
+import BlankLayout from 'src/@core/layouts/BlankLayout'
+import useTranscribe from 'src/hooks/useTranscribe'
 
 interface RecordedChunks {
   data: Blob[]
@@ -19,14 +21,13 @@ function MockInterviewPage() {
     : JSON.stringify([])
 
   const interviews = JSON.parse(interviewsParam)
-
   const webcamRef = useRef<Webcam>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const [capturing, setCapturing] = useState<boolean>(false)
   const [recordedChunks, setRecordedChunks] = useState<RecordedChunks>({ data: [] })
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0)
-  const [timeLeft, setTimeLeft] = useState(30)
-
+  const [timeLeft, setTimeLeft] = useState(300)
+  const { transcribedText, handleStartRecording, handleStopRecording } = useTranscribe()
   const auth = useAuth()
 
   const handleDataAvailable = useCallback(
@@ -43,6 +44,10 @@ function MockInterviewPage() {
     if (mediaRecorderRef.current?.state !== 'inactive') {
       mediaRecorderRef.current?.stop()
     }
+    const text = transcribedText
+    console.log('text', text)
+
+    handleStopRecording()
 
     Log.info('handleUploadAndMoveToNextQuestion')
     Log.info('recordedChunks.data.length:', recordedChunks.data.length)
@@ -83,9 +88,7 @@ function MockInterviewPage() {
         setTimeLeft(30)
 
         if (currentQuestionIndex < interviews.length - 1) {
-          setTimeout(() => {
-            handleStartCaptureClick()
-          }, 500)
+          handleStartCaptureClick()
         } else {
           alert('You have completed all the mock interviews. Thank you!')
 
@@ -104,6 +107,8 @@ function MockInterviewPage() {
   const handleStartCaptureClick = async () => {
     Log.info('handleStartCaptureClick')
     setCapturing(true)
+
+    handleStartRecording()
 
     // Reset the media recorder
     if (mediaRecorderRef.current) {
@@ -158,8 +163,10 @@ function MockInterviewPage() {
           )}
         </>
       )}
+      <p>{transcribedText}</p>
     </>
   )
 }
 
+MockInterviewPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default MockInterviewPage

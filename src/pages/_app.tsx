@@ -9,6 +9,13 @@ import type { AppProps } from 'next/app'
 
 // * Amplify
 import { Amplify } from 'aws-amplify'
+import { AmazonAIPredictionsProvider } from '@aws-amplify/predictions'
+import { Predictions } from 'aws-amplify'
+
+if (!Predictions.getPluggable('AmazonAIPredictionsProvider')) {
+  Amplify.addPluggable(new AmazonAIPredictionsProvider())
+}
+
 import config from '../aws-exports'
 
 Amplify.configure(config)

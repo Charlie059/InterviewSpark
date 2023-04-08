@@ -21,6 +21,9 @@
       },
       "api": {
         "hirebeatjobseeker": {}
+      },
+      "predictions": {
+        "transcriptionc32b6e4f": {}
       }
     }
   }

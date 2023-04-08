@@ -48,6 +48,13 @@
       "service": "Cognito"
     }
   },
+  "predictions": {
+    "transcriptionc32b6e4f": {
+      "convertType": "transcription",
+      "providerPlugin": "awscloudformation",
+      "service": "Transcribe"
+    }
+  },
   "storage": {
     "s3162639c6": {
       "dependsOn": [],
