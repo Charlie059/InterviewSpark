@@ -35,7 +35,9 @@
   "eslint.packageManager": "yarn",
   "npm.packageManager": "yarn",
   "cSpell.words": [
-    "Customizer"
+    "Customizer",
+    "dataavailable",
+    "webm"
   ],
   "search-node-modules.path": "node_modules",
   "markdown.extension.toc.updateOnSave": false,
