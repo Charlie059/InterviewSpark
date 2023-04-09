@@ -1,47 +1,42 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Auth } from 'aws-amplify'
 import { Polly, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 
-type PollyState = {
-  loading: boolean
-  error: Error | null
-  response: Blob | null
-}
-
-type PollyOptions = {
+type UsePollyOptions = {
+  region?: string
   voiceId?: string
-  languageCode?: string
-  textType?: string
-  outputFormat?: string
+  engine?: string
+  sampleRate?: string
 }
 
-const usePolly = (text: string, options: PollyOptions = {}): PollyState => {
-  const [state, setState] = useState<PollyState>({
-    loading: true,
-    error: null,
-    response: null
-  })
+export const usePolly = (text: string | null, options: UsePollyOptions = {}) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const { region = 'us-east-1', voiceId = 'Aria', engine = 'neural', sampleRate = '22050' } = options
 
   useEffect(() => {
-    const fetchPolly = async () => {
-      try {
-        setState(prevState => ({ ...prevState, loading: true }))
+    const synthesizeSpeech = async () => {
+      if (!text) {
+        return
+      }
 
+      setIsLoading(true)
+
+      try {
         const credentials = await Auth.currentCredentials()
 
         const polly = new Polly({
-          region: 'us-east-1',
+          region: region,
           credentials: credentials
         })
 
-        const { voiceId = 'Joanna', languageCode = 'en-US', textType = 'text', outputFormat = 'mp3' } = options
-
         const params: any = {
-          OutputFormat: outputFormat,
+          OutputFormat: 'mp3',
           Text: text,
+          TextType: 'text',
+          Engine: engine,
           VoiceId: voiceId,
-          TextType: textType,
-          LanguageCode: languageCode
+          SampleRate: sampleRate
         }
 
         const data = await polly.send(new SynthesizeSpeechCommand(params))
@@ -59,9 +54,13 @@ const usePolly = (text: string, options: PollyOptions = {}): PollyState => {
 
                 return tmp.buffer
               }, new ArrayBuffer(0))
-              const blob = new Blob([arrayBuffer], { type: `audio/${outputFormat}` })
+              const blob = new Blob([arrayBuffer], { type: 'audio/mp3' })
+              const url = URL.createObjectURL(blob)
 
-              setState(prevState => ({ ...prevState, loading: false, response: blob }))
+              if (audioRef.current) {
+                audioRef.current.src = url
+                audioRef.current.play()
+              }
             } else {
               chunks.push(result.value)
               reader.read().then(processStream)
@@ -72,18 +71,13 @@ const usePolly = (text: string, options: PollyOptions = {}): PollyState => {
         }
       } catch (error) {
         console.error('Error:', error)
-        setState(prevState => ({
-          ...prevState,
-          loading: false,
-          error: error instanceof Error ? error : null
-        }))
+      } finally {
+        setIsLoading(false)
       }
     }
 
-    fetchPolly()
-  }, [text, options])
+    synthesizeSpeech()
+  }, [text, region, engine, voiceId, sampleRate])
 
-  return state
+  return { audioRef, isLoading }
 }
-
-export default usePolly

@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 import Log from 'src/middleware/loggerMiddleware'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import useTranscribe from 'src/hooks/useTranscribe'
+import axios from 'axios'
+import { usePolly } from 'src/hooks/usePolly'
 
 interface RecordedChunks {
   data: Blob[]
@@ -21,6 +23,7 @@ function MockInterviewPage() {
     : JSON.stringify([])
 
   const interviews = JSON.parse(interviewsParam)
+
   const webcamRef = useRef<Webcam>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const [capturing, setCapturing] = useState<boolean>(false)
@@ -29,6 +32,9 @@ function MockInterviewPage() {
   const [timeLeft, setTimeLeft] = useState(300)
   const { transcribedText, handleStartRecording, handleStopRecording } = useTranscribe()
   const auth = useAuth()
+  const [messageToSpeak, setMessageToSpeak] = useState<string | null>(null)
+  const { audioRef } = usePolly(messageToSpeak)
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false)
 
   const handleDataAvailable = useCallback(
     ({ data }: BlobEvent) => {
@@ -39,30 +45,85 @@ function MockInterviewPage() {
     [setRecordedChunks]
   )
 
+  const handleStartCaptureClick = async () => {
+    Log.info('handleStartCaptureClick')
+    setCapturing(true)
+
+    handleStartRecording()
+
+    // Play the audio of the question
+    console.log(interviews)
+    console.log(currentQuestionIndex)
+    console.log('Interview question: ', interviews[currentQuestionIndex].interviewQuestion)
+    setMessageToSpeak('The question is ' + interviews[currentQuestionIndex].interviewQuestion)
+
+    // Wait for the audio to end
+    await waitForAudioToEnd()
+
+    // Reset the media recorder
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.removeEventListener('dataavailable', handleDataAvailable)
+    }
+    setRecordedChunks({ data: [] })
+
+    const mediaStream = webcamRef.current?.stream
+    if (mediaStream) {
+      mediaRecorderRef.current = new MediaRecorder(mediaStream, {
+        mimeType: 'video/webm'
+      })
+      mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
+      mediaRecorderRef.current.start(1000)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }
+
+  const waitForAudioToEnd = () => {
+    return new Promise(resolve => {
+      setIsAudioPlaying(true)
+      audioRef.current?.addEventListener('ended', () => {
+        setIsAudioPlaying(false)
+        resolve(true)
+      })
+    })
+  }
+
   const handleUploadAndMoveToNextQuestion = async () => {
     // If the media recorder state is not 'inactive', then stop it
     if (mediaRecorderRef.current?.state !== 'inactive') {
       mediaRecorderRef.current?.stop()
     }
-    const text = transcribedText
-    console.log('text', text)
 
-    // try {
-    //   const api = new ChatGPTAPI({
-    //     apiKey: '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',
-    //     debug: false
-    //   })
+    // Pass the text to the ChatGPT API
+    const transcribedText_ = transcribedText
 
-    //   const prompt = 'Write a python version of bubble sort. Do not include example usage.'
+    const prompt =
+      'This is a mock interview. You are interviewer, the candidate is asked to' +
+      interviews[currentQuestionIndex].interviewQuestion +
+      ' And the candidate answer is : " ' +
+      transcribedText_ +
+      ' " ' +
+      ' Please give your response to this answer and please do not ask any question! no more than 300 words.'
 
-    //   const res = await api.sendMessage(prompt)
-    //   console.log(res.text)
-    // } catch (error) {}
+    console.log(prompt)
+    try {
+      const res = await axios.post('/api/chatgpt', {
+        message: prompt
+      })
+      console.log(res.data.text)
 
+      // Use polly to speak the response
+      setMessageToSpeak(res.data.text)
+
+      // Wait for the audio to end
+      await waitForAudioToEnd()
+
+      console.log('Audio ended')
+    } catch (error) {
+      console.error(error)
+    }
+
+    // Stop the transcription
     handleStopRecording()
-
-    Log.info('handleUploadAndMoveToNextQuestion')
-    Log.info('recordedChunks.data.length:', recordedChunks.data.length)
 
     if (currentQuestionIndex < interviews.length) {
       try {
@@ -116,33 +177,10 @@ function MockInterviewPage() {
     }
   }
 
-  const handleStartCaptureClick = async () => {
-    Log.info('handleStartCaptureClick')
-    setCapturing(true)
-
-    handleStartRecording()
-
-    // Reset the media recorder
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.removeEventListener('dataavailable', handleDataAvailable)
-    }
-    setRecordedChunks({ data: [] })
-
-    const mediaStream = webcamRef.current?.stream
-    if (mediaStream) {
-      mediaRecorderRef.current = new MediaRecorder(mediaStream, {
-        mimeType: 'video/webm'
-      })
-      mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
-      mediaRecorderRef.current.start(1000)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }
-
   useEffect(() => {
     let interval: any | undefined
 
-    if (capturing) {
+    if (capturing && !isAudioPlaying) {
       interval = setInterval(() => {
         setTimeLeft(prevTime => prevTime - 1)
       }, 1000)
@@ -154,7 +192,7 @@ function MockInterviewPage() {
 
     return () => clearInterval(interval)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [capturing, timeLeft])
+  }, [capturing, timeLeft, isAudioPlaying])
 
   return (
     <>
@@ -176,6 +214,7 @@ function MockInterviewPage() {
         </>
       )}
       <p>{transcribedText}</p>
+      <audio ref={audioRef} />
     </>
   )
 }
