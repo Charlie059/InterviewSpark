@@ -6,7 +6,6 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useRouter } from 'next/router'
 import { usePolly } from 'src/hooks/usePolly'
 import { getQuestionMetaData } from 'src/graphql/queries'
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
 import Log from 'src/middleware/loggerMiddleware'
 import Webcam from 'react-webcam'
