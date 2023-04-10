@@ -410,5 +410,10 @@ function MockInterviewPage() {
   )
 }
 
+MockInterviewPage.acl = {
+  action: 'read',
+  subject: 'acl-page'
+}
+
 MockInterviewPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default MockInterviewPage
