@@ -19,7 +19,6 @@ import Alert from '@mui/material/Alert'
 import { useSettings } from 'src/@core/hooks/useSettings'
 import { Auth } from 'aws-amplify'
 import Log from 'src/middleware/loggerMiddleware'
-import { log } from 'console'
 
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
