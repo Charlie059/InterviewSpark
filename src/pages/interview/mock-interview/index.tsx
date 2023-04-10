@@ -6,6 +6,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useRouter } from 'next/router'
 import { usePolly } from 'src/hooks/usePolly'
 import { getQuestionMetaData } from 'src/graphql/queries'
+import { CountdownCircleTimer } from 'react-countdown-circle-timer'
 
 import Log from 'src/middleware/loggerMiddleware'
 import Webcam from 'react-webcam'
@@ -13,9 +14,85 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import useTranscribe from 'src/hooks/useTranscribe'
 import axios from 'axios'
 
+// MUI Components
+import IconButton, { IconButtonProps } from '@mui/material/IconButton'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'
+import VideocamIcon from '@mui/icons-material/Videocam'
+import MicIcon from '@mui/icons-material/Mic'
+import { Box, Grid, styled } from '@mui/material'
+
 interface RecordedChunks {
   data: Blob[]
 }
+
+type StyledIconButtonProps = IconButtonProps & {
+  capturing: boolean
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const StyledVideoRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => (
+  <IconButton {...props} />
+))(({ theme }) => ({
+  backgroundColor: '#72D868',
+  '&:hover': {
+    backgroundColor: '#72D868'
+  },
+  '& .MuiSvgIcon-root': {
+    color: 'white',
+    fontSize: '2rem'
+  },
+  padding: theme.spacing(4.1),
+  margin: theme.spacing(0, 1.2)
+}))
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const StyledMicRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
+  ({ theme }) => ({
+    backgroundColor: '#FF6C4B',
+    '&:hover': {
+      backgroundColor: '#FF6C4B'
+    },
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+      fontSize: '2rem'
+    },
+    padding: theme.spacing(4.1),
+    margin: theme.spacing(0, 1.2)
+  })
+)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const StyledStartButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
+  ({ theme }) => ({
+    backgroundColor: '#DFDDDD',
+    '&:hover': {
+      backgroundColor: '#3888FF'
+    },
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+      fontSize: '2rem'
+    },
+    padding: theme.spacing(4.1),
+    margin: theme.spacing(0, 1.2)
+  })
+)
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const StyledNextButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
+  ({ theme }) => ({
+    backgroundColor: '#DFDDDD',
+    '&:hover': {
+      backgroundColor: '#3888FF'
+    },
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+      fontSize: '2rem'
+    },
+    padding: theme.spacing(4.1),
+    margin: theme.spacing(0, 1.2)
+  })
+)
 
 // Variables
 let currentQuestionIndex = 0
@@ -31,7 +108,7 @@ function MockInterviewPage() {
   const [capturing, setCapturing] = useState<boolean>(false)
   const [recordedChunks, setRecordedChunks] = useState<RecordedChunks>({ data: [] })
 
-  const [timeLeft, setTimeLeft] = useState(30)
+  const [timeLeft, setTimeLeft] = useState(1000)
   const [messageToSpeak, setMessageToSpeak] = useState<string | null>(null)
   const [isAudioPlaying, setIsAudioPlaying] = useState(false)
   const [detailedInterviews, setDetailedInterviews] = useState<any[]>([])
@@ -59,8 +136,6 @@ function MockInterviewPage() {
           )) as any
 
           const interviewQuestion = result.data.getQuestionMetaData.interviewQuestion
-
-          console.log('Question details:', interviewQuestion)
 
           return { ...interview, interviewQuestion }
         })
@@ -164,7 +239,7 @@ function MockInterviewPage() {
       transcribedText_ +
       ' " ' +
       'Please give your response to this answer with the following rules:' +
-      ' 1. The response should not be a question and it should be a general feedback.' +
+      ' 1. The response should not be a question and it should be a general feedback about 300 words.' +
       ' 2. Ignore the grammar and spelling mistakes.' +
       ' 3. If the candidate answer is not clear, do not ask any questions to the candidate and say some general feedback.' +
       ' 4. The response should be a complete sentence and should like a real interview conversion between you and candidate.' +
@@ -228,16 +303,17 @@ function MockInterviewPage() {
     currentQuestionIndex += 1
 
     // Reset time left
-    setTimeLeft(30)
+    setTimeLeft(1000)
 
     if (currentQuestionIndex < interviews.length) {
       handleStartCaptureClick()
     } else {
-      alert('You have completed all the mock interviews. Thank you!')
       setCapturing(false)
 
       // Turn off the webcam and stop the media recorder
       webcamRef.current?.stream?.getTracks().forEach(track => track.stop())
+
+      router.push('/interview/finish')
     }
   }
 
@@ -259,27 +335,79 @@ function MockInterviewPage() {
   }, [capturing, timeLeft, isAudioPlaying])
 
   return (
-    <>
-      <Webcam audio={true} muted={true} ref={webcamRef} />
-      {currentQuestionIndex < interviews.length && (
-        <>
+    <Grid container direction='column' alignItems='center'>
+      <Box sx={{ margin: 20 }}></Box>
+      <Grid item xs={12}>
+        <Grid container spacing={5} alignItems='center'>
+          <Grid item xs={6}>
+            <Box width='500px' height='380px'>
+              <Webcam
+                audio={true}
+                muted={true}
+                ref={webcamRef}
+                width='100%'
+                height='100%'
+                style={{ borderRadius: '15px' }}
+              />
+            </Box>
+          </Grid>
+          <Grid item xs={6}>
+            <Box
+              width='500px'
+              height='380px'
+              borderRadius={'15px'}
+              style={{ overflow: 'hidden', backgroundColor: '#EBEBEB' }}
+            >
+              <Grid container alignItems='center' justifyContent='center' style={{ height: '100%' }}>
+                <img src='/images/favicon.png' alt='logo' width={'15%'} height={'auto'} />
+              </Grid>
+            </Box>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item xs={12} sx={{ width: '100%', position: 'absolute', bottom: 0 }}>
+        <Box
+          width='100%'
+          height='100%'
+          p={2}
+          borderRadius={'20px'}
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          {currentQuestionIndex < interviews.length && (
+            <>
+              <StyledVideoRecordingButton capturing={capturing}>
+                <VideocamIcon />
+              </StyledVideoRecordingButton>
+
+              <StyledMicRecordingButton capturing={capturing}>
+                <MicIcon />
+              </StyledMicRecordingButton>
+              {capturing ? (
+                <>
+                  <StyledNextButton capturing={capturing} onClick={handleUploadAndMoveToNextQuestion}>
+                    <ArrowForwardIosIcon />
+                  </StyledNextButton>
+                </>
+              ) : (
+                <StyledStartButton capturing={capturing} onClick={handleStartCaptureClick}>
+                  <PlayArrowIcon />
+                </StyledStartButton>
+              )}
+            </>
+          )}
+        </Box>
+        <Box sx={{ margin: 5 }}>
+          {' '}
           <p>
-            Question {currentQuestionIndex + 1} of {interviews.length}:{' '}
-            {interviews[currentQuestionIndex].interviewDateTime}
+            Question {currentQuestionIndex + 1} of {interviews.length}:
+            {detailedInterviews[currentQuestionIndex]?.interviewQuestion}
           </p>
           <p>Time left: {timeLeft}s</p>
-          {capturing ? (
-            <>
-              <button onClick={handleUploadAndMoveToNextQuestion}>Finish Early</button>
-            </>
-          ) : (
-            <button onClick={handleStartCaptureClick}>Start Capture</button>
-          )}
-        </>
-      )}
-      <p>{transcribedText}</p>
-      <audio ref={audioRef} />
-    </>
+          <p>{transcribedText}</p>
+          <audio ref={audioRef} />
+        </Box>
+      </Grid>
+    </Grid>
   )
 }
 
