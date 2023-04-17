@@ -1,0 +1,269 @@
+type Education {
+  eduDegree: String
+  eduFieldStudy: String
+  eduSchool: String
+  eduStartDate: AWSDate
+  eduEndDate: AWSDate
+}
+
+type Educations {
+  educations: [Education]
+}
+
+type Interview {
+  interviewID: String
+  interviewDateTime: AWSDateTime
+  interviewQuestionID: String
+  interviewVideoKey: String
+}
+
+type InterviewList {
+  interviewList: [Interview]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+type Mutation {
+  test_deactiveSubscription(id: String!): String
+  addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
+  addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
+  createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+  updateInterviewVideoKey(emailAddress: AWSEmail!, interviewID: String!, questionID: String!, interviewVideoKey: String!): Interview!
+}
+
+type PaginatedInterviewList {
+  interviewList: [Interview]
+  nextToken: String
+  totalRecords: Int
+}
+
+type PaginatedQuestionList {
+  questionList: [Question]
+  nextToken: String
+  totalRecords: Int
+}
+
+type Profile {
+  fName: String
+  lName: String
+  photoImgKey: AWSURL
+  coverImgKey: AWSURL
+  resumeKey: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  joiningDate: AWSDate
+  contact: AWSPhone
+}
+
+type Query {
+  getUser(emailAddress: AWSEmail!): User!
+  getProfile(emailAddress: AWSEmail!): Profile!
+  getWorkHistories(emailAddress: AWSEmail!): WorkHistories!
+  getEducations(emailAddress: AWSEmail!): Educations!
+  getInterviewList(emailAddress: AWSEmail!, limit: Int, nextToken: String): PaginatedInterviewList!
+  getInterviewListByID(emailAddress: AWSEmail!, interviewID: String!): InterviewList!
+  getInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview!
+  getNumOfQuestion: QuestionCount!
+  getQuestionMetaData(questionID: String!): Question!
+  getQuestionList(limit: Int, nextToken: String): PaginatedQuestionList!
+}
+
+type Question {
+  GSI1PK: String
+  interviewQuestion: String
+  interviewQuestionSampleAns: String
+  interviewQuestionType: String
+  QuestionID: String
+}
+
+type QuestionCount {
+  questionCount: Int
+}
+
+type User {
+  userEmailAddress: AWSEmail!
+  userRole: String!
+  userName: String!
+  hasProfile: Boolean!
+  allowPublicInterview: Boolean!
+}
+
+type WorkHistories {
+  workHistory: [WorkHistory]
+}
+
+type WorkHistory {
+  workHistoryJobTitle: String
+  workHistoryEmployer: String
+  workHistoryStartDate: AWSDate
+  workHistoryEndDate: AWSDate
+  workHistoryJobDescription: String
+}
+
+input addUserProfileInput {
+  fName: String
+  lName: String
+  photoImgKey: AWSURL
+  coverImgKey: AWSURL
+  resumeKey: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  joiningDate: AWSDate
+  contact: AWSPhone
+}
