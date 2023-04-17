@@ -18,13 +18,13 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "predictions": {
-    "transcriptionc32b6e4f": {
+    "transcription5847e459": {
       "language": "string",
       "region": "string"
     }
   },
   "storage": {
-    "s3162639c6": {
+    "s382ae0ffc": {
       "BucketName": "string",
       "Region": "string"
     }

@@ -7,7 +7,9 @@
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
+              "apiKeyExpirationDate": "2024-04-15T21:56:20.079Z",
+              "apiKeyExpirationDays": 365,
+              "description": ""
             },
             "authenticationType": "API_KEY"
           }
@@ -48,15 +50,16 @@
       "service": "Cognito"
     }
   },
+  "function": {},
   "predictions": {
-    "transcriptionc32b6e4f": {
+    "transcription5847e459": {
       "convertType": "transcription",
       "providerPlugin": "awscloudformation",
       "service": "Transcribe"
     }
   },
   "storage": {
-    "s3162639c6": {
+    "s382ae0ffc": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"

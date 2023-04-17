@@ -35,6 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 
 #amplify-do-not-edit-begin
+amplify
 amplify/\#current-cloud-backend
 amplify/.config/local-*
 amplify/logs
@@ -55,3 +56,4 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+src/aws-exports.js

@@ -176,12 +176,7 @@ type Mutation {
   addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
   addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
   createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
-  updateInterviewVideoKey(
-    emailAddress: AWSEmail!
-    interviewID: String!
-    questionID: String!
-    interviewVideoKey: String!
-  ): Interview!
+  updateInterviewVideoKey(emailAddress: AWSEmail!, interviewID: String!, questionID: String!, interviewVideoKey: String!): Interview!
 }
 
 type PaginatedInterviewList {
