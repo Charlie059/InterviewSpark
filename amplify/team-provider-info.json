@@ -17,6 +17,19 @@
       },
       "storage": {
         "s382ae0ffc": {}
+      },
+      "function": {
+        "resumeScanAPINewAmp": {
+          "deploymentBucketName": "amplify-amplifyc249ba1b12034-staging-214038-deployment",
+          "s3Key": "amplify-builds/resumeScanAPINewAmp-767a544e717350486d62-build.zip"
+        }
+      },
+      "api": {
+        "hirebeatjobseeker": {},
+        "resumeScanAPI": {}
+      },
+      "predictions": {
+        "transcription5847e459": {}
       }
     }
   }

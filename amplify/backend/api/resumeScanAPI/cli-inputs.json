@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/resume-scan": {
+      "name": "/resume-scan",
+      "lambdaFunction": "resumeScanAPINewAmp",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

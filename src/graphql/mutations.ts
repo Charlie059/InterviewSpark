@@ -2,9 +2,46 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const test_deactiveSubscription = /* GraphQL */ `
-  mutation Test_deactiveSubscription($id: String!) {
-    test_deactiveSubscription(id: $id)
+export const createGuestUser = /* GraphQL */ `
+  mutation CreateGuestUser(
+    $emailAddress: AWSEmail!
+    $uniqueHandle: String!
+    $fName: String!
+    $lName: String!
+  ) {
+    createGuestUser(
+      emailAddress: $emailAddress
+      uniqueHandle: $uniqueHandle
+      fName: $fName
+      lName: $lName
+    ) {
+      allowPublicInterview
+      fName
+      lName
+      uniqueHandle
+      userEmailAddress
+      userRole
+    }
+  }
+`;
+export const createGuestProfile = /* GraphQL */ `
+  mutation CreateGuestProfile($emailAddress: AWSEmail!) {
+    createGuestProfile(emailAddress: $emailAddress) {
+      profilePhotoImgKey
+      profileCoverImgKey
+      profileResumeKey
+      profileVideoKey
+      profileLanguage
+      profileIsPublic
+      profileAddressLine1
+      profileAddressLine2
+      profileCity
+      profileState
+      profilePostalCode
+      profileCountry
+      profileJoiningDate
+      profileContact
+    }
   }
 `;
 export const addNewGuestUser = /* GraphQL */ `

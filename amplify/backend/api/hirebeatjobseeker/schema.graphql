@@ -10,6 +10,32 @@ type Educations {
   educations: [Education]
 }
 
+type GuestProfile {
+  profilePhotoImgKey: String
+  profileCoverImgKey: String
+  profileResumeKey: String
+  profileVideoKey: String
+  profileLanguage: String
+  profileIsPublic: Boolean
+  profileAddressLine1: String
+  profileAddressLine2: String
+  profileCity: String
+  profileState: String
+  profilePostalCode: String
+  profileCountry: String
+  profileJoiningDate: AWSDateTime
+  profileContact: AWSPhone
+}
+
+type GuestUser {
+  allowPublicInterview: Boolean
+  fName: String
+  lName: String
+  uniqueHandle: String
+  userEmailAddress: AWSEmail
+  userRole: String
+}
+
 type Interview {
   interviewID: String
   interviewDateTime: AWSDateTime
@@ -172,11 +198,17 @@ input ModelSubscriptionStringInput {
 }
 
 type Mutation {
-  test_deactiveSubscription(id: String!): String
+  createGuestUser(emailAddress: AWSEmail!, uniqueHandle: String!, fName: String!, lName: String!): GuestUser!
+  createGuestProfile(emailAddress: AWSEmail!): GuestProfile!
   addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
   addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
   createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
-  updateInterviewVideoKey(emailAddress: AWSEmail!, interviewID: String!, questionID: String!, interviewVideoKey: String!): Interview!
+  updateInterviewVideoKey(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    questionID: String!
+    interviewVideoKey: String!
+  ): Interview!
 }
 
 type PaginatedInterviewList {

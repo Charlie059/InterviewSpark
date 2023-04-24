@@ -17,6 +17,20 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync"
+    },
+    "resumeScanAPI": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "resumeScanAPINewAmp"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
     }
   },
   "auth": {
@@ -50,7 +64,31 @@
       "service": "Cognito"
     }
   },
-  "function": {},
+  "function": {
+    "resumeScanAPINewAmp": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_resumeScanAPINewAmp_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "resumeScanAPINewAmp"
+        }
+      ]
+    },
+    "AMPLIFY_function_resumeScanAPINewAmp_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "resumeScanAPINewAmp"
+        }
+      ]
+    }
+  },
   "predictions": {
     "transcription5847e459": {
       "convertType": "transcription",

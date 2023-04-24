@@ -2,6 +2,34 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
+export type GuestUser = {
+  __typename: "GuestUser",
+  allowPublicInterview?: boolean | null,
+  fName?: string | null,
+  lName?: string | null,
+  uniqueHandle?: string | null,
+  userEmailAddress?: string | null,
+  userRole?: string | null,
+};
+
+export type GuestProfile = {
+  __typename: "GuestProfile",
+  profilePhotoImgKey?: string | null,
+  profileCoverImgKey?: string | null,
+  profileResumeKey?: string | null,
+  profileVideoKey?: string | null,
+  profileLanguage?: string | null,
+  profileIsPublic?: boolean | null,
+  profileAddressLine1?: string | null,
+  profileAddressLine2?: string | null,
+  profileCity?: string | null,
+  profileState?: string | null,
+  profilePostalCode?: string | null,
+  profileCountry?: string | null,
+  profileJoiningDate?: string | null,
+  profileContact?: string | null,
+};
+
 export type User = {
   __typename: "User",
   userEmailAddress: string,
@@ -113,12 +141,47 @@ export type PaginatedQuestionList = {
   totalRecords?: number | null,
 };
 
-export type Test_deactiveSubscriptionMutationVariables = {
-  id: string,
+export type CreateGuestUserMutationVariables = {
+  emailAddress: string,
+  uniqueHandle: string,
+  fName: string,
+  lName: string,
 };
 
-export type Test_deactiveSubscriptionMutation = {
-  test_deactiveSubscription?: string | null,
+export type CreateGuestUserMutation = {
+  createGuestUser:  {
+    __typename: "GuestUser",
+    allowPublicInterview?: boolean | null,
+    fName?: string | null,
+    lName?: string | null,
+    uniqueHandle?: string | null,
+    userEmailAddress?: string | null,
+    userRole?: string | null,
+  },
+};
+
+export type CreateGuestProfileMutationVariables = {
+  emailAddress: string,
+};
+
+export type CreateGuestProfileMutation = {
+  createGuestProfile:  {
+    __typename: "GuestProfile",
+    profilePhotoImgKey?: string | null,
+    profileCoverImgKey?: string | null,
+    profileResumeKey?: string | null,
+    profileVideoKey?: string | null,
+    profileLanguage?: string | null,
+    profileIsPublic?: boolean | null,
+    profileAddressLine1?: string | null,
+    profileAddressLine2?: string | null,
+    profileCity?: string | null,
+    profileState?: string | null,
+    profilePostalCode?: string | null,
+    profileCountry?: string | null,
+    profileJoiningDate?: string | null,
+    profileContact?: string | null,
+  },
 };
 
 export type AddNewGuestUserMutationVariables = {

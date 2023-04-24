@@ -172,6 +172,7 @@ const LoginPage = () => {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.email)}
+                      data-testid='email-input'
                     />
                   )}
                 />
