@@ -14,8 +14,8 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Verification code: {####}",
-    "emailVerificationMessage": "Verification code: {####}",
+    "emailVerificationSubject": "Welcome to HireBeat! Verify your email address",
+    "emailVerificationMessage": "<!DOCTYPE html>\n<html>\n<head>\n<style>\n  body {\n    font-family: Arial, sans-serif;\n  }\n  .container {\n    max-width: 600px;\n    margin: 0 auto;\n    padding: 20px;\n  }\n  .header {\n    text-align: center;\n  }\n  .logo {\n    max-width: 150px;\n  }\n  h1 {\n    font-size: 24px;\n    color: #333;\n  }\n  p {\n    font-size: 16px;\n    color: #666;\n    line-height: 1.5;\n  }\n  .code {\n    display: inline-block;\n    background-color: #f0f0f0;\n    padding: 15px 20px;\n    border-radius: 5px;\n    font-size: 18px;\n  }\n</style>\n</head>\n<body>\n  <div class=\"container\">\n    <div class=\"header\">\n      <img class=\"logo\" src=\"https://hirebeat.co/wp-content/uploads/2021/11/HireBeat-Logo-1024x360.png\" alt=\"HireBeat Logo\" />\n    </div>\n    <h1>Welcome to HireBeat!</h1>\n    <p>\n      Thank you for signing up for HireBeat!\n      To complete your registration, please enter the 6-digit verification code below in the website:\n    </p>\n    <p style=\"text-align: center;\">\n      <span class=\"code\">{####}</span>\n    </p>\n    <p>\n      The code will expire in 24 hours. If you did not request this verification, please ignore this email.\n    </p>\n    <p>\n      Best regards,<br>\n      HireBeat Team\n    </p>\n  </div>\n</body>\n</html>\n",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [
@@ -46,6 +46,21 @@
     "thirdPartyAuth": false,
     "authProviders": [],
     "usernameCaseSensitive": false,
-    "useEnabledMfas": true
+    "useEnabledMfas": true,
+    "authRoleArn": {
+      "Fn::GetAtt": [
+        "AuthRole",
+        "Arn"
+      ]
+    },
+    "unauthRoleArn": {
+      "Fn::GetAtt": [
+        "UnauthRole",
+        "Arn"
+      ]
+    },
+    "breakCircularDependency": true,
+    "dependsOn": [],
+    "hostedUI": false
   }
 }
