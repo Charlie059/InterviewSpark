@@ -1,14 +1,11 @@
 // ** React Imports
-import { useState, ReactNode, MouseEvent } from 'react'
-import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth'
-import { Auth } from 'aws-amplify'
+import { useState, ReactNode } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
 
 // ** MUI Components
 import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
