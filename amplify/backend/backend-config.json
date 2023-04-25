@@ -17,20 +17,6 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync"
-    },
-    "resumeScanAPI": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "resumeScanAPINewAmp"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
     }
   },
   "auth": {
@@ -64,13 +50,7 @@
       "service": "Cognito"
     }
   },
-  "function": {
-    "resumeScanAPINewAmp": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    }
-  },
+  "function": {},
   "parameters": {
     "AMPLIFY_function_resumeScanAPINewAmp_deploymentBucketName": {
       "usedBy": [

@@ -10,7 +10,6 @@ import VerifyCode from '../validation'
 export default function RegisterPage() {
   const [username, setUsername] = useState('')
 
-  //TODO - change to false
   const [registered, setRegistered] = useState(false)
 
   function handleRegister(username: string) {

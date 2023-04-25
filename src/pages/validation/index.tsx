@@ -107,7 +107,7 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
   }
 
   return (
-    <Box className='content-center'>
+    <Box className='content-center' data-testid='confirmation-page'>
       <Box sx={{ p: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
         <div>
           <Box className='content-right'>
@@ -123,7 +123,7 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
                   justifyContent: 'center'
                 }}
               >
-                <BoxWrapper>
+                <BoxWrapper data-testid='auth-input-container'>
                   <TypographyStyled variant='h4'>Two-Factor Authentication</TypographyStyled>
                   <div className={styles.pageWrapper}>
                     <div>
