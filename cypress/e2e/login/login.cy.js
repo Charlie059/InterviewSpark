@@ -50,6 +50,6 @@ describe('Login Page', () => {
     cy.get('button[type="submit"]').click()
 
     // Verify that the error message is displayed
-    cy.get('form').contains('password must be at least 5 characters')
+    cy.get('form').contains('password must be at least 8 characters')
   })
 })
