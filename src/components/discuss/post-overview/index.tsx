@@ -1,5 +1,5 @@
 import React from 'react'
-import { Topic } from '../../types/types'
+import { Topic } from '../../../types/types'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'

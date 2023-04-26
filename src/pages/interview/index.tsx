@@ -1,13 +1,13 @@
 // ** MUI Imports
 import { Box } from '@mui/material'
-import InterviewList from 'src/components/interview-list'
+import InterviewList from 'src/components/interview/interviewProfile/interview-list'
 
 // import NewInterview from 'src/views/pages/dialog/new-interview'
 
-import InterviewUsageSummaryThisMonth from 'src/components/Interview-monthly-summary-card'
-import InterviewProfileHeader from 'src/components/interview-profile-header'
-import InterviewPromotion from 'src/components/interview-promotion'
-import InterviewTotalSummaryCard from 'src/components/interview-total-summary-card/index'
+import InterviewUsageSummaryThisMonth from 'src/components/interview/interviewProfile/Interview-monthly-summary-card'
+import InterviewProfileHeader from 'src/components/interview/interviewProfile/interview-profile-header'
+import InterviewPromotion from 'src/components/interview/interviewProfile/interview-promotion'
+import InterviewTotalSummaryCard from 'src/components/interview/interviewProfile/interview-total-summary-card/index'
 
 const InterviewPage = () => {
   return (
