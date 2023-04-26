@@ -22,7 +22,7 @@ import {
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import NewInterview from 'src/views/pages/dialog/new-interview'
 import { SelectChangeEvent } from '@mui/material/Select'
-import DeviceSelector from 'src/components/device_selector/device_selector'
+import DeviceSelector from 'src/components/interview/createInterview/device_selector/device_selector'
 
 type DeviceSelectorProps = {
   deviceType: 'videoinput' | 'audioInput' | 'audioOutput'
