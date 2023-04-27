@@ -16,7 +16,7 @@ import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { useAuth } from 'src/hooks/useAuth'
-import { getUserInterviewsByMonth } from 'src/graphql/queries'
+import { getUserInterviewUsageMetaData, getUserInterviewsByMonth } from 'src/graphql/queries'
 
 const InterviewTotalSummaryCard = () => {
   const options: ApexOptions = {
@@ -93,8 +93,6 @@ const InterviewTotalSummaryCard = () => {
         if ('data' in result) {
           // Get the list of interviews from the result data
           const interviewList = result.data.getUserInterviewsByMonth.interviewList
-
-          // Filter out the interviews that are not from this month
           const currentDate = new Date()
 
           // Count the number of interviews per day
@@ -113,20 +111,26 @@ const InterviewTotalSummaryCard = () => {
             return { date: formattedDate, count: interviewCount }
           })
 
-          // Use a hashSet to store the questionID
-          const questionIDSet = new Set()
-
-          // Iterate through the interview list and add the questionID to the hashSet
-          interviewList.forEach((interview: { interviewQuestionID: string }) => {
-            questionIDSet.add(interview.interviewQuestionID)
-          })
-
           // Update the state with the interview count data
-
           setData(interviewList)
-          setInterviewTotalCount(interviewList.length)
+
           setInterviewHotMapData(interviewHotMapData)
-          setTotalQuestionUserDid(questionIDSet.size)
+
+          // Query the UserInterviewUsageMetaData
+          const userInterviewUsageMetaData = await API.graphql(
+            graphqlOperation(getUserInterviewUsageMetaData, {
+              emailAddress
+            })
+          )
+
+          console.log(userInterviewUsageMetaData)
+          if ('data' in userInterviewUsageMetaData) {
+            const interviewUsageMetaData = userInterviewUsageMetaData.data.getUserInterviewUsageMetaData
+            const interviewTotalCount = interviewUsageMetaData.userInterviewNumCount
+            const interviewQuestionSet = interviewUsageMetaData.userInterviewQuestionSet
+            setInterviewTotalCount(interviewTotalCount)
+            setTotalQuestionUserDid(interviewQuestionSet.length)
+          }
         }
 
         // Fetch the total number of questions
