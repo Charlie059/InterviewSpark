@@ -90,6 +90,8 @@ export const createInterviewWithQuestion = /* GraphQL */ `
       interviewDateTime
       interviewQuestionID
       interviewVideoKey
+      interviewQuestion
+      interviewQuestionType
     }
   }
 `;
@@ -110,6 +112,8 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewDateTime
       interviewQuestionID
       interviewVideoKey
+      interviewQuestion
+      interviewQuestionType
     }
   }
 `;

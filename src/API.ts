@@ -78,6 +78,8 @@ export type Interview = {
   interviewDateTime?: string | null,
   interviewQuestionID?: string | null,
   interviewVideoKey?: string | null,
+  interviewQuestion?: string | null,
+  interviewQuestionType?: string | null,
 };
 
 export type WorkHistories = {
@@ -120,9 +122,15 @@ export type InterviewList = {
   interviewList?:  Array<Interview | null > | null,
 };
 
-export type QuestionCount = {
-  __typename: "QuestionCount",
-  questionCount?: number | null,
+export type UserInterviewUsageMetaData = {
+  __typename: "UserInterviewUsageMetaData",
+  userInterviewNumCount?: number | null,
+  userInterviewQuestionSet?: Array< number | null > | null,
+};
+
+export type QuestionUsageMetaData = {
+  __typename: "QuestionUsageMetaData",
+  totalNumOfQuestion?: number | null,
 };
 
 export type Question = {
@@ -236,6 +244,8 @@ export type CreateInterviewWithQuestionMutation = {
     interviewDateTime?: string | null,
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
+    interviewQuestion?: string | null,
+    interviewQuestionType?: string | null,
   },
 };
 
@@ -253,6 +263,8 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewDateTime?: string | null,
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
+    interviewQuestion?: string | null,
+    interviewQuestionType?: string | null,
   },
 };
 
@@ -271,12 +283,12 @@ export type GetUserQuery = {
   },
 };
 
-export type GetProfileQueryVariables = {
+export type GetUserProfileQueryVariables = {
   emailAddress: string,
 };
 
-export type GetProfileQuery = {
-  getProfile:  {
+export type GetUserProfileQuery = {
+  getUserProfile:  {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
@@ -294,12 +306,12 @@ export type GetProfileQuery = {
   },
 };
 
-export type GetWorkHistoriesQueryVariables = {
+export type GetUserWorkHistoriesQueryVariables = {
   emailAddress: string,
 };
 
-export type GetWorkHistoriesQuery = {
-  getWorkHistories:  {
+export type GetUserWorkHistoriesQuery = {
+  getUserWorkHistories:  {
     __typename: "WorkHistories",
     workHistory?:  Array< {
       __typename: "WorkHistory",
@@ -312,12 +324,12 @@ export type GetWorkHistoriesQuery = {
   },
 };
 
-export type GetEducationsQueryVariables = {
+export type GetUserEducationsQueryVariables = {
   emailAddress: string,
 };
 
-export type GetEducationsQuery = {
-  getEducations:  {
+export type GetUserEducationsQuery = {
+  getUserEducations:  {
     __typename: "Educations",
     educations?:  Array< {
       __typename: "Education",
@@ -330,14 +342,14 @@ export type GetEducationsQuery = {
   },
 };
 
-export type GetInterviewListQueryVariables = {
+export type GetUserInterviewsPaginatedQueryVariables = {
   emailAddress: string,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type GetInterviewListQuery = {
-  getInterviewList:  {
+export type GetUserInterviewsPaginatedQuery = {
+  getUserInterviewsPaginated:  {
     __typename: "PaginatedInterviewList",
     interviewList?:  Array< {
       __typename: "Interview",
@@ -345,19 +357,20 @@ export type GetInterviewListQuery = {
       interviewDateTime?: string | null,
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionType?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
   },
 };
 
-export type GetInterviewListByIDQueryVariables = {
+export type GetUserInterviewsByMonthQueryVariables = {
   emailAddress: string,
-  interviewID: string,
 };
 
-export type GetInterviewListByIDQuery = {
-  getInterviewListByID:  {
+export type GetUserInterviewsByMonthQuery = {
+  getUserInterviewsByMonth:  {
     __typename: "InterviewList",
     interviewList?:  Array< {
       __typename: "Interview",
@@ -365,30 +378,66 @@ export type GetInterviewListByIDQuery = {
       interviewDateTime?: string | null,
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionType?: string | null,
     } | null > | null,
   },
 };
 
-export type GetInterviewMetaDataQueryVariables = {
+export type GetUserInterviewMetaDataQueryVariables = {
   emailAddress: string,
   interviewID: string,
   interviewQuestionID: string,
 };
 
-export type GetInterviewMetaDataQuery = {
-  getInterviewMetaData:  {
+export type GetUserInterviewMetaDataQuery = {
+  getUserInterviewMetaData:  {
     __typename: "Interview",
     interviewID?: string | null,
     interviewDateTime?: string | null,
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
+    interviewQuestion?: string | null,
+    interviewQuestionType?: string | null,
   },
 };
 
-export type GetNumOfQuestionQuery = {
-  getNumOfQuestion:  {
-    __typename: "QuestionCount",
-    questionCount?: number | null,
+export type SearchUserInterviewsQueryVariables = {
+  emailAddress: string,
+  keyword: string,
+};
+
+export type SearchUserInterviewsQuery = {
+  searchUserInterviews:  {
+    __typename: "InterviewList",
+    interviewList?:  Array< {
+      __typename: "Interview",
+      interviewID?: string | null,
+      interviewDateTime?: string | null,
+      interviewQuestionID?: string | null,
+      interviewVideoKey?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionType?: string | null,
+    } | null > | null,
+  },
+};
+
+export type GetUserInterviewUsageMetaDataQueryVariables = {
+  emailAddress: string,
+};
+
+export type GetUserInterviewUsageMetaDataQuery = {
+  getUserInterviewUsageMetaData:  {
+    __typename: "UserInterviewUsageMetaData",
+    userInterviewNumCount?: number | null,
+    userInterviewQuestionSet?: Array< number | null > | null,
+  },
+};
+
+export type GetQuestionUsageMetaDataQuery = {
+  getQuestionUsageMetaData:  {
+    __typename: "QuestionUsageMetaData",
+    totalNumOfQuestion?: number | null,
   },
 };
 
@@ -407,13 +456,13 @@ export type GetQuestionMetaDataQuery = {
   },
 };
 
-export type GetQuestionListQueryVariables = {
+export type GetQuestionsPaginatedQueryVariables = {
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type GetQuestionListQuery = {
-  getQuestionList:  {
+export type GetQuestionsPaginatedQuery = {
+  getQuestionsPaginated:  {
     __typename: "PaginatedQuestionList",
     questionList?:  Array< {
       __typename: "Question",
@@ -425,5 +474,25 @@ export type GetQuestionListQuery = {
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
+  },
+};
+
+export type GetUserInterviewsByQuestionIDQueryVariables = {
+  emailAddress: string,
+  questionID: string,
+};
+
+export type GetUserInterviewsByQuestionIDQuery = {
+  getUserInterviewsByQuestionID:  {
+    __typename: "InterviewList",
+    interviewList?:  Array< {
+      __typename: "Interview",
+      interviewID?: string | null,
+      interviewDateTime?: string | null,
+      interviewQuestionID?: string | null,
+      interviewVideoKey?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionType?: string | null,
+    } | null > | null,
   },
 };

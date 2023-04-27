@@ -13,9 +13,9 @@ export const getUser = /* GraphQL */ `
     }
   }
 `;
-export const getProfile = /* GraphQL */ `
-  query GetProfile($emailAddress: AWSEmail!) {
-    getProfile(emailAddress: $emailAddress) {
+export const getUserProfile = /* GraphQL */ `
+  query GetUserProfile($emailAddress: AWSEmail!) {
+    getUserProfile(emailAddress: $emailAddress) {
       fName
       lName
       photoImgKey
@@ -32,9 +32,9 @@ export const getProfile = /* GraphQL */ `
     }
   }
 `;
-export const getWorkHistories = /* GraphQL */ `
-  query GetWorkHistories($emailAddress: AWSEmail!) {
-    getWorkHistories(emailAddress: $emailAddress) {
+export const getUserWorkHistories = /* GraphQL */ `
+  query GetUserWorkHistories($emailAddress: AWSEmail!) {
+    getUserWorkHistories(emailAddress: $emailAddress) {
       workHistory {
         workHistoryJobTitle
         workHistoryEmployer
@@ -45,9 +45,9 @@ export const getWorkHistories = /* GraphQL */ `
     }
   }
 `;
-export const getEducations = /* GraphQL */ `
-  query GetEducations($emailAddress: AWSEmail!) {
-    getEducations(emailAddress: $emailAddress) {
+export const getUserEducations = /* GraphQL */ `
+  query GetUserEducations($emailAddress: AWSEmail!) {
+    getUserEducations(emailAddress: $emailAddress) {
       educations {
         eduDegree
         eduFieldStudy
@@ -58,13 +58,13 @@ export const getEducations = /* GraphQL */ `
     }
   }
 `;
-export const getInterviewList = /* GraphQL */ `
-  query GetInterviewList(
+export const getUserInterviewsPaginated = /* GraphQL */ `
+  query GetUserInterviewsPaginated(
     $emailAddress: AWSEmail!
     $limit: Int
     $nextToken: String
   ) {
-    getInterviewList(
+    getUserInterviewsPaginated(
       emailAddress: $emailAddress
       limit: $limit
       nextToken: $nextToken
@@ -74,34 +74,35 @@ export const getInterviewList = /* GraphQL */ `
         interviewDateTime
         interviewQuestionID
         interviewVideoKey
+        interviewQuestion
+        interviewQuestionType
       }
       nextToken
       totalRecords
     }
   }
 `;
-export const getInterviewListByID = /* GraphQL */ `
-  query GetInterviewListByID($emailAddress: AWSEmail!, $interviewID: String!) {
-    getInterviewListByID(
-      emailAddress: $emailAddress
-      interviewID: $interviewID
-    ) {
+export const getUserInterviewsByMonth = /* GraphQL */ `
+  query GetUserInterviewsByMonth($emailAddress: AWSEmail!) {
+    getUserInterviewsByMonth(emailAddress: $emailAddress) {
       interviewList {
         interviewID
         interviewDateTime
         interviewQuestionID
         interviewVideoKey
+        interviewQuestion
+        interviewQuestionType
       }
     }
   }
 `;
-export const getInterviewMetaData = /* GraphQL */ `
-  query GetInterviewMetaData(
+export const getUserInterviewMetaData = /* GraphQL */ `
+  query GetUserInterviewMetaData(
     $emailAddress: AWSEmail!
     $interviewID: String!
     $interviewQuestionID: String!
   ) {
-    getInterviewMetaData(
+    getUserInterviewMetaData(
       emailAddress: $emailAddress
       interviewID: $interviewID
       interviewQuestionID: $interviewQuestionID
@@ -110,13 +111,37 @@ export const getInterviewMetaData = /* GraphQL */ `
       interviewDateTime
       interviewQuestionID
       interviewVideoKey
+      interviewQuestion
+      interviewQuestionType
     }
   }
 `;
-export const getNumOfQuestion = /* GraphQL */ `
-  query GetNumOfQuestion {
-    getNumOfQuestion {
-      questionCount
+export const searchUserInterviews = /* GraphQL */ `
+  query SearchUserInterviews($emailAddress: AWSEmail!, $keyword: String!) {
+    searchUserInterviews(emailAddress: $emailAddress, keyword: $keyword) {
+      interviewList {
+        interviewID
+        interviewDateTime
+        interviewQuestionID
+        interviewVideoKey
+        interviewQuestion
+        interviewQuestionType
+      }
+    }
+  }
+`;
+export const getUserInterviewUsageMetaData = /* GraphQL */ `
+  query GetUserInterviewUsageMetaData($emailAddress: AWSEmail!) {
+    getUserInterviewUsageMetaData(emailAddress: $emailAddress) {
+      userInterviewNumCount
+      userInterviewQuestionSet
+    }
+  }
+`;
+export const getQuestionUsageMetaData = /* GraphQL */ `
+  query GetQuestionUsageMetaData {
+    getQuestionUsageMetaData {
+      totalNumOfQuestion
     }
   }
 `;
@@ -131,9 +156,9 @@ export const getQuestionMetaData = /* GraphQL */ `
     }
   }
 `;
-export const getQuestionList = /* GraphQL */ `
-  query GetQuestionList($limit: Int, $nextToken: String) {
-    getQuestionList(limit: $limit, nextToken: $nextToken) {
+export const getQuestionsPaginated = /* GraphQL */ `
+  query GetQuestionsPaginated($limit: Int, $nextToken: String) {
+    getQuestionsPaginated(limit: $limit, nextToken: $nextToken) {
       questionList {
         GSI1PK
         interviewQuestion
@@ -143,6 +168,26 @@ export const getQuestionList = /* GraphQL */ `
       }
       nextToken
       totalRecords
+    }
+  }
+`;
+export const getUserInterviewsByQuestionID = /* GraphQL */ `
+  query GetUserInterviewsByQuestionID(
+    $emailAddress: AWSEmail!
+    $questionID: String!
+  ) {
+    getUserInterviewsByQuestionID(
+      emailAddress: $emailAddress
+      questionID: $questionID
+    ) {
+      interviewList {
+        interviewID
+        interviewDateTime
+        interviewQuestionID
+        interviewVideoKey
+        interviewQuestion
+        interviewQuestionType
+      }
     }
   }
 `;

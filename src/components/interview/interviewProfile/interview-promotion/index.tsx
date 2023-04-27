@@ -8,7 +8,7 @@ import { styled, useTheme } from '@mui/material/styles'
 import { useAuth } from 'src/hooks/useAuth'
 import { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
-import { getInterviewList } from 'src/graphql/queries'
+import { getUserInterviewsByMonth } from 'src/graphql/queries'
 
 // Styled Grid component
 const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
@@ -38,12 +38,27 @@ const InterviewPromotion = () => {
   const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
 
   // Determine the appropriate encouragement message
-  const encouragementMessage =
-    percentageIncrease >= 0
-      ? `Your interviews in the last 30 days have increased by ${percentageIncrease}%. Keep pushing forward! 💪`
-      : `Don't worry! It's not too late to bounce back. Stay positive and focused. You've got this! 💪`
+  const encouragementMessage = (() => {
+    const goal = 10
+
+    if (percentageIncrease >= 100) {
+      return `Congratulations! 🎉 You've reached or surpassed your goal of ${goal} interviews this month. Keep up the great work!`
+    } else if (percentageIncrease >= 75) {
+      return `You're almost there! You've completed ${percentageIncrease}% of your goal of ${goal} interviews this month. Keep pushing forward! 💪`
+    } else if (percentageIncrease > 0) {
+      return `You're making progress! You've completed ${percentageIncrease}% of your goal of ${goal} interviews this month. Stay focused and keep going! 💪`
+    } else {
+      return `Let's get started! Your goal is to complete ${goal} interviews this month. You can do it! 💪`
+    }
+  })()
 
   useEffect(() => {
+    const calculatePercentageProgress = (currentValue: number, goal: number): number => {
+      if (goal === 0) return 0
+
+      return Math.round((currentValue / goal) * 100)
+    }
+
     const fetchData = async () => {
       try {
         // Get the email address of the current user
@@ -51,43 +66,19 @@ const InterviewPromotion = () => {
 
         // Fetch the interview list for the user
         const result = await API.graphql(
-          graphqlOperation(getInterviewList, {
+          graphqlOperation(getUserInterviewsByMonth, {
             emailAddress
           })
         )
 
         if ('data' in result) {
-          // Get the list of interviews from the result data
-          const interviewList = result.data.getInterviewList.interviewList
+          const interviewListInCurrentMonth = result.data.getUserInterviewsByMonth.interviewList
+          const goal = 10
 
-          // Filter out the interviews that are in 30 days
-          const currentDate = new Date()
+          // Calculate the percentage increase
+          const percentageIncrease = calculatePercentageProgress(interviewListInCurrentMonth.length, goal)
 
-          // Filter out the interviews that are in the last 30 days
-          const filteredInterviewsLast30Days = interviewList.filter((interview: { interviewDateTime: string }) => {
-            const interviewDate = new Date(interview.interviewDateTime)
-            const dateDifference = Math.abs(currentDate.getTime() - interviewDate.getTime())
-            const daysDifference = Math.ceil(dateDifference / (1000 * 60 * 60 * 24))
-
-            return daysDifference <= 30
-          })
-
-          // Filter out the interviews that happened between 30 to 60 days ago
-          const filteredInterviews30To60Days = interviewList.filter((interview: { interviewDateTime: string }) => {
-            const interviewDate = new Date(interview.interviewDateTime)
-            const dateDifference = Math.abs(currentDate.getTime() - interviewDate.getTime())
-            const daysDifference = Math.ceil(dateDifference / (1000 * 60 * 60 * 24))
-
-            return daysDifference > 30 && daysDifference <= 60
-          })
-
-          const last30DaysCount = filteredInterviewsLast30Days.length
-          const last30To60DaysCount = filteredInterviews30To60Days.length
-          const percentageIncrease =
-            last30To60DaysCount > 0
-              ? Math.round(((last30DaysCount - last30To60DaysCount) / last30To60DaysCount) * 100)
-              : 100
-
+          // Update state with the calculated percentage increase
           setPercentageIncrease(percentageIncrease)
         }
       } catch (error) {

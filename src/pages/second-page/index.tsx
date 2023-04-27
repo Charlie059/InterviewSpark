@@ -1,28 +1,96 @@
-// ** MUI Imports
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import Typography from '@mui/material/Typography'
-import CardHeader from '@mui/material/CardHeader'
-import CardContent from '@mui/material/CardContent'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// ignore all errors and warnings in this file
+// @ts-nocheck
 
-const SecondPage = () => {
+// ignore all var not used errors in this file
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import Webcam from 'react-webcam'
+
+import {
+  Box,
+  Button,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
+} from '@mui/material'
+
+// import InterviewList from 'src/components/interview-list/interview-list'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import NewInterview from 'src/views/pages/dialog/new-interview'
+import { SelectChangeEvent } from '@mui/material/Select'
+import DeviceSelector from 'src/components/interview/createInterview/device_selector/device_selector'
+
+type DeviceSelectorProps = {
+  deviceType: 'videoinput' | 'audioInput' | 'audioOutput'
+  onChange: (deviceId: string) => void
+}
+
+const WebcamConfirm: React.FC<DeviceSelectorProps> = ({ deviceType, onChange }) => {
+  const [open, setOpen] = useState(false)
+
+  const webcamRef = useRef<Webcam>(null)
+  const [videoDeviceId, setVideoDeviceId] = useState('')
+  const [audioInputDeviceId, setAudioInputDeviceId] = useState('')
+  const [audioOutputDeviceId, setAudioOutputDeviceId] = useState('')
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const handleVideoDeviceChange = (deviceId: string) => {
+    setVideoDeviceId(deviceId)
+  }
+
+  const handleAudioInputDeviceChange = (deviceId: string) => {
+    setAudioInputDeviceId(deviceId)
+  }
+
+  const handleAudioOutputDeviceChange = (deviceId: string) => {
+    setAudioOutputDeviceId(deviceId)
+  }
+
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Card>
-          <CardHeader title='Create Awesome 🙌'></CardHeader>
-          <CardContent>
-            <Typography sx={{ mb: 2 }}>This is your second page.</Typography>
-            <Typography>
-              Chocolate sesame snaps pie carrot cake pastry pie lollipop muffin.
-              Carrot cake dragée chupa chups jujubes. Macaroon liquorice cookie
-              wafer tart marzipan bonbon. Gingerbread jelly-o dragée chocolate.
-            </Typography>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+    <div>
+      <Button variant='contained' onClick={handleOpen}>
+        Next
+      </Button>
+      <Dialog open={open} onClose={handleClose}>
+        <Webcam audio={true} muted={true} ref={webcamRef} />
+        <IconButton edge='start' color='inherit' onClick={handleClose} aria-label='close'></IconButton>
+        <DialogTitle>Start Interview</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            For your best experience, Select and configure your camera, microphone and speakers.
+          </DialogContentText>
+
+          <DeviceSelector deviceType='videoinput' onChange={handleVideoDeviceChange} />
+          <DeviceSelector deviceType='audioinput' onChange={handleAudioInputDeviceChange} />
+          <DeviceSelector deviceType='audiooutput' onChange={handleAudioOutputDeviceChange} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={handleClose} color='primary' autoFocus>
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   )
 }
 
-export default SecondPage
+WebcamConfirm.acl = {
+  action: 'read',
+  subject: 'acl-page'
+}
+
+export default WebcamConfirm

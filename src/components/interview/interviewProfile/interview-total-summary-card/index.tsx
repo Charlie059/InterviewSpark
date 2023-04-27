@@ -16,7 +16,7 @@ import { Grid } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { useAuth } from 'src/hooks/useAuth'
-import { getInterviewList, getNumOfQuestion } from 'src/graphql/queries'
+import { getUserInterviewsByMonth } from 'src/graphql/queries'
 
 const InterviewTotalSummaryCard = () => {
   const options: ApexOptions = {
@@ -84,32 +84,22 @@ const InterviewTotalSummaryCard = () => {
         const emailAddress = auth.user?.userEmailAddress
 
         // Fetch the interview list for the user
-        // TODO: remove the limit
         const result = await API.graphql(
-          graphqlOperation(getInterviewList, {
-            emailAddress,
-            limit: 1000
+          graphqlOperation(getUserInterviewsByMonth, {
+            emailAddress
           })
         )
 
         if ('data' in result) {
           // Get the list of interviews from the result data
-          const interviewList = result.data.getInterviewList.interviewList
+          const interviewList = result.data.getUserInterviewsByMonth.interviewList
 
           // Filter out the interviews that are not from this month
           const currentDate = new Date()
-          const filteredInterviews = interviewList.filter((interview: { interviewDateTime: string }) => {
-            const interviewDate = new Date(interview.interviewDateTime)
-
-            return (
-              interviewDate.getFullYear() === currentDate.getFullYear() &&
-              interviewDate.getMonth() === currentDate.getMonth()
-            )
-          })
 
           // Count the number of interviews per day
           const interviewCounts = Array.from({ length: currentDate.getDate() }, () => 0)
-          filteredInterviews.forEach((interview: { interviewDateTime: string }) => {
+          interviewList.forEach((interview: { interviewDateTime: string }) => {
             const interviewDate = new Date(interview.interviewDateTime)
             const dayOfMonth = interviewDate.getDate()
             interviewCounts[dayOfMonth - 1] += 1
@@ -133,18 +123,20 @@ const InterviewTotalSummaryCard = () => {
 
           // Update the state with the interview count data
 
-          setData(filteredInterviews)
+          setData(interviewList)
           setInterviewTotalCount(interviewList.length)
           setInterviewHotMapData(interviewHotMapData)
           setTotalQuestionUserDid(questionIDSet.size)
         }
 
         // Fetch the total number of questions
-        const totalQuestionsResult = await API.graphql(graphqlOperation(getNumOfQuestion, {}))
+        // const totalQuestionsResult = await API.graphql(graphqlOperation(getNumOfQuestion, {}))
 
-        if ('data' in totalQuestionsResult) {
-          setTotalQuestions(totalQuestionsResult.data.getNumOfQuestion.questionCount)
-        }
+        // if ('data' in totalQuestionsResult) {
+        // setTotalQuestions(totalQuestionsResult.data.getNumOfQuestion.questionCount)
+        setTotalQuestions(100)
+
+        // }
       } catch (error) {
         console.error(error)
       }

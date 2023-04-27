@@ -8,8 +8,7 @@ import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 import { useEffect, useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
-import { getInterviewList } from 'src/graphql/queries'
-import Log from 'src/middleware/loggerMiddleware'
+import { getUserInterviewsByMonth } from 'src/graphql/queries'
 
 const InterviewUsageSummaryThisMonth = () => {
   // ** Hook
@@ -28,35 +27,22 @@ const InterviewUsageSummaryThisMonth = () => {
         const emailAddress = auth.user?.userEmailAddress
 
         // Fetch the interview list for the user
-
-        // TODO: Change the limit
         const result = await API.graphql(
-          graphqlOperation(getInterviewList, {
-            emailAddress,
-            limit: 10000
+          graphqlOperation(getUserInterviewsByMonth, {
+            emailAddress
           })
         )
 
-        Log.info(result)
-
         if ('data' in result) {
           // Get the list of interviews from the result data
-          const interviewList = result.data.getInterviewList.interviewList
+          const interviewList = result.data.getUserInterviewsByMonth.interviewList
 
           // Filter out the interviews that in this month
           const currentDate = new Date()
-          const filteredInterviews = interviewList.filter((interview: { interviewDateTime: string }) => {
-            const interviewDate = new Date(interview.interviewDateTime)
-
-            return (
-              interviewDate.getFullYear() === currentDate.getFullYear() &&
-              interviewDate.getMonth() === currentDate.getMonth()
-            )
-          })
 
           // Count the number of interviews per day
           const interviewCounts = Array.from({ length: currentDate.getDate() }, () => 0)
-          filteredInterviews.forEach((interview: { interviewDateTime: string }) => {
+          interviewList.forEach((interview: { interviewDateTime: string }) => {
             const interviewDate = new Date(interview.interviewDateTime)
             const dayOfMonth = interviewDate.getDate()
             interviewCounts[dayOfMonth - 1] += 1
@@ -74,8 +60,7 @@ const InterviewUsageSummaryThisMonth = () => {
 
           // Update the state with the interview count data
           setData(interviewCountsSum)
-
-          setInterviewTotalCount(filteredInterviews.length)
+          setInterviewTotalCount(interviewList.length)
         }
       } catch (error) {
         console.error(error)

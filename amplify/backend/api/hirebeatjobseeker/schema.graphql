@@ -1,0 +1,316 @@
+type Education {
+  eduDegree: String
+  eduFieldStudy: String
+  eduSchool: String
+  eduStartDate: AWSDate
+  eduEndDate: AWSDate
+}
+
+type Educations {
+  educations: [Education]
+}
+
+type GuestProfile {
+  profilePhotoImgKey: String
+  profileCoverImgKey: String
+  profileResumeKey: String
+  profileVideoKey: String
+  profileLanguage: String
+  profileIsPublic: Boolean
+  profileAddressLine1: String
+  profileAddressLine2: String
+  profileCity: String
+  profileState: String
+  profilePostalCode: String
+  profileCountry: String
+  profileJoiningDate: AWSDateTime
+  profileContact: AWSPhone
+}
+
+type GuestUser {
+  allowPublicInterview: Boolean
+  fName: String
+  lName: String
+  uniqueHandle: String
+  userEmailAddress: AWSEmail
+  userRole: String
+}
+
+type Interview {
+  interviewID: String
+  interviewDateTime: AWSDateTime
+  interviewQuestionID: String
+  interviewVideoKey: String
+  interviewQuestion: String
+  interviewQuestionType: String
+}
+
+type InterviewList {
+  interviewList: [Interview]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+type Mutation {
+  createGuestUser(emailAddress: AWSEmail!, uniqueHandle: String!, fName: String!, lName: String!): GuestUser!
+  createGuestProfile(emailAddress: AWSEmail!): GuestProfile!
+  addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
+  addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
+  createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+  updateInterviewVideoKey(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    questionID: String!
+    interviewVideoKey: String!
+  ): Interview!
+}
+
+type PaginatedInterviewList {
+  interviewList: [Interview]
+  nextToken: String
+  totalRecords: Int
+}
+
+type PaginatedQuestionList {
+  questionList: [Question]
+  nextToken: String
+  totalRecords: Int
+}
+
+type Profile {
+  fName: String
+  lName: String
+  photoImgKey: AWSURL
+  coverImgKey: AWSURL
+  resumeKey: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  joiningDate: AWSDate
+  contact: AWSPhone
+}
+
+type Query {
+  getUser(emailAddress: AWSEmail!): User!
+  getUserProfile(emailAddress: AWSEmail!): Profile!
+  getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!
+  getUserEducations(emailAddress: AWSEmail!): Educations!
+  getUserInterviewsPaginated(emailAddress: AWSEmail!, limit: Int, nextToken: String): PaginatedInterviewList!
+  getUserInterviewsByMonth(emailAddress: AWSEmail!): InterviewList!
+  getUserInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview!
+  searchUserInterviews(emailAddress: AWSEmail!, keyword: String!): InterviewList!
+  getUserInterviewUsageMetaData(emailAddress: AWSEmail!): UserInterviewUsageMetaData!
+  getQuestionUsageMetaData: QuestionUsageMetaData!
+  getQuestionMetaData(questionID: String!): Question!
+  getQuestionsPaginated(limit: Int, nextToken: String): PaginatedQuestionList!
+  # Deprecated: getUserInterviewsByQuestionID
+  getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
+}
+
+type Question {
+  GSI1PK: String
+  interviewQuestion: String
+  interviewQuestionSampleAns: String
+  interviewQuestionType: String
+  QuestionID: String
+}
+
+type QuestionList {
+  questionList: [Question]
+}
+
+type QuestionUsageMetaData {
+  totalNumOfQuestion: Int
+}
+
+type User {
+  userEmailAddress: AWSEmail!
+  userRole: String!
+  userName: String!
+  hasProfile: Boolean!
+  allowPublicInterview: Boolean!
+}
+
+type UserInterviewUsageMetaData {
+  userInterviewNumCount: Int
+  userInterviewQuestionSet: [Int]
+}
+
+type WorkHistories {
+  workHistory: [WorkHistory]
+}
+
+type WorkHistory {
+  workHistoryJobTitle: String
+  workHistoryEmployer: String
+  workHistoryStartDate: AWSDate
+  workHistoryEndDate: AWSDate
+  workHistoryJobDescription: String
+}
+
+input addUserProfileInput {
+  fName: String
+  lName: String
+  photoImgKey: AWSURL
+  coverImgKey: AWSURL
+  resumeKey: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  joiningDate: AWSDate
+  contact: AWSPhone
+}

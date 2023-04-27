@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
-
-import { getInterviewList, getQuestionMetaData } from 'src/graphql/queries'
+import { getUserInterviewsPaginated, searchUserInterviews } from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 import { format } from 'date-fns'
-
-import { Card, IconButton } from '@mui/material'
-
+import { Box, Card, IconButton } from '@mui/material'
 import TableHeader from '../../../table-header'
-
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
-
 import Log from 'src/middleware/loggerMiddleware'
 
 interface Interview {
@@ -25,37 +20,68 @@ interface Interview {
 const InterviewList = () => {
   const auth = useAuth()
   const [interviews, setInterviews] = useState<Interview[]>([])
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [pageSize, setPageSize] = useState<number>(5)
+  const [pageSize] = useState<number>(5)
   const [nextToken, setNextToken] = useState<string | null>(null)
   const [value, setValue] = useState<string>('')
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [totalRecords, setTotalRecords] = useState<number>(0)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [maxPageReached, setMaxPageReached] = useState<number>(0)
+
+  const getQuestionTypeColors = (questionType: string) => {
+    switch (questionType) {
+      case 'Behavioral':
+        return { backgroundColor: '#F1FBE7', color: '#8EDE4E' }
+      case 'Technical':
+        return { backgroundColor: '#E7F1FB', color: '#4E8EDE' }
+      case 'Situational':
+        return { backgroundColor: '#FBE7F1', color: '#DE4E8E' }
+      default:
+        return { backgroundColor: '#F1F1F1', color: '#4E4E4E' }
+    }
+  }
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 100, hide: true },
-    { field: 'questionID', headerName: 'ID', width: 100 },
-    { field: 'interviewQuestion', headerName: 'Name', width: 300 },
+    { field: 'interviewQuestionID', headerName: 'ID', width: 100 },
+    { field: 'interviewQuestion', headerName: 'Question', width: 500 },
     {
       field: 'interviewDateTime',
       headerName: 'Date',
-      width: 260,
+      width: 150,
       valueFormatter: (params: any) => {
         const date = new Date(params.value)
 
-        return format(date, 'MM/dd/yyyy hh:mm:ss a')
+        return format(date, 'dd MMM yyyy')
       }
     },
-    { field: 'interviewQuestionType', headerName: 'Type', width: 100 },
-    { field: 'interviewQuestionID', headerName: 'Question ID', width: 200, hide: true },
+    {
+      field: 'interviewQuestionType',
+      headerName: 'Type',
+      width: 180,
+      renderCell: (params: GridRenderCellParams) => {
+        const colors = getQuestionTypeColors(params.value)
+
+        return (
+          <Box
+            sx={{
+              display: 'inline-block',
+              borderRadius: '15px',
+              padding: '3px 12px',
+              backgroundColor: colors.backgroundColor,
+              color: colors.color
+            }}
+          >
+            {params.value}
+          </Box>
+        )
+      }
+    },
     { field: 'interviewVideoKey', headerName: 'Video Key', width: 200, hide: true },
     { field: 'interviewID', headerName: 'Interview ID', width: 200, hide: true },
     {
       field: 'operations',
       headerName: 'Operations',
-      width: 200,
+      width: 125,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -82,8 +108,49 @@ const InterviewList = () => {
     }
   ]
 
+  const searchInterviews = async (searchValue: string) => {
+    try {
+      const emailAddress = auth.user?.userEmailAddress
+
+      const result = await API.graphql(
+        graphqlOperation(searchUserInterviews, {
+          emailAddress,
+          keyword: searchValue
+        })
+      )
+
+      if ('data' in result) {
+        const interviewList = result.data.searchUserInterviews.interviewList
+
+        // Add the ID field to each interview in the list
+        const interviewsWithID = interviewList.map((interview: Interview) => {
+          return {
+            ...interview,
+            id: `${interview.interviewID}`
+          }
+        })
+
+        setInterviews(interviewsWithID)
+        setNextToken(result.data.searchUserInterviews.nextToken)
+        setTotalRecords(result.data.searchUserInterviews.totalRecords)
+      }
+    } catch (error) {
+      console.error('Error fetching interviews:', error)
+    }
+  }
+
   const handleFilter = (val: string) => {
     setValue(val)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      if (value === '') {
+        fetchInterviews()
+      } else {
+        searchInterviews(value)
+      }
+    }
   }
 
   const handleDelete = () => {
@@ -100,7 +167,7 @@ const InterviewList = () => {
       const emailAddress = auth.user?.userEmailAddress
 
       const result = await API.graphql(
-        graphqlOperation(getInterviewList, {
+        graphqlOperation(getUserInterviewsPaginated, {
           emailAddress,
           limit: pageSize,
           nextToken
@@ -108,52 +175,19 @@ const InterviewList = () => {
       )
 
       if ('data' in result) {
-        const interviewList = result.data.getInterviewList.interviewList
+        const interviewList = result.data.getUserInterviewsPaginated.interviewList
 
-        const interviewListWithQuestionData = await Promise.all(
-          interviewList.map(async (interview: any) => {
-            // If interviewQuestionID is null, then we don't need to fetch the question data
-            if (interview.interviewQuestionID === null) {
-              return {
-                ...interview,
-                id: interview.interviewDateTime
-              }
-            }
+        // Add the ID field to the each interview in the list
+        const interviewsWithID = interviewList.map((interview: Interview) => {
+          return {
+            ...interview,
+            id: `${interview.interviewID}`
+          }
+        })
 
-            try {
-              const questionResult = await API.graphql(
-                graphqlOperation(getQuestionMetaData, {
-                  questionID: interview.interviewQuestionID
-                })
-              )
-
-              if ('data' in questionResult) {
-                const questionData = questionResult.data.getQuestionMetaData
-
-                return {
-                  ...interview,
-                  id: interview.interviewDateTime,
-                  questionID: interview.interviewQuestionID,
-                  interviewQuestion: questionData.interviewQuestion,
-                  interviewQuestionType: questionData.interviewQuestionType
-                }
-              }
-            } catch (error) {
-              console.error(`Error fetching question details:`, error)
-            }
-
-            return {
-              ...interview,
-              id: interview.interviewDateTime,
-              questionID: interview.interviewQuestionID
-            }
-          })
-        )
-
-        setInterviews(prevInterviews => [...prevInterviews, ...interviewListWithQuestionData])
-
-        setNextToken(result.data.getInterviewList.nextToken)
-        setTotalRecords(result.data.getInterviewList.totalRecords)
+        setInterviews(interviewsWithID)
+        setNextToken(result.data.getUserInterviewsPaginated.nextToken)
+        setTotalRecords(result.data.getUserInterviewsPaginated.totalRecords)
       }
     } catch (error) {
       console.error('Error fetching interviews:', error)
@@ -175,6 +209,7 @@ const InterviewList = () => {
           value={value}
           selectedRows={selectedRows}
           handleFilter={handleFilter}
+          handleKeyDown={handleKeyDown}
           onDelete={handleDelete}
           buttonText={'New Interview'}
           buttonLink={'/interview/create-questions'}
@@ -191,7 +226,6 @@ const InterviewList = () => {
           }))}
           pageSize={pageSize}
           rowsPerPageOptions={[5]}
-          checkboxSelection
           disableSelectionOnClick
           onPageChange={handlePageChange}
           onSelectionModelChange={rows => {

@@ -4,15 +4,14 @@ import Link from 'next/link'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Select from '@mui/material/Select'
 import { GridRowId } from '@mui/x-data-grid'
-import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 
 interface TableHeaderProps {
   value: string
   selectedRows: GridRowId[]
   handleFilter: (val: string) => void
+  handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
   onDelete: () => void
   buttonText: string
   buttonLink: string
@@ -20,7 +19,7 @@ interface TableHeaderProps {
 
 const TableHeader = (props: TableHeaderProps) => {
   // ** Props
-  const { value, selectedRows, handleFilter, onDelete, buttonText, buttonLink } = props
+  const { value, handleFilter, handleKeyDown, buttonText, buttonLink } = props
 
   return (
     <Box
@@ -34,7 +33,7 @@ const TableHeader = (props: TableHeaderProps) => {
         justifyContent: 'space-between'
       }}
     >
-      <Select
+      {/* <Select
         size='small'
         displayEmpty
         defaultValue=''
@@ -47,19 +46,21 @@ const TableHeader = (props: TableHeaderProps) => {
           }
         }}
       >
-        <MenuItem disabled>Actions</MenuItem>
-        <MenuItem disabled value='Delete'>
-          Delete
+        <MenuItem disabled hidden>
+          Actions
         </MenuItem>
-      </Select>
+        <MenuItem value='Delete'>Delete</MenuItem>
+      </Select> */}
 
+      <Box sx={{ mr: 4, mb: 2 }}></Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
           size='small'
           value={value}
-          placeholder='Search QuestionID'
+          placeholder='Search Keyword'
           sx={{ mr: 4, mb: 2, maxWidth: '180px' }}
           onChange={e => handleFilter(e.target.value)}
+          onKeyDown={e => handleKeyDown(e)}
         />
         <Button
           sx={{
