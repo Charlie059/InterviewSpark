@@ -3,10 +3,13 @@ import { Box, CardContent, Typography, Button, Card } from '@mui/material'
 import { ReactNode } from 'react'
 import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import { InterviewQuestionList, InterviewQuestion } from 'src/components/interview-question-selection-result-list'
-import Logo from 'src/components/logo'
-import InterviewQuestionSummary from 'src/components/interview-question-summary'
-import QuestionList from 'src/components/question-list'
+import {
+  InterviewQuestionList,
+  InterviewQuestion
+} from 'src/components/interview/createInterview/interview-question-selection-result-list'
+import Logo from 'src/components/interview/createInterview/logo'
+import InterviewQuestionSummary from 'src/components/interview/createInterview/interview-question-summary'
+import QuestionList from 'src/components/interview/createInterview/question-list'
 import router from 'next/router'
 import { API, graphqlOperation } from 'aws-amplify'
 import { createInterviewWithQuestion } from 'src/graphql/mutations'

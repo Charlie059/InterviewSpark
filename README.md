@@ -52,6 +52,7 @@ The HireBeat Job Seeker includes the following features:
 
 ## Documentations
 
+Check GraphQL DOCS: https://charile059s-organization.gitbook.io/api-docs/
 For more information about using the HireBeat Job Seeker with AWS Amplify, check out the [official documentation](https://hirebeat-job-seeker.example.com/docs/). The documentation includes information on installation, configuration, and customization, as well as a list of frequently asked questions and troubleshooting tips.
 
 ## Support

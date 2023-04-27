@@ -8,7 +8,7 @@ import { format } from 'date-fns'
 
 import { Card, IconButton } from '@mui/material'
 
-import TableHeader from '../table-header'
+import TableHeader from '../../../table-header'
 
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'

@@ -1,4 +1,8 @@
 import { defineConfig } from 'cypress'
+import dotenv from 'dotenv'
+
+// Load environment variables from .env.local
+dotenv.config({ path: '.env.local' })
 
 export default defineConfig({
   component: {
@@ -10,17 +14,11 @@ export default defineConfig({
 
   e2e: {
     baseUrl: 'http://localhost:3000',
-    setupNodeEvents(on, config) {
-      config.env = {
-        ...process.env,
-        ...config.env
-      }
-
-      return config
-    }
+    setupNodeEvents(on, config) {}
   },
 
   env: {
-    MAILOSAUR_API_KEY: 'cqbNeiG7h0LhsaYCiUarNxSqMPoEqMeB'
+    MAILOSAUR_API_KEY: process.env.CYPRESS_MAILOSAUR_API_KEY,
+    SERVER_ID: process.env.CYPRESS_SERVER_ID
   }
 })

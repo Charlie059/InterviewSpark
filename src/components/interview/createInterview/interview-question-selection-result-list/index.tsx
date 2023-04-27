@@ -3,7 +3,7 @@ import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
 
 import { Card, IconButton } from '@mui/material'
 
-import TableHeader from '../table-header'
+import TableHeader from '../../../table-header'
 
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
