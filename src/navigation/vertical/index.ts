@@ -37,7 +37,14 @@ const navigation = (): VerticalNavItemsType => {
       action: 'read',
       subject: 'profile-page',
       icon: 'mdi:account-outline'
-    }
+    },
+    {
+      title: 'Resume',
+      path: '/resume',
+      action: 'read',
+      subject: 'resume-page',
+      icon: 'mdi:book-open-outline'
+    },
   ]
 }
 

@@ -53,6 +53,9 @@ const ResumeScanPage= () => {
   )
 }
 
-
+ResumeScanPage.acl = {
+  action: 'read',
+  subject: 'acl-page'
+}
 
 export default ResumeScanPage
