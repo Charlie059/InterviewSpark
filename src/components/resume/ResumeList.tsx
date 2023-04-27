@@ -117,12 +117,15 @@ const ResumeList: React.FC<ResumeListProps> = () => {
   };
 
   const deleteResume = async (toDelete: React.MouseEvent<HTMLButtonElement>) => {
-    const resumeStore = await DataStore.query(Resume, (c) =>
-      c.resume_name('eq', toDelete.currentTarget.value)
-    );
-    DataStore.delete(resumeStore[0]);
-    console.log(resumes);
-    await getResume();
+    //#TODO
+    //Delete Resume
+
+    // const resumeStore = await DataStore.query(Resume, (c) =>
+    //   c.resume_name('eq', toDelete.currentTarget.value)
+    // );
+    // DataStore.delete(resumeStore[0]);
+    // console.log(resumes);
+    // await getResume();
   };
 
   useEffect(() => {
