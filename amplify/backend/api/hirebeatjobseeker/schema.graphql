@@ -211,6 +211,16 @@ type Mutation {
     questionID: String!
     interviewVideoKey: String!
   ): Interview!
+  removeUserInterviewsByID(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+  ): OperationResult!
+}
+
+type OperationResult {
+  isSuccessful: Boolean!
+  error: String
 }
 
 type PaginatedInterviewList {

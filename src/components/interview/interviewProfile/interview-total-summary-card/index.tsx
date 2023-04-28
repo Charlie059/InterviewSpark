@@ -113,7 +113,6 @@ const InterviewTotalSummaryCard = () => {
 
           // Update the state with the interview count data
           setData(interviewList)
-
           setInterviewHotMapData(interviewHotMapData)
 
           // Query the UserInterviewUsageMetaData
@@ -123,7 +122,6 @@ const InterviewTotalSummaryCard = () => {
             })
           )
 
-          console.log(userInterviewUsageMetaData)
           if ('data' in userInterviewUsageMetaData) {
             const interviewUsageMetaData = userInterviewUsageMetaData.data.getUserInterviewUsageMetaData
             const interviewTotalCount = interviewUsageMetaData.userInterviewNumCount
@@ -133,12 +131,13 @@ const InterviewTotalSummaryCard = () => {
           }
         }
 
+        //TODO : Need to fix this
         // Fetch the total number of questions
         // const totalQuestionsResult = await API.graphql(graphqlOperation(getNumOfQuestion, {}))
 
         // if ('data' in totalQuestionsResult) {
         // setTotalQuestions(totalQuestionsResult.data.getNumOfQuestion.questionCount)
-        setTotalQuestions(100)
+        setTotalQuestions(1)
 
         // }
       } catch (error) {

@@ -117,3 +117,19 @@ export const updateInterviewVideoKey = /* GraphQL */ `
     }
   }
 `;
+export const removeUserInterviewsByID = /* GraphQL */ `
+  mutation RemoveUserInterviewsByID(
+    $emailAddress: AWSEmail!
+    $interviewID: String!
+    $interviewQuestionID: String!
+  ) {
+    removeUserInterviewsByID(
+      emailAddress: $emailAddress
+      interviewID: $interviewID
+      interviewQuestionID: $interviewQuestionID
+    ) {
+      isSuccessful
+      error
+    }
+  }
+`;

@@ -82,6 +82,12 @@ export type Interview = {
   interviewQuestionType?: string | null,
 };
 
+export type OperationResult = {
+  __typename: "OperationResult",
+  isSuccessful: boolean,
+  error?: string | null,
+};
+
 export type WorkHistories = {
   __typename: "WorkHistories",
   workHistory?:  Array<WorkHistory | null > | null,
@@ -265,6 +271,20 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewVideoKey?: string | null,
     interviewQuestion?: string | null,
     interviewQuestionType?: string | null,
+  },
+};
+
+export type RemoveUserInterviewsByIDMutationVariables = {
+  emailAddress: string,
+  interviewID: string,
+  interviewQuestionID: string,
+};
+
+export type RemoveUserInterviewsByIDMutation = {
+  removeUserInterviewsByID:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
   },
 };
 

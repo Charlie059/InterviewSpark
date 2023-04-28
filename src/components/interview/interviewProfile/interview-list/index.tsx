@@ -4,11 +4,23 @@ import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
 import { getUserInterviewsPaginated, searchUserInterviews } from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 import { format } from 'date-fns'
-import { Box, Card, IconButton } from '@mui/material'
+import {
+  Box,
+  Card,
+  IconButton,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
+} from '@mui/material'
+
 import TableHeader from '../../../table-header'
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import Log from 'src/middleware/loggerMiddleware'
+import { removeUserInterviewsByID } from 'src/graphql/mutations'
 
 interface Interview {
   interviewID: string
@@ -26,6 +38,11 @@ const InterviewList = () => {
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [totalRecords, setTotalRecords] = useState<number>(0)
   const [maxPageReached, setMaxPageReached] = useState<number>(0)
+  const [confirmationDialogOpen, setConfirmationDialogOpen] = useState<boolean>(false)
+  const [selectedInterview, setSelectedInterview] = useState<{
+    interviewID: string
+    interviewQuestionID: string
+  } | null>(null)
 
   const getQuestionTypeColors = (questionType: string) => {
     switch (questionType) {
@@ -99,6 +116,11 @@ const InterviewList = () => {
             color='secondary'
             onClick={() => {
               Log.info('Delete button clicked for interview ID:', params.row.interviewID)
+              setSelectedInterview({
+                interviewID: params.row.interviewID,
+                interviewQuestionID: params.row.interviewQuestionID
+              })
+              setConfirmationDialogOpen(true)
             }}
           >
             <DeleteIcon color='disabled' />
@@ -126,7 +148,7 @@ const InterviewList = () => {
         const interviewsWithID = interviewList.map((interview: Interview) => {
           return {
             ...interview,
-            id: `${interview.interviewID}`
+            id: `INT#${interview.interviewID}#QST#${interview.interviewQuestionID}`
           }
         })
 
@@ -153,8 +175,33 @@ const InterviewList = () => {
     }
   }
 
+  const handleConfirmedDelete = async () => {
+    if (!selectedInterview) return
+
+    try {
+      const emailAddress = auth.user?.userEmailAddress
+      console.log(emailAddress)
+      console.log('Deleting interview:', selectedInterview)
+      await API.graphql(
+        graphqlOperation(removeUserInterviewsByID, {
+          emailAddress,
+          interviewID: selectedInterview.interviewID,
+          interviewQuestionID: selectedInterview.interviewQuestionID
+        })
+      )
+
+      setConfirmationDialogOpen(false)
+      setSelectedRows([])
+      setSelectedInterview(null)
+      fetchInterviews()
+    } catch (error) {
+      console.error('Error deleting interviews:', error)
+    }
+  }
+
+  // TODO: Unusued
   const handleDelete = () => {
-    Log.info('Delete button clicked for interview IDs:', selectedRows)
+    // Pop up a confirmation dialog to confirm the deletion, if confirmed then delete the selected rows by calling the API removeUserInterviewsByID
   }
 
   useEffect(() => {
@@ -181,7 +228,7 @@ const InterviewList = () => {
         const interviewsWithID = interviewList.map((interview: Interview) => {
           return {
             ...interview,
-            id: `${interview.interviewID}`
+            id: `INT#${interview.interviewID}#QST#${interview.interviewQuestionID}`
           }
         })
 
@@ -221,7 +268,7 @@ const InterviewList = () => {
           rowCount={totalRecords}
           columns={columns.map(column => ({
             ...column,
-            headerAlign: 'center', // Add this line to center the headerName
+            headerAlign: 'center',
             align: 'center'
           }))}
           pageSize={pageSize}
@@ -233,6 +280,20 @@ const InterviewList = () => {
           }}
         />
       </div>
+      <Dialog open={confirmationDialogOpen} onClose={() => setConfirmationDialogOpen(false)}>
+        <DialogTitle>Delete Selected Interviews Video</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete the selected interview video? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmationDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirmedDelete} color='error'>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   )
 }
