@@ -3,7 +3,6 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid'
 import { getQuestionsPaginated } from 'src/graphql/queries'
 import { IconButton } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import QuestionListHeader from '../question-list-table-header/index'
 import { InterviewQuestion } from '../interview-question-selection-result-list'
@@ -18,6 +17,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pageSize, setPageSize] = useState<number>(5)
   const [nextToken, setNextToken] = useState<string | null>(null)
+  const [prevToken, setPrevToken] = useState<string[]>([])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [value, setValue] = useState<string>('')
   const [totalRecords, setTotalRecords] = useState<number>(0)
@@ -46,14 +46,6 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
           >
             <VisibilityIcon color='disabled' />
           </IconButton>
-          <IconButton
-            color='secondary'
-            onClick={() => {
-              Log.info('Delete button clicked for interview ID:', params.row.interviewID)
-            }}
-          >
-            <DeleteIcon color='disabled' />
-          </IconButton>
         </>
       )
     }
@@ -64,11 +56,11 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   }
 
   useEffect(() => {
-    fetchInterviews()
+    fetchInterviewQuestions()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const fetchInterviews = async (nextToken: string | null = null) => {
+  const fetchInterviewQuestions = async (token: string | null = null) => {
     try {
       const result = await API.graphql(
         graphqlOperation(getQuestionsPaginated, {
@@ -83,6 +75,10 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
         setNextToken(result.data.getQuestionsPaginated.nextToken)
         setTotalRecords(result.data.getQuestionsPaginated.totalRecords)
 
+        if (nextToken === token) {
+          setPrevToken(prevToken.slice(0, -1))
+        }
+
         // Add the ID field to each question
         const questionsWithID = questionList.map((question: InterviewQuestion, questionID: number) => {
           return { ...question, id: questionID }
@@ -96,9 +92,20 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
 
   const handlePageChange = (params: number) => {
     const currentPage = params
+
     if (currentPage > maxPageReached) {
-      fetchInterviews(nextToken)
+      // Going forward
+      const newPrevTokens = [...prevToken]
+      if (nextToken !== null) {
+        newPrevTokens[currentPage - 1] = nextToken
+      }
+      setPrevToken(newPrevTokens)
+      fetchInterviewQuestions(nextToken)
       setMaxPageReached(currentPage)
+    } else {
+      // Going backward
+      const currentPrevToken = prevToken[currentPage - 1] || null
+      fetchInterviewQuestions(currentPrevToken)
     }
   }
 

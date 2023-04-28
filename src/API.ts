@@ -147,6 +147,8 @@ export type Question = {
   interviewQuestionSampleAns?: string | null,
   interviewQuestionType?: string | null,
   QuestionID?: string | null,
+  difficulty?: string | null,
+  estimatedSecond?: number | null,
 };
 
 export type PaginatedQuestionList = {
@@ -154,6 +156,11 @@ export type PaginatedQuestionList = {
   questionList?:  Array<Question | null > | null,
   nextToken?: string | null,
   totalRecords?: number | null,
+};
+
+export type QuestionList = {
+  __typename: "QuestionList",
+  questionList?:  Array<Question | null > | null,
 };
 
 export type CreateGuestUserMutationVariables = {
@@ -475,6 +482,8 @@ export type GetQuestionMetaDataQuery = {
     interviewQuestionSampleAns?: string | null,
     interviewQuestionType?: string | null,
     QuestionID?: string | null,
+    difficulty?: string | null,
+    estimatedSecond?: number | null,
   },
 };
 
@@ -493,9 +502,31 @@ export type GetQuestionsPaginatedQuery = {
       interviewQuestionSampleAns?: string | null,
       interviewQuestionType?: string | null,
       QuestionID?: string | null,
+      difficulty?: string | null,
+      estimatedSecond?: number | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
+  },
+};
+
+export type SearchInterviewQuestionsQueryVariables = {
+  keyword: string,
+};
+
+export type SearchInterviewQuestionsQuery = {
+  searchInterviewQuestions:  {
+    __typename: "QuestionList",
+    questionList?:  Array< {
+      __typename: "Question",
+      GSI1PK?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionSampleAns?: string | null,
+      interviewQuestionType?: string | null,
+      QuestionID?: string | null,
+      difficulty?: string | null,
+      estimatedSecond?: number | null,
+    } | null > | null,
   },
 };
 

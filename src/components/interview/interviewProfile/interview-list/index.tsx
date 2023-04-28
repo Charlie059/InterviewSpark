@@ -33,6 +33,7 @@ const InterviewList = () => {
   const auth = useAuth()
   const [interviews, setInterviews] = useState<Interview[]>([])
   const [pageSize] = useState<number>(5)
+
   const [nextToken, setNextToken] = useState<string | null>(null)
   const [value, setValue] = useState<string>('')
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])

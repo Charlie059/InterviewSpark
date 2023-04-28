@@ -154,6 +154,8 @@ export const getQuestionMetaData = /* GraphQL */ `
       interviewQuestionSampleAns
       interviewQuestionType
       QuestionID
+      difficulty
+      estimatedSecond
     }
   }
 `;
@@ -166,9 +168,26 @@ export const getQuestionsPaginated = /* GraphQL */ `
         interviewQuestionSampleAns
         interviewQuestionType
         QuestionID
+        difficulty
+        estimatedSecond
       }
       nextToken
       totalRecords
+    }
+  }
+`;
+export const searchInterviewQuestions = /* GraphQL */ `
+  query SearchInterviewQuestions($keyword: String!) {
+    searchInterviewQuestions(keyword: $keyword) {
+      questionList {
+        GSI1PK
+        interviewQuestion
+        interviewQuestionSampleAns
+        interviewQuestionType
+        QuestionID
+        difficulty
+        estimatedSecond
+      }
     }
   }
 `;
