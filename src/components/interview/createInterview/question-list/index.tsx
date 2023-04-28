@@ -12,12 +12,12 @@ interface QuestionListProps {
   setSelectedRows: (rows: InterviewQuestion[]) => void
 }
 
+let currentPage = 0
 const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const [questions, setQuestions] = useState<InterviewQuestion[]>([])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pageSize, setPageSize] = useState<number>(5)
-  const [nextToken, setNextToken] = useState<string | null>(null)
-  const [prevToken, setPrevToken] = useState<string[]>([])
+  const [tokens, setTokens] = useState<string[]>([])
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [value, setValue] = useState<string>('')
   const [totalRecords, setTotalRecords] = useState<number>(0)
@@ -60,7 +60,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const fetchInterviewQuestions = async (token: string | null = null) => {
+  const fetchInterviewQuestions = async (nextToken: string | null = null) => {
     try {
       const result = await API.graphql(
         graphqlOperation(getQuestionsPaginated, {
@@ -69,21 +69,23 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
         })
       )
 
+      console.log('Result:', result)
+
       if ('data' in result) {
         const questionList = result.data.getQuestionsPaginated.questionList
-        setQuestions(questionList)
-        setNextToken(result.data.getQuestionsPaginated.nextToken)
-        setTotalRecords(result.data.getQuestionsPaginated.totalRecords)
-
-        if (nextToken === token) {
-          setPrevToken(prevToken.slice(0, -1))
-        }
-
-        // Add the ID field to each question
         const questionsWithID = questionList.map((question: InterviewQuestion, questionID: number) => {
           return { ...question, id: questionID }
         })
-        setQuestions(questionsWithID)
+
+        setQuestions([...questions, ...questionsWithID])
+
+        // Add the next token to the list of tokens
+        if (result.data.getQuestionsPaginated.nextToken) {
+          if (tokens.length === 0) setTokens([...tokens, result.data.getQuestionsPaginated.nextToken])
+          else if (currentPage > maxPageReached) setTokens([...tokens, result.data.getQuestionsPaginated.nextToken])
+        }
+
+        setTotalRecords(result.data.getQuestionsPaginated.totalRecords)
       }
     } catch (error) {
       console.error('Error fetching interviews:', error)
@@ -91,21 +93,14 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   }
 
   const handlePageChange = (params: number) => {
-    const currentPage = params
-
+    currentPage = params
     if (currentPage > maxPageReached) {
       // Going forward
-      const newPrevTokens = [...prevToken]
-      if (nextToken !== null) {
-        newPrevTokens[currentPage - 1] = nextToken
-      }
-      setPrevToken(newPrevTokens)
-      fetchInterviewQuestions(nextToken)
+      fetchInterviewQuestions(tokens[currentPage - 1])
       setMaxPageReached(currentPage)
     } else {
       // Going backward
-      const currentPrevToken = prevToken[currentPage - 1] || null
-      fetchInterviewQuestions(currentPrevToken)
+      fetchInterviewQuestions(tokens[currentPage - 1])
     }
   }
 
