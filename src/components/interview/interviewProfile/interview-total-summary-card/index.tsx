@@ -125,9 +125,11 @@ const InterviewTotalSummaryCard = () => {
           if ('data' in userInterviewUsageMetaData) {
             const interviewUsageMetaData = userInterviewUsageMetaData.data.getUserInterviewUsageMetaData
             const interviewTotalCount = interviewUsageMetaData.userInterviewNumCount
-            const interviewQuestionSet = interviewUsageMetaData.userInterviewQuestionSet
+            const interviewQuestionMap = JSON.parse(interviewUsageMetaData.userInterviewQuestionMap)
+            const interviewQuestionMapLength = Object.keys(interviewQuestionMap).length
+
             setInterviewTotalCount(interviewTotalCount)
-            setTotalQuestionUserDid(interviewQuestionSet.length)
+            setTotalQuestionUserDid(interviewQuestionMapLength)
           }
         }
 
@@ -137,7 +139,7 @@ const InterviewTotalSummaryCard = () => {
 
         // if ('data' in totalQuestionsResult) {
         // setTotalQuestions(totalQuestionsResult.data.getNumOfQuestion.questionCount)
-        setTotalQuestions(1)
+        setTotalQuestions(100)
 
         // }
       } catch (error) {

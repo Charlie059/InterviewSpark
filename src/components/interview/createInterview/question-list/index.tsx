@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid'
-import { getQuestionList } from 'src/graphql/queries'
+import { getQuestionsPaginated } from 'src/graphql/queries'
 import { IconButton } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -71,17 +71,17 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const fetchInterviews = async (nextToken: string | null = null) => {
     try {
       const result = await API.graphql(
-        graphqlOperation(getQuestionList, {
+        graphqlOperation(getQuestionsPaginated, {
           limit: pageSize,
           nextToken
         })
       )
 
       if ('data' in result) {
-        const questionList = result.data.getQuestionList.questionList
+        const questionList = result.data.getQuestionsPaginated.questionList
         setQuestions(questionList)
-        setNextToken(result.data.getQuestionList.nextToken)
-        setTotalRecords(result.data.getQuestionList.totalRecords)
+        setNextToken(result.data.getQuestionsPaginated.nextToken)
+        setTotalRecords(result.data.getQuestionsPaginated.totalRecords)
 
         // Add the ID field to each question
         const questionsWithID = questionList.map((question: InterviewQuestion, questionID: number) => {

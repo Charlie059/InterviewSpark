@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { API, graphqlOperation } from 'aws-amplify'
+import { API, graphqlOperation, Storage } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
-import { getUserInterviewsPaginated, searchUserInterviews } from 'src/graphql/queries'
+import { getUserInterviewMetaData, getUserInterviewsPaginated, searchUserInterviews } from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 import { format } from 'date-fns'
 import {
@@ -178,8 +178,34 @@ const InterviewList = () => {
   const handleConfirmedDelete = async () => {
     if (!selectedInterview) return
 
+    const emailAddress = auth.user?.userEmailAddress
+
+    // Use getUserInterviewMetaData by GraphQL and get interviewVideoKey
     try {
-      const emailAddress = auth.user?.userEmailAddress
+      const result = await API.graphql(
+        graphqlOperation(getUserInterviewMetaData, {
+          emailAddress,
+          interviewID: selectedInterview.interviewID,
+          interviewQuestionID: selectedInterview.interviewQuestionID
+        })
+      )
+
+      if ('data' in result) {
+        const interviewVideoKey = result.data.getUserInterviewMetaData.interviewVideoKey
+
+        // Remove the video from S3
+        try {
+          await Storage.remove(interviewVideoKey, { level: 'private' })
+        } catch (error) {
+          console.error('Error removing video from S3:', error)
+        }
+      }
+    } catch (error) {
+      console.error('Error getUserInterviewMetaData:', error)
+    }
+
+    // Remove the interview from DynamoDB and update the INT MetaData
+    try {
       console.log(emailAddress)
       console.log('Deleting interview:', selectedInterview)
       await API.graphql(

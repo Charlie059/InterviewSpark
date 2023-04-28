@@ -77,6 +77,10 @@ const InterviewQuestionList = (props: Props) => {
     Log.info('Delete button clicked for interview IDs:', selectedRows)
   }
 
+  const handleKeyDown = () => {
+    Log.info('Pressed Enter')
+  }
+
   useEffect(() => {
     Log.info('interviewQuestions:', interviewQuestions)
   }, [interviewQuestions])
@@ -90,6 +94,7 @@ const InterviewQuestionList = (props: Props) => {
         onDelete={handleDelete}
         buttonText={'Add Randomly'}
         buttonLink={''}
+        handleKeyDown={handleKeyDown}
       />
       <DataGrid
         autoHeight

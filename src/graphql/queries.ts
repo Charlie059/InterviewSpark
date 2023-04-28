@@ -135,6 +135,7 @@ export const getUserInterviewUsageMetaData = /* GraphQL */ `
     getUserInterviewUsageMetaData(emailAddress: $emailAddress) {
       userInterviewNumCount
       userInterviewQuestionSet
+      userInterviewQuestionMap
     }
   }
 `;

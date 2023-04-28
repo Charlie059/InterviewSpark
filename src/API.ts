@@ -132,6 +132,7 @@ export type UserInterviewUsageMetaData = {
   __typename: "UserInterviewUsageMetaData",
   userInterviewNumCount?: number | null,
   userInterviewQuestionSet?: Array< number | null > | null,
+  userInterviewQuestionMap?: string | null,
 };
 
 export type QuestionUsageMetaData = {
@@ -451,6 +452,7 @@ export type GetUserInterviewUsageMetaDataQuery = {
     __typename: "UserInterviewUsageMetaData",
     userInterviewNumCount?: number | null,
     userInterviewQuestionSet?: Array< number | null > | null,
+    userInterviewQuestionMap?: string | null,
   },
 };
 

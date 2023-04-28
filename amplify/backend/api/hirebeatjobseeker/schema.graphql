@@ -264,7 +264,6 @@ type Query {
   getQuestionUsageMetaData: QuestionUsageMetaData!
   getQuestionMetaData(questionID: String!): Question!
   getQuestionsPaginated(limit: Int, nextToken: String): PaginatedQuestionList!
-  # Deprecated: getUserInterviewsByQuestionID
   getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
 }
 
@@ -295,6 +294,7 @@ type User {
 type UserInterviewUsageMetaData {
   userInterviewNumCount: Int
   userInterviewQuestionSet: [Int]
+  userInterviewQuestionMap: AWSJSON
 }
 
 type WorkHistories {

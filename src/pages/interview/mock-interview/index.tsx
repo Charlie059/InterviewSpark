@@ -174,6 +174,7 @@ function MockInterviewPage() {
       const uniqueFilename = `${userId}-${timestamp}-interview.webm`
 
       const blob = new Blob(recordedChunks.data, { type: 'video/webm' })
+
       await Storage.put(uniqueFilename, blob, {
         contentType: 'video/webm',
         level: 'private'
