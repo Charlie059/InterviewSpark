@@ -176,3 +176,4 @@
 // }
 
 // export default ResumeResults
+export {}
