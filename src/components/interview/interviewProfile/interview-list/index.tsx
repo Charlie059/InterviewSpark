@@ -240,7 +240,7 @@ const InterviewList = () => {
             setSearchTokens([...searchTokens, result.data.searchUserInterviewsPaginated.nextToken])
         }
         setTotalRecords(result.data.searchUserInterviewsPaginated.totalRecords)
-        setInterviews(interviewsWithID)
+        setInterviews(prevState => [...prevState, ...interviewsWithID])
       }
       setLoading(false)
 
@@ -250,6 +250,12 @@ const InterviewList = () => {
     }
   }
 
+  useEffect(() => {
+    if (searchMode && interviews.length === 0) {
+      searchInterviews()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interviews])
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Enter') {
       return
@@ -268,7 +274,8 @@ const InterviewList = () => {
       setSearchMode(true)
       setTokens([])
       setSearchTokens([])
-      searchInterviews()
+
+      // searchInterviews()
     }
   }
 

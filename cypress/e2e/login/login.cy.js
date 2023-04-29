@@ -1,7 +1,10 @@
 describe('Login Page', () => {
   beforeEach(() => {
+    cy.viewport(1280, 720)
+
     // Change this to your app's login URL
     cy.visit('/login')
+    cy.wait(1000)
   })
 
   it('logs in successfully with correct credentials', () => {
@@ -9,7 +12,7 @@ describe('Login Page', () => {
     const email = 'charlie@catting.co.uk'
     const password = 'Testing1234'
 
-    cy.get('[data-testid="email-input"]').type(email)
+    cy.get('[data-testid="email-input"]').scrollIntoView().type(email)
     cy.get('input[type="password"]').type(password)
     cy.get('button[type="submit"]').click()
 

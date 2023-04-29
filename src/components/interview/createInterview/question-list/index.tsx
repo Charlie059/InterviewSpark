@@ -146,6 +146,14 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
       console.error('Error fetching interviews:', error)
     }
   }
+
+  useEffect(() => {
+    if (searchMode && questions.length === 0) {
+      searchQuestions()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions])
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Enter') {
       return
@@ -164,7 +172,8 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
       setSearchMode(true)
       setTokens([])
       setSearchTokens([])
-      searchQuestions()
+
+      // searchQuestions()
     }
   }
 

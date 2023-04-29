@@ -14,27 +14,28 @@ const WindowWrapper = ({ children }: Props) => {
 
   const router = useRouter()
 
-  const handleResize = () => {
-    const baseWidth = 1750
-    const viewportWidth = window.innerWidth
-    const zoom = viewportWidth / baseWidth
+  // const handleResize = () => {
+  //   const baseWidth = 1750
+  //   const viewportWidth = window.innerWidth
+  //   const zoom = viewportWidth / baseWidth
 
-    document.documentElement.style.setProperty('zoom', zoom.toString())
-  }
+  //   document.documentElement.style.setProperty('zoom', zoom.toString())
+  // }
 
   useEffect(
     () => {
       if (typeof window !== 'undefined') {
         setWindowReadyFlag(true)
-        handleResize()
-        window.addEventListener('resize', handleResize)
+
+        // handleResize()
+        // window.addEventListener('resize', handleResize)
       }
 
-      return () => {
-        if (typeof window !== 'undefined') {
-          window.removeEventListener('resize', handleResize)
-        }
-      }
+      // return () => {
+      //   if (typeof window !== 'undefined') {
+      //     window.removeEventListener('resize', handleResize)
+      //   }
+      // }
     },
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
