@@ -176,9 +176,9 @@ export const getQuestionsPaginated = /* GraphQL */ `
     }
   }
 `;
-export const searchInterviewQuestions = /* GraphQL */ `
-  query SearchInterviewQuestions($keyword: String!) {
-    searchInterviewQuestions(keyword: $keyword) {
+export const searchQuestions = /* GraphQL */ `
+  query SearchQuestions($keyword: String!) {
+    searchQuestions(keyword: $keyword) {
       questionList {
         GSI1PK
         interviewQuestion
@@ -188,6 +188,31 @@ export const searchInterviewQuestions = /* GraphQL */ `
         difficulty
         estimatedSecond
       }
+    }
+  }
+`;
+export const searchQuestionsPaginated = /* GraphQL */ `
+  query SearchQuestionsPaginated(
+    $keyword: String!
+    $limit: Int!
+    $nextToken: String
+  ) {
+    searchQuestionsPaginated(
+      keyword: $keyword
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      questionList {
+        GSI1PK
+        interviewQuestion
+        interviewQuestionSampleAns
+        interviewQuestionType
+        QuestionID
+        difficulty
+        estimatedSecond
+      }
+      nextToken
+      totalRecords
     }
   }
 `;

@@ -510,12 +510,12 @@ export type GetQuestionsPaginatedQuery = {
   },
 };
 
-export type SearchInterviewQuestionsQueryVariables = {
+export type SearchQuestionsQueryVariables = {
   keyword: string,
 };
 
-export type SearchInterviewQuestionsQuery = {
-  searchInterviewQuestions:  {
+export type SearchQuestionsQuery = {
+  searchQuestions:  {
     __typename: "QuestionList",
     questionList?:  Array< {
       __typename: "Question",
@@ -527,6 +527,30 @@ export type SearchInterviewQuestionsQuery = {
       difficulty?: string | null,
       estimatedSecond?: number | null,
     } | null > | null,
+  },
+};
+
+export type SearchQuestionsPaginatedQueryVariables = {
+  keyword: string,
+  limit: number,
+  nextToken?: string | null,
+};
+
+export type SearchQuestionsPaginatedQuery = {
+  searchQuestionsPaginated:  {
+    __typename: "PaginatedQuestionList",
+    questionList?:  Array< {
+      __typename: "Question",
+      GSI1PK?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionSampleAns?: string | null,
+      interviewQuestionType?: string | null,
+      QuestionID?: string | null,
+      difficulty?: string | null,
+      estimatedSecond?: number | null,
+    } | null > | null,
+    nextToken?: string | null,
+    totalRecords?: number | null,
   },
 };
 

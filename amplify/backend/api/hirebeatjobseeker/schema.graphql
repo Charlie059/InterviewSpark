@@ -277,8 +277,10 @@ type Query {
   getQuestionMetaData(questionID: String!): Question!
   # getQuestionsPaginated: The getQuestionsPaginated query retrieves a paginated list of interview questions.
   getQuestionsPaginated(limit: Int, nextToken: String): PaginatedQuestionList!
-  # searchInterviewQuestions:The searchInterviewQuestions query takes a required keyword argument of type String and returns a list of Question objects that match the provided keyword in their interviewQuestion field.
-  searchInterviewQuestions(keyword: String!): QuestionList!
+  # searchQuestions:The searchQuestions query takes a required keyword argument of type String and returns a list of Question objects that match the provided keyword in their interviewQuestion field.
+  searchQuestions(keyword: String!): QuestionList!
+  # searchQuestionsPaginated: searchQuestionsPaginated is a paginated query that retrieves a list of interview questions matching a specific keyword.
+  searchQuestionsPaginated(keyword: String!, limit: Int!, nextToken: String): PaginatedQuestionList!
   # Deprecated: getUserInterviewsByQuestionID
   getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
 }

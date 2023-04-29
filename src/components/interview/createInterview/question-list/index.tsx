@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid'
-import { getQuestionsPaginated } from 'src/graphql/queries'
+import { getQuestionsPaginated, searchQuestionsPaginated } from 'src/graphql/queries'
 import { IconButton } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import QuestionListHeader from '../question-list-table-header/index'
@@ -13,16 +13,18 @@ interface QuestionListProps {
 }
 
 let currentPage = 0
+
 const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const [questions, setQuestions] = useState<InterviewQuestion[]>([])
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [pageSize, setPageSize] = useState<number>(5)
+  const [pageSize] = useState<number>(5)
   const [tokens, setTokens] = useState<string[]>([])
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [searchTokens, setSearchTokens] = useState<string[]>([])
   const [value, setValue] = useState<string>('')
   const [totalRecords, setTotalRecords] = useState<number>(0)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [maxPageReached, setMaxPageReached] = useState<number>(0)
+  const [searchMode, setSearchMode] = useState<boolean>(false)
+  const [page, setPage] = useState<number>(0)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const columns = [
     { field: 'QuestionID', headerName: 'ID', width: 75 },
@@ -41,7 +43,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
           <IconButton
             color='primary'
             onClick={() => {
-              Log.info('View button clicked for interview ID:', params.row.interviewID)
+              Log.info('View button clicked for interview ID:', params.row.id)
             }}
           >
             <VisibilityIcon color='disabled' />
@@ -57,10 +59,12 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
 
   useEffect(() => {
     fetchInterviewQuestions()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchInterviewQuestions = async (nextToken: string | null = null) => {
+    setLoading(true)
     try {
       const result = await API.graphql(
         graphqlOperation(getQuestionsPaginated, {
@@ -69,15 +73,11 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
         })
       )
 
-      console.log('Result:', result)
-
       if ('data' in result) {
         const questionList = result.data.getQuestionsPaginated.questionList
-        const questionsWithID = questionList.map((question: InterviewQuestion, questionID: number) => {
-          return { ...question, id: questionID }
+        const questionsWithID = questionList.map((question: InterviewQuestion) => {
+          return { ...question, id: question.QuestionID }
         })
-
-        setQuestions([...questions, ...questionsWithID])
 
         // Add the next token to the list of tokens
         if (result.data.getQuestionsPaginated.nextToken) {
@@ -86,28 +86,94 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
         }
 
         setTotalRecords(result.data.getQuestionsPaginated.totalRecords)
+        setQuestions(prevState => [...prevState, ...questionsWithID])
       }
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching interviews:', error)
     }
   }
 
   const handlePageChange = (params: number) => {
+    setPage(params)
     currentPage = params
-    if (currentPage > maxPageReached) {
-      // Going forward
-      fetchInterviewQuestions(tokens[currentPage - 1])
-      setMaxPageReached(currentPage)
+
+    if (searchMode) {
+      if (currentPage > maxPageReached) {
+        // Going forward
+        searchQuestions(searchTokens[currentPage - 1])
+        setMaxPageReached(currentPage)
+      }
     } else {
-      // Going backward
-      fetchInterviewQuestions(tokens[currentPage - 1])
+      if (currentPage > maxPageReached) {
+        // Going forward
+        fetchInterviewQuestions(tokens[currentPage - 1])
+        setMaxPageReached(currentPage)
+      }
+    }
+  }
+
+  const searchQuestions = async (nextToken: string | null = null) => {
+    setLoading(true)
+    try {
+      const result = await API.graphql(
+        graphqlOperation(searchQuestionsPaginated, {
+          keyword: value,
+          limit: pageSize,
+          nextToken
+        })
+      )
+
+      if ('data' in result) {
+        const questionList = result.data.searchQuestionsPaginated.questionList
+        const questionsWithID = questionList.map((question: InterviewQuestion) => {
+          return { ...question, id: question.QuestionID }
+        })
+
+        // Add the next token to the list of tokens
+        if (result.data.searchQuestionsPaginated.nextToken) {
+          if (searchTokens.length === 0) {
+            setSearchTokens([...searchTokens, result.data.searchQuestionsPaginated.nextToken])
+          } else if (currentPage > maxPageReached)
+            setSearchTokens([...searchTokens, result.data.searchQuestionsPaginated.nextToken])
+        }
+        setTotalRecords(result.data.searchQuestionsPaginated.totalRecords)
+        setQuestions(prevState => [...prevState, ...questionsWithID])
+      }
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching interviews:', error)
+    }
+  }
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Enter') {
+      return
+    }
+
+    setQuestions([])
+    setMaxPageReached(0)
+    setPage(0)
+
+    if (value === '') {
+      setSearchMode(false)
+      setTokens([])
+      setSearchTokens([])
+      fetchInterviewQuestions()
+    } else {
+      setSearchMode(true)
+      setTokens([])
+      setSearchTokens([])
+      searchQuestions()
     }
   }
 
   return (
     <div>
-      <QuestionListHeader value={''} selectedRows={[]} handleFilter={handleFilter} />
+      <QuestionListHeader value={value} selectedRows={[]} handleKeyDown={handleKeyDown} handleFilter={handleFilter} />
+
       <DataGrid
+        loading={loading}
+        page={page}
         autoHeight
         pagination
         rows={questions}
@@ -117,10 +183,9 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
           headerAlign: 'center', // Add this line to center the headerName
           align: 'center'
         }))}
+        checkboxSelection
         pageSize={pageSize}
         rowsPerPageOptions={[5]}
-        checkboxSelection
-        disableSelectionOnClick
         onPageChange={handlePageChange}
         onSelectionModelChange={newSelection => {
           const selectedRowsData = newSelection

@@ -226,7 +226,7 @@ const InterviewList = () => {
     }
   }
 
-  // TODO: Unusued
+  // TODO: Unused
   const handleDelete = () => {
     // Pop up a confirmation dialog to confirm the deletion, if confirmed then delete the selected rows by calling the API removeUserInterviewsByID
   }
