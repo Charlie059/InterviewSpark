@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { API, graphqlOperation, Storage } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
-import { getUserInterviewMetaData, getUserInterviewsPaginated, searchUserInterviews } from 'src/graphql/queries'
+import {
+  getUserInterviewMetaData,
+  getUserInterviewsPaginated,
+  searchUserInterviewsPaginated
+} from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 import { format } from 'date-fns'
 import {
@@ -29,12 +33,16 @@ interface Interview {
   interviewVideoKey: string
 }
 
+let currentPage = 0
+
 const InterviewList = () => {
   const auth = useAuth()
   const [interviews, setInterviews] = useState<Interview[]>([])
   const [pageSize] = useState<number>(5)
-
-  const [nextToken, setNextToken] = useState<string | null>(null)
+  const [page, setPage] = useState<number>(0)
+  const [searchMode, setSearchMode] = useState<boolean>(false)
+  const [tokens, setTokens] = useState<string[]>([])
+  const [searchTokens, setSearchTokens] = useState<string[]>([])
   const [value, setValue] = useState<string>('')
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
   const [totalRecords, setTotalRecords] = useState<number>(0)
@@ -44,6 +52,8 @@ const InterviewList = () => {
     interviewID: string
     interviewQuestionID: string
   } | null>(null)
+
+  const [loading, setLoading] = useState<boolean>(false)
 
   const getQuestionTypeColors = (questionType: string) => {
     switch (questionType) {
@@ -131,21 +141,35 @@ const InterviewList = () => {
     }
   ]
 
-  const searchInterviews = async (searchValue: string) => {
+  const handleFilter = (val: string) => {
+    setValue(val)
+  }
+
+  useEffect(() => {
+    fetchInterviews()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const fetchInterviews = async (nextToken: string | null = null) => {
+    setLoading(true)
     try {
       const emailAddress = auth.user?.userEmailAddress
 
       const result = await API.graphql(
-        graphqlOperation(searchUserInterviews, {
+        graphqlOperation(getUserInterviewsPaginated, {
           emailAddress,
-          keyword: searchValue
+          limit: pageSize,
+          nextToken
         })
       )
 
-      if ('data' in result) {
-        const interviewList = result.data.searchUserInterviews.interviewList
+      console.log('Result:', result)
 
-        // Add the ID field to each interview in the list
+      if ('data' in result) {
+        const interviewList = result.data.getUserInterviewsPaginated.interviewList
+
+        // Add the ID field to the each interview in the list
         const interviewsWithID = interviewList.map((interview: Interview) => {
           return {
             ...interview,
@@ -153,26 +177,98 @@ const InterviewList = () => {
           }
         })
 
-        setInterviews(interviewsWithID)
-        setNextToken(result.data.searchUserInterviews.nextToken)
-        setTotalRecords(result.data.searchUserInterviews.totalRecords)
+        // Add the next token to the list of tokens
+        if (result.data.getUserInterviewsPaginated.nextToken) {
+          if (tokens.length === 0) setTokens([...tokens, result.data.getUserInterviewsPaginated.nextToken])
+          else if (currentPage > maxPageReached)
+            setTokens([...tokens, result.data.getUserInterviewsPaginated.nextToken])
+        }
+
+        setTotalRecords(result.data.getUserInterviewsPaginated.totalRecords)
+        setInterviews(prevState => [...prevState, ...interviewsWithID])
       }
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching interviews:', error)
     }
   }
 
-  const handleFilter = (val: string) => {
-    setValue(val)
+  const handlePageChange = (params: number) => {
+    setPage(params)
+    currentPage = params
+    if (searchMode) {
+      if (currentPage > maxPageReached) {
+        // Going forward
+        searchInterviews(searchTokens[currentPage - 1])
+        setMaxPageReached(currentPage)
+      }
+    } else {
+      if (currentPage > maxPageReached) {
+        // Going forward
+        fetchInterviews(tokens[currentPage - 1])
+        setMaxPageReached(currentPage)
+      }
+    }
+  }
+
+  const searchInterviews = async (nextToken: string | null = null) => {
+    setLoading(true)
+    try {
+      const result = await API.graphql(
+        graphqlOperation(searchUserInterviewsPaginated, {
+          emailAddress: auth.user?.userEmailAddress,
+          keyword: value,
+          limit: pageSize,
+          nextToken
+        })
+      )
+
+      if ('data' in result) {
+        const interviewList = result.data.searchUserInterviewsPaginated.interviewList
+        const interviewsWithID = interviewList.map((interview: Interview) => {
+          return {
+            ...interview,
+            id: `INT#${interview.interviewID}#QST#${interview.interviewQuestionID}`
+          }
+        })
+
+        // Add the next token to the list of tokens
+        if (result.data.searchUserInterviewsPaginated.nextToken) {
+          if (searchTokens.length === 0) {
+            setSearchTokens([...searchTokens, result.data.searchUserInterviewsPaginated.nextToken])
+          } else if (currentPage > maxPageReached)
+            setSearchTokens([...searchTokens, result.data.searchUserInterviewsPaginated.nextToken])
+        }
+        setTotalRecords(result.data.searchUserInterviewsPaginated.totalRecords)
+        setInterviews(interviewsWithID)
+      }
+      setLoading(false)
+
+      console.log('Interviews:', interviews)
+    } catch (error) {
+      console.error('Error fetching interviews:', error)
+    }
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
-      if (value === '') {
-        fetchInterviews()
-      } else {
-        searchInterviews(value)
-      }
+    if (event.key !== 'Enter') {
+      return
+    }
+
+    setInterviews([])
+    setMaxPageReached(0)
+    setPage(0)
+
+    if (value === '') {
+      setSearchMode(false)
+      setTokens([])
+      setSearchTokens([])
+      fetchInterviews()
+    } else {
+      setSearchMode(true)
+      setTokens([])
+      setSearchTokens([])
+      searchInterviews()
     }
   }
 
@@ -231,51 +327,6 @@ const InterviewList = () => {
     // Pop up a confirmation dialog to confirm the deletion, if confirmed then delete the selected rows by calling the API removeUserInterviewsByID
   }
 
-  useEffect(() => {
-    fetchInterviews()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const fetchInterviews = async (nextToken: string | null = null) => {
-    try {
-      const emailAddress = auth.user?.userEmailAddress
-
-      const result = await API.graphql(
-        graphqlOperation(getUserInterviewsPaginated, {
-          emailAddress,
-          limit: pageSize,
-          nextToken
-        })
-      )
-
-      if ('data' in result) {
-        const interviewList = result.data.getUserInterviewsPaginated.interviewList
-
-        // Add the ID field to the each interview in the list
-        const interviewsWithID = interviewList.map((interview: Interview) => {
-          return {
-            ...interview,
-            id: `INT#${interview.interviewID}#QST#${interview.interviewQuestionID}`
-          }
-        })
-
-        setInterviews(interviewsWithID)
-        setNextToken(result.data.getUserInterviewsPaginated.nextToken)
-        setTotalRecords(result.data.getUserInterviewsPaginated.totalRecords)
-      }
-    } catch (error) {
-      console.error('Error fetching interviews:', error)
-    }
-  }
-
-  const handlePageChange = (params: number) => {
-    const currentPage = params
-    if (currentPage > maxPageReached) {
-      fetchInterviews(nextToken)
-      setMaxPageReached(currentPage)
-    }
-  }
-
   return (
     <Card sx={{ width: '1060px', borderRadius: '20px' }}>
       <div>
@@ -289,6 +340,8 @@ const InterviewList = () => {
           buttonLink={'/interview/create-questions'}
         />
         <DataGrid
+          loading={loading}
+          page={page}
           autoHeight
           pagination
           rows={interviews}

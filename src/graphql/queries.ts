@@ -130,6 +130,28 @@ export const searchUserInterviews = /* GraphQL */ `
     }
   }
 `;
+export const searchUserInterviewsPaginated = /* GraphQL */ `
+  query SearchUserInterviewsPaginated(
+    $emailAddress: AWSEmail!
+    $keyword: String!
+  ) {
+    searchUserInterviewsPaginated(
+      emailAddress: $emailAddress
+      keyword: $keyword
+    ) {
+      interviewList {
+        interviewID
+        interviewDateTime
+        interviewQuestionID
+        interviewVideoKey
+        interviewQuestion
+        interviewQuestionType
+      }
+      nextToken
+      totalRecords
+    }
+  }
+`;
 export const getUserInterviewUsageMetaData = /* GraphQL */ `
   query GetUserInterviewUsageMetaData($emailAddress: AWSEmail!) {
     getUserInterviewUsageMetaData(emailAddress: $emailAddress) {

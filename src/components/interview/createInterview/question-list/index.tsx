@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid'
 import { getQuestionsPaginated, searchQuestionsPaginated } from 'src/graphql/queries'
-import { IconButton } from '@mui/material'
+import { Box, IconButton } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import QuestionListHeader from '../question-list-table-header/index'
 import { InterviewQuestion } from '../interview-question-selection-result-list'
@@ -16,7 +16,7 @@ let currentPage = 0
 
 const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const [questions, setQuestions] = useState<InterviewQuestion[]>([])
-  const [pageSize] = useState<number>(5)
+  const [pageSize] = useState<number>(8)
   const [tokens, setTokens] = useState<string[]>([])
   const [searchTokens, setSearchTokens] = useState<string[]>([])
   const [value, setValue] = useState<string>('')
@@ -27,14 +27,15 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const [loading, setLoading] = useState<boolean>(false)
 
   const columns = [
-    { field: 'QuestionID', headerName: 'ID', width: 75 },
+    { field: 'QuestionID', headerName: 'ID', width: 70 },
     { field: 'id', headerName: 'ID', hide: true },
-    { field: 'interviewQuestion', headerName: 'Name', width: 100 },
-    { field: 'interviewQuestionType', headerName: 'Type', width: 100 },
+    { field: 'interviewQuestion', headerName: 'Name', width: 350 },
+    { field: 'interviewQuestionType', headerName: 'Type', width: 95 },
+    { field: 'difficulty', headerName: 'Difficulty', width: 100 },
     {
       field: 'operations',
-      headerName: 'Operations',
-      width: 100,
+      headerName: 'Detail',
+      width: 85,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -168,7 +169,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   }
 
   return (
-    <div>
+    <Box>
       <QuestionListHeader value={value} selectedRows={[]} handleKeyDown={handleKeyDown} handleFilter={handleFilter} />
 
       <DataGrid
@@ -194,7 +195,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
           setSelectedRows(selectedRowsData)
         }}
       />
-    </div>
+    </Box>
   )
 }
 

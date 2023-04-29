@@ -1,4 +1,3 @@
-// ** Next Import
 import Link from 'next/link'
 
 // ** MUI Imports
@@ -15,11 +14,12 @@ interface TableHeaderProps {
   onDelete: () => void
   buttonText: string
   buttonLink: string
+  disableSearch?: boolean
 }
 
 const TableHeader = (props: TableHeaderProps) => {
   // ** Props
-  const { value, handleFilter, handleKeyDown, buttonText, buttonLink } = props
+  const { value, handleFilter, handleKeyDown, buttonText, buttonLink, disableSearch } = props
 
   return (
     <Box
@@ -33,35 +33,19 @@ const TableHeader = (props: TableHeaderProps) => {
         justifyContent: 'space-between'
       }}
     >
-      {/* <Select
-        size='small'
-        displayEmpty
-        defaultValue=''
-        sx={{ mr: 4, mb: 2 }}
-        disabled={selectedRows && selectedRows.length === 0}
-        renderValue={selected => (selected.length === 0 ? 'Actions' : selected)}
-        onChange={event => {
-          if (event.target.value === 'Delete') {
-            onDelete()
-          }
-        }}
-      >
-        <MenuItem disabled hidden>
-          Actions
-        </MenuItem>
-        <MenuItem value='Delete'>Delete</MenuItem>
-      </Select> */}
-
-      <Box sx={{ mr: 4, mb: 2 }}></Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <TextField
-          size='small'
-          value={value}
-          placeholder='Search Keyword'
-          sx={{ mr: 4, mb: 2, maxWidth: '180px' }}
-          onChange={e => handleFilter(e.target.value)}
-          onKeyDown={e => handleKeyDown(e)}
-        />
+        {!disableSearch && (
+          <TextField
+            size='small'
+            value={value}
+            placeholder='Search Keyword'
+            sx={{ mr: 4, mb: 2, maxWidth: '180px' }}
+            onChange={e => handleFilter(e.target.value)}
+            onKeyDown={e => handleKeyDown(e)}
+          />
+        )}
+      </Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <Button
           sx={{
             mb: 2,

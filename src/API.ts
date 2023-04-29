@@ -450,6 +450,28 @@ export type SearchUserInterviewsQuery = {
   },
 };
 
+export type SearchUserInterviewsPaginatedQueryVariables = {
+  emailAddress: string,
+  keyword: string,
+};
+
+export type SearchUserInterviewsPaginatedQuery = {
+  searchUserInterviewsPaginated:  {
+    __typename: "PaginatedInterviewList",
+    interviewList?:  Array< {
+      __typename: "Interview",
+      interviewID?: string | null,
+      interviewDateTime?: string | null,
+      interviewQuestionID?: string | null,
+      interviewVideoKey?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionType?: string | null,
+    } | null > | null,
+    nextToken?: string | null,
+    totalRecords?: number | null,
+  },
+};
+
 export type GetUserInterviewUsageMetaDataQueryVariables = {
   emailAddress: string,
 };

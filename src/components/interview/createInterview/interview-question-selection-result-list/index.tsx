@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
-
-import { Card, IconButton } from '@mui/material'
-
-import TableHeader from '../../../table-header'
-
+import { Box, IconButton } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-import VisibilityIcon from '@mui/icons-material/Visibility'
 import Log from 'src/middleware/loggerMiddleware'
 
 interface InterviewQuestion {
@@ -15,8 +10,9 @@ interface InterviewQuestion {
   interviewQuestion: string
   interviewQuestionSampleAns: string
   interviewQuestionType: string
+  difficulty: 'easy' | 'medium' | 'hard'
+  estimatedSecond: number
 }
-
 interface Props {
   interviewQuestions: InterviewQuestion[]
   onDeleteInterview: (id: number) => void
@@ -25,23 +21,24 @@ interface Props {
 const InterviewQuestionList = (props: Props) => {
   const { interviewQuestions, onDeleteInterview } = props
 
-  const [value, setValue] = useState<string>('')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
 
   const columns = [
     { field: 'id', headerName: 'ID', hide: true },
-    { field: 'QuestionID', headerName: 'Question', width: 100 },
-    { field: 'interviewQuestion', headerName: 'Name', width: 220 },
+    { field: 'QuestionID', headerName: 'Question', hide: true },
+    { field: 'interviewQuestion', headerName: 'Name', width: 280 },
     {
       field: 'difficulty',
       headerName: 'Difficulty',
-      width: 100
+      width: 100,
+      hide: true
     },
-    { field: 'interviewQuestionType', headerName: 'Type', width: 75 },
+    { field: 'interviewQuestionType', headerName: 'Type', width: 100 },
     {
       field: 'operations',
-      headerName: 'Operations',
-      width: 150,
+      headerName: '',
+      width: 5,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -52,9 +49,7 @@ const InterviewQuestionList = (props: Props) => {
             onClick={() => {
               Log.info('View button clicked for interview ID:', params.row.interviewID)
             }}
-          >
-            <VisibilityIcon color='disabled' />
-          </IconButton>
+          ></IconButton>
           <IconButton
             color='secondary'
             onClick={() => {
@@ -69,33 +64,12 @@ const InterviewQuestionList = (props: Props) => {
     }
   ]
 
-  const handleFilter = (val: string) => {
-    setValue(val)
-  }
-
-  const handleDelete = () => {
-    Log.info('Delete button clicked for interview IDs:', selectedRows)
-  }
-
-  const handleKeyDown = () => {
-    Log.info('Pressed Enter')
-  }
-
   useEffect(() => {
     Log.info('interviewQuestions:', interviewQuestions)
   }, [interviewQuestions])
 
   return (
-    <Card sx={{ width: 700, height: 530, marginLeft: 5, marginRight: 2, borderRadius: '20px' }}>
-      <TableHeader
-        value={value}
-        selectedRows={selectedRows}
-        handleFilter={handleFilter}
-        onDelete={handleDelete}
-        buttonText={'Add Randomly'}
-        buttonLink={''}
-        handleKeyDown={handleKeyDown}
-      />
+    <Box>
       <DataGrid
         autoHeight
         rows={interviewQuestions}
@@ -106,13 +80,12 @@ const InterviewQuestionList = (props: Props) => {
         }))}
         pageSize={interviewQuestions.length} // Set pageSize to the length of interviewQuestion array
         rowsPerPageOptions={[interviewQuestions.length]} // Set rowsPerPageOptions to the length of interviewQuestion array
-        checkboxSelection
         disableSelectionOnClick
         onSelectionModelChange={rows => {
           setSelectedRows(rows)
         }}
       />
-    </Card>
+    </Box>
   )
 }
 

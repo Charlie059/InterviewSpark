@@ -42,7 +42,7 @@ const QuestionListHeader = (props: TableHeaderProps) => {
         renderValue={selected => (selected.length === 0 ? 'Actions' : selected)}
       ></Select>
 
-      <Typography variant='subtitle1' sx={{ mb: 2.5, color: 'black' }}>
+      <Typography variant='subtitle1' sx={{ mb: 2.5, color: 'black', fontSize: '20px', fontWeight: 300 }}>
         Problems
       </Typography>
 
@@ -50,7 +50,7 @@ const QuestionListHeader = (props: TableHeaderProps) => {
         <TextField
           size='small'
           value={value}
-          placeholder='Search QuestionID'
+          placeholder='Search Keyword'
           sx={{ mr: 4, mb: 2, maxWidth: '180px' }}
           onChange={e => handleFilter(e.target.value)}
           onKeyDown={e => handleKeyDown(e)}

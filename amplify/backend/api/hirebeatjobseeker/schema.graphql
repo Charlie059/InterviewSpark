@@ -211,7 +211,6 @@ type Mutation {
     questionID: String!
     interviewVideoKey: String!
   ): Interview!
-  # removeUserInterviewsByID: This mutation removes an interview that belongs to the specified user, identified by their email address. To remove an interview, you must provide the ID of the interview and the ID of the interview question.
   removeUserInterviewsByID(
     emailAddress: AWSEmail!
     interviewID: String!
@@ -253,35 +252,21 @@ type Profile {
 }
 
 type Query {
-  # getUser: This query returns a User object with the given email address.
   getUser(emailAddress: AWSEmail!): User!
-  # getUserProfile: This query returns a Profile object associated with the given email address.
   getUserProfile(emailAddress: AWSEmail!): Profile!
-  # getUserWorkHistories:This query returns a list of WorkHistory objects associated with the given email address.
   getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!
-  # getUserEducations: The getUserEducations function retrieves the education details of the user with the given email address.
   getUserEducations(emailAddress: AWSEmail!): Educations!
-  # getUserInterviewsPaginated: This query returns a paginated list of Interview objects associated with the given email address.
   getUserInterviewsPaginated(emailAddress: AWSEmail!, limit: Int, nextToken: String): PaginatedInterviewList!
-  # getUserInterviewsByMonth: This query returns a list of interviews in the current month
   getUserInterviewsByMonth(emailAddress: AWSEmail!): InterviewList!
-  # getUserInterviewMetaData: This query returns a single Interview object with the given email address, interview ID and interview question ID.
   getUserInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview!
-  # searchUserInterviews: This function returns a list of interviews belonging to the specified user, identified by their email address, that contain the specified keyword in their question or id.
   searchUserInterviews(emailAddress: AWSEmail!, keyword: String!): InterviewList!
-  # getUserInterviewUsageMetaData:This query retrieves usage metadata for a user's interviews.
+  searchUserInterviewsPaginated(emailAddress: AWSEmail!, keyword: String!): PaginatedInterviewList!
   getUserInterviewUsageMetaData(emailAddress: AWSEmail!): UserInterviewUsageMetaData!
-  # getQuestionUsageMetaData: The getQuestionUsageMetaData query retrieves metadata about the usage of interview questions in the system.
   getQuestionUsageMetaData: QuestionUsageMetaData!
-  # getQuestionMetaData: The getQuestionMetaData query retrieves metadata about a specific interview question identified by its ID. Here are the details:
   getQuestionMetaData(questionID: String!): Question!
-  # getQuestionsPaginated: The getQuestionsPaginated query retrieves a paginated list of interview questions.
   getQuestionsPaginated(limit: Int, nextToken: String): PaginatedQuestionList!
-  # searchQuestions:The searchQuestions query takes a required keyword argument of type String and returns a list of Question objects that match the provided keyword in their interviewQuestion field.
   searchQuestions(keyword: String!): QuestionList!
-  # searchQuestionsPaginated: searchQuestionsPaginated is a paginated query that retrieves a list of interview questions matching a specific keyword.
   searchQuestionsPaginated(keyword: String!, limit: Int!, nextToken: String): PaginatedQuestionList!
-  # Deprecated: getUserInterviewsByQuestionID
   getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
 }
 
