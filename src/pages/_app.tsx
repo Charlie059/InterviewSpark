@@ -1,11 +1,12 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 // ** Next Imports
 import Head from 'next/head'
 import { Router } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material'
 
 // * Amplify
 import { Amplify } from 'aws-amplify'
@@ -110,6 +111,21 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   }
 }
 
+function useWindowSize() {
+  const [size, setSize] = useState([0, 0])
+  useEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight])
+    }
+    window.addEventListener('resize', updateSize)
+    updateSize()
+
+    return () => window.removeEventListener('resize', updateSize)
+  }, [])
+
+  return size
+}
+
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
@@ -127,38 +143,93 @@ const App = (props: ExtendedAppProps) => {
 
   const aclAbilities = Component.acl ?? defaultACLObj
 
-  return (
-    <CacheProvider value={emotionCache}>
-      <Head>
-        <title>{`HireBeat`}</title>
-        <meta name='description' content={`${themeConfig.templateName} – HireBeat.Interview`} />
-        <meta name='keywords' content='HireBeat.Interview' />
-        <meta name='viewport' content='initial-scale=1, width=device-width' />
-      </Head>
+  const [width, height] = useWindowSize()
+  const [scale, setScale] = useState(1)
+  const [showLowResWarning, setShowLowResWarning] = useState(false)
 
-      <AuthProvider>
-        <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-          <SettingsConsumer>
-            {({ settings }) => {
-              return (
-                <ThemeComponent settings={settings}>
-                  <WindowWrapper>
-                    <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                      <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                        {getLayout(<Component {...pageProps} />)}
-                      </AclGuard>
-                    </Guard>
-                  </WindowWrapper>
-                  <ReactHotToast>
-                    <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                  </ReactHotToast>
-                </ThemeComponent>
-              )
-            }}
-          </SettingsConsumer>
-        </SettingsProvider>
-      </AuthProvider>
-    </CacheProvider>
+  const handleResize = () => {
+    const baseWidth = 1168
+    const viewportWidth = width
+    const maxScale = 1
+    let newScale = viewportWidth / baseWidth
+    const minSupportedWidth = 768
+
+    if (viewportWidth < minSupportedWidth) {
+      setShowLowResWarning(true)
+    } else {
+      setShowLowResWarning(false)
+    }
+
+    if (newScale > maxScale) {
+      newScale = maxScale
+    } else {
+      newScale *= 0.7
+    }
+
+    setScale(newScale)
+  }
+  useEffect(() => {
+    handleResize()
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [width, height])
+
+  // TODO: Change Hint
+
+  return (
+    <div className='app-scale' style={{ transform: `scale(${scale})` }}>
+      {showLowResWarning ? (
+        <Dialog open={showLowResWarning} maxWidth='sm' fullWidth disableEscapeKeyDown>
+          <DialogTitle>Unsupported Screen Size</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              If you're having trouble viewing this application due to a low screen resolution, don't worry! You can
+              improve your experience by using your browser's zoom feature. For Mac users, press CMD and the plus (+)
+              key in Chrome to zoom in. For Windows users, press Ctrl and the plus (+) or minus (-) key in Chrome to
+              zoom in or out, or adjust your screen resolution as needed.
+            </DialogContentText>
+          </DialogContent>
+
+          <DialogActions></DialogActions>
+        </Dialog>
+      ) : (
+        <CacheProvider value={emotionCache}>
+          <Head>
+            <title>{`HireBeat`}</title>
+            <meta name='description' content={`${themeConfig.templateName} – HireBeat.Interview`} />
+            <meta name='keywords' content='HireBeat.Interview' />
+            <meta name='viewport' content='initial-scale=1, width=device-width' />
+          </Head>
+
+          <AuthProvider>
+            <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
+              <SettingsConsumer>
+                {({ settings }) => {
+                  return (
+                    <ThemeComponent settings={settings}>
+                      <WindowWrapper>
+                        <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                          <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                            {getLayout(<Component {...pageProps} />)}
+                          </AclGuard>
+                        </Guard>
+                      </WindowWrapper>
+                      <ReactHotToast>
+                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                      </ReactHotToast>
+                    </ThemeComponent>
+                  )
+                }}
+              </SettingsConsumer>
+            </SettingsProvider>
+          </AuthProvider>
+        </CacheProvider>
+      )}
+    </div>
   )
 }
 

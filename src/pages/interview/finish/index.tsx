@@ -25,5 +25,10 @@ function FinishedInterviewPage() {
   )
 }
 
+FinishedInterviewPage.acl = {
+  action: 'read',
+  subject: 'acl-page'
+}
+
 FinishedInterviewPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default FinishedInterviewPage

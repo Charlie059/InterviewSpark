@@ -27,7 +27,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const columns = [
     { field: 'QuestionID', headerName: 'ID', width: 70 },
     { field: 'id', headerName: 'ID', hide: true },
-    { field: 'interviewQuestion', headerName: 'Name', width: 350 },
+    { field: 'interviewQuestion', headerName: 'Name', width: 300 },
     { field: 'interviewQuestionType', headerName: 'Type', width: 95 },
     { field: 'difficulty', headerName: 'Difficulty', width: 100 },
     {

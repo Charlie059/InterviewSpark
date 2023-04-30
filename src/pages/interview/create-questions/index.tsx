@@ -68,7 +68,7 @@ const CreateQuestionsPage = () => {
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <CardContent>
             <Typography variant='h6' sx={{ mb: 2.5, color: 'black' }}>
-              Add Interview Questions
+              Add Questions
             </Typography>
             <Typography variant='subtitle1'>Add Existing Questions from Question List</Typography>
           </CardContent>
@@ -89,18 +89,18 @@ const CreateQuestionsPage = () => {
           </Box>
         </Box>
         <Box display='flex' justifyContent='center'>
-          <Card sx={{ width: 760 }}>
+          <Card sx={{ width: 800 }}>
             <QuestionList setSelectedRows={setQuestionListSelectedRows} />
           </Card>
           <Box sx={{ marginLeft: 2 }}>
-            <Box sx={{ width: 440, height: 107 }}>
+            <Box sx={{ width: 440, height: 109 }}>
               <InterviewQuestionSummary
                 interviewQuestions={interviewQuestions}
                 questionListSelectedRows={questionListSelectedRows}
                 onAddSelectedQuestions={handleAddSelectedQuestions}
               />
             </Box>
-            <Card sx={{ width: 440, height: 475 }}>
+            <Card sx={{ width: 440, height: 500 }}>
               <InterviewQuestionList
                 interviewQuestions={interviewQuestions}
                 onDeleteInterview={handleDeleteInterviewInQuestionList}
