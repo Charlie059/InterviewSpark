@@ -12,8 +12,6 @@ interface QuestionListProps {
   setSelectedRows: (rows: InterviewQuestion[]) => void
 }
 
-let currentPage = 0
-
 const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const [questions, setQuestions] = useState<InterviewQuestion[]>([])
   const [pageSize] = useState<number>(8)
@@ -58,11 +56,35 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
     setValue(val)
   }
 
+  // Fetch the question data in first load
   useEffect(() => {
     fetchInterviewQuestions()
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (searchMode && questions.length === 0) {
+      searchQuestions()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [questions])
+
+  useEffect(() => {
+    if (searchMode) {
+      if (page > maxPageReached) {
+        // Going forward
+        searchQuestions(searchTokens[page - 1])
+        setMaxPageReached(page)
+      }
+    } else {
+      if (page > maxPageReached) {
+        // Going forward
+        fetchInterviewQuestions(tokens[page - 1])
+        setMaxPageReached(page)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   const fetchInterviewQuestions = async (nextToken: string | null = null) => {
     setLoading(true)
@@ -83,7 +105,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
         // Add the next token to the list of tokens
         if (result.data.getQuestionsPaginated.nextToken) {
           if (tokens.length === 0) setTokens([...tokens, result.data.getQuestionsPaginated.nextToken])
-          else if (currentPage > maxPageReached) setTokens([...tokens, result.data.getQuestionsPaginated.nextToken])
+          else if (page > maxPageReached) setTokens([...tokens, result.data.getQuestionsPaginated.nextToken])
         }
 
         setTotalRecords(result.data.getQuestionsPaginated.totalRecords)
@@ -97,21 +119,6 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
 
   const handlePageChange = (params: number) => {
     setPage(params)
-    currentPage = params
-
-    if (searchMode) {
-      if (currentPage > maxPageReached) {
-        // Going forward
-        searchQuestions(searchTokens[currentPage - 1])
-        setMaxPageReached(currentPage)
-      }
-    } else {
-      if (currentPage > maxPageReached) {
-        // Going forward
-        fetchInterviewQuestions(tokens[currentPage - 1])
-        setMaxPageReached(currentPage)
-      }
-    }
   }
 
   const searchQuestions = async (nextToken: string | null = null) => {
@@ -135,7 +142,7 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
         if (result.data.searchQuestionsPaginated.nextToken) {
           if (searchTokens.length === 0) {
             setSearchTokens([...searchTokens, result.data.searchQuestionsPaginated.nextToken])
-          } else if (currentPage > maxPageReached)
+          } else if (page > maxPageReached)
             setSearchTokens([...searchTokens, result.data.searchQuestionsPaginated.nextToken])
         }
         setTotalRecords(result.data.searchQuestionsPaginated.totalRecords)
@@ -146,13 +153,6 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
       console.error('Error fetching interviews:', error)
     }
   }
-
-  useEffect(() => {
-    if (searchMode && questions.length === 0) {
-      searchQuestions()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questions])
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Enter') {
