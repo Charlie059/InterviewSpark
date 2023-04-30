@@ -159,6 +159,10 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
       return
     }
 
+    if (value === '' && !searchMode) {
+      return
+    }
+
     setQuestions([])
     setMaxPageReached(0)
     setPage(0)

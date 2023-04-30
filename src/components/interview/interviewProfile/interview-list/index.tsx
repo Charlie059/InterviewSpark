@@ -261,6 +261,10 @@ const InterviewList = () => {
       return
     }
 
+    if (value === '' && !searchMode) {
+      return
+    }
+
     setInterviews([])
     setMaxPageReached(0)
     setPage(0)
