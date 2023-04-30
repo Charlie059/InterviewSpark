@@ -365,48 +365,40 @@ function MockInterviewPage() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} sx={{ width: '100%', position: 'absolute', bottom: 0 }}>
-        <Box
-          width='100%'
-          height='100%'
-          p={2}
-          borderRadius={'20px'}
-          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-        >
-          {currentQuestionIndex < interviews.length && (
-            <>
-              <StyledVideoRecordingButton capturing={capturing}>
-                <VideocamIcon />
-              </StyledVideoRecordingButton>
+      <Box width='100%' height='100%' p={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {currentQuestionIndex < interviews.length && (
+          <>
+            <StyledVideoRecordingButton capturing={capturing}>
+              <VideocamIcon />
+            </StyledVideoRecordingButton>
 
-              <StyledMicRecordingButton capturing={capturing}>
-                <MicIcon />
-              </StyledMicRecordingButton>
-              {capturing ? (
-                <>
-                  <StyledNextButton capturing={capturing} onClick={handleUploadAndMoveToNextQuestion}>
-                    <ArrowForwardIosIcon />
-                  </StyledNextButton>
-                </>
-              ) : (
-                <StyledStartButton capturing={capturing} onClick={handleStartCaptureClick}>
-                  <PlayArrowIcon />
-                </StyledStartButton>
-              )}
-            </>
-          )}
-        </Box>
-        <Box sx={{ margin: 5 }}>
-          {' '}
-          <p>
-            Question {currentQuestionIndex + 1} of {interviews.length}:
-            {detailedInterviews[currentQuestionIndex]?.interviewQuestion}
-          </p>
-          <p>Time left: {timeLeft}s</p>
-          <p>{transcribedText}</p>
-          <audio ref={audioRef} />
-        </Box>
-      </Grid>
+            <StyledMicRecordingButton capturing={capturing}>
+              <MicIcon />
+            </StyledMicRecordingButton>
+            {capturing ? (
+              <>
+                <StyledNextButton capturing={capturing} onClick={handleUploadAndMoveToNextQuestion}>
+                  <ArrowForwardIosIcon />
+                </StyledNextButton>
+              </>
+            ) : (
+              <StyledStartButton capturing={capturing} onClick={handleStartCaptureClick}>
+                <PlayArrowIcon />
+              </StyledStartButton>
+            )}
+          </>
+        )}
+      </Box>
+      <Box sx={{ margin: 5 }}>
+        {' '}
+        <p>
+          Question {currentQuestionIndex + 1} of {interviews.length}:
+          {detailedInterviews[currentQuestionIndex]?.interviewQuestion}
+        </p>
+        <p>Time left: {timeLeft}s</p>
+        <p>{transcribedText}</p>
+        <audio ref={audioRef} />
+      </Box>
     </Grid>
   )
 }
