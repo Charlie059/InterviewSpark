@@ -33,8 +33,6 @@ interface Interview {
   interviewVideoKey: string
 }
 
-let currentPage = 0
-
 const InterviewList = () => {
   const auth = useAuth()
   const [interviews, setInterviews] = useState<Interview[]>([])
@@ -147,9 +145,32 @@ const InterviewList = () => {
 
   useEffect(() => {
     fetchInterviews()
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    if (searchMode && interviews.length === 0) {
+      searchInterviews()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interviews])
+
+  useEffect(() => {
+    if (searchMode) {
+      if (page > maxPageReached) {
+        // Going forward
+        searchInterviews(searchTokens[page - 1])
+        setMaxPageReached(page)
+      }
+    } else {
+      if (page > maxPageReached) {
+        // Going forward
+        fetchInterviews(tokens[page - 1])
+        setMaxPageReached(page)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   const fetchInterviews = async (nextToken: string | null = null) => {
     setLoading(true)
@@ -180,8 +201,7 @@ const InterviewList = () => {
         // Add the next token to the list of tokens
         if (result.data.getUserInterviewsPaginated.nextToken) {
           if (tokens.length === 0) setTokens([...tokens, result.data.getUserInterviewsPaginated.nextToken])
-          else if (currentPage > maxPageReached)
-            setTokens([...tokens, result.data.getUserInterviewsPaginated.nextToken])
+          else if (page > maxPageReached) setTokens([...tokens, result.data.getUserInterviewsPaginated.nextToken])
         }
 
         setTotalRecords(result.data.getUserInterviewsPaginated.totalRecords)
@@ -195,20 +215,6 @@ const InterviewList = () => {
 
   const handlePageChange = (params: number) => {
     setPage(params)
-    currentPage = params
-    if (searchMode) {
-      if (currentPage > maxPageReached) {
-        // Going forward
-        searchInterviews(searchTokens[currentPage - 1])
-        setMaxPageReached(currentPage)
-      }
-    } else {
-      if (currentPage > maxPageReached) {
-        // Going forward
-        fetchInterviews(tokens[currentPage - 1])
-        setMaxPageReached(currentPage)
-      }
-    }
   }
 
   const searchInterviews = async (nextToken: string | null = null) => {
@@ -236,11 +242,11 @@ const InterviewList = () => {
         if (result.data.searchUserInterviewsPaginated.nextToken) {
           if (searchTokens.length === 0) {
             setSearchTokens([...searchTokens, result.data.searchUserInterviewsPaginated.nextToken])
-          } else if (currentPage > maxPageReached)
+          } else if (page > maxPageReached)
             setSearchTokens([...searchTokens, result.data.searchUserInterviewsPaginated.nextToken])
         }
         setTotalRecords(result.data.searchUserInterviewsPaginated.totalRecords)
-        setInterviews(prevState => [...prevState, ...interviewsWithID])
+        setInterviews(interviewsWithID)
       }
       setLoading(false)
 
@@ -250,12 +256,6 @@ const InterviewList = () => {
     }
   }
 
-  useEffect(() => {
-    if (searchMode && interviews.length === 0) {
-      searchInterviews()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interviews])
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key !== 'Enter') {
       return
