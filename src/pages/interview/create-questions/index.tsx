@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, CardContent, Typography, Button, Card } from '@mui/material'
+import { Box, Typography, Button, Grid, Card } from '@mui/material'
 import { ReactNode } from 'react'
 import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
@@ -64,51 +64,52 @@ const CreateQuestionsPage = () => {
   return (
     <div>
       <Logo />
-      <Box>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <CardContent>
-            <Typography variant='h6' sx={{ mb: 2.5, color: 'black' }}>
-              Add Questions
-            </Typography>
-            <Typography variant='subtitle1'>Add Existing Questions from Question List</Typography>
-          </CardContent>
-          <Box sx={{ marginLeft: 205 }}>
-            <Button
-              variant='contained'
-              disabled={interviewQuestions.length === 0} // Add this line
-              sx={{
-                backgroundColor: interviewQuestions.length === 0 ? 'grey' : '#3888FF', // Update this line
-                color: 'white',
-                borderRadius: 5,
-                textTransform: 'none'
-              }}
-              onClick={handleNextButtonClick}
-            >
-              Next
-            </Button>
-          </Box>
+      <Box display='flex' marginBottom={4}>
+        <Box sx={{ marginLeft: 10, marginTop: 5 }}>
+          <Typography variant='h6' sx={{ mb: 2.5, color: 'black' }}>
+            Add Questions
+          </Typography>
+          <Typography variant='subtitle1'>Add Existing Questions from Question List</Typography>
         </Box>
-        <Box display='flex' justifyContent='center'>
-          <Card sx={{ width: 800 }}>
-            <QuestionList setSelectedRows={setQuestionListSelectedRows} />
-          </Card>
-          <Box sx={{ marginLeft: 2 }}>
-            <Box sx={{ width: 440, height: 109 }}>
-              <InterviewQuestionSummary
-                interviewQuestions={interviewQuestions}
-                questionListSelectedRows={questionListSelectedRows}
-                onAddSelectedQuestions={handleAddSelectedQuestions}
-              />
-            </Box>
-            <Card sx={{ width: 440, height: 500 }}>
-              <InterviewQuestionList
-                interviewQuestions={interviewQuestions}
-                onDeleteInterview={handleDeleteInterviewInQuestionList}
-              />
-            </Card>
-          </Box>
+        <Box flex={1} />
+        <Box display='flex' alignItems='center' sx={{ marginRight: 10, marginTop: 2 }}>
+          <Button
+            variant='contained'
+            disabled={interviewQuestions.length === 0}
+            sx={{
+              backgroundColor: interviewQuestions.length === 0 ? 'grey' : '#3888FF',
+              color: 'white',
+              borderRadius: 5,
+              textTransform: 'none'
+            }}
+            onClick={handleNextButtonClick}
+          >
+            Next
+          </Button>
         </Box>
       </Box>
+
+      <Grid container justifyContent='center' spacing={2} mx={3}>
+        <Grid item xs={12} sm={12} md={7}>
+          <QuestionList setSelectedRows={setQuestionListSelectedRows} />
+        </Grid>
+        <Grid item xs={12} sm={12} md={3.5}>
+          <InterviewQuestionSummary
+            interviewQuestions={interviewQuestions}
+            questionListSelectedRows={questionListSelectedRows}
+            onAddSelectedQuestions={handleAddSelectedQuestions}
+          />
+
+          <div style={{ margin: 8 }}></div>
+
+          <Card>
+            <InterviewQuestionList
+              interviewQuestions={interviewQuestions}
+              onDeleteInterview={handleDeleteInterviewInQuestionList}
+            />
+          </Card>
+        </Grid>
+      </Grid>
     </div>
   )
 }

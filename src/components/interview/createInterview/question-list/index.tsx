@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid'
 import { getQuestionsPaginated, searchQuestionsPaginated } from 'src/graphql/queries'
-import { Box, IconButton } from '@mui/material'
+import { Box, Card, IconButton } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import QuestionListHeader from '../question-list-table-header/index'
 import { InterviewQuestion } from '../interview-question-selection-result-list'
@@ -23,17 +23,100 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   const [searchMode, setSearchMode] = useState<boolean>(false)
   const [page, setPage] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const [containerWidth, setContainerWidth] = useState<number>(0)
+
+  useEffect(() => {
+    const handleResize = (entries: ResizeObserverEntry[]) => {
+      const width = entries[0].contentRect.width
+
+      setContainerWidth(width)
+    }
+
+    const resizeObserver = new ResizeObserver(handleResize)
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current)
+    }
+
+    return () => {
+      if (containerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        resizeObserver.unobserve(containerRef.current)
+      }
+    }
+  }, [])
+
+  const getColumnWidths = () => {
+    if (!containerWidth || isNaN(containerWidth)) {
+      // Default column widths when containerWidth is not ready
+      return [70, 300, 95, 100, 85]
+    }
+
+    const totalWidth = containerWidth - 50
+    const columnRatios = containerWidth < 800 ? [1.2, 6, 3, 0, 2] : [2, 6, 3, 2, 2]
+    const totalRatios = columnRatios.reduce((acc, ratio) => acc + ratio, 0)
+    const columnWidths = columnRatios.map(ratio => Math.floor((totalWidth * ratio) / totalRatios))
+
+    return columnWidths
+  }
+
+  const [qIdWidth, qNameWidth, qTypeWidth, difficultyWidth, operationsWidth] = getColumnWidths()
+
+  const getQuestionTypeColors = (questionType: string) => {
+    switch (questionType) {
+      case 'Behavioral':
+        return { backgroundColor: '#F1FBE7', color: '#8EDE4E' }
+      case 'Technical':
+        return { backgroundColor: '#E7F1FB', color: '#4E8EDE' }
+      case 'Situational':
+        return { backgroundColor: '#FBE7F1', color: '#DE4E8E' }
+      default:
+        return { backgroundColor: '#F1F1F1', color: '#4E4E4E' }
+    }
+  }
 
   const columns = [
-    { field: 'QuestionID', headerName: 'ID', width: 70 },
+    { field: 'QuestionID', headerName: 'ID', width: qIdWidth },
     { field: 'id', headerName: 'ID', hide: true },
-    { field: 'interviewQuestion', headerName: 'Name', width: 300 },
-    { field: 'interviewQuestionType', headerName: 'Type', width: 95 },
-    { field: 'difficulty', headerName: 'Difficulty', width: 100 },
+    {
+      field: 'interviewQuestion',
+      headerName: 'Name',
+      width: qNameWidth
+    },
+    {
+      field: 'interviewQuestionType',
+      headerName: 'Type',
+      width: qTypeWidth,
+      renderCell: (params: GridRenderCellParams) => {
+        const colors = getQuestionTypeColors(params.value)
+
+        return (
+          <Box
+            sx={{
+              display: 'inline-block',
+              borderRadius: '15px',
+              padding: '3px 12px',
+              backgroundColor: colors.backgroundColor,
+              color: colors.color
+            }}
+          >
+            {params.value}
+          </Box>
+        )
+      }
+    },
+    {
+      field: 'difficulty',
+      headerName: 'Difficulty',
+      width: difficultyWidth,
+      hide: containerWidth < 800
+    },
     {
       field: 'operations',
       headerName: 'Detail',
-      width: 85,
+      width: operationsWidth,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -182,33 +265,35 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
   }
 
   return (
-    <Box>
+    <Card>
       <QuestionListHeader value={value} selectedRows={[]} handleKeyDown={handleKeyDown} handleFilter={handleFilter} />
 
-      <DataGrid
-        loading={loading}
-        page={page}
-        autoHeight
-        pagination
-        rows={questions}
-        rowCount={totalRecords}
-        columns={columns.map(column => ({
-          ...column,
-          headerAlign: 'center', // Add this line to center the headerName
-          align: 'center'
-        }))}
-        checkboxSelection
-        pageSize={pageSize}
-        rowsPerPageOptions={[5]}
-        onPageChange={handlePageChange}
-        onSelectionModelChange={newSelection => {
-          const selectedRowsData = newSelection
-            .map(rowId => questions.find(question => question.id.toString() === rowId.toString()))
-            .filter(row => row !== undefined) as InterviewQuestion[]
-          setSelectedRows(selectedRowsData)
-        }}
-      />
-    </Box>
+      <Box ref={containerRef}>
+        <DataGrid
+          loading={loading}
+          page={page}
+          autoHeight
+          pagination
+          rows={questions}
+          rowCount={totalRecords}
+          columns={columns.map(column => ({
+            ...column,
+            headerAlign: 'center', // Add this line to center the headerName
+            align: 'center'
+          }))}
+          checkboxSelection
+          pageSize={pageSize}
+          rowsPerPageOptions={[5]}
+          onPageChange={handlePageChange}
+          onSelectionModelChange={newSelection => {
+            const selectedRowsData = newSelection
+              .map(rowId => questions.find(question => question.id.toString() === rowId.toString()))
+              .filter(row => row !== undefined) as InterviewQuestion[]
+            setSelectedRows(selectedRowsData)
+          }}
+        />
+      </Box>
+    </Card>
   )
 }
 

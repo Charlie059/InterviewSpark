@@ -1,5 +1,6 @@
 import { Button, Card, Typography } from '@mui/material'
 import { Box } from '@mui/system'
+import { auto } from '@popperjs/core'
 import React, { useState, useEffect } from 'react'
 
 interface InterviewQuestion {
@@ -49,7 +50,7 @@ const InterviewQuestionSummary = (props: Props) => {
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
           <Box sx={{ width: '33%', textAlign: 'center' }}>
-            <Box margin={3}>
+            <Box margin={2}>
               <Typography variant='body2' style={{ fontSize: '11px', color: 'rgba(76, 78, 100, 0.6)' }}>
                 # Question
               </Typography>
@@ -76,7 +77,8 @@ const InterviewQuestionSummary = (props: Props) => {
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ marginBottom: '5px' }}>
+        <Box sx={{ display: 'flex', marginBottom: '5px', width: '100%' }}>
+          <div style={{ margin: '10px' }}></div>
           <Button
             onClick={onAddSelectedQuestions}
             variant='contained'
@@ -84,7 +86,7 @@ const InterviewQuestionSummary = (props: Props) => {
               backgroundColor: questionCount >= 6 ? '#BDBDBD' : '#3888FF',
               color: 'white',
               borderRadius: 1,
-              width: 325,
+              width: '100%',
               textTransform: 'none',
               fontSize: '12px'
             }}
@@ -92,6 +94,7 @@ const InterviewQuestionSummary = (props: Props) => {
           >
             Add New Question
           </Button>
+          <div style={{ margin: '10px' }}></div>
         </Box>
       </Box>
     </Card>

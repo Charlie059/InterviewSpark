@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
-import { Box, IconButton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Log from 'src/middleware/loggerMiddleware'
 
@@ -24,21 +24,36 @@ const InterviewQuestionList = (props: Props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
 
+  const [containerWidth, setContainerWidth] = useState<number>(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerWidth(containerRef.current.clientWidth)
+    }
+  }, [])
+
+  const interviewQuestionWidth = containerWidth * 0.65
+  const operationsWidth = containerWidth * 0.1
+
   const columns = [
     { field: 'id', headerName: 'ID', hide: true },
-    { field: 'QuestionID', headerName: 'Question', hide: true },
-    { field: 'interviewQuestion', headerName: 'Name', width: 280 },
+    { field: 'QuestionID', headerName: 'ID', width: 70 },
+    {
+      field: 'interviewQuestion',
+      headerName: 'Name',
+      width: interviewQuestionWidth
+    },
     {
       field: 'difficulty',
       headerName: 'Difficulty',
-      width: 100,
       hide: true
     },
-    { field: 'interviewQuestionType', headerName: 'Type', width: 100 },
+    { field: 'interviewQuestionType', headerName: 'Type', hide: true },
     {
       field: 'operations',
       headerName: '',
-      width: 5,
+      width: operationsWidth,
       sortable: false,
       filterable: false,
       disableColumnMenu: true,
@@ -69,9 +84,9 @@ const InterviewQuestionList = (props: Props) => {
   }, [interviewQuestions])
 
   return (
-    <Box>
+    <div ref={containerRef} style={{ height: 485 }}>
       <DataGrid
-        autoHeight
+        ref={containerRef}
         rows={interviewQuestions}
         columns={columns.map(column => ({
           ...column,
@@ -85,7 +100,7 @@ const InterviewQuestionList = (props: Props) => {
           setSelectedRows(rows)
         }}
       />
-    </Box>
+    </div>
   )
 }
 

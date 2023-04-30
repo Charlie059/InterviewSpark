@@ -144,6 +144,7 @@ const App = (props: ExtendedAppProps) => {
   const aclAbilities = Component.acl ?? defaultACLObj
 
   const [width, height] = useWindowSize()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [scale, setScale] = useState(1)
   const [showLowResWarning, setShowLowResWarning] = useState(false)
 
@@ -166,7 +167,7 @@ const App = (props: ExtendedAppProps) => {
       newScale *= 0.7
     }
 
-    setScale(newScale)
+    // setScale(newScale)
   }
   useEffect(() => {
     handleResize()
@@ -182,7 +183,7 @@ const App = (props: ExtendedAppProps) => {
 
   return (
     <div className='app-scale' style={{ transform: `scale(${scale})` }}>
-      {showLowResWarning ? (
+      {/* {showLowResWarning ? (
         <Dialog open={showLowResWarning} maxWidth='sm' fullWidth disableEscapeKeyDown>
           <DialogTitle>Unsupported Screen Size</DialogTitle>
           <DialogContent>
@@ -196,39 +197,39 @@ const App = (props: ExtendedAppProps) => {
 
           <DialogActions></DialogActions>
         </Dialog>
-      ) : (
-        <CacheProvider value={emotionCache}>
-          <Head>
-            <title>{`HireBeat`}</title>
-            <meta name='description' content={`${themeConfig.templateName} – HireBeat.Interview`} />
-            <meta name='keywords' content='HireBeat.Interview' />
-            <meta name='viewport' content='initial-scale=1, width=device-width' />
-          </Head>
+      ) : ( */}
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <title>{`HireBeat`}</title>
+          <meta name='description' content={`${themeConfig.templateName} – HireBeat.Interview`} />
+          <meta name='keywords' content='HireBeat.Interview' />
+          <meta name='viewport' content='initial-scale=1, width=device-width' />
+        </Head>
 
-          <AuthProvider>
-            <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
-              <SettingsConsumer>
-                {({ settings }) => {
-                  return (
-                    <ThemeComponent settings={settings}>
-                      <WindowWrapper>
-                        <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                          <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
-                            {getLayout(<Component {...pageProps} />)}
-                          </AclGuard>
-                        </Guard>
-                      </WindowWrapper>
-                      <ReactHotToast>
-                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                      </ReactHotToast>
-                    </ThemeComponent>
-                  )
-                }}
-              </SettingsConsumer>
-            </SettingsProvider>
-          </AuthProvider>
-        </CacheProvider>
-      )}
+        <AuthProvider>
+          <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
+            <SettingsConsumer>
+              {({ settings }) => {
+                return (
+                  <ThemeComponent settings={settings}>
+                    <WindowWrapper>
+                      <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                        <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                          {getLayout(<Component {...pageProps} />)}
+                        </AclGuard>
+                      </Guard>
+                    </WindowWrapper>
+                    <ReactHotToast>
+                      <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                    </ReactHotToast>
+                  </ThemeComponent>
+                )
+              }}
+            </SettingsConsumer>
+          </SettingsProvider>
+        </AuthProvider>
+      </CacheProvider>
+      {/* )} */}
     </div>
   )
 }
