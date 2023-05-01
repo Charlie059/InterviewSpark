@@ -28,7 +28,7 @@ interface RecordedChunks {
 }
 
 type StyledIconButtonProps = IconButtonProps & {
-  capturing: boolean
+  capturing?: boolean
 }
 
 // Variables
@@ -58,19 +58,18 @@ function MockInterviewPage() {
   const [audioEnabled, setAudioEnabled] = useState(true)
   const [showCard, setShowCard] = useState(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const StyledVideoRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => (
-    <IconButton {...props} />
-  ))(({ theme }) => ({
-    backgroundColor: videoEnabled ? '#72D868' : '#DFDDDD',
+  const StyledVideoRecordingButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
+    ({ theme }) => ({
+      backgroundColor: videoEnabled ? '#72D868' : '#DFDDDD',
 
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-      fontSize: '2rem'
-    },
-    padding: theme.spacing(4.1),
-    margin: theme.spacing(0, 1.2)
-  }))
+      '& .MuiSvgIcon-root': {
+        color: 'white',
+        fontSize: '2rem'
+      },
+      padding: theme.spacing(4.1),
+      margin: theme.spacing(0, 1.2)
+    })
+  )
 
   const CircleProgressBarWrapper = styled(Box)(({}) => ({
     position: 'absolute',
@@ -107,20 +106,18 @@ function MockInterviewPage() {
   )
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const StyledStartButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
-    ({ theme }) => ({
-      backgroundColor: '#DFDDDD',
-      '&:hover': {
-        backgroundColor: '#3888FF'
-      },
-      '& .MuiSvgIcon-root': {
-        color: 'white',
-        fontSize: '2rem'
-      },
-      padding: theme.spacing(4.1),
-      margin: theme.spacing(0, 1.2)
-    })
-  )
+  const StyledStartButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
+    backgroundColor: '#DFDDDD',
+    '&:hover': {
+      backgroundColor: '#3888FF'
+    },
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+      fontSize: '2rem'
+    },
+    padding: theme.spacing(4.1),
+    margin: theme.spacing(0, 1.2)
+  }))
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const StyledNextButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
@@ -430,11 +427,11 @@ function MockInterviewPage() {
       <Box width='100%' height='100%' p={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {currentQuestionIndex < interviews.length && (
           <>
-            <StyledVideoRecordingButton capturing={capturing} onClick={handleVideoToggle}>
+            <StyledVideoRecordingButton onClick={handleVideoToggle}>
               <VideocamIcon />
             </StyledVideoRecordingButton>
 
-            <StyledMicRecordingButton capturing={capturing} onClick={handleAudioToggle}>
+            <StyledMicRecordingButton onClick={handleAudioToggle}>
               <MicIcon />
             </StyledMicRecordingButton>
             {capturing ? (
@@ -449,13 +446,13 @@ function MockInterviewPage() {
                       circleTwoStroke='#4C4CFD'
                     />
                   </CircleProgressBarWrapper>
-                  <StyledNextButton onClick={handleUploadAndMoveToNextQuestion} capturing={capturing}>
+                  <StyledNextButton onClick={handleUploadAndMoveToNextQuestion}>
                     <ArrowForwardIosIcon />
                   </StyledNextButton>
                 </StyledNextButtonWrapper>
               </>
             ) : (
-              <StyledStartButton onClick={handleStartCaptureClick} capturing={capturing}>
+              <StyledStartButton onClick={handleStartCaptureClick}>
                 <PlayArrowIcon />
               </StyledStartButton>
             )}
