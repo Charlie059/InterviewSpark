@@ -149,7 +149,7 @@ const InterviewList = () => {
   }, [])
 
   useEffect(() => {
-    if (searchMode && interviews.length === 0) {
+    if (searchMode && interviews.length === 0 && totalRecords > 0) {
       searchInterviews()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -327,7 +327,13 @@ const InterviewList = () => {
       setConfirmationDialogOpen(false)
       setSelectedRows([])
       setSelectedInterview(null)
-      fetchInterviews()
+
+      //TODO Should not reload the page, should update the table
+      // Reload the page
+      setSearchMode(true)
+      setInterviews([])
+
+      // sleep
     } catch (error) {
       console.error('Error deleting interviews:', error)
     }
