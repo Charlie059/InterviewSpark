@@ -29,70 +29,6 @@ type StyledIconButtonProps = IconButtonProps & {
   capturing: boolean
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledVideoRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => (
-  <IconButton {...props} />
-))(({ theme }) => ({
-  backgroundColor: '#72D868',
-  '&:hover': {
-    backgroundColor: '#72D868'
-  },
-  '& .MuiSvgIcon-root': {
-    color: 'white',
-    fontSize: '2rem'
-  },
-  padding: theme.spacing(4.1),
-  margin: theme.spacing(0, 1.2)
-}))
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledMicRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
-  ({ theme }) => ({
-    backgroundColor: '#FF6C4B',
-    '&:hover': {
-      backgroundColor: '#FF6C4B'
-    },
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-      fontSize: '2rem'
-    },
-    padding: theme.spacing(4.1),
-    margin: theme.spacing(0, 1.2)
-  })
-)
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledStartButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
-  ({ theme }) => ({
-    backgroundColor: '#DFDDDD',
-    '&:hover': {
-      backgroundColor: '#3888FF'
-    },
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-      fontSize: '2rem'
-    },
-    padding: theme.spacing(4.1),
-    margin: theme.spacing(0, 1.2)
-  })
-)
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledNextButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
-  ({ theme }) => ({
-    backgroundColor: '#DFDDDD',
-    '&:hover': {
-      backgroundColor: '#3888FF'
-    },
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-      fontSize: '2rem'
-    },
-    padding: theme.spacing(4.1),
-    margin: theme.spacing(0, 1.2)
-  })
-)
-
 // Variables
 let currentQuestionIndex = 0
 
@@ -116,6 +52,79 @@ function MockInterviewPage() {
   const { transcribedText, handleStartRecording, handleStopRecording } = useTranscribe()
   const { audioRef } = usePolly(messageToSpeak)
 
+  const [videoEnabled, setVideoEnabled] = useState(true)
+  const [audioEnabled, setAudioEnabled] = useState(true)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const StyledVideoRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => (
+    <IconButton {...props} />
+  ))(({ theme }) => ({
+    backgroundColor: videoEnabled ? '#72D868' : '#DFDDDD',
+
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+      fontSize: '2rem'
+    },
+    padding: theme.spacing(4.1),
+    margin: theme.spacing(0, 1.2)
+  }))
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const StyledMicRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => (
+    <IconButton {...props} />
+  ))(({ theme }) => ({
+    backgroundColor: audioEnabled ? '#FF6C4B' : '#DFDDDD',
+
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+      fontSize: '2rem'
+    },
+    padding: theme.spacing(4.1),
+    margin: theme.spacing(0, 1.2)
+  }))
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const StyledStartButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
+    ({ theme }) => ({
+      backgroundColor: '#DFDDDD',
+      '&:hover': {
+        backgroundColor: '#3888FF'
+      },
+      '& .MuiSvgIcon-root': {
+        color: 'white',
+        fontSize: '2rem'
+      },
+      padding: theme.spacing(4.1),
+      margin: theme.spacing(0, 1.2)
+    })
+  )
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const StyledNextButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
+    ({ theme }) => ({
+      backgroundColor: '#DFDDDD',
+      '&:hover': {
+        backgroundColor: '#3888FF'
+      },
+      '& .MuiSvgIcon-root': {
+        color: 'white',
+        fontSize: '2rem'
+      },
+      padding: theme.spacing(4.1),
+      margin: theme.spacing(0, 1.2)
+    })
+  )
+
+  const handleVideoToggle = () => {
+    setVideoEnabled(prev => !prev)
+    webcamRef.current?.stream?.getVideoTracks().forEach(track => (track.enabled = !track.enabled))
+  }
+
+  const handleAudioToggle = () => {
+    setAudioEnabled(prev => !prev)
+    webcamRef.current?.stream?.getAudioTracks().forEach(track => (track.enabled = !track.enabled))
+  }
+
   // Fetch interview questions from the router query
   const interviewsParam = router.query.interviews
     ? Array.isArray(router.query.interviews)
@@ -135,8 +144,9 @@ function MockInterviewPage() {
           )) as any
 
           const interviewQuestion = result.data.getQuestionMetaData.interviewQuestion
+          const estimatedSecond = result.data.getQuestionMetaData.estimatedSecond
 
-          return { ...interview, interviewQuestion }
+          return { ...interview, interviewQuestion, estimatedSecond }
         })
         const newInterviews = await Promise.all(questionDetailsPromises)
 
@@ -266,6 +276,10 @@ function MockInterviewPage() {
   const handleStartCaptureClick = async () => {
     setCapturing(true)
 
+    const estimatedSecond = detailedInterviews[currentQuestionIndex]?.estimatedSecond || 1000
+    console.log('detailedInterviews', detailedInterviews)
+    setTimeLeft(estimatedSecond)
+
     // Play the audio of the question
     setMessageToSpeak('My question is, ' + detailedInterviews[currentQuestionIndex].interviewQuestion)
     await waitForAudioToEnd() // Wait for the audio playing to end
@@ -278,6 +292,14 @@ function MockInterviewPage() {
   }
 
   const handleUploadAndMoveToNextQuestion = async () => {
+    setCapturing(true)
+    setTimeLeft(NaN)
+
+    // If the media recorder state is not 'inactive', then stop it
+    if (mediaRecorderRef.current?.state !== 'inactive') {
+      mediaRecorderRef.current?.stop()
+    }
+
     // TODO - Add a loading indicator and it is not good to use a timeout here
     // Wait 4 seconds for the transcription to complete
     await new Promise(resolve => setTimeout(resolve, 4000))
@@ -288,11 +310,6 @@ function MockInterviewPage() {
     // Stop the transcription
     handleStopRecording()
 
-    // If the media recorder state is not 'inactive', then stop it
-    if (mediaRecorderRef.current?.state !== 'inactive') {
-      mediaRecorderRef.current?.stop()
-    }
-
     // Send the transcribed text to GPT-3.5 Speak
     await sendToGPT2Speak(transcribedText_)
 
@@ -301,9 +318,6 @@ function MockInterviewPage() {
 
     // Move to the next question
     currentQuestionIndex += 1
-
-    // Reset time left
-    setTimeLeft(1000)
 
     if (currentQuestionIndex < interviews.length) {
       handleStartCaptureClick()
@@ -326,7 +340,7 @@ function MockInterviewPage() {
       }, 1000)
     }
 
-    if (timeLeft === 0 && !capturing) {
+    if (timeLeft === 0 && capturing) {
       handleUploadAndMoveToNextQuestion()
     }
 
@@ -340,14 +354,28 @@ function MockInterviewPage() {
       <Grid item xs={12}>
         <Grid container spacing={5} alignItems='center'>
           <Grid item xs={6}>
-            <Box width='500px' height='380px'>
+            <Box width='500px' height='380px' sx={{ position: 'relative' }}>
               <Webcam
                 audio={true}
                 muted={true}
                 ref={webcamRef}
                 width='100%'
                 height='100%'
-                style={{ borderRadius: '15px' }}
+                style={{
+                  borderRadius: '15px',
+                  position: 'absolute',
+                  zIndex: videoEnabled ? 1 : -1
+                }}
+              />
+              <Box
+                width='100%'
+                height='100%'
+                borderRadius={'15px'}
+                style={{
+                  backgroundColor: videoEnabled ? 'transparent' : 'rgba(128, 128, 128, 0.5)',
+                  position: 'absolute',
+                  zIndex: videoEnabled ? -1 : 1
+                }}
               />
             </Box>
           </Grid>
@@ -368,11 +396,11 @@ function MockInterviewPage() {
       <Box width='100%' height='100%' p={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {currentQuestionIndex < interviews.length && (
           <>
-            <StyledVideoRecordingButton capturing={capturing}>
+            <StyledVideoRecordingButton capturing={capturing} onClick={handleVideoToggle}>
               <VideocamIcon />
             </StyledVideoRecordingButton>
 
-            <StyledMicRecordingButton capturing={capturing}>
+            <StyledMicRecordingButton capturing={capturing} onClick={handleAudioToggle}>
               <MicIcon />
             </StyledMicRecordingButton>
             {capturing ? (

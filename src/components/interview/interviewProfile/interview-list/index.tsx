@@ -69,7 +69,7 @@ const InterviewList = () => {
   const columns = [
     { field: 'id', headerName: 'ID', width: 100, hide: true },
     { field: 'interviewQuestionID', headerName: 'ID', width: 100 },
-    { field: 'interviewQuestion', headerName: 'Question', width: 500 },
+    { field: 'interviewQuestionTitle', headerName: 'Question', width: 500 },
     {
       field: 'interviewDateTime',
       headerName: 'Date',

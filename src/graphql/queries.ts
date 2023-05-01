@@ -179,6 +179,7 @@ export const getQuestionMetaData = /* GraphQL */ `
       interviewQuestion
       interviewQuestionSampleAns
       interviewQuestionType
+      interviewQuestionTitle
       QuestionID
       difficulty
       estimatedSecond
@@ -193,6 +194,7 @@ export const getQuestionsPaginated = /* GraphQL */ `
         interviewQuestion
         interviewQuestionSampleAns
         interviewQuestionType
+        interviewQuestionTitle
         QuestionID
         difficulty
         estimatedSecond
@@ -210,6 +212,7 @@ export const searchQuestions = /* GraphQL */ `
         interviewQuestion
         interviewQuestionSampleAns
         interviewQuestionType
+        interviewQuestionTitle
         QuestionID
         difficulty
         estimatedSecond
@@ -233,6 +236,7 @@ export const searchQuestionsPaginated = /* GraphQL */ `
         interviewQuestion
         interviewQuestionSampleAns
         interviewQuestionType
+        interviewQuestionTitle
         QuestionID
         difficulty
         estimatedSecond

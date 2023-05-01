@@ -8,7 +8,7 @@ interface InterviewQuestion {
   interviewQuestion: string
   interviewQuestionSampleAns: string
   interviewQuestionType: string
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: 'Easy' | 'Medium' | 'Hard'
   estimatedSecond: number
 }
 
@@ -25,7 +25,7 @@ const InterviewQuestionSummary = (props: Props) => {
   const [averageDifficulty, setAverageDifficulty] = useState(0)
 
   useEffect(() => {
-    const difficultyValue = { easy: 1, medium: 2, hard: 3 }
+    const difficultyValue = { Easy: 1, Medium: 2, Hard: 3 }
     let totalDifficulty = 0
     let totalTime = 0
 

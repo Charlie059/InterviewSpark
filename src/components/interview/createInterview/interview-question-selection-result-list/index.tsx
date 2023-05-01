@@ -10,6 +10,7 @@ interface InterviewQuestion {
   interviewQuestion: string
   interviewQuestionSampleAns: string
   interviewQuestionType: string
+  interviewQuestionTitle: string
   difficulty: 'easy' | 'medium' | 'hard'
   estimatedSecond: number
 }
@@ -40,7 +41,7 @@ const InterviewQuestionList = (props: Props) => {
     { field: 'id', headerName: 'ID', hide: true },
     { field: 'QuestionID', headerName: 'ID', width: 70 },
     {
-      field: 'interviewQuestion',
+      field: 'interviewQuestionTitle',
       headerName: 'Name',
       width: interviewQuestionWidth
     },

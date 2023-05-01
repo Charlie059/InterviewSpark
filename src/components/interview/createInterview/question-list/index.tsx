@@ -77,11 +77,24 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
     }
   }
 
+  const getDifficultyColors = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Easy':
+        return { backgroundColor: '#F1FBE7', color: '#8EDE4E' }
+      case 'Medium':
+        return { backgroundColor: '#E7F1FB', color: '#4E8EDE' }
+      case 'Hard':
+        return { backgroundColor: '#FBE7F1', color: '#DE4E8E' }
+      default:
+        return { backgroundColor: '#F1F1F1', color: '#4E4E4E' }
+    }
+  }
+
   const columns = [
     { field: 'QuestionID', headerName: 'ID', width: qIdWidth },
     { field: 'id', headerName: 'ID', hide: true },
     {
-      field: 'interviewQuestion',
+      field: 'interviewQuestionTitle',
       headerName: 'Name',
       width: qNameWidth
     },
@@ -111,7 +124,24 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
       field: 'difficulty',
       headerName: 'Difficulty',
       width: difficultyWidth,
-      hide: containerWidth < 800
+      hide: containerWidth < 800,
+      renderCell: (params: GridRenderCellParams) => {
+        const colors = getDifficultyColors(params.value)
+
+        return (
+          <Box
+            sx={{
+              display: 'inline-block',
+              borderRadius: '15px',
+              padding: '3px 12px',
+              backgroundColor: colors.backgroundColor,
+              color: colors.color
+            }}
+          >
+            {params.value}
+          </Box>
+        )
+      }
     },
     {
       field: 'operations',

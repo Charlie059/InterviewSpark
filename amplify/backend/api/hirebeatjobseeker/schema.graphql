@@ -274,6 +274,7 @@ type Question {
   interviewQuestion: String
   interviewQuestionSampleAns: String
   interviewQuestionType: String
+  interviewQuestionTitle: String
   QuestionID: String
   difficulty: String
   estimatedSecond: Int
