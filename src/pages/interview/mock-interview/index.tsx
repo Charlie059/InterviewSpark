@@ -419,7 +419,6 @@ function MockInterviewPage() {
           <Typography variant='h6' sx={{ ml: 2, fontWeight: 200, margin: '10px 20px 10px 20px' }}>
             Question {currentQuestionIndex + 1}: {detailedInterviews[currentQuestionIndex]?.interviewQuestion}
           </Typography>
-          <audio ref={audioRef} />
         </Card>
       )}
 
@@ -459,6 +458,7 @@ function MockInterviewPage() {
           </>
         )}
       </Box>
+      <audio ref={audioRef} />
     </Grid>
   )
 }
