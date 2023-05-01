@@ -330,8 +330,10 @@ const InterviewList = () => {
 
       //TODO Should not reload the page, should update the table
       // Reload the page
-      setSearchMode(true)
-      setInterviews([])
+      // setSearchMode(true)
+      // setInterviews([])
+
+      window.location.reload()
 
       // sleep
     } catch (error) {
