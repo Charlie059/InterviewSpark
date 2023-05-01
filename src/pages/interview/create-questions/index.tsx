@@ -13,11 +13,13 @@ import QuestionList from 'src/components/interview/createInterview/question-list
 import router from 'next/router'
 import { API, graphqlOperation } from 'aws-amplify'
 import { createUserInterviewWithQuestion } from 'src/graphql/mutations'
+import QuickViewQuestion from 'src/components/interview/createInterview/quick-view-question'
 
 const CreateQuestionsPage = () => {
   const [interviewQuestions, setInterviewQuestions] = useState<InterviewQuestion[]>([])
   const [questionListSelectedRows, setQuestionListSelectedRows] = useState<InterviewQuestion[]>([])
   const { user } = useAuth()
+  const [showQuickViewQuestion, setShowQuickViewQuestion] = useState<boolean>(false)
 
   const handleAddSelectedQuestions = () => {
     // If questionListSelectedRows has elements which is repeated in interviewQuestions, remove them
@@ -91,7 +93,10 @@ const CreateQuestionsPage = () => {
 
       <Grid container justifyContent='center' spacing={2} mx={3}>
         <Grid item xs={12} sm={12} md={7}>
-          <QuestionList setSelectedRows={setQuestionListSelectedRows} />
+          <QuestionList
+            setSelectedRows={setQuestionListSelectedRows}
+            setShowQuickViewQuestion={setShowQuickViewQuestion}
+          />
         </Grid>
         <Grid item xs={12} sm={12} md={3.5}>
           <InterviewQuestionSummary
@@ -110,6 +115,13 @@ const CreateQuestionsPage = () => {
           </Card>
         </Grid>
       </Grid>
+      {showQuickViewQuestion && (
+        <QuickViewQuestion
+          onOpen={() => true}
+          onClose={() => setShowQuickViewQuestion(false)}
+          row={questionListSelectedRows}
+        />
+      )}
     </div>
   )
 }

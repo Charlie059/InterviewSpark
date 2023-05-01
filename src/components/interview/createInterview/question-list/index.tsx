@@ -8,11 +8,12 @@ import QuestionListHeader from '../question-list-table-header/index'
 import { InterviewQuestion } from '../interview-question-selection-result-list'
 import Log from 'src/middleware/loggerMiddleware'
 
-interface QuestionListProps {
+interface Props {
   setSelectedRows: (rows: InterviewQuestion[]) => void
+  setShowQuickViewQuestion: (value: boolean) => void
 }
 
-const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
+const QuestionList = ({ setSelectedRows, setShowQuickViewQuestion }: Props) => {
   const [questions, setQuestions] = useState<InterviewQuestion[]>([])
   const [pageSize] = useState<number>(8)
   const [tokens, setTokens] = useState<string[]>([])
@@ -155,7 +156,8 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
           <IconButton
             color='primary'
             onClick={() => {
-              Log.info('View button clicked for interview ID:', params.row.id)
+              Log.info('View button clicked for interview ID:', params.row.interviewID)
+              setShowQuickViewQuestion(true)
             }}
           >
             <VisibilityIcon color='disabled' />
@@ -311,7 +313,6 @@ const QuestionList = ({ setSelectedRows }: QuestionListProps) => {
             headerAlign: 'center', // Add this line to center the headerName
             align: 'center'
           }))}
-          checkboxSelection
           pageSize={pageSize}
           rowsPerPageOptions={[5]}
           onPageChange={handlePageChange}
