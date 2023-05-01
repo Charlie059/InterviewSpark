@@ -60,6 +60,16 @@ export type Interview = {
   interviewQuestionType?: string | null,
 };
 
+export type ResumeScan = {
+  __typename: "ResumeScan",
+  displayName?: string | null,
+  jobName?: string | null,
+  resumeName?: string | null,
+  resumeResults?: string | null,
+  resumeUrl?: string | null,
+  resumeScanID: string,
+};
+
 export type WorkHistories = {
   __typename: "WorkHistories",
   workHistory?:  Array<WorkHistory | null > | null,
@@ -134,6 +144,11 @@ export type PaginatedQuestionList = {
 export type QuestionList = {
   __typename: "QuestionList",
   questionList?:  Array<Question | null > | null,
+};
+
+export type ResumeScanList = {
+  __typename: "ResumeScanList",
+  resumeScanList?:  Array<ResumeScan | null > | null,
 };
 
 export type CreateNewGuestUserMutationVariables = {
@@ -255,6 +270,58 @@ export type RemoveUserInterviewsByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+  },
+};
+
+export type RemoveUserResumeScanByIDMutationVariables = {
+  emailAddress: string,
+  resumeScanID: string,
+};
+
+export type RemoveUserResumeScanByIDMutation = {
+  removeUserResumeScanByID:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+  },
+};
+
+export type CreateUserResumeScanMutationVariables = {
+  emailAddress: string,
+  resumeUrl: string,
+  displayName: string,
+  jobName: string,
+  resumeName: string,
+  resumeResults: string,
+};
+
+export type CreateUserResumeScanMutation = {
+  createUserResumeScan:  {
+    __typename: "ResumeScan",
+    displayName?: string | null,
+    jobName?: string | null,
+    resumeName?: string | null,
+    resumeResults?: string | null,
+    resumeUrl?: string | null,
+    resumeScanID: string,
+  },
+};
+
+export type UpdateUserResumeScanURLMutationVariables = {
+  emailAddress: string,
+  resumeID?: string | null,
+  resumeUrl: string,
+};
+
+export type UpdateUserResumeScanURLMutation = {
+  updateUserResumeScanURL:  {
+    __typename: "ResumeScan",
+    displayName?: string | null,
+    jobName?: string | null,
+    resumeName?: string | null,
+    resumeResults?: string | null,
+    resumeUrl?: string | null,
+    resumeScanID: string,
   },
 };
 
@@ -563,6 +630,25 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewQuestion?: string | null,
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
+    } | null > | null,
+  },
+};
+
+export type GetUserResumeScansQueryVariables = {
+  emailAddress: string,
+};
+
+export type GetUserResumeScansQuery = {
+  getUserResumeScans:  {
+    __typename: "ResumeScanList",
+    resumeScanList?:  Array< {
+      __typename: "ResumeScan",
+      displayName?: string | null,
+      jobName?: string | null,
+      resumeName?: string | null,
+      resumeResults?: string | null,
+      resumeUrl?: string | null,
+      resumeScanID: string,
     } | null > | null,
   },
 };

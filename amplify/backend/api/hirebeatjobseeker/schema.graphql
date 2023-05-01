@@ -215,6 +215,16 @@ type Mutation {
     interviewID: String!
     interviewQuestionID: String!
   ): OperationResult!
+  removeUserResumeScanByID(emailAddress: AWSEmail!, resumeScanID: String!): OperationResult!
+  createUserResumeScan(
+    emailAddress: AWSEmail!
+    resumeUrl: String!
+    displayName: String!
+    jobName: String!
+    resumeName: String!
+    resumeResults: String!
+  ): ResumeScan!
+  updateUserResumeScanURL(emailAddress: AWSEmail!, resumeID: String, resumeUrl: String!): ResumeScan!
 }
 
 type OperationResult {
@@ -267,6 +277,7 @@ type Query {
   searchQuestions(keyword: String!): QuestionList!
   searchQuestionsPaginated(keyword: String!, limit: Int!, nextToken: String): PaginatedQuestionList!
   getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
+  getUserResumeScans(emailAddress: AWSEmail!): ResumeScanList!
 }
 
 type Question {
@@ -286,6 +297,19 @@ type QuestionList {
 
 type QuestionUsageMetaData {
   totalNumOfQuestion: Int
+}
+
+type ResumeScan {
+  displayName: String
+  jobName: String
+  resumeName: String
+  resumeResults: String
+  resumeUrl: String
+  resumeScanID: String!
+}
+
+type ResumeScanList {
+  resumeScanList: [ResumeScan]
 }
 
 type User {

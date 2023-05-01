@@ -119,3 +119,63 @@ export const removeUserInterviewsByID = /* GraphQL */ `
     }
   }
 `;
+export const removeUserResumeScanByID = /* GraphQL */ `
+  mutation RemoveUserResumeScanByID(
+    $emailAddress: AWSEmail!
+    $resumeScanID: String!
+  ) {
+    removeUserResumeScanByID(
+      emailAddress: $emailAddress
+      resumeScanID: $resumeScanID
+    ) {
+      isSuccessful
+      error
+    }
+  }
+`;
+export const createUserResumeScan = /* GraphQL */ `
+  mutation CreateUserResumeScan(
+    $emailAddress: AWSEmail!
+    $resumeUrl: String!
+    $displayName: String!
+    $jobName: String!
+    $resumeName: String!
+    $resumeResults: String!
+  ) {
+    createUserResumeScan(
+      emailAddress: $emailAddress
+      resumeUrl: $resumeUrl
+      displayName: $displayName
+      jobName: $jobName
+      resumeName: $resumeName
+      resumeResults: $resumeResults
+    ) {
+      displayName
+      jobName
+      resumeName
+      resumeResults
+      resumeUrl
+      resumeScanID
+    }
+  }
+`;
+export const updateUserResumeScanURL = /* GraphQL */ `
+  mutation UpdateUserResumeScanURL(
+    $emailAddress: AWSEmail!
+    $resumeID: String
+    $resumeUrl: String!
+  ) {
+    updateUserResumeScanURL(
+      emailAddress: $emailAddress
+      resumeID: $resumeID
+      resumeUrl: $resumeUrl
+    ) {
+      displayName
+      jobName
+      resumeName
+      resumeResults
+      resumeUrl
+      resumeScanID
+    }
+  }
+`;

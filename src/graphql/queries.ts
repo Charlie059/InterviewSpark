@@ -267,3 +267,17 @@ export const getUserInterviewsByQuestionID = /* GraphQL */ `
     }
   }
 `;
+export const getUserResumeScans = /* GraphQL */ `
+  query GetUserResumeScans($emailAddress: AWSEmail!) {
+    getUserResumeScans(emailAddress: $emailAddress) {
+      resumeScanList {
+        displayName
+        jobName
+        resumeName
+        resumeResults
+        resumeUrl
+        resumeScanID
+      }
+    }
+  }
+`;
