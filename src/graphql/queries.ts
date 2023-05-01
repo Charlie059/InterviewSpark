@@ -8,7 +8,6 @@ export const getUser = /* GraphQL */ `
       userEmailAddress
       userRole
       userName
-      hasProfile
       allowPublicInterview
     }
   }
@@ -75,6 +74,7 @@ export const getUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionID
         interviewVideoKey
         interviewQuestion
+        interviewQuestionTitle
         interviewQuestionType
       }
       nextToken
@@ -91,6 +91,7 @@ export const getUserInterviewsByMonth = /* GraphQL */ `
         interviewQuestionID
         interviewVideoKey
         interviewQuestion
+        interviewQuestionTitle
         interviewQuestionType
       }
     }
@@ -112,6 +113,7 @@ export const getUserInterviewMetaData = /* GraphQL */ `
       interviewQuestionID
       interviewVideoKey
       interviewQuestion
+      interviewQuestionTitle
       interviewQuestionType
     }
   }
@@ -125,6 +127,7 @@ export const searchUserInterviews = /* GraphQL */ `
         interviewQuestionID
         interviewVideoKey
         interviewQuestion
+        interviewQuestionTitle
         interviewQuestionType
       }
     }
@@ -145,6 +148,7 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionID
         interviewVideoKey
         interviewQuestion
+        interviewQuestionTitle
         interviewQuestionType
       }
       nextToken
@@ -253,6 +257,7 @@ export const getUserInterviewsByQuestionID = /* GraphQL */ `
         interviewQuestionID
         interviewVideoKey
         interviewQuestion
+        interviewQuestionTitle
         interviewQuestionType
       }
     }

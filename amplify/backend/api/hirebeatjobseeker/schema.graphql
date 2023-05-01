@@ -28,12 +28,10 @@ type GuestProfile {
 }
 
 type GuestUser {
-  allowPublicInterview: Boolean
-  fName: String
-  lName: String
-  uniqueHandle: String
-  userEmailAddress: AWSEmail
-  userRole: String
+  allowPublicInterview: Boolean!
+  userEmailAddress: AWSEmail!
+  userRole: String!
+  userName: String!
 }
 
 type Interview {
@@ -42,6 +40,7 @@ type Interview {
   interviewQuestionID: String
   interviewVideoKey: String
   interviewQuestion: String
+  interviewQuestionTitle: String
   interviewQuestionType: String
 }
 
@@ -200,10 +199,10 @@ input ModelSubscriptionStringInput {
 }
 
 type Mutation {
-  createGuestUser(emailAddress: AWSEmail!, uniqueHandle: String!, fName: String!, lName: String!): GuestUser!
-  createGuestProfile(emailAddress: AWSEmail!): GuestProfile!
+  createNewGuestUser(emailAddress: AWSEmail!, userName: String): OperationResult!
   addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
   addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
+  createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   updateInterviewVideoKey(
     emailAddress: AWSEmail!
@@ -292,7 +291,6 @@ type User {
   userEmailAddress: AWSEmail!
   userRole: String!
   userName: String!
-  hasProfile: Boolean!
   allowPublicInterview: Boolean!
 }
 

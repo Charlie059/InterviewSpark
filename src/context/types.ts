@@ -18,7 +18,6 @@ export type UserDataType =
       userEmailAddress: string
       userRole: string
       userName: string
-      hasProfile: boolean
       allowPublicInterview: boolean
     }
   | null

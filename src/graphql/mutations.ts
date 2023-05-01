@@ -2,45 +2,11 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createGuestUser = /* GraphQL */ `
-  mutation CreateGuestUser(
-    $emailAddress: AWSEmail!
-    $uniqueHandle: String!
-    $fName: String!
-    $lName: String!
-  ) {
-    createGuestUser(
-      emailAddress: $emailAddress
-      uniqueHandle: $uniqueHandle
-      fName: $fName
-      lName: $lName
-    ) {
-      allowPublicInterview
-      fName
-      lName
-      uniqueHandle
-      userEmailAddress
-      userRole
-    }
-  }
-`;
-export const createGuestProfile = /* GraphQL */ `
-  mutation CreateGuestProfile($emailAddress: AWSEmail!) {
-    createGuestProfile(emailAddress: $emailAddress) {
-      profilePhotoImgKey
-      profileCoverImgKey
-      profileResumeKey
-      profileVideoKey
-      profileLanguage
-      profileIsPublic
-      profileAddressLine1
-      profileAddressLine2
-      profileCity
-      profileState
-      profilePostalCode
-      profileCountry
-      profileJoiningDate
-      profileContact
+export const createNewGuestUser = /* GraphQL */ `
+  mutation CreateNewGuestUser($emailAddress: AWSEmail!, $userName: String) {
+    createNewGuestUser(emailAddress: $emailAddress, userName: $userName) {
+      isSuccessful
+      error
     }
   }
 `;
@@ -50,7 +16,6 @@ export const addNewGuestUser = /* GraphQL */ `
       userEmailAddress
       userRole
       userName
-      hasProfile
       allowPublicInterview
     }
   }
@@ -77,6 +42,25 @@ export const addProfileToUser = /* GraphQL */ `
     }
   }
 `;
+export const createUserInterviewWithQuestion = /* GraphQL */ `
+  mutation CreateUserInterviewWithQuestion(
+    $emailAddress: AWSEmail!
+    $questionID: String!
+  ) {
+    createUserInterviewWithQuestion(
+      emailAddress: $emailAddress
+      questionID: $questionID
+    ) {
+      interviewID
+      interviewDateTime
+      interviewQuestionID
+      interviewVideoKey
+      interviewQuestion
+      interviewQuestionTitle
+      interviewQuestionType
+    }
+  }
+`;
 export const createInterviewWithQuestion = /* GraphQL */ `
   mutation CreateInterviewWithQuestion(
     $emailAddress: AWSEmail!
@@ -91,6 +75,7 @@ export const createInterviewWithQuestion = /* GraphQL */ `
       interviewQuestionID
       interviewVideoKey
       interviewQuestion
+      interviewQuestionTitle
       interviewQuestionType
     }
   }
@@ -113,6 +98,7 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewQuestionID
       interviewVideoKey
       interviewQuestion
+      interviewQuestionTitle
       interviewQuestionType
     }
   }

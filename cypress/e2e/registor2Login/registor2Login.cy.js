@@ -12,7 +12,7 @@ describe('User Registration', () => {
   })
 
   it('Fills out and submits the registration form and fill the code', () => {
-    cy.get('[data-testid="username-input"]').type(testUsername)
+    cy.get('[data-testid="username-input"]').type('testUser')
     cy.get('[data-testid="email-input"]').type(testEmail)
     cy.get('[data-testid="password-input"]').type(testPassword)
     cy.get('[data-testid="term-input"]').click()

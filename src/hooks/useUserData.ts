@@ -16,7 +16,6 @@ export const getUserData = async (emailAddress: string): Promise<UserDataType | 
         __typename: 'User',
         userRole: user.userRole,
         userEmailAddress: user.userEmailAddress,
-        hasProfile: user.hasProfile,
         allowPublicInterview: user.allowPublicInterview,
         userName: user.userName
       }

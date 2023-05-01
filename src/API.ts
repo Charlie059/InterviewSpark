@@ -2,32 +2,10 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type GuestUser = {
-  __typename: "GuestUser",
-  allowPublicInterview?: boolean | null,
-  fName?: string | null,
-  lName?: string | null,
-  uniqueHandle?: string | null,
-  userEmailAddress?: string | null,
-  userRole?: string | null,
-};
-
-export type GuestProfile = {
-  __typename: "GuestProfile",
-  profilePhotoImgKey?: string | null,
-  profileCoverImgKey?: string | null,
-  profileResumeKey?: string | null,
-  profileVideoKey?: string | null,
-  profileLanguage?: string | null,
-  profileIsPublic?: boolean | null,
-  profileAddressLine1?: string | null,
-  profileAddressLine2?: string | null,
-  profileCity?: string | null,
-  profileState?: string | null,
-  profilePostalCode?: string | null,
-  profileCountry?: string | null,
-  profileJoiningDate?: string | null,
-  profileContact?: string | null,
+export type OperationResult = {
+  __typename: "OperationResult",
+  isSuccessful: boolean,
+  error?: string | null,
 };
 
 export type User = {
@@ -35,7 +13,6 @@ export type User = {
   userEmailAddress: string,
   userRole: string,
   userName: string,
-  hasProfile: boolean,
   allowPublicInterview: boolean,
 };
 
@@ -79,13 +56,8 @@ export type Interview = {
   interviewQuestionID?: string | null,
   interviewVideoKey?: string | null,
   interviewQuestion?: string | null,
+  interviewQuestionTitle?: string | null,
   interviewQuestionType?: string | null,
-};
-
-export type OperationResult = {
-  __typename: "OperationResult",
-  isSuccessful: boolean,
-  error?: string | null,
 };
 
 export type WorkHistories = {
@@ -163,46 +135,16 @@ export type QuestionList = {
   questionList?:  Array<Question | null > | null,
 };
 
-export type CreateGuestUserMutationVariables = {
+export type CreateNewGuestUserMutationVariables = {
   emailAddress: string,
-  uniqueHandle: string,
-  fName: string,
-  lName: string,
+  userName?: string | null,
 };
 
-export type CreateGuestUserMutation = {
-  createGuestUser:  {
-    __typename: "GuestUser",
-    allowPublicInterview?: boolean | null,
-    fName?: string | null,
-    lName?: string | null,
-    uniqueHandle?: string | null,
-    userEmailAddress?: string | null,
-    userRole?: string | null,
-  },
-};
-
-export type CreateGuestProfileMutationVariables = {
-  emailAddress: string,
-};
-
-export type CreateGuestProfileMutation = {
-  createGuestProfile:  {
-    __typename: "GuestProfile",
-    profilePhotoImgKey?: string | null,
-    profileCoverImgKey?: string | null,
-    profileResumeKey?: string | null,
-    profileVideoKey?: string | null,
-    profileLanguage?: string | null,
-    profileIsPublic?: boolean | null,
-    profileAddressLine1?: string | null,
-    profileAddressLine2?: string | null,
-    profileCity?: string | null,
-    profileState?: string | null,
-    profilePostalCode?: string | null,
-    profileCountry?: string | null,
-    profileJoiningDate?: string | null,
-    profileContact?: string | null,
+export type CreateNewGuestUserMutation = {
+  createNewGuestUser:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
   },
 };
 
@@ -217,7 +159,6 @@ export type AddNewGuestUserMutation = {
     userEmailAddress: string,
     userRole: string,
     userName: string,
-    hasProfile: boolean,
     allowPublicInterview: boolean,
   } | null,
 };
@@ -246,6 +187,24 @@ export type AddProfileToUserMutation = {
   } | null,
 };
 
+export type CreateUserInterviewWithQuestionMutationVariables = {
+  emailAddress: string,
+  questionID: string,
+};
+
+export type CreateUserInterviewWithQuestionMutation = {
+  createUserInterviewWithQuestion:  {
+    __typename: "Interview",
+    interviewID?: string | null,
+    interviewDateTime?: string | null,
+    interviewQuestionID?: string | null,
+    interviewVideoKey?: string | null,
+    interviewQuestion?: string | null,
+    interviewQuestionTitle?: string | null,
+    interviewQuestionType?: string | null,
+  },
+};
+
 export type CreateInterviewWithQuestionMutationVariables = {
   emailAddress: string,
   questionID: string,
@@ -259,6 +218,7 @@ export type CreateInterviewWithQuestionMutation = {
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
     interviewQuestion?: string | null,
+    interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
   },
 };
@@ -278,6 +238,7 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
     interviewQuestion?: string | null,
+    interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
   },
 };
@@ -306,7 +267,6 @@ export type GetUserQuery = {
     userEmailAddress: string,
     userRole: string,
     userName: string,
-    hasProfile: boolean,
     allowPublicInterview: boolean,
   },
 };
@@ -386,6 +346,7 @@ export type GetUserInterviewsPaginatedQuery = {
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
       interviewQuestion?: string | null,
+      interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
     } | null > | null,
     nextToken?: string | null,
@@ -407,6 +368,7 @@ export type GetUserInterviewsByMonthQuery = {
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
       interviewQuestion?: string | null,
+      interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
     } | null > | null,
   },
@@ -426,6 +388,7 @@ export type GetUserInterviewMetaDataQuery = {
     interviewQuestionID?: string | null,
     interviewVideoKey?: string | null,
     interviewQuestion?: string | null,
+    interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
   },
 };
@@ -445,6 +408,7 @@ export type SearchUserInterviewsQuery = {
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
       interviewQuestion?: string | null,
+      interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
     } | null > | null,
   },
@@ -465,6 +429,7 @@ export type SearchUserInterviewsPaginatedQuery = {
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
       interviewQuestion?: string | null,
+      interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
     } | null > | null,
     nextToken?: string | null,
@@ -591,6 +556,7 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewQuestionID?: string | null,
       interviewVideoKey?: string | null,
       interviewQuestion?: string | null,
+      interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
     } | null > | null,
   },

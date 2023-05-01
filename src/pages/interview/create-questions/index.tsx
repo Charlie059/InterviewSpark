@@ -12,7 +12,7 @@ import InterviewQuestionSummary from 'src/components/interview/createInterview/i
 import QuestionList from 'src/components/interview/createInterview/question-list'
 import router from 'next/router'
 import { API, graphqlOperation } from 'aws-amplify'
-import { createInterviewWithQuestion } from 'src/graphql/mutations'
+import { createUserInterviewWithQuestion } from 'src/graphql/mutations'
 
 const CreateQuestionsPage = () => {
   const [interviewQuestions, setInterviewQuestions] = useState<InterviewQuestion[]>([])
@@ -35,14 +35,14 @@ const CreateQuestionsPage = () => {
     for (const question of interviewQuestions) {
       const questionID = question.QuestionID
       const result = await API.graphql(
-        graphqlOperation(createInterviewWithQuestion, {
+        graphqlOperation(createUserInterviewWithQuestion, {
           emailAddress,
           questionID
         })
       )
 
       if ('data' in result) {
-        fetchedInterviews.push(result.data.createInterviewWithQuestion)
+        fetchedInterviews.push(result.data.createUserInterviewWithQuestion)
       } else {
         // Handle the case where result does not have a 'data' property
         console.error('Failed to create interview with question:', questionID)
