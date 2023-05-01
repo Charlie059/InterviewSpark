@@ -20,6 +20,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import VideocamIcon from '@mui/icons-material/Videocam'
 import MicIcon from '@mui/icons-material/Mic'
 import { Box, Grid, styled } from '@mui/material'
+import CircleProgressBar from 'src/components/interview/mockInterview/circleProgressBar'
 
 interface RecordedChunks {
   data: Blob[]
@@ -69,19 +70,39 @@ function MockInterviewPage() {
     margin: theme.spacing(0, 1.2)
   }))
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const StyledMicRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => (
-    <IconButton {...props} />
-  ))(({ theme }) => ({
-    backgroundColor: audioEnabled ? '#FF6C4B' : '#DFDDDD',
-
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-      fontSize: '2rem'
-    },
-    padding: theme.spacing(4.1),
-    margin: theme.spacing(0, 1.2)
+  const CircleProgressBarWrapper = styled(Box)(({}) => ({
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    rotate: '270deg'
   }))
+
+  const StyledNextButtonWrapper = styled(Box)(({}) => ({
+    position: 'relative',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }))
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const StyledMicRecordingButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
+    ({ theme }) => ({
+      backgroundColor: audioEnabled ? '#FF6C4B' : '#DFDDDD',
+
+      '& .MuiSvgIcon-root': {
+        color: 'white',
+        fontSize: '2rem'
+      },
+      padding: theme.spacing(4.1),
+      margin: theme.spacing(0, 1.2)
+    })
+  )
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const StyledStartButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
@@ -100,20 +121,18 @@ function MockInterviewPage() {
   )
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const StyledNextButton = styled(({ capturing, ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
-    ({ theme }) => ({
-      backgroundColor: '#DFDDDD',
-      '&:hover': {
-        backgroundColor: '#3888FF'
-      },
-      '& .MuiSvgIcon-root': {
-        color: 'white',
-        fontSize: '2rem'
-      },
-      padding: theme.spacing(4.1),
-      margin: theme.spacing(0, 1.2)
-    })
-  )
+  const StyledNextButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
+    backgroundColor: '#DFDDDD',
+    '&:hover': {
+      backgroundColor: '#3888FF'
+    },
+    '& .MuiSvgIcon-root': {
+      color: 'white',
+      fontSize: '2rem'
+    },
+    padding: theme.spacing(4.1),
+    margin: theme.spacing(0, 1.2)
+  }))
 
   const handleVideoToggle = () => {
     setVideoEnabled(prev => !prev)
@@ -405,12 +424,23 @@ function MockInterviewPage() {
             </StyledMicRecordingButton>
             {capturing ? (
               <>
-                <StyledNextButton capturing={capturing} onClick={handleUploadAndMoveToNextQuestion}>
-                  <ArrowForwardIosIcon />
-                </StyledNextButton>
+                <StyledNextButtonWrapper>
+                  <CircleProgressBarWrapper>
+                    <CircleProgressBar
+                      size={70}
+                      progress={(timeLeft / detailedInterviews[currentQuestionIndex]?.estimatedSecond) * 100}
+                      strokeWidth={8}
+                      circleOneStroke='#D9D9D9'
+                      circleTwoStroke='#4C4CFD'
+                    />
+                  </CircleProgressBarWrapper>
+                  <StyledNextButton onClick={handleUploadAndMoveToNextQuestion} capturing={capturing}>
+                    <ArrowForwardIosIcon />
+                  </StyledNextButton>
+                </StyledNextButtonWrapper>
               </>
             ) : (
-              <StyledStartButton capturing={capturing} onClick={handleStartCaptureClick}>
+              <StyledStartButton onClick={handleStartCaptureClick} capturing={capturing}>
                 <PlayArrowIcon />
               </StyledStartButton>
             )}
