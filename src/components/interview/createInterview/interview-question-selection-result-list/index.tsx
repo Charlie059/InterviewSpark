@@ -11,7 +11,7 @@ interface InterviewQuestion {
   interviewQuestionSampleAns: string
   interviewQuestionType: string
   interviewQuestionTitle: string
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: 'Easy' | 'Medium' | 'Hard'
   estimatedSecond: number
 }
 interface Props {
