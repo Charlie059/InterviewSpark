@@ -77,6 +77,7 @@ const AuthProvider = ({ children }: Props) => {
       if (session.isValid()) {
         // If there is a session, set the loading state to true and get the current authenticated user.
         setLoading(true)
+        console.log('setLoading(true)')
 
         const user = await handleCurrUser()
 
@@ -84,15 +85,18 @@ const AuthProvider = ({ children }: Props) => {
         if (user) {
           // Set the loading state to false and the user data to the local state.
           setLoading(false)
+          console.log('setLoading(false)')
           setUser({ ...user })
         } else {
           // If there is no user, set the loading state to false.
           setLoading(false)
+          console.log('setLoading(false)')
           setUser(null)
         }
       } else {
         // If there is no session, set the loading state to false.
         setLoading(false)
+        console.log('setLoading(false)')
         setUser(null)
       }
     }
@@ -100,6 +104,7 @@ const AuthProvider = ({ children }: Props) => {
     initAuth().catch(err => {
       Log.info(err)
       setLoading(false)
+      console.log('setLoading(false)')
     })
   }, [])
 
