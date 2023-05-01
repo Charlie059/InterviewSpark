@@ -4,13 +4,13 @@ import { Grid, Typography } from '@mui/material'
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
 import PageHeader from 'src/@core/components/page-header'
 
-// import ResumeScan from "src/components/resume/ResumeScan";
-// import ResumeList from "src/components/resume/ResumeList";
+import ResumeScan from "src/components/resume/ResumeScan";
+import ResumeList from "src/components/resume/ResumeList";
 
 // import { useState } from "react";
 // import ResumeScanPage from "../index";
 
-const ResumeList = () => {
+const ResumeListPage = () => {
   return (
     <DropzoneWrapper>
       <Grid container spacing={6} className='match-height'>
@@ -19,7 +19,7 @@ const ResumeList = () => {
           subtitle={<Typography variant='body2'>Upload Your Resume Here</Typography>}
         />
         <Grid item xs={12}>
-          {/* <ResumeScan nocollapse={false} refreshResume={refreshResume} setRefreshResume={setRefreshResume}/> */}
+           <ResumeScan nocollapse={false}/>
         </Grid>
         <Grid item xs={12}>
           <ResumeList />
@@ -29,9 +29,9 @@ const ResumeList = () => {
   )
 }
 
-ResumeList.acl = {
+ResumeListPage.acl = {
   action: 'read',
   subject: 'acl-page'
 }
 
-export default ResumeList
+export default ResumeListPage
