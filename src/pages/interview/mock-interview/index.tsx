@@ -19,8 +19,9 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import VideocamIcon from '@mui/icons-material/Videocam'
 import MicIcon from '@mui/icons-material/Mic'
-import { Box, Grid, styled } from '@mui/material'
+import { Box, Card, Grid, Typography, styled } from '@mui/material'
 import CircleProgressBar from 'src/components/interview/mockInterview/circleProgressBar'
+import MenuOpenIcon from '@mui/icons-material/MenuOpen'
 
 interface RecordedChunks {
   data: Blob[]
@@ -55,6 +56,7 @@ function MockInterviewPage() {
 
   const [videoEnabled, setVideoEnabled] = useState(true)
   const [audioEnabled, setAudioEnabled] = useState(true)
+  const [showCard, setShowCard] = useState(false)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const StyledVideoRecordingButton = styled(({ capturing, ...props }: StyledIconButtonProps) => (
@@ -403,8 +405,10 @@ function MockInterviewPage() {
               width='500px'
               height='380px'
               borderRadius={'15px'}
-              style={{ overflow: 'hidden', backgroundColor: '#EBEBEB' }}
+              style={{ overflow: 'hidden', backgroundColor: '#EBEBEB', position: 'relative' }}
+              onClick={() => setShowCard(!showCard)}
             >
+              <MenuOpenIcon style={{ position: 'absolute', bottom: 0, right: 0, margin: 5, color: '#0f0f0f0f' }} />
               <Grid container alignItems='center' justifyContent='center' style={{ height: '100%' }}>
                 <img src='/images/favicon.png' alt='logo' width={'15%'} height={'auto'} />
               </Grid>
@@ -412,6 +416,17 @@ function MockInterviewPage() {
           </Grid>
         </Grid>
       </Grid>
+      {showCard && (
+        <Card sx={{ marginTop: 8, marginLeft: 30, marginRight: 30, backgroundColor: '#EBEBEB' }}>
+          {/* <p>{transcribedText}</p> */}
+          <Typography variant='h6' sx={{ ml: 2, fontWeight: 200, margin: '10px 20px 10px 20px' }}>
+            Question {currentQuestionIndex + 1}: {detailedInterviews[currentQuestionIndex]?.interviewQuestion}
+          </Typography>
+          <audio ref={audioRef} />
+        </Card>
+      )}
+
+      <Box margin={2}></Box>
       <Box width='100%' height='100%' p={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         {currentQuestionIndex < interviews.length && (
           <>
@@ -446,16 +461,6 @@ function MockInterviewPage() {
             )}
           </>
         )}
-      </Box>
-      <Box sx={{ margin: 5 }}>
-        {' '}
-        <p>
-          Question {currentQuestionIndex + 1} of {interviews.length}:
-          {detailedInterviews[currentQuestionIndex]?.interviewQuestion}
-        </p>
-        <p>Time left: {timeLeft}s</p>
-        <p>{transcribedText}</p>
-        <audio ref={audioRef} />
       </Box>
     </Grid>
   )
