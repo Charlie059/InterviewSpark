@@ -25,6 +25,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import Log from 'src/middleware/loggerMiddleware'
 import { removeUserInterviewsByID } from 'src/graphql/mutations'
+import router from 'next/router'
 
 interface Interview {
   interviewID: string
@@ -117,6 +118,13 @@ const InterviewList = () => {
             color='primary'
             onClick={() => {
               Log.info('View button clicked for interview ID:', params.row.interviewID)
+
+              const interviewsString = JSON.stringify(params.row)
+
+              router.push({
+                pathname: '/interview/detail',
+                query: { interview: interviewsString }
+              })
             }}
           >
             <VisibilityIcon color='disabled' />
