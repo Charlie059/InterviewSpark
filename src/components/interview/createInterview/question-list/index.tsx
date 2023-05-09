@@ -253,6 +253,8 @@ const QuestionList = ({ setSelectedRows, setShowQuickViewQuestion }: Props) => {
           return { ...question, id: question.QuestionID }
         })
 
+        console.log(questionList)
+
         // Add the next token to the list of tokens
         if (result.data.searchQuestionsPaginated.nextToken) {
           if (searchTokens.length === 0) {

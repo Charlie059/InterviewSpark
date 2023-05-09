@@ -194,7 +194,7 @@ function MockInterviewPage() {
   )
 
   // Helper function to save the recorded chunks to S3
-  const saveToS3 = async () => {
+  const saveToS3 = async (feedback: string) => {
     try {
       const currentUser = await Auth.currentAuthenticatedUser()
       const userId = currentUser.attributes.sub
@@ -219,7 +219,8 @@ function MockInterviewPage() {
           emailAddress: emailAddress,
           interviewID: interviewID,
           questionID: questionID,
-          interviewVideoKey: uniqueFilename
+          interviewVideoKey: uniqueFilename,
+          interviewFeedback: feedback
         })
       )
 
@@ -285,6 +286,8 @@ function MockInterviewPage() {
       // Use polly to speak the response
       setMessageToSpeak(res.data.text)
       await waitForAudioToEnd()
+
+      return res.data.text
     } catch (error) {
       console.error(error)
     }
@@ -329,10 +332,10 @@ function MockInterviewPage() {
     handleStopRecording()
 
     // Send the transcribed text to GPT-3.5 Speak
-    await sendToGPT2Speak(transcribedText_)
+    const feedback = await sendToGPT2Speak(transcribedText_)
 
     // Upload the video to S3
-    await saveToS3()
+    await saveToS3(feedback)
 
     // Move to the next question
     currentQuestionIndex += 1
@@ -439,10 +442,14 @@ function MockInterviewPage() {
                   <CircleProgressBarWrapper>
                     <CircleProgressBar
                       size={70}
-                      progress={(timeLeft / detailedInterviews[currentQuestionIndex]?.estimatedSecond) * 100}
+                      progress={
+                        !isNaN(timeLeft / (detailedInterviews[currentQuestionIndex]?.estimatedSecond || 1))
+                          ? (timeLeft / (detailedInterviews[currentQuestionIndex]?.estimatedSecond || 1)) * 100
+                          : 0
+                      }
                       strokeWidth={8}
                       circleOneStroke='#D9D9D9'
-                      circleTwoStroke='#4C4CFD'
+                      circleTwoStroke='#4C4CFF'
                     />
                   </CircleProgressBarWrapper>
                   <StyledNextButton onClick={handleUploadAndMoveToNextQuestion}>

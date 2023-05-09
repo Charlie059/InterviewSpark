@@ -42,6 +42,7 @@ type Interview {
   interviewQuestion: String
   interviewQuestionTitle: String
   interviewQuestionType: String
+  interviewFeedback: String
 }
 
 type InterviewList {
@@ -209,6 +210,7 @@ type Mutation {
     interviewID: String!
     questionID: String!
     interviewVideoKey: String!
+    interviewFeedback: String!
   ): Interview!
   removeUserInterviewsByID(
     emailAddress: AWSEmail!

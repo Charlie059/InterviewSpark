@@ -58,6 +58,7 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewQuestion
       interviewQuestionTitle
       interviewQuestionType
+      interviewFeedback
     }
   }
 `;
@@ -77,6 +78,7 @@ export const createInterviewWithQuestion = /* GraphQL */ `
       interviewQuestion
       interviewQuestionTitle
       interviewQuestionType
+      interviewFeedback
     }
   }
 `;
@@ -86,12 +88,14 @@ export const updateInterviewVideoKey = /* GraphQL */ `
     $interviewID: String!
     $questionID: String!
     $interviewVideoKey: String!
+    $interviewFeedback: String!
   ) {
     updateInterviewVideoKey(
       emailAddress: $emailAddress
       interviewID: $interviewID
       questionID: $questionID
       interviewVideoKey: $interviewVideoKey
+      interviewFeedback: $interviewFeedback
     ) {
       interviewID
       interviewDateTime
@@ -100,6 +104,7 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewQuestion
       interviewQuestionTitle
       interviewQuestionType
+      interviewFeedback
     }
   }
 `;

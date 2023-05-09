@@ -76,6 +76,7 @@ export const getUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestion
         interviewQuestionTitle
         interviewQuestionType
+        interviewFeedback
       }
       nextToken
       totalRecords
@@ -93,6 +94,7 @@ export const getUserInterviewsByMonth = /* GraphQL */ `
         interviewQuestion
         interviewQuestionTitle
         interviewQuestionType
+        interviewFeedback
       }
     }
   }
@@ -115,6 +117,7 @@ export const getUserInterviewMetaData = /* GraphQL */ `
       interviewQuestion
       interviewQuestionTitle
       interviewQuestionType
+      interviewFeedback
     }
   }
 `;
@@ -129,6 +132,7 @@ export const searchUserInterviews = /* GraphQL */ `
         interviewQuestion
         interviewQuestionTitle
         interviewQuestionType
+        interviewFeedback
       }
     }
   }
@@ -150,6 +154,7 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestion
         interviewQuestionTitle
         interviewQuestionType
+        interviewFeedback
       }
       nextToken
       totalRecords
@@ -263,6 +268,7 @@ export const getUserInterviewsByQuestionID = /* GraphQL */ `
         interviewQuestion
         interviewQuestionTitle
         interviewQuestionType
+        interviewFeedback
       }
     }
   }

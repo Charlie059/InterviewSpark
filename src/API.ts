@@ -58,6 +58,7 @@ export type Interview = {
   interviewQuestion?: string | null,
   interviewQuestionTitle?: string | null,
   interviewQuestionType?: string | null,
+  interviewFeedback?: string | null,
 };
 
 export type ResumeScan = {
@@ -218,6 +219,7 @@ export type CreateUserInterviewWithQuestionMutation = {
     interviewQuestion?: string | null,
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
+    interviewFeedback?: string | null,
   },
 };
 
@@ -236,6 +238,7 @@ export type CreateInterviewWithQuestionMutation = {
     interviewQuestion?: string | null,
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
+    interviewFeedback?: string | null,
   },
 };
 
@@ -244,6 +247,7 @@ export type UpdateInterviewVideoKeyMutationVariables = {
   interviewID: string,
   questionID: string,
   interviewVideoKey: string,
+  interviewFeedback: string,
 };
 
 export type UpdateInterviewVideoKeyMutation = {
@@ -256,6 +260,7 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewQuestion?: string | null,
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
+    interviewFeedback?: string | null,
   },
 };
 
@@ -416,6 +421,7 @@ export type GetUserInterviewsPaginatedQuery = {
       interviewQuestion?: string | null,
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
+      interviewFeedback?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -438,6 +444,7 @@ export type GetUserInterviewsByMonthQuery = {
       interviewQuestion?: string | null,
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
+      interviewFeedback?: string | null,
     } | null > | null,
   },
 };
@@ -458,6 +465,7 @@ export type GetUserInterviewMetaDataQuery = {
     interviewQuestion?: string | null,
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
+    interviewFeedback?: string | null,
   },
 };
 
@@ -478,6 +486,7 @@ export type SearchUserInterviewsQuery = {
       interviewQuestion?: string | null,
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
+      interviewFeedback?: string | null,
     } | null > | null,
   },
 };
@@ -499,6 +508,7 @@ export type SearchUserInterviewsPaginatedQuery = {
       interviewQuestion?: string | null,
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
+      interviewFeedback?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -630,6 +640,7 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewQuestion?: string | null,
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
+      interviewFeedback?: string | null,
     } | null > | null,
   },
 };
