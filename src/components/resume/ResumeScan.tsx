@@ -99,7 +99,7 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
       Payload: JSON.stringify({"body":myPayload}),
       InvocationType: 'RequestResponse'
     };
-    await Auth.currentCredentials()
+    Auth.currentCredentials()
       .then(credentials => {
         console.log(credentials)
 
@@ -117,7 +117,9 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
             resumePack.resume_results = responseData;
             console.log(responseData)
             console.log(resumePack)
-            await putResume(resumePack)
+            putResume(resumePack).then(async () =>{
+              await router.replace('/resume/list')
+            })
           })
           .catch((error) => {
             throw error
@@ -175,7 +177,6 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
     }
 
     setCollapsed(false)
-    await router.replace('/resume/list')
   }
 
   return (

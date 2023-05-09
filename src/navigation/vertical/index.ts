@@ -40,7 +40,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Resume',
-      path: '/resume',
+      path: '/resume/list/',
       action: 'read',
       subject: 'resume-page',
       icon: 'mdi:book-open-outline'

@@ -35,6 +35,7 @@ import IconButton from '@mui/material/IconButton'
 import {API, graphqlOperation} from "aws-amplify";
 import {getUserResumeScans} from "../../graphql/queries";
 import {removeUserResumeScanByID, updateUserResumeScanURL} from "../../graphql/mutations";
+import router from 'next/router'
 
 interface Resume {
   jobName: string;
@@ -66,6 +67,7 @@ const ResumeList = () => {
 
     //#Done
     //Update resumeurl mutation
+    //not used. URL now updates when download is hit
 
     try {
       const result = await API.graphql(graphqlOperation(updateUserResumeScanURL, {
@@ -102,14 +104,15 @@ const ResumeList = () => {
         setResumes([
               emptyR
             ]);
+        router.replace('/resume')
       }else {
-            for (const r of resumeList) {
-              console.log(r.resumeName);
-              const newUrl = await Storage.get(r.resumeName);
-              console.log("new url:", newUrl);
-
-              await updateResumeUrl(r.resumeScanID, newUrl);
-            }
+            // for (const r of resumeList) {
+            //   console.log(r.resumeName);
+            //   const newUrl = await Storage.get(r.resumeName);
+            //   console.log("new url:", newUrl);
+            //
+            //   await updateResumeUrl(r.resumeScanID, newUrl);
+            // }
             setResumes(resumeList);
       }
     }
