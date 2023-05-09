@@ -53,6 +53,7 @@ interface Resume {
   resumeName: string;
   resumeResults: string;
   displayName: string;
+  resumeScanID: string;
 }
 
 const ResumeList = () => {
