@@ -27,7 +27,7 @@ interface ResumeResultsProps {
 }
 
 const ResumeResults: React.FC<ResumeResultsProps> = ({resumeResults}) => {
-  const results = JSON.parse(JSON.parse(resumeResults))["Final Report"]
+  const results = JSON.parse(resumeResults)["Final Report"]
   const JD_keywords = results.JD_keywords_in_profile
   const keywords: Keyword[] = []
   let keywords_hit_count = 0

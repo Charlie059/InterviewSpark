@@ -30,8 +30,11 @@ import Divider from "@mui/material/Divider";
 
 import Refresh from 'mdi-material-ui/Refresh';
 
-// import {useAuth} from "../../hooks/useAuth";
+import {useAuth} from "../../hooks/useAuth";
 import IconButton from '@mui/material/IconButton'
+import {API, graphqlOperation} from "aws-amplify";
+import { getUserResumeScans} from "../../graphql/queries";
+import {removeUserResumeScanByID, updateUserResumeScanURL} from "../../graphql/mutations";
 
 // Styled component for the heading inside the dropzone area
 
@@ -45,13 +48,11 @@ import IconButton from '@mui/material/IconButton'
 //   return <TextField inputRef={ref} {...props} sx={{ width: '100%' }} />
 // })
 interface Resume {
-  jobTitle: string;
-  jobDescription: string;
-  resume_url: string;
-  resume_name: string;
-  resume_results: string;
-  resume_file: string;
-  display_name: string;
+  jobName: string;
+  resumeUrl: string;
+  resumeName: string;
+  resumeResults: string;
+  displayName: string;
 }
 
 const ResumeList = () => {
@@ -68,7 +69,7 @@ const ResumeList = () => {
   // const handleResumeClickOpen = () => setOpenResume(true);
   const handleResumeClose = () => setOpenResume(false);
 
-  // const auth = useAuth();
+  const auth = useAuth();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function updateResumeUrl(id: string, newUrl: string) {
@@ -81,44 +82,53 @@ const ResumeList = () => {
     // );
     //#TODO
     //Update resumeurl mutation
+
+    try {
+      const result = await API.graphql(graphqlOperation(updateUserResumeScanURL, {
+        emailAddress: auth.user?.userEmailAddress, // replace with the user's email address
+        resumeID: id,
+        resumeUrl: newUrl
+      }));
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   async function getResume() {
     //#TODO
-    //new GetResume Mutation needed
+    //new GetResume Mutation
+    const emailAddress = auth.user?.userEmailAddress
 
-    // const user = await DataStore.query(User, (c) =>
-    //   c.username('eq', auth.user.email)
-    // );
-    // if (user.length !== 0) {
-    //   const resumeStore = await DataStore.query(Resume, (c) =>
-    //     c.userID('eq', user[0].id).resume_results('ne', '')
-    //   );
-    //   if (resumeStore.length === 0) {
-    //     setResumes([
-    //       {
-    //         resume_name: 'No Resume, Please upload or refresh',
-    //       },
-    //     ]);
-    //   } else {
-    //     console.log(resumeStore);
-    //     for (let r of resumeStore) {
-    //       console.log(r.resume_name);
-    //       const newUrl = await Storage.get(r.resume_name);
-    //       await updateResumeUrl(r.id, newUrl);
-    //     }
-    //     setResumes(resumeStore);
-    //   }
-    // } else {
-    //   setResumes([
-    //     {
-    //       resume_name: 'No Resume, Please upload or refresh',
-    //     },
-    //   ]);
-    // }
-    // console.log(resumes);
+    const result = await API.graphql(
+      graphqlOperation(getUserResumeScans, {
+        emailAddress
+      })
+    )
 
-    //setRefreshResume(false)
+    console.log('Result:', result)
+    if('data' in result){
+      const resumeList = result.data.getUserResumeScans.resumeScanList
+      console.log('ResumeList: ', resumeList)
+      if (resumeList.length === 0) {
+            // @ts-ignore
+        const emptyR : Resume ={
+          resumeName: 'No Resume, Please upload or refresh',
+        }
+        setResumes([
+              emptyR
+            ]);
+      }else {
+            for (const r of resumeList) {
+              console.log(r.resumeName);
+              const newUrl = await Storage.get(r.resumeName);
+              console.log("new url:", newUrl);
+
+              // await updateResumeUrl(r.resumeScanID, newUrl);
+            }
+            setResumes(resumeList);
+      }
+    }
   }
 
   const refreshUrl = async ({ resumeName }: { resumeName: string }) => {
@@ -127,15 +137,24 @@ const ResumeList = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const deleteResume = async (toDelete: React.MouseEvent<HTMLButtonElement>) => {
-    //#TODO
-    //Delete Resume
 
-    // const resumeStore = await DataStore.query(Resume, (c) =>
-    //   c.resume_name('eq', toDelete.currentTarget.value)
-    // );
-    // DataStore.delete(resumeStore[0]);
-    // console.log(resumes);
-    // await getResume();
+    //Delete Resume
+    try {
+        const resumeIdToDelete = toDelete.currentTarget.value;
+        const result = await API.graphql(graphqlOperation(removeUserResumeScanByID, {
+          emailAddress: auth.user?.userEmailAddress, // replace with the user's email address
+          resumeScanID: resumeIdToDelete
+        }));
+        console.log(result);
+
+        // Check if the deletion was successful and update the list of resumes accordingly
+        if ('data' in result && result.data.removeUserResumeScanByID.isSuccessful) {
+          await getResume();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
   };
 
   useEffect(() => {
@@ -195,42 +214,42 @@ const ResumeList = () => {
                           variant="subtitle2"
                           sx={{ color: 'text.primary' }}
                         >
-                          {item.display_name}
+                          {item.displayName}
                         </Typography>
                         <Typography
                           variant="body2"
                           sx={{ color: 'text.disabled' }}
                         >
-                          For {item.jobTitle}
+                          For {item.jobName}
                         </Typography>
                       </Box>
                     </Box>
                   </TableCell>
                   <TableCell>
-                    {item.resume_url && (
+                    {item.resumeUrl && (
                       <Button
                         target="_blank"
                         variant="contained"
                         sx={{ mr: 2 }}
                         onClick={async () => {
-                          await refreshUrl({ resumeName: item.resume_name });
+                          await refreshUrl({ resumeName: item.resumeName });
                         }}
                        href=''>
                         <Typography sx={{ color: 'white' }}>Download</Typography>
                       </Button>
                     )}
                   </TableCell>
-                  {item.resume_results && (
+                  {item.resumeResults && (
                     <TableCell sx={{ color: 'text' }}>
                       {(
-                        JSON.parse(JSON.parse(item.resume_results))[
+                        JSON.parse(item.resumeResults)[
                           'Final Report'
                           ]['Final_score'].toFixed(2) * 2
                       ).toString()}
                       <LinearProgress
                         variant="determinate"
                         value={
-                          JSON.parse(JSON.parse(item.resume_results))[
+                          JSON.parse(item.resumeResults)[
                             'Final Report'
                             ]['Final_score'].toFixed(2) * 2
                         }
@@ -238,12 +257,12 @@ const ResumeList = () => {
                       />
                     </TableCell>
                   )}
-                  {item.resume_results && (
+                  {item.resumeResults && (
                     <TableCell>
                       <Button
                         onClick={() => {
                           setOpenResume(true);
-                          setResumeResult(item.resume_results);
+                          setResumeResult(item.resumeResults);
                         }}
                         target="_blank"
                         variant="outlined"
@@ -271,10 +290,10 @@ const ResumeList = () => {
                       </Dialog>
                     </TableCell>
                   )}
-                  {item.resume_results && (
+                  {item.displayName && (
                     <TableCell>
                       <Button
-                        value={item.resume_name}
+                        value={item.resumeScanID}
                         onClick={deleteResume}
                         variant="outlined"
                         color="error"

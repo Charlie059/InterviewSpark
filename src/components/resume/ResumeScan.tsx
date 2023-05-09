@@ -25,9 +25,13 @@ import Collapse from "@mui/material/Collapse";
 
 import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
-import {API} from "aws-amplify";
+import {API, graphqlOperation} from "aws-amplify";
 import {useRouter} from "next/router";
 import {useAuth} from "../../hooks/useAuth";
+import Auth from '@aws-amplify/auth';
+
+import {createUserResumeScan} from 'src/graphql/mutations'
+import {Lambda} from "aws-sdk";
 
 // Styled component for the heading inside the dropzone area
 
@@ -55,47 +59,71 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
 
   const router = useRouter()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const auth = useAuth()
+  const { user } = useAuth()
 
   async function putResume(resumePack: ResumePack) {
+    console.log("resumePack: ")
+    console.log(resumePack.display_name)
 
-    // const user = await DataStore.query(User, c => c.username('eq', auth.user.email));
-    // console.log("resumePack: ")
-    // console.log(resumePack.display_name)
-    //
-    // return await DataStore.save(
-    //   new Resume({
-    //     "resume_url":  resumePack.resume_url,
-    //     "display_name": resumePack.display_name,
-    //     "resume_name": resumePack.resume_name,
-    //     "job_name":resumePack.jobTitle,
-    //     "resume_results": resumePack.resume_results,
-    //     "userID": user[0].id
-    //   })
-    // );
-    return resumePack
+    const emailAddress = user?.userEmailAddress || ''
+    const displayName = resumePack.display_name
+    const resumeName= resumePack.resume_name
+    const jobName = resumePack.jobTitle
+    const resumeResults = resumePack.resume_results
+    const resumeUrl = resumePack.resume_url
 
-    //#TODO
+    const payload = {
+      emailAddress,
+      displayName,
+      resumeUrl,
+      resumeName,
+      jobName,
+      resumeResults,
+    }
+    console.log('Payload to be stored in DB:', payload)
+    const result = await API.graphql(
+      graphqlOperation(createUserResumeScan, payload)
+    )
+
+    return result
+
     //GraphQL mutation for resume db storage
+
   }
 
   async function scanResume(resumePack: ResumePack) {
-    const apiName = 'resumeAPI';
-    const path = '/resume-scan';
+    const myPayload = JSON.stringify(resumePack);
 
-    const myInit = {
-      headers: {}, // OPTIONAL
-      response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
-      body: resumePack
+    const myParams = {
+      FunctionName: 'resumeScanAPI-dev',
+      Payload: JSON.stringify({"body":myPayload}),
+      InvocationType: 'RequestResponse'
     };
+    await Auth.currentCredentials()
+      .then(credentials => {
+        console.log(credentials)
 
-    return API.post(apiName, path, myInit)
-      .then((response) => {
-        resumePack.resume_results = JSON.stringify(response.data)
+        const lambda = new Lambda({
+          region:"us-east-1",
+          credentials: Auth.essentialCredentials(credentials)
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const scanPromise = lambda.invoke(myParams).promise()
+          .then(async (response) => {
+            // @ts-ignore
+            const responseData = JSON.parse(JSON.parse(response.Payload).body);
+
+            resumePack.resume_results = responseData;
+            console.log(responseData)
+            console.log(resumePack)
+            await putResume(resumePack)
+          })
+          .catch((error) => {
+            throw error
+          })
+
       })
-      .catch((error) => {
-        console.log(error.response);
-      });
   }
 
   // ** States
@@ -142,14 +170,12 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
       data.resume_name = cvName
       data.display_name = name
       await scanResume(data)
-
-      await putResume(data)
     } catch (error) {
       console.log("Error uploading file: ", error);
     }
 
     setCollapsed(false)
-    await router.replace('/my-resume')
+    await router.replace('/resume/list')
   }
 
   return (
