@@ -33,20 +33,9 @@ import Refresh from 'mdi-material-ui/Refresh';
 import {useAuth} from "../../hooks/useAuth";
 import IconButton from '@mui/material/IconButton'
 import {API, graphqlOperation} from "aws-amplify";
-import { getUserResumeScans} from "../../graphql/queries";
+import {getUserResumeScans} from "../../graphql/queries";
 import {removeUserResumeScanByID, updateUserResumeScanURL} from "../../graphql/mutations";
 
-// Styled component for the heading inside the dropzone area
-
-// const defaultValues = {
-//   resume: null,
-//   jobTitle: '',
-//   jobDescription: '',
-// }
-
-// const CustomInput = forwardRef(({ ...props }, ref) => {
-//   return <TextField inputRef={ref} {...props} sx={{ width: '100%' }} />
-// })
 interface Resume {
   jobName: string;
   resumeUrl: string;
@@ -75,13 +64,7 @@ const ResumeList = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async function updateResumeUrl(id: string, newUrl: string) {
 
-    // const original = await DataStore.query(Resume, id);
-    // await DataStore.save(
-    //   Resume.copyOf(original, (updated) => {
-    //     updated.resume_url = newUrl;
-    //   })
-    // );
-    //#TODO
+    //#Done
     //Update resumeurl mutation
 
     try {
@@ -97,7 +80,7 @@ const ResumeList = () => {
   }
 
   async function getResume() {
-    //#TODO
+    //#Done
     //new GetResume Mutation
     const emailAddress = auth.user?.userEmailAddress
 
@@ -125,7 +108,7 @@ const ResumeList = () => {
               const newUrl = await Storage.get(r.resumeName);
               console.log("new url:", newUrl);
 
-              // await updateResumeUrl(r.resumeScanID, newUrl);
+              await updateResumeUrl(r.resumeScanID, newUrl);
             }
             setResumes(resumeList);
       }
