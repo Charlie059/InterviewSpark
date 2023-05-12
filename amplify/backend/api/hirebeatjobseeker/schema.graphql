@@ -10,30 +10,6 @@ type Educations {
   educations: [Education]
 }
 
-type GuestProfile {
-  profilePhotoImgKey: String
-  profileCoverImgKey: String
-  profileResumeKey: String
-  profileVideoKey: String
-  profileLanguage: String
-  profileIsPublic: Boolean
-  profileAddressLine1: String
-  profileAddressLine2: String
-  profileCity: String
-  profileState: String
-  profilePostalCode: String
-  profileCountry: String
-  profileJoiningDate: AWSDateTime
-  profileContact: AWSPhone
-}
-
-type GuestUser {
-  allowPublicInterview: Boolean!
-  userEmailAddress: AWSEmail!
-  userRole: String!
-  userName: String!
-}
-
 type Interview {
   interviewID: String
   interviewDateTime: AWSDateTime
@@ -200,9 +176,7 @@ input ModelSubscriptionStringInput {
 }
 
 type Mutation {
-  createNewGuestUser(emailAddress: AWSEmail!, userName: String): OperationResult!
-  addNewGuestUser(emailAddress: AWSEmail!, userName: String!): User
-  addProfileToUser(emailAddress: AWSEmail!, input: addUserProfileInput!): Profile
+  createNewGuestUser(emailAddress: AWSEmail!, userName: String, fName: String!, lName: String!): OperationResult!
   createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   updateInterviewVideoKey(
@@ -249,8 +223,8 @@ type PaginatedQuestionList {
 type Profile {
   fName: String
   lName: String
-  photoImgKey: AWSURL
-  coverImgKey: AWSURL
+  photoImgURL: AWSURL
+  coverImgRUL: AWSURL
   resumeKey: String
   addressLine1: String
   addressLine2: String
@@ -337,20 +311,4 @@ type WorkHistory {
   workHistoryStartDate: AWSDate
   workHistoryEndDate: AWSDate
   workHistoryJobDescription: String
-}
-
-input addUserProfileInput {
-  fName: String
-  lName: String
-  photoImgKey: AWSURL
-  coverImgKey: AWSURL
-  resumeKey: String
-  addressLine1: String
-  addressLine2: String
-  city: String
-  state: String
-  postalCode: String
-  country: String
-  joiningDate: AWSDate
-  contact: AWSPhone
 }

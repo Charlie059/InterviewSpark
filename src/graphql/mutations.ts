@@ -3,42 +3,20 @@
 // this is an auto generated file. This will be overwritten
 
 export const createNewGuestUser = /* GraphQL */ `
-  mutation CreateNewGuestUser($emailAddress: AWSEmail!, $userName: String) {
-    createNewGuestUser(emailAddress: $emailAddress, userName: $userName) {
+  mutation CreateNewGuestUser(
+    $emailAddress: AWSEmail!
+    $userName: String
+    $fName: String!
+    $lName: String!
+  ) {
+    createNewGuestUser(
+      emailAddress: $emailAddress
+      userName: $userName
+      fName: $fName
+      lName: $lName
+    ) {
       isSuccessful
       error
-    }
-  }
-`;
-export const addNewGuestUser = /* GraphQL */ `
-  mutation AddNewGuestUser($emailAddress: AWSEmail!, $userName: String!) {
-    addNewGuestUser(emailAddress: $emailAddress, userName: $userName) {
-      userEmailAddress
-      userRole
-      userName
-      allowPublicInterview
-    }
-  }
-`;
-export const addProfileToUser = /* GraphQL */ `
-  mutation AddProfileToUser(
-    $emailAddress: AWSEmail!
-    $input: addUserProfileInput!
-  ) {
-    addProfileToUser(emailAddress: $emailAddress, input: $input) {
-      fName
-      lName
-      photoImgKey
-      coverImgKey
-      resumeKey
-      addressLine1
-      addressLine2
-      city
-      state
-      postalCode
-      country
-      joiningDate
-      contact
     }
   }
 `;

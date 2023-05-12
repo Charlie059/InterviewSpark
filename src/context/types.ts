@@ -10,6 +10,8 @@ export type RegisterParams = {
   email: string
   username: string
   password: string
+  fName: string
+  lName: string
 }
 
 export type UserDataType =

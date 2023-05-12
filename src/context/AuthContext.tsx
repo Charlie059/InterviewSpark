@@ -8,14 +8,14 @@ import { useRouter } from 'next/router'
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
 
 // ** Aws-amplify
-import { Auth } from 'aws-amplify'
+import { API, Auth, graphqlOperation } from 'aws-amplify'
 
 // ** Logger
 import Log from 'src/middleware/loggerMiddleware'
 
 // ** Get user
 import { getUserData } from '../utils/getUser'
-import { addNewGuestUser } from 'src/utils/addNewGuestUser'
+import { createNewGuestUser } from 'src/graphql/mutations'
 
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
@@ -151,6 +151,8 @@ const AuthProvider = ({ children }: Props) => {
   }
 
   const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
+    console.log('handleRegister', params)
+
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
     try {
       const { user } = await Auth.signUp({
@@ -159,7 +161,22 @@ const AuthProvider = ({ children }: Props) => {
       })
 
       // TODO error condition check
-      addNewGuestUser(params.email, params.username)
+      try {
+        const response = await API.graphql(
+          graphqlOperation(createNewGuestUser, {
+            emailAddress: params.email,
+            userName: params.username,
+            fName: params.fName,
+            lName: params.lName
+          })
+        )
+
+        console.log('response', response)
+      } catch (error) {
+        console.error('Error adding new guest user:', error)
+
+        return null
+      }
 
       Log.info('Verify email sent', user)
     } catch (err: any) {

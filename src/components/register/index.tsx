@@ -46,13 +46,17 @@ const defaultValues = {
   email: '',
   username: '',
   password: '',
-  terms: false
+  terms: false,
+  fName: '',
+  lName: ''
 }
 interface FormData {
   email: string
   terms: boolean
   username: string
   password: string
+  fName: string
+  lName: string
 }
 
 // ** Styled Components
@@ -126,7 +130,9 @@ const Register = ({ onRegister }: Props) => {
     password: yup.string().min(8).required(),
     username: yup.string().min(3).required(),
     email: yup.string().email().required(),
-    terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms')
+    terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
+    fName: yup.string().required(),
+    lName: yup.string().required()
   })
 
   const {
@@ -141,10 +147,10 @@ const Register = ({ onRegister }: Props) => {
   })
 
   const onSubmit = (data: FormData) => {
-    const { username, email, password } = data
+    const { username, email, password, fName, lName } = data
 
     let hasError = false
-    register({ email, username, password }, err => {
+    register({ email, username, password, fName, lName }, err => {
       hasError = true
       if (err.email) {
         setError('email', {
@@ -155,6 +161,16 @@ const Register = ({ onRegister }: Props) => {
         setError('username', {
           type: 'manual',
           message: err.username
+        })
+      } else if (err.fName) {
+        setError('fName', {
+          type: 'manual',
+          message: err.fName
+        })
+      } else if (err.lName) {
+        setError('lName', {
+          type: 'manual',
+          message: err.lName
         })
       }
 
@@ -259,6 +275,45 @@ const Register = ({ onRegister }: Props) => {
                 />
                 {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
               </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name='fName'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      value={value}
+                      onBlur={onBlur}
+                      label='First Name'
+                      onChange={onChange}
+                      placeholder='John'
+                      error={Boolean(errors.fName)}
+                      data-testid='fName-input'
+                    />
+                  )}
+                />
+                {errors.fName && <FormHelperText sx={{ color: 'error.main' }}>{errors.fName.message}</FormHelperText>}
+              </FormControl>
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name='lName'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      value={value}
+                      onBlur={onBlur}
+                      label='Last Name'
+                      onChange={onChange}
+                      placeholder='John'
+                      error={Boolean(errors.lName)}
+                      data-testid='lName-input'
+                    />
+                  )}
+                />
+                {errors.lName && <FormHelperText sx={{ color: 'error.main' }}>{errors.lName.message}</FormHelperText>}
+              </FormControl>
+
               <FormControl fullWidth>
                 <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
                   Password

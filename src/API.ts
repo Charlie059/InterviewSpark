@@ -8,47 +8,6 @@ export type OperationResult = {
   error?: string | null,
 };
 
-export type User = {
-  __typename: "User",
-  userEmailAddress: string,
-  userRole: string,
-  userName: string,
-  allowPublicInterview: boolean,
-};
-
-export type addUserProfileInput = {
-  fName?: string | null,
-  lName?: string | null,
-  photoImgKey?: string | null,
-  coverImgKey?: string | null,
-  resumeKey?: string | null,
-  addressLine1?: string | null,
-  addressLine2?: string | null,
-  city?: string | null,
-  state?: string | null,
-  postalCode?: string | null,
-  country?: string | null,
-  joiningDate?: string | null,
-  contact?: string | null,
-};
-
-export type Profile = {
-  __typename: "Profile",
-  fName?: string | null,
-  lName?: string | null,
-  photoImgKey?: string | null,
-  coverImgKey?: string | null,
-  resumeKey?: string | null,
-  addressLine1?: string | null,
-  addressLine2?: string | null,
-  city?: string | null,
-  state?: string | null,
-  postalCode?: string | null,
-  country?: string | null,
-  joiningDate?: string | null,
-  contact?: string | null,
-};
-
 export type Interview = {
   __typename: "Interview",
   interviewID?: string | null,
@@ -69,6 +28,31 @@ export type ResumeScan = {
   resumeResults?: string | null,
   resumeUrl?: string | null,
   resumeScanID: string,
+};
+
+export type User = {
+  __typename: "User",
+  userEmailAddress: string,
+  userRole: string,
+  userName: string,
+  allowPublicInterview: boolean,
+};
+
+export type Profile = {
+  __typename: "Profile",
+  fName?: string | null,
+  lName?: string | null,
+  photoImgURL?: string | null,
+  coverImgRUL?: string | null,
+  resumeKey?: string | null,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postalCode?: string | null,
+  country?: string | null,
+  joiningDate?: string | null,
+  contact?: string | null,
 };
 
 export type WorkHistories = {
@@ -155,6 +139,8 @@ export type ResumeScanList = {
 export type CreateNewGuestUserMutationVariables = {
   emailAddress: string,
   userName?: string | null,
+  fName: string,
+  lName: string,
 };
 
 export type CreateNewGuestUserMutation = {
@@ -163,45 +149,6 @@ export type CreateNewGuestUserMutation = {
     isSuccessful: boolean,
     error?: string | null,
   },
-};
-
-export type AddNewGuestUserMutationVariables = {
-  emailAddress: string,
-  userName: string,
-};
-
-export type AddNewGuestUserMutation = {
-  addNewGuestUser?:  {
-    __typename: "User",
-    userEmailAddress: string,
-    userRole: string,
-    userName: string,
-    allowPublicInterview: boolean,
-  } | null,
-};
-
-export type AddProfileToUserMutationVariables = {
-  emailAddress: string,
-  input: addUserProfileInput,
-};
-
-export type AddProfileToUserMutation = {
-  addProfileToUser?:  {
-    __typename: "Profile",
-    fName?: string | null,
-    lName?: string | null,
-    photoImgKey?: string | null,
-    coverImgKey?: string | null,
-    resumeKey?: string | null,
-    addressLine1?: string | null,
-    addressLine2?: string | null,
-    city?: string | null,
-    state?: string | null,
-    postalCode?: string | null,
-    country?: string | null,
-    joiningDate?: string | null,
-    contact?: string | null,
-  } | null,
 };
 
 export type CreateUserInterviewWithQuestionMutationVariables = {
@@ -353,8 +300,8 @@ export type GetUserProfileQuery = {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
-    photoImgKey?: string | null,
-    coverImgKey?: string | null,
+    photoImgURL?: string | null,
+    coverImgRUL?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,
