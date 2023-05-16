@@ -260,6 +260,7 @@ function MockInterviewPage() {
   }
 
   // Helper function to send the transcribed text to GPT-3.5 Speak
+  // Helper function to send the transcribed text to GPT-3.5 Speak
   async function sendToGPT2Speak(transcribedText_: string) {
     const prompt =
       'This is a mock interview. You are interviewer, the candidate is asked to " ' +
@@ -277,20 +278,30 @@ function MockInterviewPage() {
       ' 7. Do not ask question!'
 
     console.log(prompt)
+    let res
     try {
-      const res = await axios.post('/api/chatgpt', {
+      res = await axios.post('/api/chatgpt', {
         message: prompt
       })
-      console.log(res.data.text)
-
-      // Use polly to speak the response
-      setMessageToSpeak(res.data.text)
-      await waitForAudioToEnd()
-
-      return res.data.text
     } catch (error) {
-      console.error(error)
+      console.error('First attempt to contact GPT failed, trying again', error)
+      try {
+        res = await axios.post('/api/chatgpt', {
+          message: prompt
+        })
+      } catch (error) {
+        console.error('Second attempt to contact GPT failed', error)
+        alert('Unable to contact GPT. Please check your network connection and try again.')
+      }
     }
+
+    console.log(res?.data.text)
+
+    // Use polly to speak the response
+    setMessageToSpeak(res?.data.text)
+    await waitForAudioToEnd()
+
+    return res?.data.text
   }
 
   // Handle the start of the recording
