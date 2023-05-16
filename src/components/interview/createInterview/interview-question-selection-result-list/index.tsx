@@ -39,7 +39,7 @@ const InterviewQuestionList = (props: Props) => {
 
   const columns = [
     { field: 'id', headerName: 'ID', hide: true },
-    { field: 'QuestionID', headerName: 'ID', width: 70 },
+    { field: 'QuestionID', headerName: 'ID', width: 70, hide: true },
     {
       field: 'interviewQuestionTitle',
       headerName: 'Name',

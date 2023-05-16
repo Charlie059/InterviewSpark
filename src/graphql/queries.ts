@@ -18,7 +18,7 @@ export const getUserProfile = /* GraphQL */ `
       fName
       lName
       photoImgURL
-      coverImgRUL
+      coverImgURL
       resumeKey
       addressLine1
       addressLine2
@@ -28,6 +28,7 @@ export const getUserProfile = /* GraphQL */ `
       country
       joiningDate
       contact
+      isPublic
     }
   }
 `;
