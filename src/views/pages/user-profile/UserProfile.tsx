@@ -160,7 +160,7 @@ const UserProfile = ({ user, data }) => {
                     <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                       Email:
                     </Typography>
-                    <Typography variant='body2'>{data.email}</Typography>
+                    <Typography variant='body2'>{data.userEmailAddress}</Typography>
                   </Box>
                 </Grid>
 
@@ -252,7 +252,7 @@ const UserProfile = ({ user, data }) => {
                                           fullWidth
                                           label='Username'
                                           value={value}
-                                          defaultValue={profileData.username}
+                                          defaultValue={profileData.userName}
                                           onChange={onChange}
                                           InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
                                         />
@@ -261,7 +261,7 @@ const UserProfile = ({ user, data }) => {
                                   </FormControl>
                                 </Grid>
                     <Grid item xs={12} sm={6}>
-                                  <TextField disabled fullWidth type='email' label='email' defaultValue={data.email} />
+                                  <TextField disabled fullWidth type='email' label='email' defaultValue={data.userEmailAddress} />
                                 </Grid>
                                 {/*<Grid item xs={12} sm={6}>*/}
                                 {/*  <FormControl fullWidth>*/}
@@ -301,68 +301,68 @@ const UserProfile = ({ user, data }) => {
                                     />
                                   </FormControl>
                                 </Grid>
-                    <Grid item xs={12} sm={6}>
-                                  <FormControl fullWidth>
-                                    <InputLabel id='user-view-language-label'>Language</InputLabel>
-                                    <Controller
-                                      name='language'
-                                      control={control}
-                                      render={({ field: { value, onChange } }) => (
-                                        <Select
-                                          label='language'
-                                          defaultValue={profileData.language}
-                                          value={value}
-                                          onChange={onChange}
-                                          id='user-view-language'
-                                          labelId='user-view-language-label'
-                                        >
-                                          <MenuItem value='English'>English</MenuItem>
-                                          <MenuItem value='Spanish'>Spanish</MenuItem>
-                                          <MenuItem value='Portuguese'>Portuguese</MenuItem>
-                                          <MenuItem value='Russian'>Russian</MenuItem>
-                                          <MenuItem value='French'>French</MenuItem>
-                                          <MenuItem value='German'>German</MenuItem>
-                                        </Select>
-                                      )}
-                                    />
-                                  </FormControl>
-                                </Grid>
                     {/*<Grid item xs={12} sm={6}>*/}
                     {/*              <FormControl fullWidth>*/}
-                    {/*                <InputLabel id='user-view-country-label'>Country</InputLabel>*/}
+                    {/*                <InputLabel id='user-view-language-label'>Language</InputLabel>*/}
                     {/*                <Controller*/}
-                    {/*                  name='country'*/}
+                    {/*                  name='language'*/}
                     {/*                  control={control}*/}
                     {/*                  render={({ field: { value, onChange } }) => (*/}
                     {/*                    <Select*/}
-                    {/*                      label='country'*/}
-                    {/*                      defaultValue={profileData.country}*/}
+                    {/*                      label='language'*/}
+                    {/*                      defaultValue={profileData.language}*/}
+                    {/*                      value={value}*/}
                     {/*                      onChange={onChange}*/}
-                    {/*                      id='user-view-country'*/}
-                    {/*                      labelId='user-view-country-label'*/}
+                    {/*                      id='user-view-language'*/}
+                    {/*                      labelId='user-view-language-label'*/}
                     {/*                    >*/}
-                    {/*                      <MenuItem value='USA'>USA</MenuItem>*/}
-                    {/*                      <MenuItem value='UK'>UK</MenuItem>*/}
-                    {/*                      <MenuItem value='Spain'>Spain</MenuItem>*/}
-                    {/*                      <MenuItem value='Russia'>Russia</MenuItem>*/}
-                    {/*                      <MenuItem value='France'>France</MenuItem>*/}
-                    {/*                      <MenuItem value='Germany'>Germany</MenuItem>*/}
-                    {/*                      <MenuItem value='China'>China</MenuItem>*/}
+                    {/*                      <MenuItem value='English'>English</MenuItem>*/}
+                    {/*                      <MenuItem value='Spanish'>Spanish</MenuItem>*/}
+                    {/*                      <MenuItem value='Portuguese'>Portuguese</MenuItem>*/}
+                    {/*                      <MenuItem value='Russian'>Russian</MenuItem>*/}
+                    {/*                      <MenuItem value='French'>French</MenuItem>*/}
+                    {/*                      <MenuItem value='German'>German</MenuItem>*/}
                     {/*                    </Select>*/}
                     {/*                  )}*/}
                     {/*                />*/}
                     {/*              </FormControl>*/}
                     {/*            </Grid>*/}
+                    <Grid item xs={12} sm={6}>
+                      <FormControl fullWidth>
+                        <InputLabel id='user-view-country-label'>Country</InputLabel>
+                        <Controller
+                          name='country'
+                          control={control}
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              label='country'
+                              defaultValue={profileData.country}
+                              onChange={onChange}
+                              id='user-view-country'
+                              labelId='user-view-country-label'
+                            >
+                              <MenuItem value='USA'>USA</MenuItem>
+                              <MenuItem value='UK'>UK</MenuItem>
+                              <MenuItem value='Spain'>Spain</MenuItem>
+                              <MenuItem value='Russia'>Russia</MenuItem>
+                              <MenuItem value='France'>France</MenuItem>
+                              <MenuItem value='Germany'>Germany</MenuItem>
+                              <MenuItem value='China'>China</MenuItem>
+                            </Select>
+                          )}
+                        />
+                      </FormControl>
+                    </Grid>
                     <Grid item xs={12} sx={{ justifyContent: 'center' }}>
-                                  <DialogActions sx={{ justifyContent: 'center' }}>
-                                    <Button  variant='contained' type='submit' sx={{ mr: 1 }}>
-                                      Submit
-                                    </Button>
-                                    <Button variant='outlined' color='secondary' onClick={handleEditClose}>
-                                      Discard
-                                    </Button>
-                                  </DialogActions>
-                                </Grid>
+                      <DialogActions sx={{ justifyContent: 'center' }}>
+                        <Button  variant='contained' type='submit' sx={{ mr: 1 }}>
+                          Submit
+                        </Button>
+                        <Button variant='outlined' color='secondary' onClick={handleEditClose}>
+                          Discard
+                        </Button>
+                      </DialogActions>
+                    </Grid>
                   </Grid>
                 </form>
               </DialogContent>
