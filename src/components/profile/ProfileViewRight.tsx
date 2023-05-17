@@ -59,6 +59,7 @@ const ProfileViewRight = profileData => {
   useEffect(() => {
     if (profileData.profileData.resumeKey) {
       getUrl()
+      setShowResume(true)
     }
   })
 
@@ -86,22 +87,17 @@ const ProfileViewRight = profileData => {
         profileData.profileData.resumeKey = cvName
         console.log(profileData.profileData)
 
-        try {
-          const input = {
-            emailAddress: profileData.profileData.userEmailAddress,
-            resumeKey: cvName
-          }
-
-          const result = await API.graphql(graphqlOperation(updateUserProfile, input))
-
-          return result
-        } catch (error) {
-          console.log(error)
+        const input = {
+          emailAddress: profileData.profileData.userEmailAddress,
+          resumeKey: cvName
         }
+
+        await API.graphql(graphqlOperation(updateUserProfile, input))
+        setShowResume(true)
+
       } catch (error) {
         console.log('Error uploading file: ', error)
       }
-      setShowResume(true)
     }
   }
 
