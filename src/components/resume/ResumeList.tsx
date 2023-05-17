@@ -99,12 +99,16 @@ const ResumeList = () => {
       if (resumeList.length === 0) {
             // @ts-ignore
         const emptyR : Resume ={
-          resumeName: 'No Resume, Please upload or refresh',
+          displayName: 'No Resume Please Upload',
         }
         setResumes([
               emptyR
             ]);
-        router.replace('/resume')
+        console.log("currentPage is", router.query.user)
+        if(!router.query.user){
+          router.replace('/resume')
+        }
+
       }else {
             // for (const r of resumeList) {
             //   console.log(r.resumeName);
@@ -203,12 +207,12 @@ const ResumeList = () => {
                         >
                           {item.displayName}
                         </Typography>
-                        <Typography
+                        {item.jobName && <Typography
                           variant="body2"
                           sx={{ color: 'text.disabled' }}
                         >
                           For {item.jobName}
-                        </Typography>
+                        </Typography>}
                       </Box>
                     </Box>
                   </TableCell>
@@ -277,7 +281,7 @@ const ResumeList = () => {
                       </Dialog>
                     </TableCell>
                   )}
-                  {item.displayName && (
+                  {item.resumeName && (
                     <TableCell>
                       <Button
                         value={item.resumeScanID}
