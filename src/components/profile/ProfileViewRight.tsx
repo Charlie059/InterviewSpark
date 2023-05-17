@@ -59,13 +59,13 @@ const ProfileViewRight = profileData => {
   useEffect(() => {
     if (profileData.profileData.resumeKey) {
       getUrl()
+      setShowResume(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const getUrl = async () => {
     setUrl(await Storage.get(profileData.profileData.resumeKey, { expires: 604800 }))
-    setShowResume(true)
   }
 
   const resumeOnSubmit = async () => {
@@ -88,7 +88,12 @@ const ProfileViewRight = profileData => {
         profileData.profileData.resumeKey = cvName
         console.log(profileData.profileData)
 
-        await API.graphql(graphqlOperation(updateUserProfile, profileData.profileData))
+        const input = {
+          emailAddress: profileData.profileData.userEmailAddress,
+          resumeKey: cvName
+        }
+
+        await API.graphql(graphqlOperation(updateUserProfile, input))
         setShowResume(true)
       } catch (error) {
         console.log('Error uploading file: ', error)
