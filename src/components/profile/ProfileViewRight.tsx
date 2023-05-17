@@ -94,7 +94,6 @@ const ProfileViewRight = profileData => {
 
         await API.graphql(graphqlOperation(updateUserProfile, input))
         setShowResume(true)
-
       } catch (error) {
         console.log('Error uploading file: ', error)
       }
@@ -163,7 +162,13 @@ const ProfileViewRight = profileData => {
             </CardActions>
             {showResume && (
               <CardContent sx={{ width: 1, justifyContent: 'center' }}>
-                <iframe src={url} height='300' width='100%'></iframe>
+                <iframe
+                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
+                  height='500'
+                  width='100%'
+                  frameBorder={0}
+                ></iframe>
+
                 <CardActions sx={{ justifyContent: 'center' }}>
                   <Button variant='outlined' color='error' sx={{ mr: 2 }} onClick={handleResumeShowClose}>
                     Remove
