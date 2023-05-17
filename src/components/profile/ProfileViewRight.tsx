@@ -1,5 +1,5 @@
 // ** React Imports
-import { Fragment, useState } from 'react'
+import {Fragment, useEffect, useState} from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -54,6 +54,16 @@ const ProfileViewRight = profileData => {
   // const handleVideoClose = () => {setOpenVideo(false)}
   // const handleVideoShowOpen = () => {setShowVideo(true)}
   // const handleVideoShowClose = () => {setShowVideo(false)}
+
+  useEffect(() => {
+    if(profileData.profileData.resumeKey){
+      getUrl()
+    }
+  })
+
+  const getUrl = async () =>{
+    setUrl(await Storage.get(profileData.profileData.resumeKey,{ expires: 604800 }))
+  }
 
   const resumeOnSubmit = async () => {
     if (files.length == 0) {
