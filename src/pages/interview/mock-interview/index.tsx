@@ -312,9 +312,21 @@ function MockInterviewPage() {
     console.log('detailedInterviews', detailedInterviews)
     setTimeLeft(estimatedSecond)
 
+    // If the first question, then play the welcome audio
+    if (currentQuestionIndex === 0) {
+      setMessageToSpeak('Welcome to the mock interview. I am your interviewer Alice. Let us start the interview.')
+      await waitForAudioToEnd()
+    }
+
     // Play the audio of the question
-    setMessageToSpeak('My question is, ' + detailedInterviews[currentQuestionIndex].interviewQuestion)
-    await waitForAudioToEnd() // Wait for the audio playing to end
+    // if the question is not the first question
+    if (currentQuestionIndex > 0) {
+      setMessageToSpeak('Next question is, ' + detailedInterviews[currentQuestionIndex].interviewQuestion)
+      await waitForAudioToEnd()
+    } else {
+      setMessageToSpeak('My question is, ' + detailedInterviews[currentQuestionIndex].interviewQuestion)
+      await waitForAudioToEnd() // Wait for the audio playing to end
+    }
 
     // Start the transcription
     handleStartRecording()
@@ -332,9 +344,12 @@ function MockInterviewPage() {
       mediaRecorderRef.current?.stop()
     }
 
+    setMessageToSpeak('Ok, give me a second.')
+    await waitForAudioToEnd()
+
     // TODO - Add a loading indicator and it is not good to use a timeout here
-    // Wait 4 seconds for the transcription to complete
-    await new Promise(resolve => setTimeout(resolve, 4000))
+    // Wait 2.5 seconds for the transcription to complete
+    await new Promise(resolve => setTimeout(resolve, 2500))
 
     // Pass the text to the ChatGPT API
     const transcribedText_ = transcribedText
