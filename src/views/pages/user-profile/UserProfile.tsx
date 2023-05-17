@@ -74,6 +74,7 @@ const UserProfile = ({ user, data }) => {
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
   const [profileData, setProfileData] = useState(data)
+
   console.log('initial data')
   console.log(data)
   const dashwidth = 12
@@ -121,6 +122,7 @@ const UserProfile = ({ user, data }) => {
   const handleEditSubmit = async (formData: any) => {
     setOpenEdit(false)
     console.log('bbb', formData)
+    setProfileData(formData)
     updateProfile(formData)
       .then(response => {
         console.log(response)
@@ -169,26 +171,26 @@ const UserProfile = ({ user, data }) => {
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Email:
                   </Typography>
-                  <Typography variant='body2'>{data.userEmailAddress}</Typography>
+                  <Typography variant='body2'>{profileData.userEmailAddress}</Typography>
                 </Box>
               </Grid>
 
               <Grid item xs={6} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Contact:</Typography>
-                  <Typography variant='body2'>{data.contact}</Typography>
+                  <Typography variant='body2'>{profileData.contact}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={6} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>City:</Typography>
-                  <Typography variant='body2'>{data.city}</Typography>
+                  <Typography variant='body2'>{profileData.city}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={6} lg={dashwidth}>
                 <Box sx={{ display: 'flex' }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Country:</Typography>
-                  <Typography variant='body2'>{data.country}</Typography>
+                  <Typography variant='body2'>{profileData.country}</Typography>
                 </Box>
               </Grid>
             </Grid>
@@ -307,6 +309,23 @@ const UserProfile = ({ user, data }) => {
                             fullWidth
                             label='Contact'
                             defaultValue={profileData.contact}
+                            value={value}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <Controller
+                        name='city'
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <TextField
+                            fullWidth
+                            label='City'
+                            defaultValue={profileData.city}
                             value={value}
                             onChange={onChange}
                           />
