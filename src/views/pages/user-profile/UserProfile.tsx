@@ -93,7 +93,6 @@ const UserProfile = ({ user, data }) => {
   const updateProfile = async data => {
     try {
       const input = {
-        emailAddress: data.emailAddress,
         addressLine1: data.addressLine1,
         addressLine2: data.addressLine2,
         city: data.city,
