@@ -2,7 +2,7 @@
 import { API, graphqlOperation } from 'aws-amplify'
 import { useRouter } from 'next/router'
 import { GetServerSideProps, GetServerSidePropsContext, InferGetServerSidePropsType } from 'next/types'
-import { getUserProfile } from 'src/graphql/queries'
+import { getUserProfileByUsername } from 'src/graphql/queries'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
@@ -27,13 +27,13 @@ const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getSe
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params }: GetServerSidePropsContext) => {
-  const userName = params
-
+  const userName = params?.user
+  console.log(userName)
   // Get userProfile data from GraphQL
   let data = null
 
   try {
-    const userData = await API.graphql(graphqlOperation(getUserProfile, { userName }))
+    const userData = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
     if ('data' in userData) {
       data = userData.data.getUserProfileByUsername
     }

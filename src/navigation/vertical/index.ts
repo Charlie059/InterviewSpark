@@ -1,7 +1,10 @@
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import {useAuth} from "../../hooks/useAuth";
 
 const navigation = (): VerticalNavItemsType => {
+  const auth = useAuth()
+  const userName = auth.user?.userName
   return [
     // {
     //   title: 'Home',
@@ -33,7 +36,7 @@ const navigation = (): VerticalNavItemsType => {
     },
     {
       title: 'Profile',
-      path: '/user-profile/profile/',
+      path: '/user-profile/'+userName,
       action: 'read',
       subject: 'profile-page',
       icon: 'mdi:account-outline'

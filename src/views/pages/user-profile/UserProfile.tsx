@@ -172,8 +172,8 @@ const UserProfile = ({ user, data }) => {
                 </Grid>
                 <Grid item xs={6} lg={dashwidth}>
                   <Box sx={{ display: 'flex', mb: 2.7 }}>
-                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Language:</Typography>
-                    <Typography variant='body2'>{data.language}</Typography>
+                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>City:</Typography>
+                    <Typography variant='body2'>{data.city}</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={6} lg={dashwidth}>
@@ -209,21 +209,38 @@ const UserProfile = ({ user, data }) => {
                     <Grid item xs={12} sm={6}>
                       <FormControl >
                         <Controller
-                          name='fullName'
+                          name='fName'
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <TextField
                               fullWidth
-                              label='Full Name'
+                              label='First Name'
                               value={value}
-                              defaultValue={profileData.fullName}
+                              defaultValue={profileData.fName}
                               onChange={onChange}
                             />
                           )}
                         />
                       </FormControl>
 
-                                </Grid>
+                    </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <FormControl >
+                          <Controller
+                            name='lName'
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                              <TextField
+                                fullWidth
+                                label='Last Name'
+                                value={value}
+                                defaultValue={profileData.lName}
+                                onChange={onChange}
+                              />
+                            )}
+                          />
+                        </FormControl>
+                      </Grid>
                     <Grid item xs={12} sm={6}>
                                   <FormControl >
                                     <Controller
