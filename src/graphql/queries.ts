@@ -29,6 +29,32 @@ export const getUserProfile = /* GraphQL */ `
       joiningDate
       contact
       isPublic
+      userName
+      userEmailAddress
+      userRole
+    }
+  }
+`;
+export const getUserProfileByUsername = /* GraphQL */ `
+  query GetUserProfileByUsername($userName: String!) {
+    getUserProfileByUsername(userName: $userName) {
+      fName
+      lName
+      photoImgURL
+      coverImgURL
+      resumeKey
+      addressLine1
+      addressLine2
+      city
+      state
+      postalCode
+      country
+      joiningDate
+      contact
+      isPublic
+      userName
+      userEmailAddress
+      userRole
     }
   }
 `;

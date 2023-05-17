@@ -54,6 +54,9 @@ export type Profile = {
   joiningDate?: string | null,
   contact?: string | null,
   isPublic?: boolean | null,
+  userName?: string | null,
+  userEmailAddress?: string | null,
+  userRole?: string | null,
 };
 
 export type WorkHistories = {
@@ -212,6 +215,31 @@ export type UpdateInterviewVideoKeyMutation = {
   },
 };
 
+export type UpdateUserProfileMutationVariables = {
+  emailAddress: string,
+  addressLine1?: string | null,
+  addressLine2?: string | null,
+  city?: string | null,
+  contact?: string | null,
+  country?: string | null,
+  coverImgURL?: string | null,
+  fName?: string | null,
+  lName?: string | null,
+  photoImgURL?: string | null,
+  postalCode?: string | null,
+  resumeKey?: string | null,
+  state?: string | null,
+  isPublic?: string | null,
+};
+
+export type UpdateUserProfileMutation = {
+  updateUserProfile:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+  },
+};
+
 export type RemoveUserInterviewsByIDMutationVariables = {
   emailAddress: string,
   interviewID: string,
@@ -313,6 +341,36 @@ export type GetUserProfileQuery = {
     joiningDate?: string | null,
     contact?: string | null,
     isPublic?: boolean | null,
+    userName?: string | null,
+    userEmailAddress?: string | null,
+    userRole?: string | null,
+  },
+};
+
+export type GetUserProfileByUsernameQueryVariables = {
+  userName: string,
+};
+
+export type GetUserProfileByUsernameQuery = {
+  getUserProfileByUsername:  {
+    __typename: "Profile",
+    fName?: string | null,
+    lName?: string | null,
+    photoImgURL?: string | null,
+    coverImgURL?: string | null,
+    resumeKey?: string | null,
+    addressLine1?: string | null,
+    addressLine2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postalCode?: string | null,
+    country?: string | null,
+    joiningDate?: string | null,
+    contact?: string | null,
+    isPublic?: boolean | null,
+    userName?: string | null,
+    userEmailAddress?: string | null,
+    userRole?: string | null,
   },
 };
 

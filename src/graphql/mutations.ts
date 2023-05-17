@@ -86,6 +86,44 @@ export const updateInterviewVideoKey = /* GraphQL */ `
     }
   }
 `;
+export const updateUserProfile = /* GraphQL */ `
+  mutation UpdateUserProfile(
+    $emailAddress: AWSEmail!
+    $addressLine1: String
+    $addressLine2: String
+    $city: String
+    $contact: String
+    $country: String
+    $coverImgURL: String
+    $fName: String
+    $lName: String
+    $photoImgURL: String
+    $postalCode: String
+    $resumeKey: String
+    $state: String
+    $isPublic: String
+  ) {
+    updateUserProfile(
+      emailAddress: $emailAddress
+      addressLine1: $addressLine1
+      addressLine2: $addressLine2
+      city: $city
+      contact: $contact
+      country: $country
+      coverImgURL: $coverImgURL
+      fName: $fName
+      lName: $lName
+      photoImgURL: $photoImgURL
+      postalCode: $postalCode
+      resumeKey: $resumeKey
+      state: $state
+      isPublic: $isPublic
+    ) {
+      isSuccessful
+      error
+    }
+  }
+`;
 export const removeUserInterviewsByID = /* GraphQL */ `
   mutation RemoveUserInterviewsByID(
     $emailAddress: AWSEmail!
