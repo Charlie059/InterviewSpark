@@ -87,9 +87,9 @@ const UserProfileHeader = ({data}) => {
                 <Icon icon={designationIcon} />
                 <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.position}</Typography>
               </Box>}
-              {data.country&&<Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+              {data.country && <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
                 <Icon icon='mdi:map-marker-outline' />
-                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.location}</Typography>
+                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.city}, {data.country}</Typography>
               </Box>}
               <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
                 <Icon icon='mdi:calendar-blank-outline' />
