@@ -35,24 +35,18 @@ type ProfileHeaderType = {
   designationIcon?: string
 }
 
-const UserProfileHeader = () => {
+const UserProfileHeader = ({data}) => {
   // ** State
-  const [data, setData] = useState<ProfileHeaderType | null>(null)
+ console.log(data.photoImgURL)
 
-  useEffect(() => {
-    axios.get('/pages/profile-header').then(response => {
-      setData(response.data)
-    })
-  }, [])
-
-  const designationIcon = data?.designationIcon || 'mdi:briefcase-outline'
+  const designationIcon =  'mdi:briefcase-outline'
 
   return data !== null ? (
     <Card>
       <CardMedia
         component='img'
-        alt='profile-header'
-        image={data.coverImg}
+        alt='profile-cover-img'
+        image={data.coverImgURL}
         sx={{
           height: { xs: 150, md: 250 }
         }}
@@ -67,7 +61,7 @@ const UserProfileHeader = () => {
           justifyContent: { xs: 'center', md: 'flex-start' }
         }}
       >
-        <ProfilePicture src={data.profileImg} alt='profile-picture' />
+        <ProfilePicture src={data.photoImgURL} alt='profile-picture' />
         <Box
           sx={{
             width: '100%',
@@ -80,7 +74,7 @@ const UserProfileHeader = () => {
         >
           <Box sx={{ mb: [6, 0], display: 'flex', flexDirection: 'column', alignItems: ['center', 'flex-start'] }}>
             <Typography variant='h5' sx={{ mb: 4, fontSize: '1.375rem' }}>
-              {data.fullName}
+              {data.fName}  {data.lName}
             </Typography>
             <Box
               sx={{
@@ -89,14 +83,14 @@ const UserProfileHeader = () => {
                 justifyContent: ['center', 'flex-start']
               }}
             >
-              <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+              {data.position&&<Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
                 <Icon icon={designationIcon} />
-                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.designation}</Typography>
-              </Box>
-              <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.position}</Typography>
+              </Box>}
+              {data.country&&<Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
                 <Icon icon='mdi:map-marker-outline' />
                 <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.location}</Typography>
-              </Box>
+              </Box>}
               <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
                 <Icon icon='mdi:calendar-blank-outline' />
                 <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>Joined {data.joiningDate}</Typography>

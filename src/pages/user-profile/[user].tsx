@@ -52,15 +52,15 @@ export const getServerSideProps: GetServerSideProps = async ({params}: GetServer
   const data = {
     "fName": "Fan",
     "lName": "Shen",
-    "photoImgURL": null,
-    "coverImgRUL": null,
-    "resumeKey": "",
+    "photoImgURL": "https://writestylesonline.com/wp-content/uploads/2018/11/Three-Statistics-That-Will-Make-You-Rethink-Your-Professional-Profile-Picture.jpg",
+    "coverImgURL": null,
+    "resumeKey": "test.url",
     "addressLine1": "",
     "addressLine2": "",
-    "city": "",
-    "state": "",
+    "city": "New York",
+    "state": "NY",
     "postalCode": "",
-    "country": "",
+    "country": "USA",
     "joiningDate": null,
     "contact": null
   }
