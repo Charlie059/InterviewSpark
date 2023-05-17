@@ -91,8 +91,10 @@ const UserProfile = ({ user, data }) => {
 
   // @ts-ignore
   const updateProfile = async data => {
+    console.log('aaa', data)
     try {
       const input = {
+        emailAddress: data.userEmailAddress,
         addressLine1: data.addressLine1,
         addressLine2: data.addressLine2,
         city: data.city,
@@ -108,7 +110,7 @@ const UserProfile = ({ user, data }) => {
         isPublic: data.isPublic
       }
 
-      const result = await API.graphql(graphqlOperation(updateUserProfile, { input }))
+      const result = await API.graphql(graphqlOperation(updateUserProfile, input))
 
       return result
     } catch (error) {
@@ -118,7 +120,7 @@ const UserProfile = ({ user, data }) => {
 
   const handleEditSubmit = async (formData: any) => {
     setOpenEdit(false)
-    console.log('to update', formData)
+    console.log('bbb', formData)
     updateProfile(formData)
       .then(response => {
         console.log(response)

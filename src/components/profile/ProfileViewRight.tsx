@@ -77,6 +77,7 @@ const ProfileViewRight = profileData => {
 
         try {
           const input = {
+            emailAddress: profileData.profileData.userEmailAddress,
             resumeKey: cvName
           }
 
