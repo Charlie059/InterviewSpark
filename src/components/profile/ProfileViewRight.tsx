@@ -1,5 +1,5 @@
 // ** React Imports
-import {Fragment, useEffect, useState} from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -57,13 +57,13 @@ const ProfileViewRight = profileData => {
   // const handleVideoShowClose = () => {setShowVideo(false)}
 
   useEffect(() => {
-    if(profileData.profileData.resumeKey){
+    if (profileData.profileData.resumeKey) {
       getUrl()
     }
   })
 
-  const getUrl = async () =>{
-    setUrl(await Storage.get(profileData.profileData.resumeKey,{ expires: 604800 }))
+  const getUrl = async () => {
+    setUrl(await Storage.get(profileData.profileData.resumeKey, { expires: 604800 }))
   }
 
   const resumeOnSubmit = async () => {
@@ -92,7 +92,7 @@ const ProfileViewRight = profileData => {
             resumeKey: cvName
           }
 
-          const result = await API.graphql(graphqlOperation(updateUserProfile, { input }))
+          const result = await API.graphql(graphqlOperation(updateUserProfile, input))
 
           return result
         } catch (error) {
