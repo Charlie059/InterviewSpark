@@ -89,10 +89,10 @@ const ProfileViewRight = profileData => {
         profileData.profileData.emailAddress = profileData.profileData.userEmailAddress
         console.log(profileData.profileData)
 
-        const input = {
-          emailAddress: profileData.profileData.userEmailAddress,
-          resumeKey: cvName
-        }
+        // const input = {
+        //   emailAddress: profileData.profileData.userEmailAddress,
+        //   resumeKey: cvName
+        // }
 
         await API.graphql(graphqlOperation(updateUserProfile, profileData.profileData))
         setShowResume(true)
