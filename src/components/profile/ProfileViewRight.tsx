@@ -86,6 +86,7 @@ const ProfileViewRight = profileData => {
         setUrl(await Storage.get(cvName, { expires: 604800 }))
 
         profileData.profileData.resumeKey = cvName
+        profileData.profileData.emailAddress = profileData.profileData.userEmailAddress
         console.log(profileData.profileData)
 
         const input = {
@@ -93,7 +94,7 @@ const ProfileViewRight = profileData => {
           resumeKey: cvName
         }
 
-        await API.graphql(graphqlOperation(updateUserProfile, input))
+        await API.graphql(graphqlOperation(updateUserProfile, profileData.profileData))
         setShowResume(true)
       } catch (error) {
         console.log('Error uploading file: ', error)
