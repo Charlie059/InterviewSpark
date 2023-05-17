@@ -61,7 +61,8 @@ const ProfileViewRight = profileData => {
       getUrl()
       setShowResume(true)
     }
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const getUrl = async () => {
     setUrl(await Storage.get(profileData.profileData.resumeKey, { expires: 604800 }))
