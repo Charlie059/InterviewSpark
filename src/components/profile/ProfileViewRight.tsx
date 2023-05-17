@@ -28,6 +28,7 @@ import { updateUserProfile } from 'src/graphql/mutations'
 
 // import VideoList from "../../../interview/VideoList";
 
+// @ts-ignore
 const ProfileViewRight = profileData => {
   const [openResume, setOpenResume] = useState(false)
   const [showResume, setShowResume] = useState(false)

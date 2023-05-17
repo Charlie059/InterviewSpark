@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState} from 'react'
 
 // ** Next Import
 // import { useRouter } from 'next/router'
@@ -42,6 +42,7 @@ import ProfileViewRight from '../../../components/profile/ProfileViewRight'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
 
+// @ts-ignore
 const UserProfile = ({ user, data }) => {
   // ** State
 
@@ -136,8 +137,7 @@ const UserProfile = ({ user, data }) => {
 
   const {
     control,
-    handleSubmit,
-    formState: { errors }
+    handleSubmit
   } = useForm({ defaultValues })
 
   return (
