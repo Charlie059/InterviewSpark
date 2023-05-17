@@ -29,6 +29,7 @@ const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getSe
 export const getServerSideProps: GetServerSideProps = async ({ params }: GetServerSidePropsContext) => {
   const userName = params?.user
   console.log(userName)
+
   // Get userProfile data from GraphQL
   let data = null
 
