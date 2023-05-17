@@ -3,20 +3,20 @@ import { VerticalNavItemsType } from 'src/@core/layouts/types'
 
 const navigation = (): VerticalNavItemsType => {
   return [
-    {
-      title: 'Home',
-      path: '/home',
-      action: 'read',
-      subject: 'home-page',
-      icon: 'mdi:home-outline'
-    },
-    {
-      title: 'Discuss',
-      path: '/discuss',
-      action: 'read',
-      subject: 'discuss-page',
-      icon: 'mdi:forum-outline'
-    },
+    // {
+    //   title: 'Home',
+    //   path: '/home',
+    //   action: 'read',
+    //   subject: 'home-page',
+    //   icon: 'mdi:home-outline',
+    // },
+    // {
+    //   title: 'Discuss',
+    //   path: '/discuss',
+    //   action: 'read',
+    //   subject: 'discuss-page',
+    //   icon: 'mdi:forum-outline'
+    // },
     {
       title: 'Interview',
       path: '/interview',
@@ -44,7 +44,7 @@ const navigation = (): VerticalNavItemsType => {
       action: 'read',
       subject: 'resume-page',
       icon: 'mdi:book-open-outline'
-    },
+    }
   ]
 }
 

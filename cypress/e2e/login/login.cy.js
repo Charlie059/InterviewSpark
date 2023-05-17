@@ -17,7 +17,7 @@ describe('Login Page', () => {
     cy.get('button[type="submit"]').click()
 
     // Change this to a URL your app navigates to after successful login
-    cy.url().should('include', '/home')
+    cy.url().should('include', '/interview')
   })
 
   it('shows an error message with incorrect credentials', () => {

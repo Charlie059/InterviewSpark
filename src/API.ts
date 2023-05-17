@@ -43,7 +43,7 @@ export type Profile = {
   fName?: string | null,
   lName?: string | null,
   photoImgURL?: string | null,
-  coverImgRUL?: string | null,
+  coverImgURL?: string | null,
   resumeKey?: string | null,
   addressLine1?: string | null,
   addressLine2?: string | null,
@@ -53,6 +53,7 @@ export type Profile = {
   country?: string | null,
   joiningDate?: string | null,
   contact?: string | null,
+  isPublic?: boolean | null,
 };
 
 export type WorkHistories = {
@@ -301,7 +302,7 @@ export type GetUserProfileQuery = {
     fName?: string | null,
     lName?: string | null,
     photoImgURL?: string | null,
-    coverImgRUL?: string | null,
+    coverImgURL?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,
@@ -311,6 +312,7 @@ export type GetUserProfileQuery = {
     country?: string | null,
     joiningDate?: string | null,
     contact?: string | null,
+    isPublic?: boolean | null,
   },
 };
 

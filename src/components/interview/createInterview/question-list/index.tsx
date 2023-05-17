@@ -92,7 +92,7 @@ const QuestionList = ({ setSelectedRows, setShowQuickViewQuestion }: Props) => {
   }
 
   const columns = [
-    { field: 'QuestionID', headerName: 'ID', width: qIdWidth },
+    { field: 'QuestionID', headerName: 'ID', width: qIdWidth, hide: true },
     { field: 'id', headerName: 'ID', hide: true },
     {
       field: 'interviewQuestionTitle',

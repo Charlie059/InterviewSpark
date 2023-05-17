@@ -12,7 +12,7 @@ type UsePollyOptions = {
 export const usePolly = (text: string | null, options: UsePollyOptions = {}) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const { region = 'us-east-1', voiceId = 'Aria', engine = 'neural', sampleRate = '22050' } = options
+  const { region = 'us-east-1', voiceId = 'Ruth', engine = 'neural', sampleRate = '22050' } = options
 
   useEffect(() => {
     const synthesizeSpeech = async () => {
