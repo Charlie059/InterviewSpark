@@ -340,6 +340,7 @@ const UserProfile = ({ user, data }) => {
                               onChange={onChange}
                               id='user-view-country'
                               labelId='user-view-country-label'
+                              value={value}
                             >
                               <MenuItem value='USA'>USA</MenuItem>
                               <MenuItem value='UK'>UK</MenuItem>
