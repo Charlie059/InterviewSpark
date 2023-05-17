@@ -29,6 +29,7 @@ const defineRulesFor = (role: string, subject: string) => {
     can(['read'], 'interview-page')
     can(['read'], 'profile-page')
     can(['read'], 'resume-page')
+    can(['read'], 'metahire-page')
   } else {
     can(['read', 'create', 'update', 'delete'], subject)
   }
