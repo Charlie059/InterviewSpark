@@ -55,7 +55,7 @@ describe('User Registration', () => {
       cy.get('button[type="submit"]').click()
 
       // Verify that the user is redirected to the home
-      cy.url().should('include', '/home')
+      cy.url().should('include', '/interview')
     })
   })
 })
