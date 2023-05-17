@@ -242,7 +242,7 @@ const UserProfile = ({ user, data }) => {
                     <Grid item xs={12} sm={6}>
                                   <FormControl >
                                     <Controller
-                                      name='username'
+                                      name='userName'
                                       control={control}
                                       render={({ field: { value, onChange } }) => (
                                         <TextField
