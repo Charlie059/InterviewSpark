@@ -1,51 +1,54 @@
 // ** React Imports
-import {Fragment, useState} from 'react'
+import { Fragment, useState } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 
 // ** Demo Component Imports
-import Button from "@mui/material/Button";
-import toast from "react-hot-toast";
-import {useForm} from "react-hook-form";
-import CardActions from "@mui/material/CardActions";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import Grid from "@mui/material/Grid";
-import DocumentUpload from "../uploaders/DocumentUpload";
-import DialogActions from "@mui/material/DialogActions";
+import Button from '@mui/material/Button'
+import toast from 'react-hot-toast'
+import { useForm } from 'react-hook-form'
+import CardActions from '@mui/material/CardActions'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import Grid from '@mui/material/Grid'
+import DocumentUpload from '../uploaders/DocumentUpload'
+import DialogActions from '@mui/material/DialogActions'
 
 // import ResumeDisplay from "../../../displays/ResumeDisplay";
 // import VideoUpload from "../../../uploaders/VideoUpload";
 // import VideoDisplay from "../../../displays/VideoDisplay";
 // import VideoRecorder from "react-video-recorder";
-import ResumeList from "../resume/ResumeList";
-import {Storage} from "@aws-amplify/storage";
+import ResumeList from '../resume/ResumeList'
+import { Storage } from '@aws-amplify/storage'
+import { API, graphqlOperation } from 'aws-amplify'
+import { updateUserProfile } from 'src/graphql/mutations'
 
 // import VideoList from "../../../interview/VideoList";
 
-
-
-const ProfileViewRight = (profileData) => {
-
+const ProfileViewRight = profileData => {
   const [openResume, setOpenResume] = useState(false)
   const [showResume, setShowResume] = useState(false)
 
   // const [openVideo, setOpenVideo] = useState(false)
   // const [showVideo, setShowVideo] = useState(false)
   const [files, setFiles] = useState<File[]>([])
-  const [url,setUrl] = useState('')
+  const [url, setUrl] = useState('')
 
   // const [videoFiles,setVideoFiles] = useState([])
   // const [videoUrl,setVideoUrl] = useState([])
 
   const handleResumeClickOpen = () => setOpenResume(true)
-  const handleResumeClose = () => {setOpenResume(false)}
+  const handleResumeClose = () => {
+    setOpenResume(false)
+  }
 
   // const handleResumeShowOpen = () => {setShowResume(true)}
-  const handleResumeShowClose = () => {setShowResume(false)}
+  const handleResumeShowClose = () => {
+    setShowResume(false)
+  }
 
   // const handleVideoClickOpen = () => setOpenVideo(true)
   // const handleVideoClose = () => {setOpenVideo(false)}
@@ -58,23 +61,33 @@ const ProfileViewRight = (profileData) => {
       handleResumeClickOpen()
     } else {
       toast.success('Resume Submitted')
-      const resume = files[0];
-      const name = resume.name;
-      const docType = name.slice(-3);
+      const resume = files[0]
+      const name = resume.name
+      const docType = name.slice(-3)
       console.log(files[0])
-      const timestamp = Date.now();
-      const suffix = docType == "pdf" ? ".pdf" : ".docx";
-      const cvName = timestamp + suffix;
+      const timestamp = Date.now()
+      const suffix = docType == 'pdf' ? '.pdf' : '.docx'
+      const cvName = timestamp + suffix
       try {
-        await Storage.put(cvName, resume).catch(e => console.log(e));
-        setUrl(await Storage.get(cvName, {expires: 604800}))
+        await Storage.put(cvName, resume).catch(e => console.log(e))
+        setUrl(await Storage.get(cvName, { expires: 604800 }))
 
         profileData.profileData.resumeKey = cvName
         console.log(profileData.profileData)
-        //#TODO UPDATE GRAPHQL resumeKey
 
+        try {
+          const input = {
+            resumeKey: cvName
+          }
+
+          const result = await API.graphql(graphqlOperation(updateUserProfile, { input }))
+
+          return result
+        } catch (error) {
+          console.log(error)
+        }
       } catch (error) {
-        console.log("Error uploading file: ", error);
+        console.log('Error uploading file: ', error)
       }
       setShowResume(true)
     }
@@ -93,9 +106,7 @@ const ProfileViewRight = (profileData) => {
   //   }
   // }
 
-  const {
-    handleSubmit:handleResumeSubmit
-  } = useForm()
+  const { handleSubmit: handleResumeSubmit } = useForm()
 
   // const {
   //   handleSubmit:handleVideoSubmit
@@ -125,11 +136,11 @@ const ProfileViewRight = (profileData) => {
                   <form onSubmit={handleResumeSubmit(resumeOnSubmit)}>
                     <Grid container spacing={6}>
                       <Grid item xs={12}>
-                        <DocumentUpload files={files} setFiles={setFiles}/>
+                        <DocumentUpload files={files} setFiles={setFiles} />
                       </Grid>
                       <Grid item xs={12} sx={{ justifyContent: 'center' }}>
                         <DialogActions sx={{ justifyContent: 'center' }}>
-                          <Button  variant='contained' type='submit' sx={{ mr: 1 }} onClick={handleResumeClose}>
+                          <Button variant='contained' type='submit' sx={{ mr: 1 }} onClick={handleResumeClose}>
                             Submit
                           </Button>
                           <Button variant='outlined' color='secondary' onClick={handleResumeClose}>
@@ -139,21 +150,19 @@ const ProfileViewRight = (profileData) => {
                       </Grid>
                     </Grid>
                   </form>
-
                 </DialogContent>
-
               </Dialog>
             </CardActions>
-            {showResume &&
-              <CardContent sx={{ width: 1 , justifyContent: 'center'}}>
-                <iframe  src={url}  height="300" width="100%"></iframe>
-                <CardActions sx={{justifyContent: 'center'}}>
-                  <Button variant='outlined' color='error'  sx={{ mr: 2 }} onClick={handleResumeShowClose}>
+            {showResume && (
+              <CardContent sx={{ width: 1, justifyContent: 'center' }}>
+                <iframe src={url} height='300' width='100%'></iframe>
+                <CardActions sx={{ justifyContent: 'center' }}>
+                  <Button variant='outlined' color='error' sx={{ mr: 2 }} onClick={handleResumeShowClose}>
                     Remove
                   </Button>
                 </CardActions>
               </CardContent>
-            }
+            )}
           </Card>
         </Grid>
         {/*<Grid item xs={6}>*/}
@@ -218,8 +227,8 @@ const ProfileViewRight = (profileData) => {
         {/*  </Card>*/}
         {/*</Grid>*/}
         <Grid item xs={12}>
-          <Card >
-            <ResumeList/>
+          <Card>
+            <ResumeList />
           </Card>
         </Grid>
         {/*<Grid item xs={12}>*/}
