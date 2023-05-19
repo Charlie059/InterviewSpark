@@ -36,6 +36,9 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { getUserResumeScans } from '../../graphql/queries'
 import { removeUserResumeScanByID, updateUserResumeScanURL } from '../../graphql/mutations'
 import router from 'next/router'
+import FileDisplay from "../file-display/FileDisplay";
+import DialogActions from "@mui/material/DialogActions";
+import Close from 'mdi-material-ui/Close'
 
 interface Resume {
   jobName: string
@@ -56,10 +59,12 @@ const ResumeList = () => {
   const [resumeResult, setResumeResult] = useState<string>('')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshResume, setRefreshResume] = useState<boolean>(false)
+  const [resumeUrl, setResumeUrl] = useState<string>('')
+  const [viewResume, setViewResume] = useState<boolean>(false)
 
   // const handleResumeClickOpen = () => setOpenResume(true);
   const handleResumeClose = () => setOpenResume(false)
-
+  const handleViewClose = () => setViewResume(false)
   const auth = useAuth()
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -122,6 +127,10 @@ const ResumeList = () => {
 
   const refreshUrl = async ({ resumeName }: { resumeName: string }) => {
     window.open(await Storage.get(resumeName, { expires: 604800 }))
+  }
+  const refreshViewUrl = async ({ resumeName }: { resumeName: string }) => {
+    setResumeUrl(await Storage.get(resumeName, { expires: 604800 }))
+    setViewResume(true)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -204,17 +213,51 @@ const ResumeList = () => {
                   </TableCell>
                   <TableCell>
                     {item.resumeUrl && (
-                      <Button
-                        target='_blank'
-                        variant='contained'
-                        sx={{ mr: 2 }}
+                      <><Button
                         onClick={async () => {
-                          await refreshUrl({ resumeName: item.resumeName })
+                          await refreshViewUrl({resumeName: item.resumeName})
                         }}
+                        target='_blank'
+                        variant='outlined'
+                        sx={{mr: 2}}
                         href=''
                       >
-                        <Typography sx={{ color: 'white' }}>Download</Typography>
+                        View Resume File
                       </Button>
+                        <Dialog
+                        open={viewResume}
+                        onClose={handleViewClose}
+                        scroll='body'
+                        aria-labelledby='user-view-edit'
+                        sx={{
+                          '& .MuiPaper-root': {
+                            width: '100%',
+                            maxWidth: 1000,
+                            p: [2, 10]
+                          }
+                        }}
+                        aria-describedby='user-view-edit-description'
+                      >
+                          <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleViewClose}>
+                            <Close/>
+                          </IconButton>
+                        <DialogContent>
+                          <FileDisplay url={resumeUrl} height = {700}/>
+                        </DialogContent>
+                        <DialogActions sx={{ justifyContent: 'center' }}>
+                          <Button
+                          target='_blank'
+                          variant='contained'
+                          sx={{mr: 2}}
+                          onClick={async () => {
+                            await refreshUrl({resumeName: item.resumeName})
+                          }}
+                          href=''
+                        >
+                          <Typography sx={{color: 'white'}}>Download</Typography>
+                        </Button>
+                        </DialogActions>
+                      </Dialog></>
                     )}
                   </TableCell>
                   {item.resumeResults && (
@@ -241,24 +284,7 @@ const ResumeList = () => {
                       >
                         View Scan Result
                       </Button>
-                      <Dialog
-                        open={openResume}
-                        onClose={handleResumeClose}
-                        scroll='body'
-                        aria-labelledby='user-view-edit'
-                        sx={{
-                          '& .MuiPaper-root': {
-                            width: '100%',
-                            maxWidth: 1000,
-                            p: [2, 10]
-                          }
-                        }}
-                        aria-describedby='user-view-edit-description'
-                      >
-                        <DialogContent>
-                          <ResumeResults resumeResults={resumeResult} />
-                        </DialogContent>
-                      </Dialog>
+
                     </TableCell>
                   )}
                   {item.resumeName && (
@@ -274,7 +300,29 @@ const ResumeList = () => {
           </Table>
         </TableContainer>
       </CardContent>
+      <Dialog
+        open={openResume}
+        onClose={handleResumeClose}
+        scroll='body'
+        aria-labelledby='user-view-edit'
+        sx={{
+          '& .MuiPaper-root': {
+            width: '100%',
+            maxWidth: 1000,
+            p: [2, 10]
+          }
+        }}
+        aria-describedby='user-view-edit-description'
+      >
+        <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleResumeClose}>
+          <Close/>
+        </IconButton>
+        <DialogContent>
+          <><ResumeResults resumeResults={resumeResult} /></>
+        </DialogContent>
+      </Dialog>
     </Card>
+
   )
 }
 

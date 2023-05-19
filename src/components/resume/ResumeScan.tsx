@@ -200,12 +200,14 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
 
           {/*<Button onClick={putIndustry}>Update Industry</Button>*/}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={5}>
-              <Grid item xs={12} sm={12}>
+            <Grid container spacing={6} alignItems="center">
+              <Grid item xs={4} sm={4}>
                 <DocumentUpload files={files} setFiles={setFiles}/>
               </Grid>
-              <Grid item xs={12} sm={12}>
-                <FormControl >
+              <Grid item xs={8} sm={8}>
+                <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <FormControl >
                   <Controller
                     name='jobTitle'
                     control={control}
@@ -227,32 +229,35 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
                     </FormHelperText>
                   )}
                 </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <Controller
+                      name='jobDescription'
+                      control={control}
+                      rules={{ required: true }}
+                      render={({ field: { value, onChange } }) => (
+                        <TextField
+                          rows={10}
+                          multiline={true}
+                          value={value}
+                          label='Job Description'
+                          onChange={onChange}
+                          error={Boolean(errors.jobDescription)}
+                        />
+                      )}
+                    />
+                    {errors.jobDescription && (
+                      <FormHelperText sx={{ color: 'error.main' }} id='validation-basic-email'>
+                        This field is required
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                </Grid>
+                </Grid>
               </Grid>
 
-              <Grid item xs={12} sm={12}>
-                <FormControl fullWidth>
-                  <Controller
-                    name='jobDescription'
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { value, onChange } }) => (
-                      <TextField
-                        rows={5}
-                        multiline={true}
-                        value={value}
-                        label='Job Description'
-                        onChange={onChange}
-                        error={Boolean(errors.jobDescription)}
-                      />
-                    )}
-                  />
-                  {errors.jobDescription && (
-                    <FormHelperText sx={{ color: 'error.main' }} id='validation-basic-email'>
-                      This field is required
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              </Grid>
+
               <Grid item xs={12}>
                 <Button  size='large' type='submit' variant='contained'>
                   Submit

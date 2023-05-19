@@ -25,6 +25,7 @@ import ResumeList from '../resume/ResumeList'
 import { Storage } from '@aws-amplify/storage'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
+import FileDisplay from "../file-display/FileDisplay";
 
 // import VideoList from "../../../interview/VideoList";
 
@@ -164,13 +165,7 @@ const ProfileViewRight = profileData => {
             </CardActions>
             {showResume && (
               <CardContent sx={{ width: 1, justifyContent: 'center' }}>
-                <iframe
-                  src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
-                  height='500'
-                  width='100%'
-                  frameBorder={0}
-                ></iframe>
-
+                <FileDisplay url={url} height = {500}/>
                 <CardActions sx={{ justifyContent: 'center' }}>
                   <Button variant='outlined' color='error' sx={{ mr: 2 }} onClick={handleResumeShowClose}>
                     Remove

@@ -26,6 +26,7 @@ const HeadingTypography = styled(Typography)(({ theme }) => ({
 const DocumentUpload: React.FC<IDocumentUploadProps> = ({ files, setFiles }) => {
 // ** Hooks
   const { getRootProps, getInputProps } = useDropzone({
+
     multiple: false,
     maxSize: 5242880,
     accept: {
@@ -80,10 +81,10 @@ const DocumentUpload: React.FC<IDocumentUploadProps> = ({ files, setFiles }) => 
 
   return(
     <Fragment>
-      <div {...getRootProps({ className: 'dropzone' })}>
+      <div  {...getRootProps({ className: 'dropzone' })}>
         <input {...getInputProps()} />
         <Box sx={{ display: 'flex', flexDirection: ['column', 'column', 'row'], alignItems: 'center' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', textAlign: ['center', 'center', 'inherit'] }}>
+          <Box sx={{ display: 'flex', flexDirection: ['column'], textAlign: ['center', 'center', 'inherit'] }}>
             <HeadingTypography variant='h5'>Drop files here or click to upload.</HeadingTypography>
             <Typography color='textSecondary'>Allowed *.pdf, *.docx, *.doc</Typography>
             <Typography color='textSecondary'>Max size 5 MB</Typography>
@@ -93,7 +94,7 @@ const DocumentUpload: React.FC<IDocumentUploadProps> = ({ files, setFiles }) => 
       {files.length ? (
         <Fragment>
           <List>{fileList}</List>
-          {files.length>1 ?(
+          {files.length > 1  ?(
             <div className='buttons'>
               <Button color='error' variant='outlined' onClick={handleRemoveAllFiles}>
                 Remove All
