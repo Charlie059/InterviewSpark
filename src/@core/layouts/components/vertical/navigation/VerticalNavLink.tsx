@@ -136,7 +136,7 @@ const VerticalNavLink = ({
         }}
       >
         <MenuNavLink
-          component={Link}
+          component={'a'}
           {...(item.disabled && { tabIndex: -1 })}
           className={isNavLinkActive() ? 'active' : ''}
           href={item.path === undefined ? '/' : `${item.path}`}

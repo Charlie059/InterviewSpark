@@ -55,7 +55,7 @@ const TableHeader = (props: TableHeaderProps) => {
             borderRadius: 5,
             fontSize: '12px'
           }}
-          component={Link}
+          component={'a'}
           variant='contained'
           href={buttonLink}
         >
