@@ -13,10 +13,10 @@ import {useState} from "react";
 
 const ResumeListPage = () => {
 
-  const [componentKey, setComponentKey] = useState<number>(0);
+  const [componentKey, setComponentKey] = useState<number>(Date.now());
 
   const reloadComponent = () => {
-    setComponentKey(prevKey => prevKey + 1);
+    setComponentKey(Date.now());
   };
 
   return (

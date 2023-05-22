@@ -120,7 +120,7 @@ const ResumeList = () => {
         //
         //   await updateResumeUrl(r.resumeScanID, newUrl);
         // }
-        setResumes(resumeList)
+        setResumes(resumeList.reverse())
       }
     }
   }
