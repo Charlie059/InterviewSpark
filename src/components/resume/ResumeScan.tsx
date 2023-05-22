@@ -55,7 +55,12 @@ const defaultValues: ResumePack = {
   display_name: '',
 }
 
-const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
+interface ResumeScanProps {
+  nocollapse: boolean;
+  reload: () => void;
+}
+
+const ResumeScan: React.FC<ResumeScanProps> = ({nocollapse, reload}) => {
 
   const router = useRouter()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -118,13 +123,25 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
             console.log(responseData)
             console.log(resumePack)
             putResume(resumePack).then(async () =>{
-              await router.replace('/resume/list')
+              console.log(router)
+              if(router.route == '/resume'){
+                await router.replace('/resume/list')
+              }else{
+                reload()
+              }
             })
           })
           .catch((error) => {
             throw error
           })
+        toast.promise(scanPromise, {
+          loading: 'AI is evaluating your Resume',
+          success: 'Evaluation Complete',
+          error: 'Error when Evaluating. Please Discard and retry.',
 
+        },{style: {
+            minWidth: '250px',
+          },position: 'top-center'})
       })
   }
 
@@ -142,7 +159,6 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
   } = useForm<ResumePack>({ defaultValues })
 
   async function onSubmit (data: ResumePack) {
-    toast.success('Form Submitted')
     const resume = files[0];
     const name = resume.name;
     const docType = name.slice(-3);
@@ -180,7 +196,7 @@ const ResumeScan: React.FC<{nocollapse: boolean}> = ({nocollapse}) => {
   }
 
   return (
-    <Card> {show&&
+    <Card sx={{ borderRadius: '20px' }}> {show&&
       <CardHeader onClick={()=>setCollapsed (!collapsed)}
                   title='Upload Your Resume'
                   titleTypographyProps={{ variant: 'h6' }}

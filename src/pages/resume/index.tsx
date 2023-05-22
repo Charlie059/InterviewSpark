@@ -31,6 +31,7 @@ import ResumeScan from "src/components/resume/ResumeScan";
 // </Grid>
 
 const ResumeScanPage = () => {
+
   return (
     <DropzoneWrapper>
       <Grid container spacing={6} className='match-height'>

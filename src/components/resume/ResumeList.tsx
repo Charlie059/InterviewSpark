@@ -163,15 +163,7 @@ const ResumeList = () => {
   // @ts-ignore
   // @ts-ignore
   return (
-    <Card>
-      {refreshResume ? (
-        <>
-          <p>yes!</p>
-          {async () => await getResume()}
-        </>
-      ) : (
-        <></>
-      )}
+    <Card sx={{borderRadius: '20px' }}>
       <CardHeader
         title='Resume Analysis'
         titleTypographyProps={{ variant: 'h6' }}
