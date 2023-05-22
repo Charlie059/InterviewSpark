@@ -57,7 +57,7 @@ const defaultValues: ResumePack = {
 
 interface ResumeScanProps {
   nocollapse: boolean;
-  reload: () => void;
+  reload?: () => void; //optional. for refreshing another component
 }
 
 const ResumeScan: React.FC<ResumeScanProps> = ({nocollapse, reload}) => {
@@ -127,7 +127,9 @@ const ResumeScan: React.FC<ResumeScanProps> = ({nocollapse, reload}) => {
               if(router.route == '/resume'){
                 await router.replace('/resume/list')
               }else{
-                reload()
+                if (reload) {
+                  reload()
+                }
               }
             })
           })
