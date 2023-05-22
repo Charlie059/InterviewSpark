@@ -32,6 +32,10 @@ import ResumeScan from "src/components/resume/ResumeScan";
 
 const ResumeScanPage = () => {
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const reload = () => {
+  }
+
   return (
     <DropzoneWrapper>
       <Grid container spacing={6} className='match-height'>
@@ -40,7 +44,7 @@ const ResumeScanPage = () => {
           subtitle={<Typography variant='body2'>Upload Your Resume Here</Typography>}
         />
         <Grid item xs={12}>
-           <ResumeScan nocollapse = {true}/>
+           <ResumeScan nocollapse = {true} reload={reload}/>
         </Grid>
       </Grid>
     </DropzoneWrapper>
