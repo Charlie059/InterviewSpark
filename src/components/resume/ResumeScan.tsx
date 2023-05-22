@@ -198,7 +198,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({nocollapse, reload}) => {
   }
 
   return (
-    <Card sx={{ borderRadius: '20px' }}> {show&&
+    <Card> {show&&
       <CardHeader onClick={()=>setCollapsed (!collapsed)}
                   title='Upload Your Resume'
                   titleTypographyProps={{ variant: 'h6' }}

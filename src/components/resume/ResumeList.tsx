@@ -163,7 +163,7 @@ const ResumeList = () => {
   // @ts-ignore
   // @ts-ignore
   return (
-    <Card sx={{borderRadius: '20px' }}>
+    <Card>
       <CardHeader
         title='Resume Analysis'
         titleTypographyProps={{ variant: 'h6' }}
