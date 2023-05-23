@@ -8,7 +8,7 @@ import { getUserProfileByUsername } from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Demo Components Imports
-import UserProfile from 'src/views/pages/user-profile/UserProfile'
+import UserProfile from 'src/components/profile/UserProfile'
 
 const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** Hooks

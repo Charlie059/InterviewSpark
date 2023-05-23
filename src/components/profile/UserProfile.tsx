@@ -37,8 +37,8 @@ import { Controller, useForm } from 'react-hook-form'
 
 // ** Demo Components
 //import Profile from 'src/views/pages/user-profile/profile'
-import UserProfileHeader from 'src/views/pages/user-profile/UserProfileHeader'
-import ProfileViewRight from '../../../components/profile/ProfileViewRight'
+import UserProfileHeader from 'src/components/profile/UserProfileHeader'
+import ProfileViewRight from './ProfileViewRight'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
 
