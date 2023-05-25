@@ -355,7 +355,7 @@ const InterviewList = () => {
   }
 
   return (
-    <Card sx={{ width: '1060px', borderRadius: '20px' }}>
+    <Card>
       <div>
         <TableHeader
           value={value}

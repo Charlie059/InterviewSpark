@@ -91,7 +91,7 @@ const InterviewPromotion = () => {
   }, [])
 
   return (
-    <Card sx={{ position: 'relative' }} style={{ borderRadius: '25px', height: '220px', width: '580px' }}>
+    <Card sx={{ position: 'relative' }} style={{ borderRadius: '25px' }}>
       <CardContent sx={{ p: theme => `${theme.spacing(6.75, 7.5)} !important` }}>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>

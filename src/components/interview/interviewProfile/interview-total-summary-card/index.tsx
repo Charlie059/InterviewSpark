@@ -153,7 +153,7 @@ const InterviewTotalSummaryCard = () => {
   }, [])
 
   return (
-    <Card style={{ borderRadius: '25px', aspectRatio: '1', height: '220px' }}>
+    <Card style={{ borderRadius: '25px', aspectRatio: '1' }}>
       <CardContent>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
           <Typography variant='h6' sx={{ mr: 1.5 }}>
