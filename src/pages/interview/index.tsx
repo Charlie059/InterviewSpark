@@ -10,21 +10,21 @@ const InterviewPage = () => {
     <div>
       <InterviewProfileHeader />
       <Grid container spacing={2}>
-        <Grid item xs={6} sm={3.8} md={2.3} lg={2}>
+        <Grid item xs={6} sm={3.8} md={2.3} lg={2.1}>
           <Box sx={{ position: 'relative', paddingBottom: '100%' }}>
             <Box sx={{ position: 'absolute', width: '100%', height: '100%' }}>
               <InterviewUsageSummaryThisMonth />
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={6} sm={3.8} md={2.3} lg={2}>
+        <Grid item xs={6} sm={3.8} md={2.3} lg={2.1}>
           <Box sx={{ position: 'relative', paddingBottom: '100%' }}>
             <Box sx={{ position: 'absolute', width: '100%', height: '100%' }}>
               <InterviewTotalSummaryCard />
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} sm={12} md={7.4} lg={8}>
+        <Grid item xs={12} sm={12} md={7.4} lg={7.8}>
           <InterviewPromotion />
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={12}>
