@@ -54,7 +54,7 @@ const InterviewPage = () => {
             </Box>
           </Box>
         </Grid>
-        <Grid item xs={12} sm={12} md={7.4} lg={7.8}>
+        <Grid item xs={12} sm={4.4} md={7.4} lg={7.8}>
           <InterviewPromotion height={cardHeight} />
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={12}>
