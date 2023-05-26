@@ -27,12 +27,11 @@ const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
 const Img = styled('img')(({ theme }) => ({
   right: 0,
   bottom: 0,
-  width: '25%',
+  width: '15%',
   position: 'absolute',
   opacity: 0.15,
   [theme.breakpoints.down('sm')]: {
-    width: 250,
-    position: 'static'
+    width: '25%'
   }
 }))
 
@@ -97,7 +96,7 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
   return (
     <Card sx={{ position: 'relative', height: `${height}px` }} style={{ borderRadius: '25px' }}>
       <CardContent sx={{ p: theme => `${theme.spacing(6.75, 7.5)} !important` }}>
-        <Grid container spacing={6}>
+        <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>
             <Typography variant='h5' sx={{ mb: 4.5 }}>
               {percentageIncrease >= 0 ? 'Keep up the great work,' : "It's okay,"}{' '}
