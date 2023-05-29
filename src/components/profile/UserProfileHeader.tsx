@@ -9,6 +9,21 @@ import { format } from 'date-fns'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import IconButton from "@mui/material/IconButton";
+import Close from "mdi-material-ui/Close";
+import Pencil from 'mdi-material-ui/Pencil';
+import {useEffect, useState} from "react";
+import Button from "@mui/material/Button";
+
+//** Component Imports
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DocumentUpload from "../uploaders/DocumentUpload";
+import { Storage } from "@aws-amplify/storage"
+import {API, graphqlOperation} from "aws-amplify";
+import {updateUserProfile} from "../../graphql/mutations";
+import toast from "react-hot-toast";
+
 
 const ProfilePicture = styled('img')(({ theme }) => ({
   width: 120,
@@ -20,20 +35,91 @@ const ProfilePicture = styled('img')(({ theme }) => ({
   }
 }))
 
+
+type diagTypes = 'profile' | 'cover';
+
 const UserProfileHeader = ({ data }: any) => {
   // ** State
-  console.log(data.photoImgURL)
+  console.log(data)
 
   const joiningDate = format(new Date(data.joiningDate), 'PP')
 
   const designationIcon = 'mdi:briefcase-outline'
+  const [openProfilePicture, setOpenProfilePicture] = useState<boolean>(false)
+  const [dialogType, setDialogType] = useState<diagTypes>('profile')
+  const [files, setFiles] = useState<File[]>([])
+  const [proPicUrl, setProPicUrl] = useState<string>('')
+  const [coverPicUrl, setCoverPicUrl] = useState<string>('')
+
+  useEffect(() => {
+    const fetchProPicUrl = async () => {
+      try {
+        const url = await Storage.get(data.photoImgURL);
+        setProPicUrl(url);
+        const coverUrl = await Storage.get(data.coverImgURL);
+        setCoverPicUrl(coverUrl);
+      } catch (error) {
+        console.error("Error fetching profile picture URL:", error);
+      }
+    };
+    fetchProPicUrl();
+  }, []);
+
+  const handleProPicOpen = () => {
+    setOpenProfilePicture(true)
+    setDialogType('profile')
+  }
+  const handleCoverPicOpen = () => {
+    setOpenProfilePicture(true)
+    setDialogType('cover')
+  }
+
+  const handleProPicClose = () => setOpenProfilePicture(false)
+  const handleProPicSubmit = async () =>{
+    if(!files[0]){
+      toast.error("no image selected")
+    }else{
+      const file = files[0];
+      const dateStamp = Date.now();
+      const fileType = file.name.split(".").pop();
+      const key = `${dateStamp}.${fileType}`;
+      await Storage.put(key, file)
+        .then(async result => {
+          console.log("Upload successful:", result);
+          if(dialogType == "profile"){
+            data.photoImgURL = key
+          }else{
+            data.coverImgURL = key
+          }
+          data.emailAddress = data.userEmailAddress
+          console.log("data to update:",data)
+          await API.graphql(graphqlOperation(updateUserProfile, data))
+          await Storage.get(key).then(newUrl => {
+            if(dialogType == "profile"){
+              setProPicUrl(newUrl)
+            }else{
+              setCoverPicUrl(newUrl)
+            }
+
+            setOpenProfilePicture(false)
+          })
+        })
+        .catch(error => {
+          console.error("Error uploading file:", error);
+        });
+    }
+
+  }
 
   return data !== null ? (
     <Card>
+      <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
+        <Pencil/>
+      </IconButton>
       <CardMedia
         component='img'
         alt='profile-cover-img'
-        image={data.coverImgURL}
+        image={coverPicUrl}
         sx={{
           height: { xs: 150, md: 250 }
         }}
@@ -48,7 +134,13 @@ const UserProfileHeader = ({ data }: any) => {
           justifyContent: { xs: 'center', md: 'flex-start' }
         }}
       >
-        <ProfilePicture src={data.photoImgURL} alt='profile-picture' />
+        <div>
+          <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleProPicOpen}>
+            <Pencil/>
+          </IconButton>
+          <ProfilePicture src={proPicUrl} alt='profile-picture' />
+        </div>
+
         <Box
           sx={{
             width: '100%',
@@ -92,7 +184,31 @@ const UserProfileHeader = ({ data }: any) => {
           </Box>
         </Box>
       </CardContent>
+      <Dialog
+        open={openProfilePicture}
+        onClose={handleProPicClose}
+        scroll='body'
+        aria-labelledby='user-view-edit'
+        sx={{
+          '& .MuiPaper-root': {
+            width: '100%',
+            p: [2, 10]
+          }
+        }}
+        aria-describedby='user-view-edit-description'
+      >
+        <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleProPicClose}>
+          <Close/>
+        </IconButton>
+        <DialogContent>
+          <DocumentUpload type="image" files={files} setFiles={setFiles} />
+        </DialogContent>
+        {files[0] &&<Button  size='large' variant='contained' onClick={handleProPicSubmit}>
+          Submit
+        </Button>}
+      </Dialog>
     </Card>
+
   ) : null
 }
 
