@@ -31,13 +31,14 @@ import FileDisplay from "../file-display/FileDisplay";
 
 // @ts-ignore
 const ProfileViewRight = profileData => {
-  const [openResume, setOpenResume] = useState(false)
-  const [showResume, setShowResume] = useState(false)
+  const [openResume, setOpenResume] = useState<boolean>(false)
+  const [showResume, setShowResume] = useState<boolean>(false)
 
   // const [openVideo, setOpenVideo] = useState(false)
   // const [showVideo, setShowVideo] = useState(false)
   const [files, setFiles] = useState<File[]>([])
-  const [url, setUrl] = useState('')
+  const [url, setUrl] = useState<string>('')
+  const [refresh, setRefresh] = useState<number>(Date.now())
 
   // const [videoFiles,setVideoFiles] = useState([])
   // const [videoUrl,setVideoUrl] = useState([])
@@ -51,6 +52,9 @@ const ProfileViewRight = profileData => {
   const handleResumeShowClose = () => {
     setShowResume(false)
   }
+  const handleRefresh = () => {
+    setRefresh(Date.now())
+  }
 
   // const handleVideoClickOpen = () => setOpenVideo(true)
   // const handleVideoClose = () => {setOpenVideo(false)}
@@ -58,16 +62,19 @@ const ProfileViewRight = profileData => {
   // const handleVideoShowClose = () => {setShowVideo(false)}
 
   useEffect(() => {
+    const getUrl = async () => {
+      await Storage.get(profileData.profileData.resumeKey, { expires: 604800 }).then(url => {
+        setUrl(url)
+        setShowResume(true)
+      })
+    }
     if (profileData.profileData.resumeKey) {
       getUrl()
-      setShowResume(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const getUrl = async () => {
-    setUrl(await Storage.get(profileData.profileData.resumeKey, { expires: 604800 }))
-  }
+
 
   const resumeOnSubmit = async () => {
     if (files.length == 0) {
@@ -89,12 +96,6 @@ const ProfileViewRight = profileData => {
         profileData.profileData.resumeKey = cvName
         profileData.profileData.emailAddress = profileData.profileData.userEmailAddress
         console.log(profileData.profileData)
-
-        // const input = {
-        //   emailAddress: profileData.profileData.userEmailAddress,
-        //   resumeKey: cvName
-        // }
-
         await API.graphql(graphqlOperation(updateUserProfile, profileData.profileData))
         setShowResume(true)
       } catch (error) {
@@ -128,52 +129,54 @@ const ProfileViewRight = profileData => {
         <Grid item xs={12}>
           <Card>
             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleResumeClickOpen}>
+              {!showResume&&<Button variant='outlined' sx={{ mr: 2 }} onClick={handleResumeClickOpen}>
                 Personal Resume Upload
-              </Button>
-
-              <Dialog
-                open={openResume}
-                onClose={handleResumeClose}
-                aria-labelledby='user-view-edit'
-                sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
-                aria-describedby='user-view-edit-description'
-              >
-                <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-                  Upload Your Resume
-                </DialogTitle>
-                <DialogContent>
-                  <form onSubmit={handleResumeSubmit(resumeOnSubmit)}>
-                    <Grid container spacing={6}>
-                      <Grid item xs={12}>
-                        <DocumentUpload files={files} setFiles={setFiles} />
-                      </Grid>
-                      <Grid item xs={12} sx={{ justifyContent: 'center' }}>
-                        <DialogActions sx={{ justifyContent: 'center' }}>
-                          <Button variant='contained' type='submit' sx={{ mr: 1 }} onClick={handleResumeClose}>
-                            Submit
-                          </Button>
-                          <Button variant='outlined' color='secondary' onClick={handleResumeClose}>
-                            Discard
-                          </Button>
-                        </DialogActions>
-                      </Grid>
-                    </Grid>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              </Button>}
             </CardActions>
             {showResume && (
-              <CardContent sx={{ width: 1, justifyContent: 'center' }}>
+              <CardContent sx={{ width: 1, justifyContent: 'center' }} key = {refresh}>
                 <FileDisplay url={url} height = {500}/>
                 <CardActions sx={{ justifyContent: 'center' }}>
                   <Button variant='outlined' color='error' sx={{ mr: 2 }} onClick={handleResumeShowClose}>
                     Remove
                   </Button>
+                  <Button variant='outlined' color='error' sx={{ mr: 2 }} onClick={handleRefresh}>
+                    Refresh
+                  </Button>
                 </CardActions>
               </CardContent>
             )}
           </Card>
+          <Dialog
+            open={openResume}
+            onClose={handleResumeClose}
+            aria-labelledby='user-view-edit'
+            sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
+            aria-describedby='user-view-edit-description'
+          >
+            <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
+              Upload Your Resume
+            </DialogTitle>
+            <DialogContent>
+              <form onSubmit={handleResumeSubmit(resumeOnSubmit)}>
+                <Grid container spacing={6}>
+                  <Grid item xs={12}>
+                    <DocumentUpload type="document" files={files} setFiles={setFiles} />
+                  </Grid>
+                  <Grid item xs={12} sx={{ justifyContent: 'center' }}>
+                    <DialogActions sx={{ justifyContent: 'center' }}>
+                      <Button variant='contained' type='submit' sx={{ mr: 1 }} onClick={handleResumeClose}>
+                        Submit
+                      </Button>
+                      <Button variant='outlined' color='secondary' onClick={handleResumeClose}>
+                        Discard
+                      </Button>
+                    </DialogActions>
+                  </Grid>
+                </Grid>
+              </form>
+            </DialogContent>
+          </Dialog>
         </Grid>
         {/*<Grid item xs={6}>*/}
         {/*  <Card>*/}

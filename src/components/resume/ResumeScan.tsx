@@ -220,7 +220,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({nocollapse, reload}) => {
           <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={6} alignItems="center">
               <Grid item xs={4} sm={4}>
-                <DocumentUpload files={files} setFiles={setFiles}/>
+                <DocumentUpload type="document" files={files} setFiles={setFiles}/>
               </Grid>
               <Grid item xs={8} sm={8}>
                 <Grid container spacing={3}>
