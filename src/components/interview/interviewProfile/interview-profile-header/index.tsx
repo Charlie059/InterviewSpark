@@ -6,7 +6,6 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
 
 import { useAuth } from 'src/hooks/useAuth'
 
@@ -54,13 +53,14 @@ const UserProfileHeader = () => {
         boxShadow: 'none' // Add this to remove the shadow around the card
       }}
     >
-      <CardContent
+      <Box
         sx={{
           pt: 0,
           display: 'flex',
           alignItems: 'flex-end',
           flexWrap: { xs: 'wrap', md: 'nowrap' },
-          justifyContent: { xs: 'center', md: 'flex-start' }
+          justifyContent: { xs: 'center', md: 'flex-start' },
+          marginBottom: { xs: 2, md: 4 }
         }}
       >
         <ProfilePicture src={data.profileImg} alt='profile-picture' />
@@ -95,7 +95,7 @@ const UserProfileHeader = () => {
             <Box sx={{ height: 45 }}></Box>
           </Box>
         </Box>
-      </CardContent>
+      </Box>
     </Card>
   ) : null
 }

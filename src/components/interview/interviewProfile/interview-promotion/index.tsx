@@ -4,11 +4,15 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Grid, { GridProps } from '@mui/material/Grid'
-import { styled, useTheme } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
 import { useAuth } from 'src/hooks/useAuth'
 import { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewsByMonth } from 'src/graphql/queries'
+
+interface InterviewPromotionProps {
+  height: number
+}
 
 // Styled Grid component
 const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
@@ -19,21 +23,29 @@ const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
   }
 }))
 
+// Styled Card component
+const StyledCard = styled(Card)<{ height: number }>(({ theme, height }) => ({
+  position: 'relative',
+  height: `${height}px`,
+  [theme.breakpoints.down('sm')]: {
+    height: '100%'
+  }
+}))
+
 // Styled component for the image
 const Img = styled('img')(({ theme }) => ({
   right: 0,
   bottom: 0,
-  width: 298,
+  width: '15%',
   position: 'absolute',
+  opacity: 0.15,
   [theme.breakpoints.down('sm')]: {
-    width: 250,
-    position: 'static'
+    width: '25%'
   }
 }))
 
-const InterviewPromotion = () => {
+const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
   // ** Hook
-  const theme = useTheme()
   const auth = useAuth()
   const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
 
@@ -91,10 +103,10 @@ const InterviewPromotion = () => {
   }, [])
 
   return (
-    <Card sx={{ position: 'relative' }} style={{ borderRadius: '25px', height: '220px', width: '580px' }}>
+    <StyledCard height={height} style={{ borderRadius: '25px' }}>
       <CardContent sx={{ p: theme => `${theme.spacing(6.75, 7.5)} !important` }}>
-        <Grid container spacing={6}>
-          <Grid item xs={12} sm={6}>
+        <Grid container>
+          <Grid item xs={12} sm={12} md={12} lg={12}>
             <Typography variant='h5' sx={{ mb: 4.5 }}>
               {percentageIncrease >= 0 ? 'Keep up the great work,' : "It's okay,"}{' '}
               <Box component='span' sx={{ fontWeight: 'bold' }}>
@@ -104,12 +116,12 @@ const InterviewPromotion = () => {
             </Typography>
             <Typography variant='body2'>{encouragementMessage}</Typography>
           </Grid>
-          <StyledGrid item xs={12} sm={6}>
-            <Img alt='Encouragement Illustration' src={`/images/cards/illustration-john-${theme.palette.mode}.png`} />
+          <StyledGrid item xs={0} sm={0} md={0} lg={0}>
+            <Img alt='Encouragement Illustration' src={'/images/certification/Medallions.png'} />
           </StyledGrid>
         </Grid>
       </CardContent>
-    </Card>
+    </StyledCard>
   )
 }
 
