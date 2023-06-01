@@ -38,12 +38,15 @@ const ProfilePicture = styled('img')(({ theme }) => ({
 
 type diagTypes = 'profile' | 'cover';
 
-const UserProfileHeader = ({ data }: any) => {
+const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   // ** State
   console.log(data)
 
   const joiningDate = format(new Date(data.joiningDate), 'PP')
 
+  //const [editable, setEditable] = useState<boolean>(true)
+
+  const [showCover, setShowCover] = useState<boolean>(true)
   const designationIcon = 'mdi:briefcase-outline'
   const [openProfilePicture, setOpenProfilePicture] = useState<boolean>(false)
   const [dialogType, setDialogType] = useState<diagTypes>('profile')
@@ -52,6 +55,11 @@ const UserProfileHeader = ({ data }: any) => {
   const [coverPicUrl, setCoverPicUrl] = useState<string>('')
 
   useEffect(() => {
+    if(type == "Dashboard"){
+      setShowCover(true)
+    }else{
+      setShowCover(false)
+    }
     const fetchProPicUrl = async () => {
       try {
         const url = await Storage.get(data.photoImgURL);
@@ -112,22 +120,22 @@ const UserProfileHeader = ({ data }: any) => {
   }
 
   return data !== null ? (
-    <Card>
-      <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
+    <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
+      {showCover && <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
         <Pencil/>
-      </IconButton>
-      <CardMedia
+      </IconButton>}
+      {showCover && <CardMedia
         component='img'
         alt='profile-cover-img'
         image={coverPicUrl}
         sx={{
           height: { xs: 150, md: 250 }
         }}
-      />
+      />}
       <CardContent
         sx={{
           pt: 0,
-          mt: -8,
+          mt: showCover ? -8 : 6,
           display: 'flex',
           alignItems: 'flex-end',
           flexWrap: { xs: 'wrap', md: 'nowrap' },
