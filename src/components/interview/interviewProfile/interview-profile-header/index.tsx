@@ -37,6 +37,7 @@ const UserProfileHeader = () => {
     if (!userName) {
       return
     }
+
     setData({
       userName: userName,
       globalRanking: '5,000',

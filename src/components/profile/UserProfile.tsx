@@ -143,7 +143,7 @@ const UserProfile = ({ user, data }) => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} />
+        <UserProfileHeader data={data} type={"profile"}/>
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}
