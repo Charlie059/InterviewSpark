@@ -23,6 +23,14 @@ import { Box, Card, Grid, Typography, styled } from '@mui/material'
 import CircleProgressBar from 'src/components/interview/mockInterview/circleProgressBar'
 import MenuOpenIcon from '@mui/icons-material/MenuOpen'
 
+// Dialog Components
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import Button from '@mui/material/Button'
+
 interface RecordedChunks {
   data: Blob[]
 }
@@ -57,6 +65,14 @@ function MockInterviewPage() {
   const [videoEnabled, setVideoEnabled] = useState(true)
   const [audioEnabled, setAudioEnabled] = useState(true)
   const [showCard, setShowCard] = useState(false)
+
+  const [openDialog, setOpenDialog] = useState(false)
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true)
+  }
+  const handleCloseDialog = () => {
+    setOpenDialog(false)
+  }
 
   const StyledVideoRecordingButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
     ({ theme }) => ({
@@ -291,7 +307,7 @@ function MockInterviewPage() {
         })
       } catch (error) {
         console.error('Second attempt to contact GPT failed', error)
-        alert('Unable to contact GPT. Please check your network connection and try again.')
+        handleClickOpenDialog()
       }
     }
 
@@ -492,6 +508,24 @@ function MockInterviewPage() {
         )}
       </Box>
       <audio ref={audioRef} />
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>{'Unable to contact GPT'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Please check your network connection and try again.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color='primary' autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   )
 }
