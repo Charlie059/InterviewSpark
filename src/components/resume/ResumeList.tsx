@@ -39,6 +39,7 @@ import router from 'next/router'
 import FileDisplay from "../file-display/FileDisplay";
 import DialogActions from "@mui/material/DialogActions";
 import Close from 'mdi-material-ui/Close'
+import FileAccount from "mdi-material-ui/FileAccount";
 
 interface Resume {
   jobName: string
@@ -178,79 +179,36 @@ const ResumeList = () => {
         <TableContainer>
           <Table size='small' sx={{ minWidth: 500 }}>
             <TableHead sx={{ backgroundColor: 'customColors.tableHeaderBg' }}>
-              <TableRow>
+              <TableRow >
                 <TableCell sx={{ height: '3.375rem' }}>File Name</TableCell>
-                <TableCell sx={{ height: '3.375rem' }}>Resume File</TableCell>
                 <TableCell sx={{ height: '3.375rem' }}>Match Score</TableCell>
                 <TableCell sx={{ height: '3.375rem' }}>View</TableCell>
-                <TableCell sx={{ height: '3.375rem' }}></TableCell>
+                <TableCell sx={{ height: '3.375rem' }}>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {resumes.map((item, index) => (
                 <TableRow hover key={index} sx={{ '&:last-of-type td': { border: 0 } }}>
                   <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
-                          {item.displayName}
-                        </Typography>
+                      <Box sx={{ width:"100%", display: 'flex', flexDirection: 'column' }}>
                         {item.jobName && (
-                          <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
                             For {item.jobName}
                           </Typography>
                         )}
+                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                          {item.displayName}
+                          {item.resumeUrl && (
+                            <IconButton
+                              sx={{height:'2rem'}}
+                              onClick={async () => {
+                                await refreshViewUrl({resumeName: item.resumeName})
+                              }}
+                            >
+                              <FileAccount/>
+                            </IconButton>)}
+                        </Typography>
                       </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    {item.resumeUrl && (
-                      <><Button
-                        onClick={async () => {
-                          await refreshViewUrl({resumeName: item.resumeName})
-                        }}
-                        target='_blank'
-                        variant='outlined'
-                        sx={{mr: 2}}
-                        href=''
-                      >
-                        View Resume File
-                      </Button>
-                        <Dialog
-                        open={viewResume}
-                        onClose={handleViewClose}
-                        scroll='body'
-                        aria-labelledby='user-view-edit'
-                        sx={{
-                          '& .MuiPaper-root': {
-                            width: '100%',
-                            maxWidth: 1000,
-                            p: [2, 10]
-                          }
-                        }}
-                        aria-describedby='user-view-edit-description'
-                      >
-                          <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleViewClose}>
-                            <Close/>
-                          </IconButton>
-                        <DialogContent>
-                          <FileDisplay url={resumeUrl} height = {700}/>
-                        </DialogContent>
-                        <DialogActions sx={{ justifyContent: 'center' }}>
-                          <Button
-                          target='_blank'
-                          variant='contained'
-                          sx={{mr: 2}}
-                          onClick={async () => {
-                            await refreshUrl({resumeName: item.resumeName})
-                          }}
-                          href=''
-                        >
-                          <Typography sx={{color: 'white'}}>Download</Typography>
-                        </Button>
-                        </DialogActions>
-                      </Dialog></>
-                    )}
                   </TableCell>
                   {item.resumeResults && (
                     <TableCell sx={{ color: 'text' }}>
@@ -286,6 +244,40 @@ const ResumeList = () => {
                       </Button>
                     </TableCell>
                   )}
+                  <Dialog
+                    open={viewResume}
+                    onClose={handleViewClose}
+                    scroll='body'
+                    aria-labelledby='user-view-edit'
+                    sx={{
+                      '& .MuiPaper-root': {
+                        width: '100%',
+                        maxWidth: 1000,
+                        p: [2, 10]
+                      }
+                    }}
+                    aria-describedby='user-view-edit-description'
+                  >
+                    <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleViewClose}>
+                      <Close/>
+                    </IconButton>
+                    <DialogContent>
+                      <FileDisplay url={resumeUrl} height = {700}/>
+                    </DialogContent>
+                    <DialogActions sx={{ justifyContent: 'center' }}>
+                      <Button
+                        target='_blank'
+                        variant='contained'
+                        sx={{mr: 2}}
+                        onClick={async () => {
+                          await refreshUrl({resumeName: item.resumeName})
+                        }}
+                        href=''
+                      >
+                        <Typography sx={{color: 'white'}}>Download</Typography>
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </TableRow>
               ))}
             </TableBody>

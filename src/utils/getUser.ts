@@ -3,7 +3,7 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { GetUserQuery } from '../API'
 import { getUser } from '../graphql/queries'
 
-export const getUserData = async (emailAddress: string) => {
+export const  getUserData = async (emailAddress: string) => {
   try {
     const response = (await API.graphql(graphqlOperation(getUser, { emailAddress }))) as { data: GetUserQuery }
 
