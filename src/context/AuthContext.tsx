@@ -110,29 +110,34 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     // Use the `Auth.signIn` method to sign in the user with the provided username and password.
-    Auth.signIn(params.email, params.password)
-      .then(async userData => {
-        const emailAddress = userData.attributes.email
-        const user = await getUserData(emailAddress)
+    try{
+      Auth.signIn(params.email, params.password)
+        .then(async userData => {
+          const emailAddress = userData.attributes.email
+          const user = await getUserData(emailAddress)
 
-        setUser(user)
-        Log.info(user)
+          setUser(user)
+          Log.info(user)
 
-        // if user is null, return error
-        if (!user) {
-          errorCallback ? errorCallback({ Error: 'User not found in database' }) : null
+          // if user is null, return error
+          if (!user) {
+            errorCallback ? errorCallback({ Error: 'User not found in database' }) : null
 
-          return
-        }
+            return
+          }
 
-        // Get the return URL from the router query, if it exists, and redirect the user to the specified URL or to the root URL if no return URL was specified.
-        const redirectURL = router.query.returnUrl || '/'
-        router.replace(redirectURL as string)
-      })
-      .catch(err => {
-        errorCallback ? errorCallback(err) : null
-        Log.info(err)
-      })
+          // Get the return URL from the router query, if it exists, and redirect the user to the specified URL or to the root URL if no return URL was specified.
+          const redirectURL = router.query.returnUrl || '/'
+          router.replace(redirectURL as string)
+        })
+        .catch(err => {
+          errorCallback ? errorCallback(err) : null
+          Log.info(err)
+        })
+    } catch(err:any){
+      errorCallback ? errorCallback(err) : null
+      Log.info(err)
+    }
   }
 
   const handleLogout = () => {
