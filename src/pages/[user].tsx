@@ -8,31 +8,27 @@ import { getUserProfileByUsername } from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Demo Components Imports
-import UserProfile from 'src/components/profile/UserProfile'
-import PublicProfile from "../../components/profile/PublicProfile";
+import PublicProfile from 'src/components/profile/PublicProfile'
+import {ReactNode} from "react";
+import BlankLayout from "../@core/layouts/BlankLayout";
+import UserProfileTab from "./user-profile/[user]";
 
-const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
   const test = true;
-
-
+  console.log()
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
-
-  // If user is current user or profile is public, display profile
   if (user === auth.user?.userName) {
-    return <UserProfile user={user} data={data} />
+    router.replace('/user-profile/' +user)
   } else if(test || data.isPublic){
-    if(auth.user){
-      return <PublicProfile user={user} data = {data}/>
-    }else{
-      router.replace(`/`+user)
-    }
+    return <PublicProfile user={user} data={data} />
   } else {
     // If user is unauthorized, redirect to 401 page
     router.replace('/401')
   }
+
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params }: GetServerSidePropsContext) => {
@@ -59,8 +55,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
   }
 }
 
-export default UserProfileTab
-UserProfileTab.acl = {
+PublicProfileGuest.authGuard = false
+
+PublicProfileGuest.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+export default PublicProfileGuest
+PublicProfileGuest.acl = {
   action: 'read',
   subject: 'acl-page'
 }
+
