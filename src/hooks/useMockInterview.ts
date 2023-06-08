@@ -42,12 +42,14 @@ interface InterviewState {
 // Define the action types for the reducer
 type InterviewAction =
   | { type: 'START_INTERVIEW' }
+  | { type: 'FINISH_QUESTION' }
   | { type: 'MOVE_TO_NEXT' }
   | { type: 'FINISH_INTERVIEW' }
   | { type: 'TOGGLE_LOADING' }
 
 // Define constants for action types
 const START_INTERVIEW = 'START_INTERVIEW'
+const FINISH_QUESTION = 'FINISH_QUESTION'
 const MOVE_TO_NEXT = 'MOVE_TO_NEXT'
 const FINISH_INTERVIEW = 'FINISH_INTERVIEW'
 const TOGGLE_LOADING = 'TOGGLE_LOADING'
@@ -62,9 +64,13 @@ const interviewReducer = (state: InterviewState, action: InterviewAction) => {
     case START_INTERVIEW:
       return { ...state, isInterviewing: true }
 
+    // Finish the question, set isInterviewing to false
+    case FINISH_QUESTION:
+      return { ...state, isInterviewing: false }
+
     // Move to the next question, increment currentQuestionIndex, and set isInterviewing to false
     case MOVE_TO_NEXT:
-      return { ...state, currentQuestionIndex: state.currentQuestionIndex + 1, isInterviewing: false }
+      return { ...state, currentQuestionIndex: state.currentQuestionIndex + 1 }
 
     // Finish the interview, set isFinished to true
     case FINISH_INTERVIEW:
@@ -171,11 +177,18 @@ const useMockInterview = (interviews: Interview[]) => {
 
   // Define a function to move to the next question
   const moveToNextQuestion = async () => {
+    dispatch({ type: MOVE_TO_NEXT })
+  }
+
+  // Define a function to finish the current interview question
+  const finishQuestion = async () => {
+    handleStopRecording()
+    handleStopCapture()
     handleStopRecording()
     handleStopCapture()
     console.log('transcribedText', transcribedText)
     generateResponse(transcribedText)
-    dispatch({ type: MOVE_TO_NEXT })
+    dispatch({ type: FINISH_QUESTION })
   }
 
   // Retry the current interview question
@@ -235,6 +248,7 @@ const useMockInterview = (interviews: Interview[]) => {
   return {
     startInterview,
     retryQuestion,
+    finishQuestion,
     moveToNextQuestion,
     saveVideo,
     getInterviewState: interviewState,

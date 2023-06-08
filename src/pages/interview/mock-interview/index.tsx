@@ -34,8 +34,15 @@ function MockInterviewPage() {
     }
   ]
   const router = useRouter()
-  const { getInterviewState, startInterview, moveToNextQuestion, retryQuestion, getAudioRef, getWebcamRef } =
-    useMockInterview(interviews)
+  const {
+    getInterviewState,
+    startInterview,
+    finishQuestion,
+    moveToNextQuestion,
+    retryQuestion,
+    getAudioRef,
+    getWebcamRef
+  } = useMockInterview(interviews)
 
   const handleStartCaptureClick = useCallback(() => {
     Logger.debug('Start Interview')
@@ -68,7 +75,8 @@ function MockInterviewPage() {
       <p>Is Finished: {getInterviewState.isFinished ? 'Yes' : 'No'}</p>
 
       {!getInterviewState.isInterviewing && <button onClick={handleStartCaptureClick}>Start Interview</button>}
-      {getInterviewState.isInterviewing && <button onClick={handleMoveToNextQuestion}>Next Question</button>}
+      {!getInterviewState.isInterviewing && <button onClick={handleMoveToNextQuestion}>Next Question</button>}
+      {getInterviewState.isInterviewing && <button onClick={finishQuestion}>Finish Question</button>}
       {getInterviewState.isInterviewing && <button onClick={retryQuestion}>Retry Question</button>}
 
       <audio ref={getAudioRef} />
