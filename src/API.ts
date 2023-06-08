@@ -30,14 +30,6 @@ export type ResumeScan = {
   resumeScanID: string,
 };
 
-export type User = {
-  __typename: "User",
-  userEmailAddress: string,
-  userRole: string,
-  userName: string,
-  allowPublicInterview: boolean,
-};
-
 export type Profile = {
   __typename: "Profile",
   fName?: string | null,
@@ -174,25 +166,6 @@ export type CreateUserInterviewWithQuestionMutation = {
   },
 };
 
-export type CreateInterviewWithQuestionMutationVariables = {
-  emailAddress: string,
-  questionID: string,
-};
-
-export type CreateInterviewWithQuestionMutation = {
-  createInterviewWithQuestion:  {
-    __typename: "Interview",
-    interviewID?: string | null,
-    interviewDateTime?: string | null,
-    interviewQuestionID?: string | null,
-    interviewVideoKey?: string | null,
-    interviewQuestion?: string | null,
-    interviewQuestionTitle?: string | null,
-    interviewQuestionType?: string | null,
-    interviewFeedback?: string | null,
-  },
-};
-
 export type UpdateInterviewVideoKeyMutationVariables = {
   emailAddress: string,
   interviewID: string,
@@ -303,20 +276,6 @@ export type UpdateUserResumeScanURLMutation = {
     resumeResults?: string | null,
     resumeUrl?: string | null,
     resumeScanID: string,
-  },
-};
-
-export type GetUserQueryVariables = {
-  emailAddress: string,
-};
-
-export type GetUserQuery = {
-  getUser:  {
-    __typename: "User",
-    userEmailAddress: string,
-    userRole: string,
-    userName: string,
-    allowPublicInterview: boolean,
   },
 };
 
