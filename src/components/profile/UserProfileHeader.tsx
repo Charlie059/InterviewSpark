@@ -52,12 +52,32 @@ const UserProfileHeader = ({ data }: any) => {
   const [coverPicUrl, setCoverPicUrl] = useState<string>('')
 
   useEffect(() => {
+
+    function isURL(str:string):boolean {
+      // Regular expression pattern to match a URL
+      const pattern = /^(?:\w+:)?\/\/([^\s.]+\.\S{2}|localhost[\:?\d]*)\S*$/;
+
+      // Test the string against the pattern
+      return pattern.test(str);
+    }
+
     const fetchProPicUrl = async () => {
       try {
-        const url = await Storage.get(data.photoImgURL);
-        setProPicUrl(url);
-        const coverUrl = await Storage.get(data.coverImgURL);
-        setCoverPicUrl(coverUrl);
+        //set profile pic url
+        if(isURL(data.photoImgURL)){  //check if url is stored, if so set url
+          setProPicUrl(data.photoImgURL)
+        }else{  //if not assume is key and get new url
+          const url = await Storage.get(data.photoImgURL);
+          setProPicUrl(url);
+        }
+
+        //set cover pic url
+        if(isURL(data.coverImgURL)){
+          setCoverPicUrl(data.coverImgURL)
+        }else{
+          const coverUrl = await Storage.get(data.coverImgURL);
+          setCoverPicUrl(coverUrl);
+        }
       } catch (error) {
         console.error("Error fetching profile picture URL:", error);
       }
@@ -87,9 +107,9 @@ const UserProfileHeader = ({ data }: any) => {
         .then(async result => {
           console.log("Upload successful:", result);
           if(dialogType == "profile"){
-            data.photoImgURL = key
+            data.photoImgURL = await Storage.get(key)
           }else{
-            data.coverImgURL = key
+            data.coverImgURL = await Storage.get(key)
           }
           data.emailAddress = data.userEmailAddress
           console.log("data to update:",data)
@@ -100,7 +120,6 @@ const UserProfileHeader = ({ data }: any) => {
             }else{
               setCoverPicUrl(newUrl)
             }
-
             setOpenProfilePicture(false)
           })
         })
