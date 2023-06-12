@@ -19,6 +19,7 @@ const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getSe
 
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
+  console.log(data)
 
   // If user is current user or profile is public, display profile
   if (user === auth.user?.userName) {

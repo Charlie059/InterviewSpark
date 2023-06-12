@@ -14,7 +14,7 @@ import { API, Auth, graphqlOperation } from 'aws-amplify'
 import Log from 'src/middleware/loggerMiddleware'
 
 // ** Get user
-import { getUserData } from '../utils/getUser'
+import { getUserProfileData } from '../utils/getUser'
 import { createNewGuestUser } from 'src/graphql/mutations'
 
 const handleCurrUser = async (): Promise<UserDataType | null> => {
@@ -27,7 +27,7 @@ const handleCurrUser = async (): Promise<UserDataType | null> => {
       // Check if Auth return empty
       if (Object.keys(userInfo).length === 0) return null
 
-      const user = await getUserData(userInfo.attributes.email)
+      const user = await getUserProfileData(userInfo.attributes.email)
       Log.info(user)
 
       return user
@@ -110,11 +110,11 @@ const AuthProvider = ({ children }: Props) => {
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     // Use the `Auth.signIn` method to sign in the user with the provided username and password.
-    try{
+    try {
       Auth.signIn(params.email, params.password)
         .then(async userData => {
           const emailAddress = userData.attributes.email
-          const user = await getUserData(emailAddress)
+          const user = await getUserProfileData(emailAddress)
 
           setUser(user)
           Log.info(user)
@@ -134,7 +134,7 @@ const AuthProvider = ({ children }: Props) => {
           errorCallback ? errorCallback(err) : null
           Log.info(err)
         })
-    } catch(err:any){
+    } catch (err: any) {
       errorCallback ? errorCallback(err) : null
       Log.info(err)
     }
