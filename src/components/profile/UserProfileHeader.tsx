@@ -112,8 +112,10 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
         .then(async result => {
           console.log("Upload successful:", result);
           if(dialogType == "profile"){
+            data.photoImgKey = key
             data.photoImgURL = await Storage.get(key)
           }else{
+            data.coverImgKey = key
             data.coverImgURL = await Storage.get(key)
           }
           data.emailAddress = data.userEmailAddress
