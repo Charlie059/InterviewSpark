@@ -11,10 +11,19 @@
 ************************************************************************************************/
 
 import { Auth, Storage } from 'aws-amplify'
+import { useState } from 'react'
 import Logger from 'src/middleware/loggerMiddleware'
+
+// Define the error state
+interface ErrorState {
+  type: 'ChatGPT-Error' | 'AWS-S3-Error'
+  message?: string
+}
 
 // This hook provides functionalities to save and remove videos in S3
 const useS3Video = () => {
+  const [error, setError] = useState<ErrorState | null>(null)
+
   // Save a video in S3 with a unique filename, and return the filename
   const save = async (blob: Blob | null) => {
     // Check if blob is null
@@ -32,9 +41,9 @@ const useS3Video = () => {
       })
 
       return uniqueFilename
-    } catch (error) {
+    } catch (error: any) {
       Logger.error('Error saving video: ', error)
-      throw error
+      setError({ type: 'AWS-S3-Error', message: error })
     }
   }
 
@@ -44,15 +53,16 @@ const useS3Video = () => {
       await Storage.remove(key, {
         level: 'private'
       })
-    } catch (error) {
+    } catch (error: any) {
       Logger.error('Error removing video: ', error)
-      throw error
+      setError({ type: 'AWS-S3-Error', message: error })
     }
   }
 
   return {
     save,
-    remove
+    remove,
+    s3Error: error
   }
 }
 

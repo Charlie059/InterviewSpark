@@ -1,6 +1,18 @@
+/***********************************************************************************************
+  Name: UsePollyByQueue.tsx
+  Description: This file contains the custom hook for polly.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/12
+  Update Date: 2023/06/12
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Auth } from 'aws-amplify'
 import { Polly, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
+import Logger from '../middleware/loggerMiddleware'
 
 type UsePollyOptions = {
   region?: string
@@ -8,12 +20,17 @@ type UsePollyOptions = {
   engine?: string
   sampleRate?: string
 }
+interface ErrorState {
+  type: 'AWS-Polly-Error'
+  message?: string
+}
 
 export const usePollyByQueue = (options: UsePollyOptions = {}) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [queue, setQueue] = useState<string[]>([])
   const { region = 'us-east-1', voiceId = 'Ruth', engine = 'neural', sampleRate = '22050' } = options
+  const [pollyError, setPollyError] = useState<ErrorState | null>(null)
 
   const addToQueue = useCallback((text: string) => {
     setQueue(prevQueue => [...prevQueue, text])
@@ -68,7 +85,6 @@ export const usePollyByQueue = (options: UsePollyOptions = {}) => {
                     })
                   })
                   .then(() => {
-                    console.log('Audio ended')
                     setIsLoading(false)
                   })
               }
@@ -81,9 +97,10 @@ export const usePollyByQueue = (options: UsePollyOptions = {}) => {
 
         reader.read().then(processStream)
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsLoading(false)
-      console.error('Error:', error)
+      Logger.error('Error:', error)
+      setPollyError({ type: 'AWS-Polly-Error', message: error })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -96,5 +113,5 @@ export const usePollyByQueue = (options: UsePollyOptions = {}) => {
     }
   }, [isLoading, queue, synthesizeSpeech])
 
-  return { audioRef, isLoading, addToQueue }
+  return { audioRef, isLoading, addToQueue, pollyError }
 }

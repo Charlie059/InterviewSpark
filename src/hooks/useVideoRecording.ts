@@ -1,5 +1,21 @@
-import { useRef, useState } from 'react'
+/***********************************************************************************************
+  Name: useVideoRecording.tsx
+  Description: This file contains the custom hook for video recording.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/12
+  Update Date: 2023/06/12
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
+import { useRef, useState, useEffect } from 'react'
 import Webcam from 'react-webcam'
+
+interface ErrorState {
+  type: 'Recording-Error'
+  message?: string
+}
 
 // Constants
 const VIDEO_MIME_TYPE = 'video/webm' // MIME type for the recorded video
@@ -8,6 +24,8 @@ const MEDIA_RECORDER_INTERVAL = 1000 // Interval for MediaRecorder's start metho
 export default function useVideoRecording() {
   // States
   const [capturing, setCapturing] = useState(false)
+  const [videoEnabled, setVideoEnabled] = useState(true)
+  const [videoRecordingError, setVideoRecordingError] = useState<ErrorState | null>(null)
 
   // Refs
   const webcamRef = useRef<Webcam | null>(null)
@@ -15,20 +33,52 @@ export default function useVideoRecording() {
   const [recordedChunks, setRecordedChunks] = useState<BlobPart[]>([])
   const videoBlobRef = useRef<Blob | null>(null)
 
+  const setVideoOn = async () => {
+    if (webcamRef.current) {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: true
+      })
+      webcamRef.current.stream = mediaStream
+      webcamRef.current.video!.srcObject = mediaStream
+    }
+    setVideoEnabled(true)
+  }
+
+  const setVideoOff = () => {
+    setVideoEnabled(false)
+    if (webcamRef.current && webcamRef.current.stream) {
+      webcamRef.current.stream.getTracks().forEach(track => {
+        track.stop()
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (webcamRef.current && webcamRef.current.stream) {
+      webcamRef.current.stream.getTracks().forEach(track => {
+        track.enabled = videoEnabled
+      })
+    }
+  }, [videoEnabled])
+
   // Start capturing video
   const handleStartCapture = () => {
-    if (!webcamRef.current || !webcamRef.current.stream) {
-      return
-    }
+    try {
+      if (!webcamRef.current || !webcamRef.current.stream) {
+        throw new Error('Webcam not available')
+      }
 
-    setCapturing(true)
-    const mediaRecorder = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: VIDEO_MIME_TYPE
-    })
-    mediaRecorderRef.current = mediaRecorder
-    setRecordedChunks([]) // Clear previous recording
-    mediaRecorderRef.current.start(MEDIA_RECORDER_INTERVAL)
-    mediaRecorder.addEventListener('dataavailable', handleDataAvailable)
+      setCapturing(true)
+      const mediaRecorder = new MediaRecorder(webcamRef.current.stream, {
+        mimeType: VIDEO_MIME_TYPE
+      })
+      mediaRecorderRef.current = mediaRecorder
+      setRecordedChunks([]) // Clear previous recording
+      mediaRecorderRef.current.start(MEDIA_RECORDER_INTERVAL)
+      mediaRecorder.addEventListener('dataavailable', handleDataAvailable)
+    } catch (err: any) {
+      setVideoRecordingError({ type: 'Recording-Error', message: err.message })
+    }
   }
 
   // Handle new data available from the MediaRecorder
@@ -40,16 +90,20 @@ export default function useVideoRecording() {
 
   // Stop capturing video
   const handleStopCapture = () => {
-    if (!mediaRecorderRef.current) {
-      return
+    try {
+      if (!mediaRecorderRef.current) {
+        throw new Error('MediaRecorder not available')
+      }
+
+      mediaRecorderRef.current.stop()
+      setCapturing(false)
+
+      // Convert the recordedChunks into a single Blob
+      const blob = new Blob(recordedChunks, { type: VIDEO_MIME_TYPE })
+      videoBlobRef.current = blob // Store the Blob in the ref
+    } catch (err: any) {
+      setVideoRecordingError({ type: 'Recording-Error', message: err.message })
     }
-
-    mediaRecorderRef.current.stop()
-    setCapturing(false)
-
-    // Convert the recordedChunks into a single Blob
-    const blob = new Blob(recordedChunks, { type: VIDEO_MIME_TYPE })
-    videoBlobRef.current = blob // Store the Blob in the ref
   }
 
   // Get the Blob of the entire video
@@ -59,9 +113,13 @@ export default function useVideoRecording() {
 
   return {
     webcamRef,
-    capturing,
+    isCapturing: capturing,
     handleStartCapture,
     handleStopCapture,
-    getVideoBlob
+    getVideoBlob,
+    videoRecordingError,
+    setVideoOn,
+    setVideoOff,
+    isVideoEnabled: videoEnabled
   }
 }
