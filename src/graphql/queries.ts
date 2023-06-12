@@ -2,16 +2,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getUser = /* GraphQL */ `
-  query GetUser($emailAddress: AWSEmail!) {
-    getUser(emailAddress: $emailAddress) {
-      userEmailAddress
-      userRole
-      userName
-      allowPublicInterview
-    }
-  }
-`;
 export const getUserProfile = /* GraphQL */ `
   query GetUserProfile($emailAddress: AWSEmail!) {
     getUserProfile(emailAddress: $emailAddress) {
