@@ -60,12 +60,29 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
     }else{
       setShowCover(false)
     }
+
+    function isUrl(input: string): boolean {
+      const urlPattern = /^(?:\w+:)?\/\/([^\s.]+\.\S{2}|localhost[:?\d]*)\S*$/;
+
+      return urlPattern.test(input);
+    }
+
+
     const fetchProPicUrl = async () => {
       try {
-        const url = await Storage.get(data.photoImgURL);
-        setProPicUrl(url);
-        const coverUrl = await Storage.get(data.coverImgURL);
-        setCoverPicUrl(coverUrl);
+        if(isUrl(data.photoImgURL)){
+          setProPicUrl(data.photoImgURL)
+        }else{
+          const url = await Storage.get(data.photoImgURL);
+          setProPicUrl(url);
+        }
+
+        if(isUrl(data.coverImgURL)){
+          setCoverPicUrl(data.coverImgURL)
+        }else{
+          const url = await Storage.get(data.coverImgURL);
+          setCoverPicUrl(url);
+        }
       } catch (error) {
         console.error("Error fetching profile picture URL:", error);
       }
@@ -95,9 +112,9 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
         .then(async result => {
           console.log("Upload successful:", result);
           if(dialogType == "profile"){
-            data.photoImgURL = key
+            data.photoImgURL = await Storage.get(key)
           }else{
-            data.coverImgURL = key
+            data.coverImgURL = await Storage.get(key)
           }
           data.emailAddress = data.userEmailAddress
           console.log("data to update:",data)
