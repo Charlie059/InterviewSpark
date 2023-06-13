@@ -116,5 +116,12 @@ const PublicProfile = ({ user, data }) => {
   )
 }
 
+PublicProfile.authGuard = false
+PublicProfile.guestGuard = false
+PublicProfile.isPublic = true
 PublicProfile.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default PublicProfile
+PublicProfile.acl = {
+  action: 'read',
+  subject: 'acl-page'
+}

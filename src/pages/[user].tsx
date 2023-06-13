@@ -11,7 +11,6 @@ import { useAuth } from 'src/hooks/useAuth'
 import PublicProfile from 'src/components/profile/PublicProfile'
 import {ReactNode} from "react";
 import BlankLayout from "../@core/layouts/BlankLayout";
-import UserProfileTab from "./user-profile/[user]";
 
 const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** Hooks
@@ -19,6 +18,7 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
   const router = useRouter()
   const test = true;
   console.log()
+
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
   if (user === auth.user?.userName) {
     router.replace('/user-profile/' +user)
@@ -56,6 +56,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
 }
 
 PublicProfileGuest.authGuard = false
+PublicProfileGuest.guestGuard = false
+PublicProfileGuest.isPublic = true
 
 PublicProfileGuest.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default PublicProfileGuest
