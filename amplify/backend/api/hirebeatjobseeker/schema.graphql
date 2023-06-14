@@ -178,6 +178,7 @@ input ModelSubscriptionStringInput {
 type Mutation {
   createNewGuestUser(emailAddress: AWSEmail!, userName: String, fName: String!, lName: String!): OperationResult!
   createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+  createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   updateInterviewVideoKey(
     emailAddress: AWSEmail!
     interviewID: String!
@@ -256,6 +257,7 @@ type Profile {
 }
 
 type Query {
+  getUser(emailAddress: AWSEmail!): User!
   getUserProfile(emailAddress: AWSEmail!): Profile!
   getUserProfileByUsername(userName: String!): Profile!
   getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!
@@ -305,6 +307,13 @@ type ResumeScan {
 
 type ResumeScanList {
   resumeScanList: [ResumeScan]
+}
+
+type User {
+  userEmailAddress: AWSEmail!
+  userRole: String!
+  userName: String!
+  allowPublicInterview: Boolean!
 }
 
 type UserInterviewUsageMetaData {

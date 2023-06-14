@@ -16,24 +16,11 @@ export type RegisterParams = {
 
 export type UserDataType =
   | {
-      __typename: 'Profile'
-      fName?: string | null
-      lName?: string | null
-      photoImgURL?: string | null
-      coverImgURL?: string | null
-      resumeKey?: string | null
-      addressLine1?: string | null
-      addressLine2?: string | null
-      city?: string | null
-      state?: string | null
-      postalCode?: string | null
-      country?: string | null
-      joiningDate?: string | null
-      contact?: string | null
-      isPublic?: boolean | null
-      userName?: string | null
-      userEmailAddress?: string | null
-      userRole?: string | null
+      __typename: 'User'
+      userEmailAddress: string
+      userRole: string
+      userName: string
+      allowPublicInterview: boolean
     }
   | null
   | undefined

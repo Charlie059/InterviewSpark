@@ -40,6 +40,26 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
     }
   }
 `;
+export const createInterviewWithQuestion = /* GraphQL */ `
+  mutation CreateInterviewWithQuestion(
+    $emailAddress: AWSEmail!
+    $questionID: String!
+  ) {
+    createInterviewWithQuestion(
+      emailAddress: $emailAddress
+      questionID: $questionID
+    ) {
+      interviewID
+      interviewDateTime
+      interviewQuestionID
+      interviewVideoKey
+      interviewQuestion
+      interviewQuestionTitle
+      interviewQuestionType
+      interviewFeedback
+    }
+  }
+`;
 export const updateInterviewVideoKey = /* GraphQL */ `
   mutation UpdateInterviewVideoKey(
     $emailAddress: AWSEmail!
