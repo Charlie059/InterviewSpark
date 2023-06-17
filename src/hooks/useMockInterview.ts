@@ -10,7 +10,7 @@
 ************************************************************************************************/
 
 // Import necessary react hooks and custom hooks
-import { useEffect, useReducer } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import useTranscribe from './useTranscribe'
 import useVideoRecording from './useVideoRecording'
 import Logger from '../middleware/loggerMiddleware'
@@ -18,8 +18,10 @@ import useS3Video from './useS3Video'
 import { useAuth } from './useAuth'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateInterviewVideoKey } from 'src/graphql/mutations'
-import { usePollyByQueue } from './usePollyByQueue'
+
+// import { usePollyByQueue } from './usePollyByQueue'
 import useChatGPTStream from './useChatGPTStream'
+import { usePollyByQueueTest } from './usePollyTest'
 
 // Define states for the mock interview process
 enum InterviewStatus {
@@ -112,7 +114,7 @@ const interviewReducer = (state: InterviewState, action: InterviewAction) => {
     case TOGGLE_LOADING:
       return {
         ...state,
-        status: state.status === InterviewStatus.Loading ? InterviewStatus.NotStarted : InterviewStatus.Loading
+        status: InterviewStatus.Loading
       }
 
     case SET_ERROR:
@@ -141,8 +143,12 @@ const useMockInterview = (interviews: Interview[]) => {
     error: null
   })
 
+  const [isReading, setReading] = useState(false)
+
   // Using the custom hooks
-  const { audioRef, addToQueue, pollyError } = usePollyByQueue() // Use the custom hook for Polly
+  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest({}, () => {
+    setReading(false)
+  })
   const { transcribedText, handleStartTranscribe, handleStopTranscribe, transcribeError } = useTranscribe() // Use the custom hook for transcribing audio
   const {
     webcamRef,
@@ -156,7 +162,8 @@ const useMockInterview = (interviews: Interview[]) => {
     videoRecordingError
   } = useVideoRecording() // Use the custom hook for video recording
   const { save, s3Error } = useS3Video() // Use the custom s3 saver hook for uploading video to S3
-  const { generateResponse, chatGPTStreamError } = useChatGPTStream(addToQueue) // Use the useChatGPTStream Hook here
+  const { generateResponse, chatGPTStreamError } = useChatGPTStream(addToQueue, start, end) // Use the useChatGPTStream Hook here
+
   const auth = useAuth() // Use the custom auth hook for authentication
 
   /* Define helper functions for the interview process */
@@ -197,8 +204,11 @@ const useMockInterview = (interviews: Interview[]) => {
 
   // Define a function to start the interview
   const startInterview = async () => {
+    setReading(true)
     if (interviewState.currentQuestionIndex === 0) addToQueue(WELCOME_WORDS)
+    start()
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
+    end()
     startTranscribingAndRecording()
     dispatch({ type: START_QUESTION })
   }
@@ -218,17 +228,22 @@ const useMockInterview = (interviews: Interview[]) => {
   // Define a function to finish the current interview question
   const finishQuestion = async () => {
     stopTranscribingAndRecording()
+    setReading(true)
     generateResponse(transcribedText)
     dispatch({ type: FINISH_QUESTION })
   }
 
   // Retry the current interview question
   const retryQuestion = async () => {
+    setReading(true)
+
     // Check if the interview process has started
     if (interviewState.status === InterviewStatus.Interviewing) {
       stopTranscribingAndRecording() // Stop recording and capturing, then play the audio again
     }
+    start()
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
+    end()
     startTranscribingAndRecording()
     dispatch({ type: RETRY_QUESTION })
   }
@@ -236,6 +251,7 @@ const useMockInterview = (interviews: Interview[]) => {
   // Save Video to S3 and upload to DynamoDB
   const saveVideo = async () => {
     return new Promise<void>((resolve, reject) => {
+      dispatch({ type: TOGGLE_LOADING })
       save(getVideoBlob())
         .then(uniqueFileName => {
           updateVideoToDynamoDB(uniqueFileName!)
@@ -300,8 +316,10 @@ const useMockInterview = (interviews: Interview[]) => {
     getAudioRef: audioRef,
     getWebcamRef: webcamRef,
     getVideoBlob: getVideoBlob,
+    getCaption: caption,
     isCapturing: isCapturing,
-    isVideoEnabled
+    isVideoEnabled,
+    isReading: isReading
   }
 }
 

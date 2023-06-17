@@ -3,17 +3,14 @@ import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import useMockInterview from 'src/hooks/useMockInterview'
 import { useRouter } from 'next/router'
-import Webcam from 'react-webcam'
-import PaginationBar from 'src/components/interview/mockInterview/PaginationBar'
-import { RoundedMedia } from 'src/components/interview/mockInterview/roundedMedia'
+import { RoundedMediaLeft } from 'src/components/interview/mockInterview/roundedMediaLeft'
 import PaginationBarWithNumber from 'src/components/interview/mockInterview/paginationBarWithNumber'
-import { Box, Icon, IconButton } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
+import { Box, Grid } from '@mui/material'
 import MenuIconButton from 'src/components/interview/mockInterview/menuIconButton'
 import BlurDrawer from 'src/components/interview/mockInterview/blurDrawer'
-import { set } from 'nprogress'
-import Timer from 'src/components/interview/mockInterview/timer'
 import TopArea from 'src/components/interview/mockInterview/topArea'
+import RoundedMediaRight from 'src/components/interview/mockInterview/roundedMediaRight'
+import InterviewButton from 'src/components/interview/mockInterview/interviewButton'
 
 // Define states for the mock interview process
 enum InterviewStatus {
@@ -42,7 +39,7 @@ function MockInterviewPage() {
     {
       interviewID: '1686172082494',
       interviewQuestion:
-        'Describe a situation where you had to handle a difficult customer. How did you manage the situation?',
+        'Describe a situation where you had to handle a difficult customer. How did you manage the situation? ',
       interviewQuestionID: '1',
       interviewQuestionTitle: 'Difficult Customer',
       interviewQuestionType: 'Behavioral',
@@ -66,6 +63,7 @@ function MockInterviewPage() {
   const router = useRouter()
   const {
     getInterviewState,
+    getCaption,
     startQuestion,
     finishQuestion,
     startReview,
@@ -77,7 +75,8 @@ function MockInterviewPage() {
     getAudioRef,
     getWebcamRef,
     getVideoBlob,
-    isVideoEnabled
+    isVideoEnabled,
+    isReading
   } = useMockInterview(interviews)
 
   const handleStartCaptureClick = useCallback(() => {
@@ -122,8 +121,21 @@ function MockInterviewPage() {
     }
   }, [getInterviewState.error])
 
+  useEffect(() => {
+    if (getInterviewState.status === InterviewStatus.SavedQuestion) {
+      handleMoveToNextQuestion()
+    }
+  }, [getInterviewState.status, handleMoveToNextQuestion])
+
   return (
     <div>
+      <BlurDrawer
+        isOpen={drawerOpen}
+        toggleDrawer={function (): void {
+          console.log('toggle')
+          setDrawerOpen(!drawerOpen)
+        }}
+      />
       <TopArea
         ref={timerRef}
         onExit={() => console.log('Exit button clicked')}
@@ -131,24 +143,116 @@ function MockInterviewPage() {
         onComplete={() => console.log('Timer completed')}
         onButtonClick={() => console.log('Menu button clicked')}
       />
+      <Grid
+        container
+        spacing={10}
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <Grid item xs={0} sm={5} md={5.5} lg={4.5}>
+          <RoundedMediaLeft
+            getWebcamRef={getWebcamRef}
+            getVideoBlob={getVideoBlob}
+            isVideoEnabled={isVideoEnabled}
+            setVideoOn={setVideoOn}
+            setVideoOff={setVideoOff}
+            status={getInterviewState.status}
+            startReview={startReview}
+          />
+        </Grid>
+        <Grid item xs={12} sm={5} md={5.5} lg={4.5}>
+          <RoundedMediaRight
+            status={getInterviewState.status}
+            questionText={interviews[getInterviewState.currentQuestionIndex].interviewQuestion}
+            questionTitle={interviews[getInterviewState.currentQuestionIndex].interviewQuestionTitle}
+            skipQuestion={() => {
+              moveToNextQuestion()
+            }}
+            caption={getCaption}
+            isReading={isReading}
+          />
+        </Grid>
+      </Grid>
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <MenuIconButton
+          onButtonClick={() => {
+            setDrawerOpen(true)
+          }}
+        />
+        <PaginationBarWithNumber
+          totalPages={interviews.length}
+          currentPage={getInterviewState.currentQuestionIndex + 1}
+          onPageChange={function (newPage: number): void {
+            setPage(newPage)
+          }}
+          enableSelect={false}
+        />
+      </Box>
+      <InterviewButton
+        status={getInterviewState.status}
+        isReading={isReading}
+        onButtonClick={async function (status: InterviewStatus): Promise<void> {
+          console.log('click')
 
-      {/* <Webcam audio={true} muted={true} ref={getWebcamRef} width='100%' height='100%' /> */}
-      <h1>Mock Interview Page</h1>
+          switch (status) {
+            case InterviewStatus.NotStarted:
+              handleStartCaptureClick()
+              break
+            case InterviewStatus.Interviewing:
+              if (!isReading) finishQuestion()
+              break
+            case InterviewStatus.FinishedQuestion || InterviewStatus.Reviewing:
+              if (!isReading) {
+                handleSaveVideo()
+
+                // TODO : Add waiting for saving video
+              }
+              break
+
+            default:
+              break
+          }
+        }}
+        onRetryClick={function (): void {
+          retryQuestion()
+        }}
+      />
+      <button
+        onClick={() => {
+          console.log('click')
+          setPage(page + 1)
+        }}
+      >
+        aaaa
+      </button>
+      <button
+        onClick={() => {
+          console.log('click')
+          setPage(page - 1)
+        }}
+      >
+        bbb
+      </button>
+      <button onClick={() => timerRef.current && timerRef.current.start()}>Start</button>
+      <button onClick={() => timerRef.current && timerRef.current.stop()}>Stop</button>
+      <button onClick={() => timerRef.current && timerRef.current.reset()}>Reset</button>
+      {/* <h1>Mock Interview Page</h1>
       {getInterviewState.currentQuestionIndex < interviews.length && (
         <div>
           <h2>Question: {interviews[getInterviewState.currentQuestionIndex].interviewQuestion}</h2>
           <p>Estimated Time: {interviews[getInterviewState.currentQuestionIndex].estimatedSecond}</p>
         </div>
       )}
-
+      <p> Is Reading</p> {isReading ? 'Yes' : 'No'} <p />
       <p>Is Interviewing: {getInterviewState.status === InterviewStatus.Interviewing ? 'Yes' : 'No'}</p>
       <p>Is Finished: {getInterviewState.status === InterviewStatus.FinishedInterview ? 'Yes' : 'No'}</p>
       <p>Is Reviewing: {getInterviewState.status === InterviewStatus.Reviewing ? 'Yes' : 'No'}</p>
       <p>Is Saved: {getInterviewState.status === InterviewStatus.SavedQuestion ? 'Yes' : 'No'}</p>
-
       <button onClick={setVideoOff}>setVideoOff</button>
       <button onClick={setVideoOn}>setVideoOn</button>
-
       {getInterviewState.status === InterviewStatus.NotStarted && (
         <button onClick={handleStartCaptureClick}>Start Question</button>
       )}
@@ -168,77 +272,7 @@ function MockInterviewPage() {
       {getInterviewState.status === InterviewStatus.FinishedQuestion && (
         <button onClick={startReview}>Review Question</button>
       )}
-
-      {getInterviewState.status === InterviewStatus.Loading && <p>Loading...</p>}
-      {/* {getInterviewState.status === InterviewStatus.Reviewing && (
-        <video src={URL.createObjectURL(getVideoBlob()!)} controls={true} autoPlay={true} />
-      )} */}
-
-      {/* <PaginationBar
-        totalPages={5}
-        currentPage={page}
-        onPageChange={function (newPage: number): void {
-          setPage(newPage)
-        }}
-        enable={true}
-      /> */}
-
-      <BlurDrawer
-        isOpen={drawerOpen}
-        toggleDrawer={function (): void {
-          console.log('toggle')
-          setDrawerOpen(!drawerOpen)
-        }}
-      />
-
-      <Box sx={{ width: '500px', height: '400px', padding: '6px' }}>
-        <RoundedMedia
-          getWebcamRef={getWebcamRef}
-          getVideoBlob={getVideoBlob}
-          isVideoEnabled={isVideoEnabled}
-          setVideoOn={setVideoOn}
-          setVideoOff={setVideoOff}
-          status={getInterviewState.status}
-          startReview={startReview}
-        />
-      </Box>
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <MenuIconButton
-          onButtonClick={() => {
-            setDrawerOpen(true)
-          }}
-        />
-        <PaginationBarWithNumber
-          totalPages={8}
-          currentPage={page}
-          onPageChange={function (newPage: number): void {
-            setPage(newPage)
-          }}
-          enableSelect={true}
-        />
-      </Box>
-
-      <button
-        onClick={() => {
-          console.log('click')
-          setPage(page + 1)
-        }}
-      >
-        aaaa
-      </button>
-
-      <button
-        onClick={() => {
-          console.log('click')
-          setPage(page - 1)
-        }}
-      >
-        bbb
-      </button>
-
-      <button onClick={() => timerRef.current && timerRef.current.start()}>Start</button>
-      <button onClick={() => timerRef.current && timerRef.current.stop()}>Stop</button>
-      <button onClick={() => timerRef.current && timerRef.current.reset()}>Reset</button>
+      {getInterviewState.status === InterviewStatus.Loading && <p>Loading...</p>} */}
       <audio ref={getAudioRef} />
     </div>
   )

@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: RoundedMediaLeft.tsx
+  Description: This file contains the custom hook for mock interview.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/16
+  Update Date: 2023/06/16
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import { FC, useRef } from 'react'
 import Webcam from 'react-webcam'
 import styled from 'styled-components'
@@ -50,7 +61,7 @@ const FrostedGlassEffect = styled.div`
 const RoundedDiv = styled.div`
   position: relative;
   width: 100%;
-  padding-bottom: 75%;
+  padding-bottom: 70%;
   border-radius: 25px;
   overflow: hidden;
   display: flex;
@@ -67,6 +78,11 @@ const StyledWebcamContainer = styled.div<{ isVisible: boolean }>`
   width: 100%;
   height: 100%;
   z-index: ${({ isVisible }) => (isVisible ? 2 : -1)};
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `
 
 const Img = styled('img')(({}) => ({
@@ -86,7 +102,7 @@ const Layer = styled.div`
   z-index: 3;
 `
 
-export const RoundedMedia: FC<RoundedMediaProps> = ({
+export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
   status,
   getWebcamRef,
   getVideoBlob,
@@ -132,7 +148,7 @@ export const RoundedMedia: FC<RoundedMediaProps> = ({
       )}
       {status === InterviewStatus.Reviewing && (
         <video
-          style={{ position: 'absolute', top: '0', left: '0', zIndex: 2 }}
+          style={{ position: 'absolute', top: '0', left: '0', zIndex: 2, objectFit: 'cover' }}
           width='100%'
           height='100%'
           src={URL.createObjectURL(getVideoBlob()!)}

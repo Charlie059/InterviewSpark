@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: UsePollyByQueue.tsx
+  Description: This file contains the custom hook for polly.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/12
+  Update Date: 2023/06/12
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Auth } from 'aws-amplify'
 import { Polly, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
@@ -14,19 +25,32 @@ interface ErrorState {
   message?: string
 }
 
-export const usePollyByQueue = (options: UsePollyOptions = {}) => {
+const START_SYMBOL = '__START__'
+const END_SYMBOL = '__END__'
+
+export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: () => void) => {
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [queue, setQueue] = useState<string[]>([])
   const { region = 'us-east-1', voiceId = 'Ruth', engine = 'neural', sampleRate = '22050' } = options
   const [pollyError, setPollyError] = useState<ErrorState | null>(null)
+  const [caption, setCaption] = useState<string>('')
 
   const addToQueue = useCallback((text: string) => {
     setQueue(prevQueue => [...prevQueue, text])
   }, [])
 
+  const start = useCallback(() => {
+    setQueue(prevQueue => [START_SYMBOL, ...prevQueue])
+  }, [])
+
+  const end = useCallback(() => {
+    setQueue(prevQueue => [...prevQueue, END_SYMBOL])
+  }, [])
+
   const synthesizeSpeech = useCallback(async (text: string) => {
     setIsLoading(true)
+    setCaption(text)
 
     try {
       const credentials = await Auth.currentCredentials()
@@ -97,10 +121,15 @@ export const usePollyByQueue = (options: UsePollyOptions = {}) => {
   useEffect(() => {
     if (!isLoading && queue.length > 0) {
       const text = queue.shift()
-      setQueue([...queue])
-      synthesizeSpeech(text as string)
+      if (text === END_SYMBOL) {
+        onComplete()
+      }
+      if (text !== START_SYMBOL && text !== END_SYMBOL) {
+        setQueue([...queue])
+        synthesizeSpeech(text as string)
+      }
     }
-  }, [isLoading, queue, synthesizeSpeech])
+  }, [isLoading, queue, synthesizeSpeech, onComplete])
 
-  return { audioRef, isLoading, addToQueue, pollyError }
+  return { caption, audioRef, isLoading, addToQueue, start, end, pollyError }
 }
