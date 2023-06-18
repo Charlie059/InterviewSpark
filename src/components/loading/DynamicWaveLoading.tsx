@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Wave from 'react-wavify'
 
@@ -30,7 +30,28 @@ const PositionedWave = styled(Wave)`
   bottom: -10px;
 `
 
-const DynamicWave: React.FC<DynamicWaveProps> = ({ size, paused = false }) => {
+const DynamicWaveLoading: React.FC<DynamicWaveProps> = ({ size, paused = false }) => {
+  const [countdown, setCountdown] = useState(15)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown(oldCountdown => {
+        // console.log('oldCountdown', oldCountdown)
+        if (oldCountdown <= 1) {
+          clearInterval(interval)
+
+          return 0
+        }
+
+        return oldCountdown - 0.05
+      })
+    }, 100)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const calculatedHeight = 150 - countdown * (140 / 15)
+
   return (
     <>
       <Tag size={size}>
@@ -38,41 +59,30 @@ const DynamicWave: React.FC<DynamicWaveProps> = ({ size, paused = false }) => {
           fill='rgba(120, 126, 255, 0.4)'
           paused={paused}
           options={{
-            height: 30,
+            height: calculatedHeight,
             amplitude: 30,
             speed: 0.15,
             points: 6
           }}
         />
         <PositionedWave
-          fill='rgba(120, 126, 255, 0.4)'
+          fill='rgba(120, 126, 255, 0.45)'
           paused={paused}
           options={{
-            height: 20,
-            amplitude: 20,
+            height: 10 + calculatedHeight,
+            amplitude: 30,
+            speed: 0.1,
+            points: 2
+          }}
+        />
+        <PositionedWave
+          fill='rgba(120, 126, 255, 0.45)'
+          paused={paused}
+          options={{
+            height: 15 + calculatedHeight,
+            amplitude: 30,
             speed: 0.2,
-            points: 5
-          }}
-        />
-        <PositionedWave
-          fill='rgba(120, 126, 255, 0.6)'
-          paused={paused}
-          options={{
-            height: 40,
-            amplitude: 20,
-            speed: 0.1,
-            points: 5
-          }}
-        />
-
-        <PositionedWave
-          fill='rgba(120, 126, 255, 0.7)'
-          paused={paused}
-          options={{
-            height: 45,
-            amplitude: 20,
-            speed: 0.1,
-            points: 4
+            points: 3
           }}
         />
       </Tag>
@@ -80,4 +90,4 @@ const DynamicWave: React.FC<DynamicWaveProps> = ({ size, paused = false }) => {
   )
 }
 
-export default DynamicWave
+export default DynamicWaveLoading

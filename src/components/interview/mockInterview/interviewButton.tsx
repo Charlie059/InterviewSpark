@@ -34,12 +34,13 @@ const ButtonCard = styled(Card)<{ color: string; size: number; status: Interview
   justify-content: center;
   align-items: center;
   background-color: ${props => props.color};
-  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
   border-radius: 50%;
   width: ${props => props.size}px;
   height: ${props => props.size}px;
   position: relative;
   ${props => (props.status === InterviewStatus.Loading ? 'display: none' : '')}
+  margin: 0 5px;
 `
 
 const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButtonClick, onRetryClick }) => {
@@ -48,9 +49,9 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 480) {
-        setButtonSize(20) // Phones
+        setButtonSize(50) // Phones
       } else if (window.innerWidth < 768) {
-        setButtonSize(30) // Tablets
+        setButtonSize(40) // Tablets
       } else if (window.innerWidth < 1024) {
         setButtonSize(40) // Laptops
       } else {

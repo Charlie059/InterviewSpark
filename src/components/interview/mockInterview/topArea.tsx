@@ -21,7 +21,6 @@ const TopAreaContainer = styled.div`
   width: 100%;
   height: 13vh;
   position: relative;
-  margin-bottom: 20px;
 `
 
 const MenuCard = styled(Card)`

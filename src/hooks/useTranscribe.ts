@@ -1,15 +1,4 @@
-/***********************************************************************************************
-  Name: UseTranscribe.tsx
-  Description: This file contains the custom hook for transcribe.
-  Author: Charlie Gong
-  Company: HireBeat Inc.
-  Contact: Xuhui.Gong@HireBeat.co
-  Create Date: 2023/06/12
-  Update Date: 2023/06/12
-  Copyright: © 2023 HireBeat Inc. All rights reserved.
-************************************************************************************************/
-
-import { useState, useCallback, useEffect, SetStateAction } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { startRecording, stopRecording } from 'src/utils/transcribe'
 
 interface ErrorState {
@@ -19,14 +8,16 @@ interface ErrorState {
 
 const useTranscribe = () => {
   const [isRecording, setIsRecording] = useState(false)
-  const [transcribedText, setTranscribedText] = useState('')
+  const transcribedText = useRef('')
   const [language, setLanguage] = useState('en-US')
   const [transcribeError, setTranscribeError] = useState<ErrorState | null>(null)
 
   const handleStartTranscribe = useCallback(async () => {
     setIsRecording(true)
     try {
-      await startRecording(language, (data: SetStateAction<string>) => setTranscribedText(data))
+      await startRecording(language, (data: any) => {
+        transcribedText.current = data as string
+      })
     } catch (err: any) {
       setTranscribeError({ type: 'AWS-Transcribe-Error', message: err })
     }
@@ -35,7 +26,6 @@ const useTranscribe = () => {
   const handleStopTranscribe = useCallback(() => {
     setIsRecording(false)
     stopRecording()
-    setTranscribedText('')
   }, [])
 
   useEffect(() => {
@@ -50,7 +40,6 @@ const useTranscribe = () => {
     isRecording,
     setIsRecording,
     transcribedText,
-    setTranscribedText,
     language,
     setLanguage,
     transcribeError,
