@@ -5,7 +5,7 @@
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
   Create Date: 2023/06/04
-  Update Date: 2023/06/12
+  Update Date: 2023/06/18
   Copyright: © 2023 HireBeat Inc. All rights reserved.
 ************************************************************************************************/
 
@@ -75,6 +75,7 @@ const FINISH_INTERVIEW = 'FINISH_INTERVIEW'
 const TOGGLE_LOADING = 'TOGGLE_LOADING'
 const SET_ERROR = 'SET_ERROR'
 const RETRY_QUESTION = 'RETRY_QUESTION'
+const SET_QUESTION_INDEX = 'SET_QUESTION_INDEX'
 
 // Define the action types for the reducer
 type InterviewAction =
@@ -87,6 +88,7 @@ type InterviewAction =
   | { type: typeof TOGGLE_LOADING }
   | { type: typeof SET_ERROR; error: ErrorState }
   | { type: typeof RETRY_QUESTION }
+  | { type: typeof SET_QUESTION_INDEX; newIndex: number }
 
 // Define constants for other strings
 const WELCOME_WORDS = 'Welcome to the mock interview.'
@@ -108,6 +110,9 @@ const interviewReducer = (state: InterviewState, action: InterviewAction) => {
 
     case MOVE_TO_NEXT:
       return { ...state, currentQuestionIndex: state.currentQuestionIndex + 1, status: InterviewStatus.NotStarted }
+
+    case SET_QUESTION_INDEX:
+      return { ...state, currentQuestionIndex: action.newIndex }
 
     case FINISH_INTERVIEW:
       return { ...state, status: InterviewStatus.FinishedInterview }
@@ -226,6 +231,11 @@ const useMockInterview = (interviews: Interview[]) => {
     else dispatch({ type: MOVE_TO_NEXT })
   }
 
+  // Define a function to set the question index
+  const setQuestionIndex = (newIndex: number) => {
+    dispatch({ type: SET_QUESTION_INDEX, newIndex })
+  }
+
   // Define a function to finish the current interview question
   const finishQuestion = async () => {
     stopTranscribingAndRecording()
@@ -314,6 +324,7 @@ const useMockInterview = (interviews: Interview[]) => {
     startReview,
     retryQuestion,
     moveToNextQuestion,
+    setQuestionIndex,
     saveVideo,
     setVideoOn,
     setVideoOff,

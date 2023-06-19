@@ -30,6 +30,7 @@ interface RoundedMediaProps {
   getWebcamRef: any
   getVideoBlob: () => Blob | null
   isVideoEnabled: boolean
+  isReading: boolean
   setVideoOn: () => void
   setVideoOff: () => void
   startReview: () => void
@@ -107,6 +108,7 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
   getWebcamRef,
   getVideoBlob,
   isVideoEnabled,
+  isReading,
   setVideoOn,
   setVideoOff,
   startReview
@@ -158,10 +160,14 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
       )}
       {status === InterviewStatus.FinishedQuestion && (
         <>
-          <ReviewButton onClick={handleReviewClick}>
-            <PlayCircleIcon sx={{ width: '100%', height: '100%', color: '#EBEBEB' }} />
-          </ReviewButton>
-          <FrostedGlassEffect />
+          {!isReading && (
+            <>
+              <ReviewButton onClick={handleReviewClick}>
+                <PlayCircleIcon sx={{ width: '100%', height: '100%', color: '#EBEBEB' }} />
+              </ReviewButton>
+              <FrostedGlassEffect />
+            </>
+          )}
           <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />
         </>
       )}

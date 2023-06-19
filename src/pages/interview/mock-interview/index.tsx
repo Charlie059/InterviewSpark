@@ -51,7 +51,8 @@ function MockInterviewPage() {
     },
     {
       interviewID: '1686172082495',
-      interviewQuestion: ' a XXXX. How did you manage the situation?',
+      interviewQuestion:
+        ' a XXXX. How did you manage the situation? DeDescribe a situation where you had to handle a difficult customer. How did you manage the situation? sDescribe a situation where you had to handle a difficult customer. How did you manage the situation? cribe a situation wDescribe a situation where you had to handle a difficult customer. How did you manage the situation? here you had to handle a difficult customer. How did you manage the situation? ',
       interviewQuestionID: '2',
       interviewQuestionTitle: ' Customer',
       interviewQuestionType: 'Behavioral',
@@ -69,6 +70,7 @@ function MockInterviewPage() {
     finishQuestion,
     startReview,
     moveToNextQuestion,
+    setQuestionIndex,
     retryQuestion,
     saveVideo,
     setVideoOn,
@@ -118,6 +120,20 @@ function MockInterviewPage() {
     timerRef.current && timerRef.current.reset()
   }
 
+  const lastInvocationTime = useRef(0)
+
+  function guardedFinishQuestion() {
+    const now = Date.now()
+    const timeSinceLastInvocation = now - lastInvocationTime.current
+    console.log('timeSinceLastInvocation:', timeSinceLastInvocation)
+
+    if (timeSinceLastInvocation > 10000) {
+      lastInvocationTime.current = now
+      console.log('Call Finish question')
+      finishQuestion()
+    }
+  }
+
   useEffect(() => {
     resetTimer()
   }, [getInterviewState.currentQuestionIndex])
@@ -143,129 +159,139 @@ function MockInterviewPage() {
   }, [getInterviewState.status, handleMoveToNextQuestion])
 
   return (
-    <Box sx={{ bgcolor: '#F2F7FE' }}>
-      {getInterviewState.status === InterviewStatus.Loading && <LoadingScreen />}
-      <BlurDrawer
-        isOpen={drawerOpen}
-        toggleDrawer={function (): void {
-          console.log('toggle')
-          setDrawerOpen(!drawerOpen)
-        }}
-      />
+    <div style={{ backgroundColor: '#F2F7FE', minHeight: '100vh' }}>
       <Box>
-        <TopArea
-          ref={timerRef}
-          onExit={() => console.log('Exit button clicked')}
-          initialTime={interviews[getInterviewState.currentQuestionIndex].estimatedSecond}
-          onComplete={() => {
-            console.log('Timer completed')
-            finishQuestion()
-            resetTimer()
+        {getInterviewState.status === InterviewStatus.Loading && <LoadingScreen />}
+        <BlurDrawer
+          isOpen={drawerOpen}
+          toggleDrawer={function (): void {
+            console.log('toggle')
+            setDrawerOpen(!drawerOpen)
           }}
-          onButtonClick={() => console.log('Menu button clicked')}
+          interviews={interviews}
         />
-      </Box>
+        <Box>
+          <TopArea
+            ref={timerRef}
+            onExit={() => console.log('Exit button clicked')}
+            initialTime={interviews[getInterviewState.currentQuestionIndex].estimatedSecond}
+            onComplete={() => {
+              console.log('Timer completed')
+              finishQuestion()
+              resetTimer()
+            }}
+            onButtonClick={() => console.log('Menu button clicked')}
+            status={getInterviewState.status}
+          />
+        </Box>
 
-      <Box mt={'5px'} mb={'40px'}>
-        <Grid
-          container
-          spacing={10}
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <Grid item xs={0} sm={5} md={5.5} lg={4.5}>
-            <RoundedMediaLeft
-              getWebcamRef={getWebcamRef}
-              getVideoBlob={getVideoBlob}
-              isVideoEnabled={isVideoEnabled}
-              setVideoOn={setVideoOn}
-              setVideoOff={setVideoOff}
-              status={getInterviewState.status}
-              startReview={startReview}
-            />
+        <Box mt={'5px'} mb={'40px'}>
+          <Grid
+            container
+            spacing={10}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Grid item xs={0} sm={5} md={5.5} lg={4.5}>
+              <RoundedMediaLeft
+                getWebcamRef={getWebcamRef}
+                getVideoBlob={getVideoBlob}
+                isVideoEnabled={isVideoEnabled}
+                setVideoOn={setVideoOn}
+                setVideoOff={setVideoOff}
+                status={getInterviewState.status}
+                startReview={startReview}
+                isReading={isReading}
+              />
+            </Grid>
+            <Grid item xs={12} sm={5} md={5.5} lg={4.5}>
+              <RoundedMediaRight
+                status={getInterviewState.status}
+                questionText={interviews[getInterviewState.currentQuestionIndex].interviewQuestion}
+                questionTitle={interviews[getInterviewState.currentQuestionIndex].interviewQuestionTitle}
+                skipQuestion={() => {
+                  moveToNextQuestion()
+                }}
+                caption={getCaption}
+                isReading={isReading}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={5} md={5.5} lg={4.5}>
-            <RoundedMediaRight
-              status={getInterviewState.status}
-              questionText={interviews[getInterviewState.currentQuestionIndex].interviewQuestion}
-              questionTitle={interviews[getInterviewState.currentQuestionIndex].interviewQuestionTitle}
-              skipQuestion={() => {
-                moveToNextQuestion()
-              }}
-              caption={getCaption}
-              isReading={isReading}
-            />
-          </Grid>
-        </Grid>
+        </Box>
+
+        <Box mb={'20px'}>
+          <InterviewButton
+            status={getInterviewState.status}
+            isReading={isReading}
+            onButtonClick={async function (status: InterviewStatus): Promise<void> {
+              console.log('click')
+
+              switch (status) {
+                case InterviewStatus.NotStarted:
+                  handleStartCaptureClick()
+                  startTimer()
+
+                  break
+                case InterviewStatus.Interviewing:
+                  if (!isReading) {
+                    stopTimer()
+
+                    // Wait 2 seconds to let transcription catch up
+                    await new Promise(resolve => setTimeout(resolve, 2800))
+                    guardedFinishQuestion()
+                  }
+                  resetTimer()
+
+                  break
+                case InterviewStatus.FinishedQuestion:
+                  if (!isReading) {
+                    handleSaveVideo()
+                  }
+                  break
+                case InterviewStatus.Reviewing:
+                  if (!isReading) {
+                    handleSaveVideo()
+                  }
+                  break
+                default:
+                  break
+              }
+            }}
+            onRetryClick={function (): void {
+              retryQuestion()
+              resetTimer()
+              startTimer()
+            }}
+          />
+        </Box>
+
+        <Box mt={'20px'} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <MenuIconButton
+            onButtonClick={() => {
+              setDrawerOpen(true)
+            }}
+          />
+          <PaginationBarWithNumber
+            totalPages={interviews.length}
+            currentPage={getInterviewState.currentQuestionIndex + 1}
+            onPageChange={function (newPage: number): void {
+              console.log('page change', newPage)
+
+              // If current status is not started, then we can change the page
+              if (getInterviewState.status === InterviewStatus.NotStarted) {
+                setQuestionIndex(newPage - 1)
+              }
+            }}
+            enableSelect={true}
+          />
+        </Box>
+
+        <audio ref={getAudioRef} />
       </Box>
-
-      <Box mb={'20px'}>
-        <InterviewButton
-          status={getInterviewState.status}
-          isReading={isReading}
-          onButtonClick={async function (status: InterviewStatus): Promise<void> {
-            console.log('click')
-
-            switch (status) {
-              case InterviewStatus.NotStarted:
-                handleStartCaptureClick()
-                startTimer()
-
-                break
-              case InterviewStatus.Interviewing:
-                if (!isReading) {
-                  stopTimer()
-
-                  // Wait 2 seconds to let transcription catch up
-                  await new Promise(resolve => setTimeout(resolve, 2800))
-                  finishQuestion()
-                }
-                resetTimer()
-
-                break
-              case InterviewStatus.FinishedQuestion:
-                if (!isReading) {
-                  handleSaveVideo()
-                }
-                break
-              case InterviewStatus.Reviewing:
-                if (!isReading) {
-                  handleSaveVideo()
-                }
-                break
-              default:
-                break
-            }
-          }}
-          onRetryClick={function (): void {
-            retryQuestion()
-            resetTimer()
-            startTimer()
-          }}
-        />
-      </Box>
-
-      <Box mt={'20px'} sx={{ display: 'flex', justifyContent: 'center' }}>
-        <MenuIconButton
-          onButtonClick={() => {
-            setDrawerOpen(true)
-          }}
-        />
-        <PaginationBarWithNumber
-          totalPages={interviews.length}
-          currentPage={getInterviewState.currentQuestionIndex + 1}
-          onPageChange={function (newPage: number): void {
-            console.log('page change', newPage)
-          }}
-          enableSelect={false}
-        />
-      </Box>
-
-      <audio ref={getAudioRef} />
-    </Box>
+    </div>
   )
 }
 

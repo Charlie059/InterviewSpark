@@ -6,6 +6,18 @@ import ControlPointSharpIcon from '@mui/icons-material/ControlPointSharp'
 interface TimerProps {
   initialTime: number
   onComplete: () => void
+  status: InterviewStatus
+}
+
+// Define states for the mock interview process
+enum InterviewStatus {
+  Interviewing = 'INTERVIEWING',
+  FinishedQuestion = 'FINISHED_QUESTION',
+  Reviewing = 'REVIEWING',
+  SavedQuestion = 'SAVED_QUESTION',
+  FinishedInterview = 'FINISHED_INTERVIEW',
+  Loading = 'LOADING',
+  NotStarted = 'NOT_STARTED'
 }
 
 const fade = keyframes`
@@ -235,7 +247,7 @@ const Timer = forwardRef((props: TimerProps, ref: any) => {
       onMouseEnter={() => setIsMouseOver(true)}
       onMouseLeave={() => setIsMouseOver(false)}
     >
-      {isMouseOver && (
+      {isMouseOver && props.status === InterviewStatus.NotStarted && (
         <IconWrapper>
           <RemoveCircleOutlineSharpIcon onClick={handleRemoveCircleOutlineSharpClick} />
         </IconWrapper>
@@ -243,7 +255,7 @@ const Timer = forwardRef((props: TimerProps, ref: any) => {
 
       <TimerNumber>{formatTime(timeLeft)}</TimerNumber>
 
-      {isMouseOver && (
+      {isMouseOver && props.status === InterviewStatus.NotStarted && (
         <IconWrapper>
           <ControlPointSharpIcon onClick={handleControlPointSharpClick} />
         </IconWrapper>

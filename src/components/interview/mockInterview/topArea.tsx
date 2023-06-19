@@ -10,6 +10,17 @@ interface TimerHandle {
   reset: () => void
 }
 
+// Define states for the mock interview process
+enum InterviewStatus {
+  Interviewing = 'INTERVIEWING',
+  FinishedQuestion = 'FINISHED_QUESTION',
+  Reviewing = 'REVIEWING',
+  SavedQuestion = 'SAVED_QUESTION',
+  FinishedInterview = 'FINISHED_INTERVIEW',
+  Loading = 'LOADING',
+  NotStarted = 'NOT_STARTED'
+}
+
 interface MenuIconButtonProps {
   onButtonClick: () => void
 }
@@ -64,6 +75,7 @@ const MenuCard = styled(Card)`
 interface TimerProps {
   initialTime: number
   onComplete: () => void
+  status: InterviewStatus
 }
 
 interface TopAreaProps extends TimerProps, MenuIconButtonProps {
@@ -96,7 +108,7 @@ const TopArea = forwardRef<TimerHandle, TopAreaProps>((props, ref) => {
 
   return (
     <TopAreaContainer>
-      <Timer ref={ref} initialTime={props.initialTime} onComplete={props.onComplete} />
+      <Timer ref={ref} initialTime={props.initialTime} onComplete={props.onComplete} status={props.status} />
       <MenuCard>
         <IconButton onClick={handleButtonClick}>
           <CloseIcon sx={{ width: iconSize }} />

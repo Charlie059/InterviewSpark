@@ -178,10 +178,15 @@ const ActionButton = styled(animated.button)`
 `
 
 const ActionButtonContainer = styled.div`
+  position: absolute;
+  top: 92%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   width: 100%;
 `
+
 const CenteredTextContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -195,6 +200,12 @@ const Layer = styled.div`
   bottom: 15px;
   right: 15px;
   z-index: 3;
+`
+
+const AutoWidthContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
 `
 
 export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
@@ -248,12 +259,11 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
                 <ActionButton
                   style={skipAnimation}
                   onClick={() => {
-                    console.log('skipped')
                     skipQuestion()
                   }}
                 >
                   <SkipNextSharpIcon />
-                  <SkipButtonText> Skip this question</SkipButtonText>
+                  <SkipButtonText> Skip this question </SkipButtonText>
                 </ActionButton>
               </ActionButtonContainer>
             </QuestionContainer>
