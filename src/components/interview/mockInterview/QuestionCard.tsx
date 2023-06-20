@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: QuestionCard.tsx
+  Description: This file contains the UI of the QuestionCard.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/13
+  Update Date: 2023/06/14
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import * as React from 'react'
 import { styled } from '@mui/material/styles'
 import Card from '@mui/material/Card'
@@ -32,7 +43,8 @@ interface QuestionCardProps {
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { ...other } = props
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { expand, ...other } = props
 
   return <IconButton {...other} />
 })(({ theme, expand }) => ({
@@ -42,7 +54,6 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
     duration: theme.transitions.duration.shortest
   })
 }))
-
 export default function QuestionCard({ interviews }: QuestionCardProps) {
   const [expandedId, setExpandedId] = React.useState<string | null>(null)
 

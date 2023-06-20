@@ -1,6 +1,6 @@
 /***********************************************************************************************
-  Name: paginationBarWithNumber.tsx
-  Description: This file contains the custom hook for chatGPTStream.
+  Name: PaginationBarWithNumber.tsx
+  Description: This file contains the UI of the PaginationBarWithNumber.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co

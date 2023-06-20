@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: InterviewButton.tsx
+  Description: This file contains the UI of the InterviewButton.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/13
+  Update Date: 2023/06/14
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import React, { FC, useEffect, useState } from 'react'
 import { IconButton, Card } from '@mui/material'
 import styled from 'styled-components'

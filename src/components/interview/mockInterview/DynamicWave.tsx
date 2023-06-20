@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: DynamicWave.tsx
+  Description: This file contains the UI of the DynamicWave.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/13
+  Update Date: 2023/06/14
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import React from 'react'
 import styled from 'styled-components'
 import Wave from 'react-wavify'

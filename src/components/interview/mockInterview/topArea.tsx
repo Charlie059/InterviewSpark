@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: TopArea.tsx
+  Description: This file contains the UI for mock interview top area.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/19
+  Update Date: 2023/06/19
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import { forwardRef } from 'react'
 import styled from 'styled-components'
 import Timer from './timer'
@@ -19,10 +30,6 @@ enum InterviewStatus {
   FinishedInterview = 'FINISHED_INTERVIEW',
   Loading = 'LOADING',
   NotStarted = 'NOT_STARTED'
-}
-
-interface MenuIconButtonProps {
-  onButtonClick: () => void
 }
 
 const TopAreaContainer = styled.div`
@@ -69,16 +76,13 @@ const MenuCard = styled(Card)`
   }
 `
 
-// For the CloseIcon, you can do something similar, but the width and height values would be different.
-// e.g., for a small screen, it might be "12px", for a medium screen "16px", for a large screen "18px", and for an extra large screen "24px".
-
 interface TimerProps {
   initialTime: number
   onComplete: () => void
   status: InterviewStatus
 }
 
-interface TopAreaProps extends TimerProps, MenuIconButtonProps {
+interface TopAreaProps extends TimerProps {
   onExit: () => void
 }
 
@@ -87,8 +91,8 @@ function getWindowDimensions() {
 
   return width
 }
+
 const TopArea = forwardRef<TimerHandle, TopAreaProps>((props, ref) => {
-  const handleButtonClick = props.onButtonClick
   const screenWidth = getWindowDimensions()
 
   let iconSize
@@ -110,7 +114,7 @@ const TopArea = forwardRef<TimerHandle, TopAreaProps>((props, ref) => {
     <TopAreaContainer>
       <Timer ref={ref} initialTime={props.initialTime} onComplete={props.onComplete} status={props.status} />
       <MenuCard>
-        <IconButton onClick={handleButtonClick}>
+        <IconButton onClick={props.onExit}>
           <CloseIcon sx={{ width: iconSize }} />
         </IconButton>
       </MenuCard>

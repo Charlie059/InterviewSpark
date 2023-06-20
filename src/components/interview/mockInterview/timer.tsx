@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: Timer.tsx
+  Description: This file contains the UI of the Timer.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/16
+  Update Date: 2023/06/16
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import React, { useEffect, useState, useImperativeHandle, forwardRef, useRef } from 'react'
 import styled, { keyframes } from 'styled-components'
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp'

@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: MockInterview
+  Description: This file contains the UI for mock interview.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/19
+  Update Date: 2023/06/19
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import Logger from 'src/middleware/loggerMiddleware'
 import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
@@ -12,6 +23,7 @@ import TopArea from 'src/components/interview/mockInterview/topArea'
 import RoundedMediaRight from 'src/components/interview/mockInterview/roundedMediaRight'
 import InterviewButton from 'src/components/interview/mockInterview/interviewButton'
 import LoadingScreen from 'src/components/loading/Loading'
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material'
 
 // Define states for the mock interview process
 enum InterviewStatus {
@@ -33,6 +45,12 @@ interface Interview {
   estimatedSecond: number
   interviewDateTime: string
   interviewFeedback: string
+}
+
+interface TimerHandle {
+  start: () => void
+  stop: () => void
+  reset: () => void
 }
 
 function MockInterviewPage() {
@@ -63,6 +81,11 @@ function MockInterviewPage() {
     }
   ]
   const router = useRouter()
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [dialogOpen, setDialogOpen] = React.useState(false)
+
+  const timerRef = useRef<TimerHandle | null>(null)
+  const lastInvocationTime = useRef(0)
   const {
     getInterviewState,
     getCaption,
@@ -82,33 +105,18 @@ function MockInterviewPage() {
     isReading
   } = useMockInterview(interviews)
 
-  const handleStartCaptureClick = useCallback(() => {
-    Logger.debug('Start Interview')
-    startQuestion()
-  }, [startQuestion])
+  // Helper function to guard against multiple invocations of finishQuestion
+  function guardedFinishQuestion() {
+    const now = Date.now()
+    const timeSinceLastInvocation = now - lastInvocationTime.current
 
-  const handleMoveToNextQuestion = useCallback(() => {
-    moveToNextQuestion()
-  }, [moveToNextQuestion])
-
-  const handleSaveVideo = useCallback(() => {
-    saveVideo()
-      .then(() => {
-        console.log('Video successfully saved.')
-      })
-      .catch(error => {
-        console.log('Failed to save video:', error)
-      })
-  }, [saveVideo])
-
-  const [drawerOpen, setDrawerOpen] = React.useState(false)
-  interface TimerHandle {
-    start: () => void
-    stop: () => void
-    reset: () => void
+    if (timeSinceLastInvocation > 10000) {
+      lastInvocationTime.current = now
+      finishQuestion()
+    }
   }
-  const timerRef = useRef<TimerHandle | null>(null)
 
+  // Timer helper functions
   const startTimer = function (): void {
     timerRef.current && timerRef.current.start()
   }
@@ -120,20 +128,111 @@ function MockInterviewPage() {
     timerRef.current && timerRef.current.reset()
   }
 
-  const lastInvocationTime = useRef(0)
+  // Handle start interview
+  const handleStartCaptureClick = useCallback(() => {
+    Logger.debug('Start Interview')
+    startQuestion()
+  }, [startQuestion])
 
-  function guardedFinishQuestion() {
-    const now = Date.now()
-    const timeSinceLastInvocation = now - lastInvocationTime.current
-    console.log('timeSinceLastInvocation:', timeSinceLastInvocation)
+  // Handle finish question and move to next question
+  const handleMoveToNextQuestion = useCallback(() => {
+    moveToNextQuestion()
+  }, [moveToNextQuestion])
 
-    if (timeSinceLastInvocation > 10000) {
-      lastInvocationTime.current = now
-      console.log('Call Finish question')
-      finishQuestion()
+  // Handle Save video
+  const handleSaveVideo = useCallback(() => {
+    saveVideo()
+      .then(() => {
+        Logger.info('Video successfully saved.')
+      })
+      .catch(error => {
+        Logger.info('Failed to save video:', error)
+      })
+  }, [saveVideo])
+
+  // Handle the toggle drawer
+  const handleToggleDrawer = function (): void {
+    setDrawerOpen(!drawerOpen)
+  }
+
+  // Handle the close interview
+  const handleCloseInterview = function (): void {
+    Logger.debug('Close Interview')
+    setDialogOpen(true) // Open the dialog
+  }
+
+  // Handle the handleDialogClose
+  const handleDialogClose = () => {
+    setDialogOpen(false)
+  }
+
+  // Handle the handleDialogConfirm
+  const handleDialogConfirm = () => {
+    setDialogOpen(false)
+    router.push('/interview') // Redirect to the homepage
+  }
+
+  // Handle the retry question
+  const handleRetryQuestion = function (): void {
+    retryQuestion()
+    resetTimer()
+    startTimer()
+  }
+
+  // Handle the click of the interview button
+  const handleClickInterviewButton = async function (status: InterviewStatus): Promise<void> {
+    Logger.debug('Click Interview Button')
+    switch (status) {
+      case InterviewStatus.NotStarted:
+        handleStartCaptureClick()
+        startTimer()
+
+        break
+      case InterviewStatus.Interviewing:
+        if (!isReading) {
+          stopTimer()
+
+          // Wait 2 seconds to let transcription catch up
+          await new Promise(resolve => setTimeout(resolve, 2800))
+          guardedFinishQuestion()
+        }
+        resetTimer()
+
+        break
+      case InterviewStatus.FinishedQuestion:
+        if (!isReading) {
+          handleSaveVideo()
+        }
+        break
+      case InterviewStatus.Reviewing:
+        if (!isReading) {
+          handleSaveVideo()
+        }
+        break
+      default:
+        break
     }
   }
 
+  // Handle change the page
+  const handlePageChange = function (newPage: number): void {
+    Logger.info('page change', newPage)
+
+    // If current status is not started, then we can change the page
+    if (getInterviewState.status === InterviewStatus.NotStarted) {
+      setQuestionIndex(newPage - 1)
+    }
+  }
+
+  // Handle the timeout
+  const handleTimeout = function (): void {
+    finishQuestion()
+    resetTimer()
+  }
+
+  // Define the UseEffect
+
+  // Reset the timer when the question index changes
   useEffect(() => {
     resetTimer()
   }, [getInterviewState.currentQuestionIndex])
@@ -145,13 +244,17 @@ function MockInterviewPage() {
     }
   }, [getInterviewState.status, router])
 
+  // If hooks encountered an error, show the error message
   useEffect(() => {
     if (getInterviewState.error) {
-      console.log('Error:', getInterviewState.error)
-      alert(getInterviewState.error)
+      Logger.error('Error:', getInterviewState.error)
+
+      // TODO: Based on the error type, show the error message and handle the error
+      alert(getInterviewState.error.type)
     }
   }, [getInterviewState.error])
 
+  // If the status is SavedQuestion, move to the next question
   useEffect(() => {
     if (getInterviewState.status === InterviewStatus.SavedQuestion) {
       handleMoveToNextQuestion()
@@ -160,27 +263,33 @@ function MockInterviewPage() {
 
   return (
     <div style={{ backgroundColor: '#F2F7FE', minHeight: '100vh' }}>
+      <audio ref={getAudioRef} />
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>{'Close the Interview'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to close the interview? If you confirm, you will be redirected to the homepage.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color='primary'>
+            No
+          </Button>
+          <Button onClick={handleDialogConfirm} color='primary' autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Box>
         {getInterviewState.status === InterviewStatus.Loading && <LoadingScreen />}
-        <BlurDrawer
-          isOpen={drawerOpen}
-          toggleDrawer={function (): void {
-            console.log('toggle')
-            setDrawerOpen(!drawerOpen)
-          }}
-          interviews={interviews}
-        />
+        <BlurDrawer isOpen={drawerOpen} toggleDrawer={handleToggleDrawer} interviews={interviews} />
         <Box>
           <TopArea
             ref={timerRef}
-            onExit={() => console.log('Exit button clicked')}
+            onExit={handleCloseInterview}
             initialTime={interviews[getInterviewState.currentQuestionIndex].estimatedSecond}
-            onComplete={() => {
-              console.log('Timer completed')
-              finishQuestion()
-              resetTimer()
-            }}
-            onButtonClick={() => console.log('Menu button clicked')}
+            onComplete={handleTimeout}
             status={getInterviewState.status}
           />
         </Box>
@@ -226,70 +335,20 @@ function MockInterviewPage() {
           <InterviewButton
             status={getInterviewState.status}
             isReading={isReading}
-            onButtonClick={async function (status: InterviewStatus): Promise<void> {
-              console.log('click')
-
-              switch (status) {
-                case InterviewStatus.NotStarted:
-                  handleStartCaptureClick()
-                  startTimer()
-
-                  break
-                case InterviewStatus.Interviewing:
-                  if (!isReading) {
-                    stopTimer()
-
-                    // Wait 2 seconds to let transcription catch up
-                    await new Promise(resolve => setTimeout(resolve, 2800))
-                    guardedFinishQuestion()
-                  }
-                  resetTimer()
-
-                  break
-                case InterviewStatus.FinishedQuestion:
-                  if (!isReading) {
-                    handleSaveVideo()
-                  }
-                  break
-                case InterviewStatus.Reviewing:
-                  if (!isReading) {
-                    handleSaveVideo()
-                  }
-                  break
-                default:
-                  break
-              }
-            }}
-            onRetryClick={function (): void {
-              retryQuestion()
-              resetTimer()
-              startTimer()
-            }}
+            onButtonClick={handleClickInterviewButton}
+            onRetryClick={handleRetryQuestion}
           />
         </Box>
 
         <Box mt={'20px'} sx={{ display: 'flex', justifyContent: 'center' }}>
-          <MenuIconButton
-            onButtonClick={() => {
-              setDrawerOpen(true)
-            }}
-          />
+          <MenuIconButton onButtonClick={handleToggleDrawer} />
           <PaginationBarWithNumber
             totalPages={interviews.length}
             currentPage={getInterviewState.currentQuestionIndex + 1}
-            onPageChange={function (newPage: number): void {
-              console.log('page change', newPage)
-
-              // If current status is not started, then we can change the page
-              if (getInterviewState.status === InterviewStatus.NotStarted) {
-                setQuestionIndex(newPage - 1)
-              }
-            }}
+            onPageChange={handlePageChange}
             enableSelect={true}
           />
         </Box>
-
-        <audio ref={getAudioRef} />
       </Box>
     </div>
   )

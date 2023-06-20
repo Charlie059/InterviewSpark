@@ -1,6 +1,6 @@
 /***********************************************************************************************
-  Name: MenuIconButton.tsx
-  Description: This file contains the custom hook for chatGPTStream.
+  Name: VideoButton.tsx
+  Description: This file contains the UI of the Video Switch Button.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co

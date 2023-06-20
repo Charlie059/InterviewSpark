@@ -1,3 +1,14 @@
+/***********************************************************************************************
+  Name: BlueDrawer.tsx
+  Description: This file contains the UI of the BlueDrawer.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/19
+  Update Date: 2023/06/19
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
+
 import React from 'react'
 import { Box, Drawer, Slide } from '@mui/material'
 import styled from 'styled-components'
