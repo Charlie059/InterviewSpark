@@ -2,7 +2,7 @@
 import { API, graphqlOperation } from 'aws-amplify'
 import { useRouter } from 'next/router'
 import { GetServerSideProps, GetServerSidePropsContext, InferGetServerSidePropsType } from 'next/types'
-import { getUserProfileByUsername } from 'src/graphql/queries'
+import {getUserEducations, getUserProfileByUsername, getUserWorkHistories} from 'src/graphql/queries'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
@@ -42,6 +42,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
     const userData = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
     if ('data' in userData) {
       data = userData.data.getUserProfileByUsername
+      //  console.log(data)
+      const eduData = await API.graphql(graphqlOperation(getUserEducations,{emailAddress:data.userEmailAddress}))
+      const workData = await API.graphql(graphqlOperation(getUserWorkHistories,{emailAddress:data.userEmailAddress}))
+      console.log(eduData.data.getUserEducations)
+      data.educations = eduData.data.getUserEducations.educations
+      data.workHistory = workData.data.getUserWorkHistories.workHistory
+      console.log(data)
     }
   } catch (error) {
     console.error('Error fetching user data', error)
