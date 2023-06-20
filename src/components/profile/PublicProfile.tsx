@@ -29,6 +29,7 @@ import CardContent from '@mui/material/CardContent'
 //import Profile from 'src/views/pages/user-profile/profile'
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import BlankLayout from "../../@core/layouts/BlankLayout";
+import EducationCard from './profile-cards/EducationCard'
 
 // import { API, graphqlOperation } from 'aws-amplify'
 // import { updateUserProfile } from 'src/graphql/mutations'
@@ -43,6 +44,32 @@ const PublicProfile = ({ user, data }) => {
   console.log('current profile page is for', user)
   console.log('current data is:', data)
 
+  const educationTestData = [
+    {
+      eduDegree : "Masters",
+      eduFieldStudy : "Computer Science",
+      eduSchool : "Rutgers University",
+      eduStartDate : "2021",
+      eduEndDate : "2023"
+    },
+    {
+      eduDegree : "Bachelors",
+      eduFieldStudy : "Computer Science",
+      eduSchool : "Ohio State University",
+      eduStartDate : "2019",
+      eduEndDate : "2021"
+    },
+  ]
+
+  const workHistoryTestData = [
+    {
+      workHistoryJobTitle: "Full Stack Developer",
+      workHistoryEmployer: "HireBeat",
+      workHistoryStartDate: "May 2021",
+      workHistoryEndDate: "",
+      workHistoryJobDescription:"",
+    },
+  ]
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profileData, setProfileData] = useState(data)
@@ -111,6 +138,9 @@ const PublicProfile = ({ user, data }) => {
             </Grid>
           </CardContent>
         </Card>
+      </Grid>
+      <Grid item xs={6}>
+        <EducationCard eduData={educationTestData}/>
       </Grid>
     </Grid>
   )
