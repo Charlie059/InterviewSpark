@@ -11,6 +11,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import PublicProfile from 'src/components/profile/PublicProfile'
 import {ReactNode} from "react";
 import BlankLayout from "../@core/layouts/BlankLayout";
+import Grid from "@mui/material/Grid";
 
 const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** Hooks
@@ -23,7 +24,27 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
   if (user === auth.user?.userName) {
     router.replace('/user-profile/' +user)
   } else if(test || data.isPublic){
-    return <PublicProfile user={user} data={data} />
+
+    return(
+      <Grid
+        container
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+        sx={{ mb: 2.7 }}
+      >
+        <Grid
+          item
+          xs={12}
+          sm={10}
+          md={8}
+          lg={8}
+          xl={8}
+        >
+          <PublicProfile user={user} data={data} />
+        </Grid>
+      </Grid>
+    )
   } else {
     // If user is unauthorized, redirect to 401 page
     router.replace('/401')
@@ -42,12 +63,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
     const userData = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
     if ('data' in userData) {
       data = userData.data.getUserProfileByUsername
-      //  console.log(data)
       const eduData = await API.graphql(graphqlOperation(getUserEducations,{emailAddress:data.userEmailAddress}))
       const workData = await API.graphql(graphqlOperation(getUserWorkHistories,{emailAddress:data.userEmailAddress}))
-      console.log(eduData.data.getUserEducations)
-      data.educations = eduData.data.getUserEducations.educations
-      data.workHistory = workData.data.getUserWorkHistories.workHistory
+      if ('data' in eduData){
+        data.educations = eduData.data.getUserEducations.educations
+      }
+      if('data' in workData){
+        data.workHistory = workData.data.getUserWorkHistories.workHistory
+      }
+
       console.log(data)
     }
   } catch (error) {

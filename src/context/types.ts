@@ -35,3 +35,14 @@ export type AuthValuesType = {
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void
   currUser: () => Promise<UserDataType | null> // Check AWS currentSession
 }
+
+export type Education = {
+  eduDegree: string
+  eduSchool: string
+  eduStartDate: string
+  eduFieldStudy: string
+  eduEndDate: string
+  eduIcon?: string
+  eduActivities?: string
+  eduDescription?: string
+}

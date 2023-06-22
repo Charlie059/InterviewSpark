@@ -16,20 +16,11 @@ import Divider from '@mui/material/Divider'
 import CardContent from '@mui/material/CardContent'
 
 
-// ** Utils Import
 
-
-// ** Type Import
-//import { ProfileTabType, UserProfileActiveTab } from 'src/@fake-db/types'
-
-// ** Icon Imports
-// import Icon from 'src/@core/components/icon'
-
-// ** Demo Components
-//import Profile from 'src/views/pages/user-profile/profile'
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import BlankLayout from "../../@core/layouts/BlankLayout";
 import EducationCard from './profile-cards/EducationCard'
+import {Education} from "../../context/types";
 
 // import { API, graphqlOperation } from 'aws-amplify'
 // import { updateUserProfile } from 'src/graphql/mutations'
@@ -44,20 +35,22 @@ const PublicProfile = ({ user, data }) => {
   console.log('current profile page is for', user)
   console.log('current data is:', data)
 
-  const educationTestData = [
+  const educationTestData:Education[] = [
     {
       eduDegree : "Masters",
       eduFieldStudy : "Computer Science",
       eduSchool : "Rutgers University",
       eduStartDate : "2021",
-      eduEndDate : "2023"
+      eduEndDate : "2023",
+      eduActivities:"testing Activities",
+      eduDescription:"testing description",
     },
     {
       eduDegree : "Bachelors",
       eduFieldStudy : "Computer Science",
       eduSchool : "Ohio State University",
       eduStartDate : "2019",
-      eduEndDate : "2021"
+      eduEndDate : "2021",
     },
   ]
 
@@ -139,7 +132,7 @@ const PublicProfile = ({ user, data }) => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={8}>
         <EducationCard eduData={educationTestData}/>
       </Grid>
     </Grid>
