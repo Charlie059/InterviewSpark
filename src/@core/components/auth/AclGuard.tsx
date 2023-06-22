@@ -25,7 +25,6 @@ interface AclGuardProps {
   guestGuard: boolean
   aclAbilities: ACLObj
   isPublic: boolean
-  authGuard: boolean
 }
 
 const AclGuard = (props: AclGuardProps) => {
