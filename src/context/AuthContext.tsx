@@ -28,7 +28,7 @@ const handleCurrUser = async (): Promise<UserDataType | null> => {
       if (Object.keys(userInfo).length === 0) return null
 
       const user = await getUserProfileData(userInfo.attributes.email)
-      Log.info(user)
+      Log.error(user)
 
       return user
     } else {
@@ -81,7 +81,7 @@ const AuthProvider = ({ children }: Props) => {
 
         const user = await handleCurrUser()
 
-        Log.info(user)
+        Log.debug('user', user)
         if (user) {
           // Set the loading state to false and the user data to the local state.
           setLoading(false)
