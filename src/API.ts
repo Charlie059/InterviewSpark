@@ -30,14 +30,6 @@ export type ResumeScan = {
   resumeScanID: string,
 };
 
-export type User = {
-  __typename: "User",
-  userEmailAddress: string,
-  userRole: string,
-  userName: string,
-  allowPublicInterview: boolean,
-};
-
 export type Profile = {
   __typename: "Profile",
   fName?: string | null,
@@ -303,20 +295,6 @@ export type UpdateUserResumeScanURLMutation = {
     resumeResults?: string | null,
     resumeUrl?: string | null,
     resumeScanID: string,
-  },
-};
-
-export type GetUserQueryVariables = {
-  emailAddress: string,
-};
-
-export type GetUserQuery = {
-  getUser:  {
-    __typename: "User",
-    userEmailAddress: string,
-    userRole: string,
-    userName: string,
-    allowPublicInterview: boolean,
   },
 };
 

@@ -257,7 +257,6 @@ type Profile {
 }
 
 type Query {
-  getUser(emailAddress: AWSEmail!): User!
   getUserProfile(emailAddress: AWSEmail!): Profile!
   getUserProfileByUsername(userName: String!): Profile!
   getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!
