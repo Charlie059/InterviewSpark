@@ -16,8 +16,6 @@
   "dependencies": {
     "@aws-sdk/client-transcribe-streaming": "^3.306.0",
     "@aws-sdk/credential-provider-cognito-identity": "^3.306.0",
-    "@aws-sdk/eventstream-codec": "^3.357.0",
-    "@aws-sdk/eventstream-marshaller": "^3.120.0",
     "@casl/ability": "6.3.2",
     "@casl/react": "3.1.0",
     "@dicebear/collection": "^5.3.4",
