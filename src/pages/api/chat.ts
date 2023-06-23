@@ -5,7 +5,7 @@ import { LLMChain } from 'langchain/chains'
 import { ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate } from 'langchain/prompts'
 import { NextApiRequest } from 'next/types'
 
-const OPENAI_API_KEY = process.env.NEXT_PUBLIC_CHATGPT_API_KEY
+const OPENAI_API_KEY = process.env.CHATGPT_API_KEY
 
 export const config = {
   api: {
@@ -74,6 +74,8 @@ export default async function handler(req: NextApiRequest) {
       }
     })
   } catch (error: any) {
+    console.error(error.stack)
+
     return new NextResponse(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
