@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -11,17 +11,23 @@ import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import MuiStep from '@mui/material/Step'
+import { useRouter } from 'next/router'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
+import { API, graphqlOperation } from 'aws-amplify'
+import { getUserProfileByUsername } from 'src/graphql/queries'
+import { GetServerSidePropsContext } from 'next/types'
+
 // ** Step Components Imports
-import UserProfileTab from '../user-profile/[user]'
+import UserProfile from 'src/components/profile/UserProfile'
 import ResumeScanPage from '../resume'
 import InterviewPage from '../interview'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
+import { useAuth } from 'src/hooks/useAuth'
 
 const steps = [
   {
@@ -60,6 +66,10 @@ const StepperHeaderContainer = styled(CardContent)(({ theme }) => ({
 const Tutorial = () => {
   // ** States
   const [activeStep, setActiveStep] = useState(0)
+  const [userData, setUserData] = useState()
+
+  const auth = useAuth()
+  const user = auth.user?.userName
 
   // Handle Stepper
   const handleNext = () => {
@@ -72,10 +82,30 @@ const Tutorial = () => {
     }
   }
 
+  async function getData() {
+    const userName = auth.user?.userName
+
+    // Get userProfile data from GraphQL
+    let data = null
+    const userDatastore = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
+    console.log('datastore:', userDatastore)
+    if ('data' in userDatastore) {
+      data = userDatastore.data.getUserProfileByUsername
+      console.log('data get:', data)
+      setUserData(data)
+    }
+  }
+
+  useEffect(() => {
+    getData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const getStepContent = step => {
+    console.log('data is:', userData)
     switch (step) {
       case 0:
-        return <UserProfileTab />
+        return <UserProfile user={user} data={userData} />
       case 1:
         return <ResumeScanPage />
       case 2:
