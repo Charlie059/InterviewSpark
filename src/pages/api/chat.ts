@@ -9,9 +9,10 @@ const OPENAI_API_KEY = process.env.NEXT_PUBLIC_CHATGPT_API_KEY
 
 export const config = {
   api: {
-    bodyParser: false
+    bodyParser: false,
+    externalResolver: true
   },
-  runtime: 'nodejs'
+  runtime: 'experimental-edge'
 }
 
 // Helper function: Parse JSON request
