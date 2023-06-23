@@ -202,12 +202,6 @@ const Layer = styled.div`
   z-index: 3;
 `
 
-const AutoWidthContainer = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-`
-
 export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
   status,
   questionTitle,
