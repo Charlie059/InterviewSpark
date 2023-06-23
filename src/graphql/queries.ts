@@ -2,23 +2,13 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getUser = /* GraphQL */ `
-  query GetUser($emailAddress: AWSEmail!) {
-    getUser(emailAddress: $emailAddress) {
-      userEmailAddress
-      userRole
-      userName
-      allowPublicInterview
-    }
-  }
-`;
 export const getUserProfile = /* GraphQL */ `
   query GetUserProfile($emailAddress: AWSEmail!) {
     getUserProfile(emailAddress: $emailAddress) {
       fName
       lName
-      photoImgURL
-      coverImgURL
+      photoImgKey
+      coverImgKey
       resumeKey
       addressLine1
       addressLine2
@@ -40,8 +30,8 @@ export const getUserProfileByUsername = /* GraphQL */ `
     getUserProfileByUsername(userName: $userName) {
       fName
       lName
-      photoImgURL
-      coverImgURL
+      photoImgKey
+      coverImgKey
       resumeKey
       addressLine1
       addressLine2
@@ -104,6 +94,7 @@ export const getUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewPerformance
       }
       nextToken
       totalRecords
@@ -122,6 +113,7 @@ export const getUserInterviewsByMonth = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewPerformance
       }
     }
   }
@@ -145,6 +137,7 @@ export const getUserInterviewMetaData = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
+      interviewPerformance
     }
   }
 `;
@@ -160,6 +153,7 @@ export const searchUserInterviews = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewPerformance
       }
     }
   }
@@ -182,6 +176,7 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewPerformance
       }
       nextToken
       totalRecords
@@ -296,6 +291,7 @@ export const getUserInterviewsByQuestionID = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewPerformance
       }
     }
   }

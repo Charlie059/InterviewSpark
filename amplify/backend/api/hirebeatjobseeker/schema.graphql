@@ -19,6 +19,7 @@ type Interview {
   interviewQuestionTitle: String
   interviewQuestionType: String
   interviewFeedback: String
+  interviewPerformance: AWSJSON
 }
 
 type InterviewList {
@@ -176,9 +177,8 @@ input ModelSubscriptionStringInput {
 }
 
 type Mutation {
-  createNewGuestUser(emailAddress: AWSEmail!, userName: String, fName: String!, lName: String!): OperationResult!
+  createNewGuestUser(emailAddress: AWSEmail!, userName: String!, fName: String!, lName: String!): OperationResult!
   createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
-  createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   updateInterviewVideoKey(
     emailAddress: AWSEmail!
     interviewID: String!
@@ -193,10 +193,10 @@ type Mutation {
     city: String
     contact: String
     country: String
-    coverImgURL: String
+    coverImgKey: String
     fName: String
     lName: String
-    photoImgURL: String
+    photoImgKey: String
     postalCode: String
     resumeKey: String
     state: String
@@ -239,8 +239,8 @@ type PaginatedQuestionList {
 type Profile {
   fName: String
   lName: String
-  photoImgURL: String
-  coverImgURL: String
+  photoImgKey: String
+  coverImgKey: String
   resumeKey: String
   addressLine1: String
   addressLine2: String
@@ -257,7 +257,6 @@ type Profile {
 }
 
 type Query {
-  getUser(emailAddress: AWSEmail!): User!
   getUserProfile(emailAddress: AWSEmail!): Profile!
   getUserProfileByUsername(userName: String!): Profile!
   getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!

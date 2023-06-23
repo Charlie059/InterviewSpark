@@ -5,7 +5,7 @@
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
   Create Date: 2023/06/04
-  Update Date: 2023/06/12
+  Update Date: 2023/06/15
   Copyright: © 2023 HireBeat Inc. All rights reserved.
 ************************************************************************************************/
 
@@ -33,7 +33,8 @@ const checkSentenceCompletion = (text: string) => {
 // Helper function to handle stream reading
 const handleStreamReading = async (
   reader: ReadableStreamDefaultReader<Uint8Array>,
-  callback: (value: string) => void
+  callback: (value: string) => void,
+  end: () => void
 ) => {
   try {
     while (true) {
@@ -48,11 +49,12 @@ const handleStreamReading = async (
     Logger.error('An error occurred while reading the stream:', error)
   } finally {
     reader.releaseLock()
+    end()
   }
 }
 
 // The useChatGPTStream Hook
-const useChatGPTStream = (addToQueue: (sentence: string) => void) => {
+const useChatGPTStream = (addToQueue: (sentence: string) => void, start: () => void, end: () => void) => {
   let cachedText = ''
   const [streamError, setStreamError] = useState<ErrorState | null>(null)
 
@@ -87,8 +89,8 @@ const useChatGPTStream = (addToQueue: (sentence: string) => void) => {
       const stream = res.body
       if (!stream) return
       const reader = stream.getReader()
-
-      handleStreamReading(reader, addToQueueIfSentenceComplete)
+      start()
+      handleStreamReading(reader, addToQueueIfSentenceComplete, end)
     } catch (error: any) {
       setStreamError({ type: 'ChatGPT-Error', message: error })
       Logger.error('An error occurred while generating the response:', error)

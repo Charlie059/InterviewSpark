@@ -1,14 +1,3 @@
-/***********************************************************************************************
-  Name: UsePollyByQueue.tsx
-  Description: This file contains the custom hook for polly.
-  Author: Charlie Gong
-  Company: HireBeat Inc.
-  Contact: Xuhui.Gong@HireBeat.co
-  Create Date: 2023/06/12
-  Update Date: 2023/06/12
-  Copyright: © 2023 HireBeat Inc. All rights reserved.
-************************************************************************************************/
-
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Auth } from 'aws-amplify'
 import { Polly, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'

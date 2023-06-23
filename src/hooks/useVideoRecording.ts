@@ -9,7 +9,7 @@
   Copyright: © 2023 HireBeat Inc. All rights reserved.
 ************************************************************************************************/
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import Webcam from 'react-webcam'
 
 interface ErrorState {
@@ -35,31 +35,17 @@ export default function useVideoRecording() {
 
   const setVideoOn = async () => {
     if (webcamRef.current) {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: true
-      })
-      webcamRef.current.stream = mediaStream
-      webcamRef.current.video!.srcObject = mediaStream
+      webcamRef.current?.stream?.getVideoTracks().forEach(track => (track.enabled = true))
     }
     setVideoEnabled(true)
   }
 
   const setVideoOff = () => {
+    if (webcamRef.current && webcamRef.current.stream) {
+      webcamRef.current?.stream?.getVideoTracks().forEach(track => (track.enabled = false))
+    }
     setVideoEnabled(false)
-    if (webcamRef.current && webcamRef.current.stream) {
-      webcamRef.current.stream.getTracks().forEach(track => {
-        track.stop()
-      })
-    }
   }
-
-  useEffect(() => {
-    if (webcamRef.current && webcamRef.current.stream) {
-      webcamRef.current.stream.getTracks().forEach(track => {
-        track.enabled = videoEnabled
-      })
-    }
-  }, [videoEnabled])
 
   // Start capturing video
   const handleStartCapture = () => {
