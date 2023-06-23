@@ -145,12 +145,7 @@ const App = (props: ExtendedAppProps) => {
                 <ThemeComponent settings={settings}>
                   <WindowWrapper>
                     <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                      <AclGuard
-                        aclAbilities={aclAbilities}
-                        guestGuard={guestGuard}
-                        isPublic={isPublic}
-                        authGuard={authGuard}
-                      >
+                      <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} isPublic={isPublic}>
                         {getLayout(<Component {...pageProps} />)}
                       </AclGuard>
                     </Guard>
