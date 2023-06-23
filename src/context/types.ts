@@ -19,8 +19,8 @@ export type UserDataType =
       __typename: 'Profile'
       fName?: string | null
       lName?: string | null
-      photoImgURL?: string | null
-      coverImgURL?: string | null
+      photoImgKey?: string | null
+      coverImgKey?: string | null
       resumeKey?: string | null
       addressLine1?: string | null
       addressLine2?: string | null

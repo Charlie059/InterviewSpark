@@ -1,6 +1,6 @@
 // src/utils/getUser.ts
 import { API, graphqlOperation } from 'aws-amplify'
-import { GetUserProfileQuery } from '../API'
+import { GetUserProfileQuery } from 'src/API'
 import { getUserProfile } from '../graphql/queries'
 
 export const getUserProfileData = async (emailAddress: string) => {

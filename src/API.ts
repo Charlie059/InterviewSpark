@@ -34,8 +34,8 @@ export type Profile = {
   __typename: "Profile",
   fName?: string | null,
   lName?: string | null,
-  photoImgURL?: string | null,
-  coverImgURL?: string | null,
+  photoImgKey?: string | null,
+  coverImgKey?: string | null,
   resumeKey?: string | null,
   addressLine1?: string | null,
   addressLine2?: string | null,
@@ -134,7 +134,7 @@ export type ResumeScanList = {
 
 export type CreateNewGuestUserMutationVariables = {
   emailAddress: string,
-  userName?: string | null,
+  userName: string,
   fName: string,
   lName: string,
 };
@@ -154,25 +154,6 @@ export type CreateUserInterviewWithQuestionMutationVariables = {
 
 export type CreateUserInterviewWithQuestionMutation = {
   createUserInterviewWithQuestion:  {
-    __typename: "Interview",
-    interviewID?: string | null,
-    interviewDateTime?: string | null,
-    interviewQuestionID?: string | null,
-    interviewVideoKey?: string | null,
-    interviewQuestion?: string | null,
-    interviewQuestionTitle?: string | null,
-    interviewQuestionType?: string | null,
-    interviewFeedback?: string | null,
-  },
-};
-
-export type CreateInterviewWithQuestionMutationVariables = {
-  emailAddress: string,
-  questionID: string,
-};
-
-export type CreateInterviewWithQuestionMutation = {
-  createInterviewWithQuestion:  {
     __typename: "Interview",
     interviewID?: string | null,
     interviewDateTime?: string | null,
@@ -214,10 +195,10 @@ export type UpdateUserProfileMutationVariables = {
   city?: string | null,
   contact?: string | null,
   country?: string | null,
-  coverImgURL?: string | null,
+  coverImgKey?: string | null,
   fName?: string | null,
   lName?: string | null,
-  photoImgURL?: string | null,
+  photoImgKey?: string | null,
   postalCode?: string | null,
   resumeKey?: string | null,
   state?: string | null,
@@ -307,8 +288,8 @@ export type GetUserProfileQuery = {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
-    photoImgURL?: string | null,
-    coverImgURL?: string | null,
+    photoImgKey?: string | null,
+    coverImgKey?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,
@@ -334,8 +315,8 @@ export type GetUserProfileByUsernameQuery = {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
-    photoImgURL?: string | null,
-    coverImgURL?: string | null,
+    photoImgKey?: string | null,
+    coverImgKey?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,

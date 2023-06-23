@@ -5,7 +5,7 @@
 export const createNewGuestUser = /* GraphQL */ `
   mutation CreateNewGuestUser(
     $emailAddress: AWSEmail!
-    $userName: String
+    $userName: String!
     $fName: String!
     $lName: String!
   ) {
@@ -26,26 +26,6 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
     $questionID: String!
   ) {
     createUserInterviewWithQuestion(
-      emailAddress: $emailAddress
-      questionID: $questionID
-    ) {
-      interviewID
-      interviewDateTime
-      interviewQuestionID
-      interviewVideoKey
-      interviewQuestion
-      interviewQuestionTitle
-      interviewQuestionType
-      interviewFeedback
-    }
-  }
-`;
-export const createInterviewWithQuestion = /* GraphQL */ `
-  mutation CreateInterviewWithQuestion(
-    $emailAddress: AWSEmail!
-    $questionID: String!
-  ) {
-    createInterviewWithQuestion(
       emailAddress: $emailAddress
       questionID: $questionID
     ) {
@@ -94,10 +74,10 @@ export const updateUserProfile = /* GraphQL */ `
     $city: String
     $contact: String
     $country: String
-    $coverImgURL: String
+    $coverImgKey: String
     $fName: String
     $lName: String
-    $photoImgURL: String
+    $photoImgKey: String
     $postalCode: String
     $resumeKey: String
     $state: String
@@ -110,10 +90,10 @@ export const updateUserProfile = /* GraphQL */ `
       city: $city
       contact: $contact
       country: $country
-      coverImgURL: $coverImgURL
+      coverImgKey: $coverImgKey
       fName: $fName
       lName: $lName
-      photoImgURL: $photoImgURL
+      photoImgKey: $photoImgKey
       postalCode: $postalCode
       resumeKey: $resumeKey
       state: $state

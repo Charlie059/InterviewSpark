@@ -7,8 +7,8 @@ export const getUserProfile = /* GraphQL */ `
     getUserProfile(emailAddress: $emailAddress) {
       fName
       lName
-      photoImgURL
-      coverImgURL
+      photoImgKey
+      coverImgKey
       resumeKey
       addressLine1
       addressLine2
@@ -30,8 +30,8 @@ export const getUserProfileByUsername = /* GraphQL */ `
     getUserProfileByUsername(userName: $userName) {
       fName
       lName
-      photoImgURL
-      coverImgURL
+      photoImgKey
+      coverImgKey
       resumeKey
       addressLine1
       addressLine2
