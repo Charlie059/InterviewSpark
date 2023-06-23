@@ -1,4 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
+
+// @ts-ignore
 import { Auth } from 'aws-amplify'
 import { Polly, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
 import Logger from '../middleware/loggerMiddleware'
