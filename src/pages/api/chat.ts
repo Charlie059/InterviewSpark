@@ -11,7 +11,7 @@ export const config = {
   api: {
     bodyParser: false
   },
-  runtime: 'server'
+  runtime: 'nodejs'
 }
 
 // Helper function: Parse JSON request
