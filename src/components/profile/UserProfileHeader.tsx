@@ -56,7 +56,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
     if (type == 'Dashboard') {
       setShowCover(true)
     } else {
-      setShowCover(false)
+      setShowCover(true)
     }
     const fetchProPicUrl = async () => {
       try {

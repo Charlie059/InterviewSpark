@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState} from 'react'
+import { useState } from 'react'
 
 // ** Next Import
 // import { useRouter } from 'next/router'
@@ -135,15 +135,12 @@ const UserProfile = ({ user, data }) => {
 
   const defaultValues = data
 
-  const {
-    control,
-    handleSubmit
-  } = useForm({ defaultValues })
+  const { control, handleSubmit } = useForm({ defaultValues })
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={"profile"}/>
+        <UserProfileHeader data={data} type={'profile'} />
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}
@@ -402,7 +399,7 @@ const UserProfile = ({ user, data }) => {
           </Dialog>
         </Card>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={10}>
         <ProfileViewRight profileData={data} />
       </Grid>
     </Grid>
