@@ -14,8 +14,7 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
-    "@aws-sdk/client-transcribe-streaming": "^3.306.0",
-    "@aws-sdk/credential-provider-cognito-identity": "^3.306.0",
+    "@aws-sdk/client-transcribe-streaming": "^3.359.0",
     "@casl/ability": "6.3.2",
     "@casl/react": "3.1.0",
     "@dicebear/collection": "^5.3.4",
@@ -48,7 +47,6 @@
     "apexcharts-clevision": "3.28.5",
     "aws-amplify": "^5.0.17",
     "aws-crt": "^1.15.13",
-    "aws-sdk": "^2.1352.0",
     "axios": "1.1.3",
     "axios-mock-adapter": "1.21.2",
     "chalk": "^5.2.0",
@@ -84,7 +82,7 @@
     "prismjs": "1.29.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
-    "react-apexcharts": "1.4.0",
+    "react-apexcharts": "^1.4.0",
     "react-auth-code-input": "^3.2.1",
     "react-camera-pro": "^1.2.2",
     "react-chartjs-2": "4.3.1",
