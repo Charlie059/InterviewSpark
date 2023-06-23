@@ -37,6 +37,7 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
+      interviewPerformance
     }
   }
 `;
@@ -63,6 +64,7 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
+      interviewPerformance
     }
   }
 `;

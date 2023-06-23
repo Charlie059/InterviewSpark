@@ -18,6 +18,7 @@ export type Interview = {
   interviewQuestionTitle?: string | null,
   interviewQuestionType?: string | null,
   interviewFeedback?: string | null,
+  interviewPerformance?: string | null,
 };
 
 export type ResumeScan = {
@@ -163,6 +164,7 @@ export type CreateUserInterviewWithQuestionMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -185,6 +187,7 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -388,6 +391,7 @@ export type GetUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -411,6 +415,7 @@ export type GetUserInterviewsByMonthQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };
@@ -432,6 +437,7 @@ export type GetUserInterviewMetaDataQuery = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -453,6 +459,7 @@ export type SearchUserInterviewsQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };
@@ -475,6 +482,7 @@ export type SearchUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -607,6 +615,7 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };

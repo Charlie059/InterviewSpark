@@ -19,6 +19,7 @@ type Interview {
   interviewQuestionTitle: String
   interviewQuestionType: String
   interviewFeedback: String
+  interviewPerformance: AWSJSON
 }
 
 type InterviewList {
