@@ -8,7 +8,10 @@ module.exports = {
   experimental: {
     esmExternals: false
   },
-  webpack: config => {
+  webpack: (config, { nextRuntime }) => {
+    // Undocumented property of next 12.
+    if (nextRuntime !== 'nodejs') return config
+
     config.experiments = {
       asyncWebAssembly: true,
       layers: true
@@ -27,6 +30,14 @@ module.exports = {
       }
     })
 
-    return config
+    return {
+      ...config,
+      entry() {
+        return config.entry().then(entry => ({
+          ...entry,
+          cli: path.resolve(process.cwd(), 'src/pages/api/chat.ts')
+        }))
+      }
+    }
   }
 }
