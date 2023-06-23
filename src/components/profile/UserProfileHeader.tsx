@@ -38,7 +38,7 @@ type diagTypes = 'profile' | 'cover'
 
 const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   // ** State
-  console.log(data)
+  console.log('date check:', data.joiningDate)
 
   const joiningDate = format(new Date(data.joiningDate), 'PP')
 
@@ -56,7 +56,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
     if (type == 'Dashboard') {
       setShowCover(true)
     } else {
-      setShowCover(true)
+      setShowCover(false)
     }
     const fetchProPicUrl = async () => {
       try {

@@ -25,6 +25,9 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import InputAdornment from '@mui/material/InputAdornment'
 import DialogContentText from '@mui/material/DialogContentText'
+import Fab from '@mui/material/Fab'
+
+import Icon from 'src/@core/components/icon'
 
 // ** Utils Import
 import { Controller, useForm } from 'react-hook-form'
@@ -43,7 +46,7 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
 
 // @ts-ignore
-const UserProfile = ({ user, data }) => {
+const UserProfile = ({ user, data, type }) => {
   // ** State
 
   //data.email = auth.user?.userEmailAddress
@@ -142,7 +145,7 @@ const UserProfile = ({ user, data }) => {
       <Grid item xs={12}>
         <UserProfileHeader data={data} type={'profile'} />
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={type === 'tutorial' ? 12 : 4}>
         {/*{isLoading ? (*/}
         {/*  <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>*/}
         {/*    <CircularProgress sx={{ mb: 4 }} />*/}
@@ -152,7 +155,14 @@ const UserProfile = ({ user, data }) => {
         {/* <Profile data={data} />*/}
         <Card>
           <CardContent>
-            <Typography variant='h6'>Details</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant='h6'>Details</Typography>
+              <CardActions sx={{ display: 'flex' }}>
+                <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
+                  <Icon icon='mdi:pencil' />
+                </Fab>
+              </CardActions>
+            </Box>
             <Divider sx={{ mt: 4 }} />
             <Grid container spacing={1}>
               <Grid item xs={6} lg={dashwidth}>
@@ -192,12 +202,6 @@ const UserProfile = ({ user, data }) => {
               </Grid>
             </Grid>
           </CardContent>
-
-          <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-              Edit
-            </Button>
-          </CardActions>
 
           <Dialog
             open={openEdit}
@@ -399,8 +403,8 @@ const UserProfile = ({ user, data }) => {
           </Dialog>
         </Card>
       </Grid>
-      <Grid item xs={10}>
-        <ProfileViewRight profileData={data} />
+      <Grid item xs={8}>
+        {type != 'tutorial' && <ProfileViewRight profileData={data} />}
       </Grid>
     </Grid>
   )

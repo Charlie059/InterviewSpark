@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography'
 import DropzoneWrapper from 'src/@core/styles/libs/react-dropzone'
 import PageHeader from 'src/@core/components/page-header'
 
-import ResumeScan from "src/components/resume/ResumeScan";
+import ResumeScan from 'src/components/resume/ResumeScan'
 
 // <Grid container spacing={6}>
 //   <Grid item xs={12}>
@@ -30,10 +30,8 @@ import ResumeScan from "src/components/resume/ResumeScan";
 //   </Grid>
 // </Grid>
 
-const ResumeScanPage = () => {
-
+const ResumeScanPage = ({ type }) => {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-
 
   return (
     <DropzoneWrapper>
@@ -43,7 +41,7 @@ const ResumeScanPage = () => {
           subtitle={<Typography variant='body2'>Upload Your Resume Here</Typography>}
         />
         <Grid item xs={12}>
-           <ResumeScan nocollapse = {true} />
+          <ResumeScan nocollapse={true} />
         </Grid>
       </Grid>
     </DropzoneWrapper>

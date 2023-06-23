@@ -11,14 +11,12 @@ import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import MuiStep from '@mui/material/Step'
-import { useRouter } from 'next/router'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserProfileByUsername } from 'src/graphql/queries'
-import { GetServerSidePropsContext } from 'next/types'
 
 // ** Step Components Imports
 import UserProfile from 'src/components/profile/UserProfile'
@@ -36,7 +34,7 @@ const steps = [
   },
   {
     title: 'Resume',
-    icon: 'Upload resume'
+    subtitle: 'Upload resume'
   },
   {
     title: 'Interview',
@@ -66,7 +64,6 @@ const StepperHeaderContainer = styled(CardContent)(({ theme }) => ({
 const Tutorial = () => {
   // ** States
   const [activeStep, setActiveStep] = useState(0)
-  const [userData, setUserData] = useState()
 
   const auth = useAuth()
   const user = auth.user?.userName
@@ -92,32 +89,33 @@ const Tutorial = () => {
     if ('data' in userDatastore) {
       data = userDatastore.data.getUserProfileByUsername
       console.log('data get:', data)
-      setUserData(data)
+
+      return data
     }
   }
+
+  const [stepContent, setStepContent] = useState<React.ReactNode>()
 
   useEffect(() => {
-    getData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const getStepContent = step => {
-    console.log('data is:', userData)
-    switch (step) {
-      case 0:
-        return <UserProfile user={user} data={userData} />
-      case 1:
-        return <ResumeScanPage />
-      case 2:
-        return <InterviewPage />
-      default:
-        return null
+    const getStepContent = async step => {
+      switch (step) {
+        case 0:
+          const userData = await getData()
+          setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} />)
+          break
+        case 1:
+          setStepContent(<ResumeScanPage type={'tutorial'} />)
+          break
+        case 2:
+          setStepContent(<InterviewPage />)
+          break
+        default:
+          setStepContent(null)
+          break
+      }
     }
-  }
-
-  const renderContent = () => {
-    return getStepContent(activeStep)
-  }
+    getStepContent(activeStep)
+  }, [activeStep])
 
   const renderFooter = () => {
     const stepCondition = activeStep === steps.length - 1
@@ -174,7 +172,7 @@ const Tutorial = () => {
       </StepperHeaderContainer>
       <div>
         <CardContent>
-          {renderContent()}
+          {stepContent}
           {renderFooter()}
         </CardContent>
       </div>
