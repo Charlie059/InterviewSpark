@@ -11,7 +11,7 @@ export const config = {
   api: {
     bodyParser: false
   },
-  runtime: 'experimental-edge'
+  runtime: 'edge'
 }
 
 // Helper function: Parse JSON request
