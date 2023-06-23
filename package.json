@@ -14,7 +14,7 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
-    "@aws-sdk/client-transcribe-streaming": "^3.306.0",
+    "@aws-sdk/client-transcribe-streaming": "^3.358.0",
     "@aws-sdk/credential-provider-cognito-identity": "^3.306.0",
     "@casl/ability": "6.3.2",
     "@casl/react": "3.1.0",
