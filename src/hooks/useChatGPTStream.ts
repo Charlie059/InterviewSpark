@@ -73,16 +73,15 @@ const useChatGPTStream = (addToQueue: (sentence: string) => void, start: () => v
   }
 
   // A function to generate a response from the chatbot
-  const generateResponse = async (question: string) => {
+  const generateResponse = async (prompt: string) => {
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch('/api/route', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          query: question,
-          history: []
+          prompt: prompt
         })
       })
 
