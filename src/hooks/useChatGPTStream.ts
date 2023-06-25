@@ -43,6 +43,7 @@ const handleStreamReading = async (
         break
       }
       const decodedValue = new TextDecoder().decode(value)
+      console.log('decodedValue', decodedValue)
       callback(decodedValue)
     }
   } catch (error) {
