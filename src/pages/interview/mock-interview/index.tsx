@@ -1,498 +1,356 @@
-import React, { useCallback, useRef, useState, useEffect, ReactNode } from 'react'
+/***********************************************************************************************
+  Name: MockInterview
+  Description: This file contains the UI for mock interview.
+  Author: Charlie Gong
+  Company: HireBeat Inc.
+  Contact: Xuhui.Gong@HireBeat.co
+  Create Date: 2023/06/19
+  Update Date: 2023/06/19
+  Copyright: © 2023 HireBeat Inc. All rights reserved.
+************************************************************************************************/
 
-import { API, Storage, Auth, graphqlOperation } from 'aws-amplify'
-import { updateInterviewVideoKey } from 'src/graphql/mutations'
-import { useAuth } from 'src/hooks/useAuth'
-import { useRouter } from 'next/router'
-import { usePolly } from 'src/hooks/usePolly'
-import { getQuestionMetaData } from 'src/graphql/queries'
-
-import Log from 'src/middleware/loggerMiddleware'
-import Webcam from 'react-webcam'
+import Logger from 'src/middleware/loggerMiddleware'
+import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import useTranscribe from 'src/hooks/useTranscribe'
-import axios from 'axios'
+import useMockInterview from 'src/hooks/useMockInterview'
+import { useRouter } from 'next/router'
+import { RoundedMediaLeft } from 'src/components/interview/mockInterview/roundedMediaLeft'
+import PaginationBarWithNumber from 'src/components/interview/mockInterview/paginationBarWithNumber'
+import { Box, Grid } from '@mui/material'
+import MenuIconButton from 'src/components/interview/mockInterview/menuIconButton'
+import BlurDrawer from 'src/components/interview/mockInterview/blurDrawer'
+import TopArea from 'src/components/interview/mockInterview/topArea'
+import RoundedMediaRight from 'src/components/interview/mockInterview/roundedMediaRight'
+import InterviewButton from 'src/components/interview/mockInterview/interviewButton'
+import LoadingScreen from 'src/components/loading/Loading'
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material'
 
-// MUI Components
-import IconButton, { IconButtonProps } from '@mui/material/IconButton'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import VideocamIcon from '@mui/icons-material/Videocam'
-import MicIcon from '@mui/icons-material/Mic'
-import { Box, Card, Grid, Typography, styled } from '@mui/material'
-import CircleProgressBar from 'src/components/interview/mockInterview/circleProgressBar'
-import MenuOpenIcon from '@mui/icons-material/MenuOpen'
-
-interface RecordedChunks {
-  data: Blob[]
+// Define states for the mock interview process
+enum InterviewStatus {
+  Interviewing = 'INTERVIEWING',
+  FinishedQuestion = 'FINISHED_QUESTION',
+  Reviewing = 'REVIEWING',
+  SavedQuestion = 'SAVED_QUESTION',
+  FinishedInterview = 'FINISHED_INTERVIEW',
+  Loading = 'LOADING',
+  NotStarted = 'NOT_STARTED'
+}
+interface Interview {
+  interviewID: string
+  interviewQuestion: string
+  interviewQuestionID: string
+  interviewQuestionTitle: string
+  interviewQuestionType: string
+  interviewVideoKey: string
+  estimatedSecond: number
+  interviewDateTime: string
+  interviewFeedback: string
 }
 
-type StyledIconButtonProps = IconButtonProps & {
-  capturing?: boolean
+interface TimerHandle {
+  start: () => void
+  stop: () => void
+  reset: () => void
 }
-
-// Variables
-let currentQuestionIndex = 0
 
 function MockInterviewPage() {
-  // Router and authentication
+  const interviews: Interview[] = [
+    {
+      interviewID: '1686172082494',
+      interviewQuestion:
+        'Describe a situation where you had to handle a difficult customer. How did you manage the situation? ',
+      interviewQuestionID: '1',
+      interviewQuestionTitle: 'Difficult Customer',
+      interviewQuestionType: 'Behavioral',
+      interviewVideoKey: '',
+      estimatedSecond: 200,
+      interviewDateTime: '2021-07-01T00:00:00',
+      interviewFeedback: 'Good'
+    },
+    {
+      interviewID: '1686172082495',
+      interviewQuestion:
+        ' a XXXX. How did you manage the situation? DeDescribe a situation where you had to handle a difficult customer. How did you manage the situation? sDescribe a situation where you had to handle a difficult customer. How did you manage the situation? cribe a situation wDescribe a situation where you had to handle a difficult customer. How did you manage the situation? here you had to handle a difficult customer. How did you manage the situation? ',
+      interviewQuestionID: '2',
+      interviewQuestionTitle: ' Customer',
+      interviewQuestionType: 'Behavioral',
+      interviewVideoKey: '',
+      estimatedSecond: 120,
+      interviewDateTime: '2021-07-01T00:00:00',
+      interviewFeedback: 'Good'
+    }
+  ]
   const router = useRouter()
-  const auth = useAuth()
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [dialogOpen, setDialogOpen] = React.useState(false)
 
-  // State variables
-  const webcamRef = useRef<Webcam>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const [capturing, setCapturing] = useState<boolean>(false)
-  const [recordedChunks, setRecordedChunks] = useState<RecordedChunks>({ data: [] })
+  const timerRef = useRef<TimerHandle | null>(null)
+  const lastInvocationTime = useRef(0)
+  const {
+    getInterviewState,
+    getCaption,
+    startQuestion,
+    finishQuestion,
+    startReview,
+    moveToNextQuestion,
+    setQuestionIndex,
+    retryQuestion,
+    saveVideo,
+    setVideoOn,
+    setVideoOff,
+    getAudioRef,
+    getWebcamRef,
+    getVideoBlob,
+    isVideoEnabled,
+    isReading
+  } = useMockInterview(interviews)
 
-  const [timeLeft, setTimeLeft] = useState(1000)
-  const [messageToSpeak, setMessageToSpeak] = useState<string | null>(null)
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false)
-  const [detailedInterviews, setDetailedInterviews] = useState<any[]>([])
+  // Helper function to guard against multiple invocations of finishQuestion
+  function guardedFinishQuestion() {
+    const now = Date.now()
+    const timeSinceLastInvocation = now - lastInvocationTime.current
 
-  // Hooks for transcription and text-to-speech
-  const { transcribedText, handleStartRecording, handleStopRecording } = useTranscribe()
-  const { audioRef } = usePolly(messageToSpeak)
-
-  const [videoEnabled, setVideoEnabled] = useState(true)
-  const [audioEnabled, setAudioEnabled] = useState(true)
-  const [showCard, setShowCard] = useState(false)
-
-  const StyledVideoRecordingButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
-    ({ theme }) => ({
-      backgroundColor: videoEnabled ? '#72D868' : '#DFDDDD',
-
-      '& .MuiSvgIcon-root': {
-        color: 'white',
-        fontSize: '2rem'
-      },
-      padding: theme.spacing(4.1),
-      margin: theme.spacing(0, 1.2)
-    })
-  )
-
-  const CircleProgressBarWrapper = styled(Box)(({}) => ({
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    rotate: '270deg'
-  }))
-
-  const StyledNextButtonWrapper = styled(Box)(({}) => ({
-    position: 'relative',
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  }))
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const StyledMicRecordingButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(
-    ({ theme }) => ({
-      backgroundColor: audioEnabled ? '#FF6C4B' : '#DFDDDD',
-
-      '& .MuiSvgIcon-root': {
-        color: 'white',
-        fontSize: '2rem'
-      },
-      padding: theme.spacing(4.1),
-      margin: theme.spacing(0, 1.2)
-    })
-  )
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const StyledStartButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
-    backgroundColor: '#DFDDDD',
-    '&:hover': {
-      backgroundColor: '#3888FF'
-    },
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-      fontSize: '2rem'
-    },
-    padding: theme.spacing(4.1),
-    margin: theme.spacing(0, 1.2)
-  }))
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const StyledNextButton = styled(({ ...props }: StyledIconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
-    backgroundColor: '#DFDDDD',
-    '&:hover': {
-      backgroundColor: '#3888FF'
-    },
-    '& .MuiSvgIcon-root': {
-      color: 'white',
-      fontSize: '2rem'
-    },
-    padding: theme.spacing(4.1),
-    margin: theme.spacing(0, 1.2)
-  }))
-
-  const handleVideoToggle = () => {
-    setVideoEnabled(prev => !prev)
-    webcamRef.current?.stream?.getVideoTracks().forEach(track => (track.enabled = !track.enabled))
+    if (timeSinceLastInvocation > 10000) {
+      lastInvocationTime.current = now
+      finishQuestion()
+    }
   }
 
-  const handleAudioToggle = () => {
-    setAudioEnabled(prev => !prev)
-    webcamRef.current?.stream?.getAudioTracks().forEach(track => (track.enabled = !track.enabled))
+  // Timer helper functions
+  const startTimer = function (): void {
+    timerRef.current && timerRef.current.start()
   }
 
-  // Fetch interview questions from the router query
-  const interviewsParam = router.query.interviews
-    ? Array.isArray(router.query.interviews)
-      ? router.query.interviews[0]
-      : router.query.interviews
-    : JSON.stringify([])
+  const stopTimer = function (): void {
+    timerRef.current && timerRef.current.stop()
+  }
+  const resetTimer = function (): void {
+    timerRef.current && timerRef.current.reset()
+  }
 
-  const interviews = JSON.parse(interviewsParam)
+  // Handle start interview
+  const handleStartCaptureClick = useCallback(() => {
+    Logger.debug('Start Interview')
+    startQuestion()
+  }, [startQuestion])
 
+  // Handle finish question and move to next question
+  const handleMoveToNextQuestion = useCallback(() => {
+    moveToNextQuestion()
+  }, [moveToNextQuestion])
+
+  // Handle Save video
+  const handleSaveVideo = useCallback(() => {
+    saveVideo()
+      .then(() => {
+        Logger.info('Video successfully saved.')
+      })
+      .catch(error => {
+        Logger.info('Failed to save video:', error)
+      })
+  }, [saveVideo])
+
+  // Handle the toggle drawer
+  const handleToggleDrawer = function (): void {
+    setDrawerOpen(!drawerOpen)
+  }
+
+  // Handle the close interview
+  const handleCloseInterview = function (): void {
+    Logger.debug('Close Interview')
+    setDialogOpen(true) // Open the dialog
+  }
+
+  // Handle the handleDialogClose
+  const handleDialogClose = () => {
+    setDialogOpen(false)
+  }
+
+  // Handle the handleDialogConfirm
+  const handleDialogConfirm = () => {
+    setDialogOpen(false)
+    router.push('/interview') // Redirect to the homepage
+  }
+
+  // Handle the retry question
+  const handleRetryQuestion = function (): void {
+    retryQuestion()
+    resetTimer()
+    startTimer()
+  }
+
+  // Handle the click of the interview button
+  const handleClickInterviewButton = async function (status: InterviewStatus): Promise<void> {
+    Logger.debug('Click Interview Button')
+    switch (status) {
+      case InterviewStatus.NotStarted:
+        handleStartCaptureClick()
+        startTimer()
+
+        break
+      case InterviewStatus.Interviewing:
+        if (!isReading) {
+          stopTimer()
+
+          // Wait 2 seconds to let transcription catch up
+          await new Promise(resolve => setTimeout(resolve, 2800))
+          guardedFinishQuestion()
+        }
+        resetTimer()
+
+        break
+      case InterviewStatus.FinishedQuestion:
+        if (!isReading) {
+          handleSaveVideo()
+        }
+        break
+      case InterviewStatus.Reviewing:
+        if (!isReading) {
+          handleSaveVideo()
+        }
+        break
+      default:
+        break
+    }
+  }
+
+  // Handle change the page
+  const handlePageChange = function (newPage: number): void {
+    Logger.info('page change', newPage)
+
+    // If current status is not started, then we can change the page
+    if (getInterviewState.status === InterviewStatus.NotStarted) {
+      setQuestionIndex(newPage - 1)
+    }
+  }
+
+  // Handle the timeout
+  const handleTimeout = function (): void {
+    finishQuestion()
+    resetTimer()
+  }
+
+  // Define the UseEffect
+
+  // Reset the timer when the question index changes
   useEffect(() => {
-    // Helper function to fetch all the question details from the GraphQL API
-    const fetchAllQuestionsDetails = async (interviews: any[]) => {
-      try {
-        const questionDetailsPromises = interviews.map(async interview => {
-          const result = (await API.graphql(
-            graphqlOperation(getQuestionMetaData, { questionID: interview.interviewQuestionID })
-          )) as any
+    resetTimer()
+  }, [getInterviewState.currentQuestionIndex])
 
-          const interviewQuestion = result.data.getQuestionMetaData.interviewQuestion
-          const estimatedSecond = result.data.getQuestionMetaData.estimatedSecond
-
-          return { ...interview, interviewQuestion, estimatedSecond }
-        })
-        const newInterviews = await Promise.all(questionDetailsPromises)
-
-        return newInterviews
-      } catch (error) {
-        console.error('Error fetching question details:', error)
-      }
-    }
-
-    // Fetch all the question details
-    const fetchAllDetails = async () => {
-      const allDetails = await fetchAllQuestionsDetails(interviews)
-      setDetailedInterviews(allDetails as any)
-    }
-    fetchAllDetails()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Helper function to process the recorded chunks
-  const handleDataAvailable = useCallback(
-    ({ data }: BlobEvent) => {
-      if (data.size > 0) {
-        setRecordedChunks(prev => ({ data: [...prev.data, data] }))
-      }
-    },
-    [setRecordedChunks]
-  )
-
-  // Helper function to save the recorded chunks to S3
-  const saveToS3 = async (feedback: string) => {
-    try {
-      const currentUser = await Auth.currentAuthenticatedUser()
-      const userId = currentUser.attributes.sub
-      const timestamp = new Date().getTime()
-      const uniqueFilename = `${userId}-${timestamp}-interview.webm`
-
-      const blob = new Blob(recordedChunks.data, { type: 'video/webm' })
-
-      await Storage.put(uniqueFilename, blob, {
-        contentType: 'video/webm',
-        level: 'private'
-      })
-
-      const interview = detailedInterviews[currentQuestionIndex]
-
-      const emailAddress = auth.user?.userEmailAddress
-      const interviewID = interview.interviewID
-      const questionID = interview.interviewQuestionID
-
-      const updateResult = await API.graphql(
-        graphqlOperation(updateInterviewVideoKey, {
-          emailAddress: emailAddress,
-          interviewID: interviewID,
-          questionID: questionID,
-          interviewVideoKey: uniqueFilename,
-          interviewFeedback: feedback
-        })
-      )
-
-      Log.info('Interview updated:', updateResult)
-    } catch (error) {
-      console.error('Error saving to S3:', error)
-    }
-  }
-
-  // Helper function to reset the media recorder
-  const resetMediaRecorder = () => {
-    // Reset the media recorder
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.removeEventListener('dataavailable', handleDataAvailable)
-    }
-    setRecordedChunks({ data: [] })
-
-    const mediaStream = webcamRef.current?.stream
-    if (mediaStream) {
-      mediaRecorderRef.current = new MediaRecorder(mediaStream, {
-        mimeType: 'video/webm'
-      })
-      mediaRecorderRef.current.addEventListener('dataavailable', handleDataAvailable)
-      mediaRecorderRef.current.start(1000)
-    }
-  }
-
-  // Helper function to wait for the audio playing to end
-  const waitForAudioToEnd = () => {
-    return new Promise(resolve => {
-      setIsAudioPlaying(true)
-      audioRef.current?.addEventListener('ended', () => {
-        setIsAudioPlaying(false)
-        resolve(true)
-      })
-    })
-  }
-
-  // Helper function to send the transcribed text to GPT-3.5 Speak
-  // Helper function to send the transcribed text to GPT-3.5 Speak
-  async function sendToGPT2Speak(transcribedText_: string) {
-    const prompt =
-      'This is a mock interview. You are interviewer, the candidate is asked to " ' +
-      detailedInterviews[currentQuestionIndex].interviewQuestion +
-      '". And the candidate answer is : " ' +
-      transcribedText_ +
-      ' " ' +
-      'Please give your response to this answer with the following rules:' +
-      ' 1. The response should not be a question and it should be a general feedback about 300 words.' +
-      ' 2. Ignore the grammar and spelling mistakes.' +
-      ' 3. If the candidate answer is not clear, do not ask any questions to the candidate and say some general feedback.' +
-      ' 4. The response should be a complete sentence and should like a real interview conversion between you and candidate.' +
-      ' 5. If the candidate did not answer any question, just say I did not get you' +
-      ' 6. Do not ask any follow up questions to the candidate.' +
-      ' 7. Do not ask question!'
-
-    console.log(prompt)
-    let res
-    try {
-      res = await axios.post('/api/chatgpt', {
-        message: prompt
-      })
-    } catch (error) {
-      console.error('First attempt to contact GPT failed, trying again', error)
-      try {
-        res = await axios.post('/api/chatgpt', {
-          message: prompt
-        })
-      } catch (error) {
-        console.error('Second attempt to contact GPT failed', error)
-        alert('Unable to contact GPT. Please check your network connection and try again.')
-      }
-    }
-
-    console.log(res?.data.text)
-
-    // Use polly to speak the response
-    setMessageToSpeak(res?.data.text)
-    await waitForAudioToEnd()
-
-    return res?.data.text
-  }
-
-  // Handle the start of the recording
-  const handleStartCaptureClick = async () => {
-    setCapturing(true)
-
-    const estimatedSecond = detailedInterviews[currentQuestionIndex]?.estimatedSecond || 1000
-    console.log('detailedInterviews', detailedInterviews)
-    setTimeLeft(estimatedSecond)
-
-    // If the first question, then play the welcome audio
-    if (currentQuestionIndex === 0) {
-      setMessageToSpeak('Welcome to the mock interview. I am your interviewer Alice. Let us start the interview.')
-      await waitForAudioToEnd()
-    }
-
-    // Play the audio of the question
-    // if the question is not the first question
-    if (currentQuestionIndex > 0) {
-      setMessageToSpeak('Next question is, ' + detailedInterviews[currentQuestionIndex].interviewQuestion)
-      await waitForAudioToEnd()
-    } else {
-      setMessageToSpeak('My question is, ' + detailedInterviews[currentQuestionIndex].interviewQuestion)
-      await waitForAudioToEnd() // Wait for the audio playing to end
-    }
-
-    // Start the transcription
-    handleStartRecording()
-
-    resetMediaRecorder()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }
-
-  const handleUploadAndMoveToNextQuestion = async () => {
-    setCapturing(true)
-    setTimeLeft(NaN)
-
-    // If the media recorder state is not 'inactive', then stop it
-    if (mediaRecorderRef.current?.state !== 'inactive') {
-      mediaRecorderRef.current?.stop()
-    }
-
-    setMessageToSpeak('Ok, give me a second.')
-    await waitForAudioToEnd()
-
-    // TODO - Add a loading indicator and it is not good to use a timeout here
-    // Wait 2.5 seconds for the transcription to complete
-    await new Promise(resolve => setTimeout(resolve, 2500))
-
-    // Pass the text to the ChatGPT API
-    const transcribedText_ = transcribedText
-
-    // Stop the transcription
-    handleStopRecording()
-
-    // Send the transcribed text to GPT-3.5 Speak
-    const feedback = await sendToGPT2Speak(transcribedText_)
-
-    // Upload the video to S3
-    await saveToS3(feedback)
-
-    // Move to the next question
-    currentQuestionIndex += 1
-
-    if (currentQuestionIndex < interviews.length) {
-      handleStartCaptureClick()
-    } else {
-      setCapturing(false)
-
-      // Turn off the webcam and stop the media recorder
-      webcamRef.current?.stream?.getTracks().forEach(track => track.stop())
-
+  // If finished, redirect to the result page
+  useEffect(() => {
+    if (getInterviewState.status === InterviewStatus.FinishedInterview) {
       router.push('/interview/finish')
     }
-  }
+  }, [getInterviewState.status, router])
 
+  // If hooks encountered an error, show the error message
   useEffect(() => {
-    let interval: any | undefined
+    if (getInterviewState.error) {
+      Logger.error('Error:', getInterviewState.error)
 
-    if (capturing && !isAudioPlaying) {
-      interval = setInterval(() => {
-        setTimeLeft(prevTime => prevTime - 1)
-      }, 1000)
+      // TODO: Based on the error type, show the error message and handle the error
+      alert(getInterviewState.error.type)
     }
+  }, [getInterviewState.error])
 
-    if (timeLeft === 0 && capturing) {
-      handleUploadAndMoveToNextQuestion()
+  // If the status is SavedQuestion, move to the next question
+  useEffect(() => {
+    if (getInterviewState.status === InterviewStatus.SavedQuestion) {
+      handleMoveToNextQuestion()
     }
-
-    return () => clearInterval(interval)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [capturing, timeLeft, isAudioPlaying])
+  }, [getInterviewState.status, handleMoveToNextQuestion])
 
   return (
-    <Grid container direction='column' alignItems='center'>
-      <Box sx={{ margin: 20 }}></Box>
-      <Grid item xs={12}>
-        <Grid container spacing={5} alignItems='center'>
-          <Grid item xs={6}>
-            <Box width='500px' height='380px' sx={{ position: 'relative' }}>
-              <Webcam
-                audio={true}
-                muted={true}
-                ref={webcamRef}
-                width='100%'
-                height='100%'
-                style={{
-                  borderRadius: '15px',
-                  position: 'absolute',
-                  zIndex: videoEnabled ? 1 : -1
-                }}
-              />
-              <Box
-                width='100%'
-                height='100%'
-                borderRadius={'15px'}
-                style={{
-                  backgroundColor: videoEnabled ? 'transparent' : 'rgba(128, 128, 128, 0.5)',
-                  position: 'absolute',
-                  zIndex: videoEnabled ? -1 : 1
-                }}
-              />
-            </Box>
-          </Grid>
-          <Grid item xs={6}>
-            <Box
-              width='500px'
-              height='380px'
-              borderRadius={'15px'}
-              style={{ overflow: 'hidden', backgroundColor: '#EBEBEB', position: 'relative' }}
-              onClick={() => setShowCard(!showCard)}
-            >
-              <MenuOpenIcon style={{ position: 'absolute', bottom: 0, right: 0, margin: 5, color: '#0f0f0f0f' }} />
-              <Grid container alignItems='center' justifyContent='center' style={{ height: '100%' }}>
-                <img src='/images/favicon.png' alt='logo' width={'15%'} height={'auto'} />
-              </Grid>
-            </Box>
-          </Grid>
-        </Grid>
-      </Grid>
-      {showCard && (
-        <Card sx={{ marginTop: 8, marginLeft: 30, marginRight: 30, backgroundColor: '#EBEBEB' }}>
-          {/* <p>{transcribedText}</p> */}
-          <Typography variant='h6' sx={{ ml: 2, fontWeight: 200, margin: '10px 20px 10px 20px' }}>
-            Question {currentQuestionIndex + 1}: {detailedInterviews[currentQuestionIndex]?.interviewQuestion}
-          </Typography>
-        </Card>
-      )}
+    <div style={{ backgroundColor: '#F2F7FE', minHeight: '100vh' }}>
+      <audio ref={getAudioRef} />
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>{'Close the Interview'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to close the interview? If you confirm, you will be redirected to the homepage.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color='primary'>
+            No
+          </Button>
+          <Button onClick={handleDialogConfirm} color='primary' autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-      <Box margin={2}></Box>
-      <Box width='100%' height='100%' p={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        {currentQuestionIndex < interviews.length && (
-          <>
-            <StyledVideoRecordingButton onClick={handleVideoToggle}>
-              <VideocamIcon />
-            </StyledVideoRecordingButton>
+      <Box>
+        {getInterviewState.status === InterviewStatus.Loading && <LoadingScreen />}
+        <BlurDrawer isOpen={drawerOpen} toggleDrawer={handleToggleDrawer} interviews={interviews} />
+        <Box>
+          <TopArea
+            ref={timerRef}
+            onExit={handleCloseInterview}
+            initialTime={interviews[getInterviewState.currentQuestionIndex].estimatedSecond}
+            onComplete={handleTimeout}
+            status={getInterviewState.status}
+          />
+        </Box>
 
-            <StyledMicRecordingButton onClick={handleAudioToggle}>
-              <MicIcon />
-            </StyledMicRecordingButton>
-            {capturing ? (
-              <>
-                <StyledNextButtonWrapper>
-                  <CircleProgressBarWrapper>
-                    <CircleProgressBar
-                      size={70}
-                      progress={
-                        !isNaN(timeLeft / (detailedInterviews[currentQuestionIndex]?.estimatedSecond || 1))
-                          ? (timeLeft / (detailedInterviews[currentQuestionIndex]?.estimatedSecond || 1)) * 100
-                          : 0
-                      }
-                      strokeWidth={8}
-                      circleOneStroke='#D9D9D9'
-                      circleTwoStroke='#4C4CFF'
-                    />
-                  </CircleProgressBarWrapper>
-                  <StyledNextButton onClick={handleUploadAndMoveToNextQuestion}>
-                    <ArrowForwardIosIcon />
-                  </StyledNextButton>
-                </StyledNextButtonWrapper>
-              </>
-            ) : (
-              <StyledStartButton onClick={handleStartCaptureClick}>
-                <PlayArrowIcon />
-              </StyledStartButton>
-            )}
-          </>
-        )}
+        <Box mt={'5px'} mb={'40px'}>
+          <Grid
+            container
+            spacing={10}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Grid item xs={0} sm={5} md={5.5} lg={4.5}>
+              <RoundedMediaLeft
+                getWebcamRef={getWebcamRef}
+                getVideoBlob={getVideoBlob}
+                isVideoEnabled={isVideoEnabled}
+                setVideoOn={setVideoOn}
+                setVideoOff={setVideoOff}
+                status={getInterviewState.status}
+                startReview={startReview}
+                isReading={isReading}
+              />
+            </Grid>
+            <Grid item xs={12} sm={5} md={5.5} lg={4.5}>
+              <RoundedMediaRight
+                status={getInterviewState.status}
+                questionText={interviews[getInterviewState.currentQuestionIndex].interviewQuestion}
+                questionTitle={interviews[getInterviewState.currentQuestionIndex].interviewQuestionTitle}
+                skipQuestion={() => {
+                  moveToNextQuestion()
+                }}
+                caption={getCaption}
+                isReading={isReading}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Box mb={'20px'}>
+          <InterviewButton
+            status={getInterviewState.status}
+            isReading={isReading}
+            onButtonClick={handleClickInterviewButton}
+            onRetryClick={handleRetryQuestion}
+          />
+        </Box>
+
+        <Box mt={'20px'} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <MenuIconButton onButtonClick={handleToggleDrawer} />
+          <PaginationBarWithNumber
+            totalPages={interviews.length}
+            currentPage={getInterviewState.currentQuestionIndex + 1}
+            onPageChange={handlePageChange}
+            enableSelect={true}
+          />
+        </Box>
       </Box>
-      <audio ref={audioRef} />
-    </Grid>
+    </div>
   )
 }
 

@@ -45,22 +45,30 @@ export const stopRecording = function () {
 }
 
 const createTranscribeClient = async () => {
-  const credentials = await Auth.currentCredentials()
-  const region = credentials.identityId.split(':')[0]
-  transcribeClient = new TranscribeStreamingClient({
-    region: region,
-    credentials
-  })
+  try {
+    const credentials = await Auth.currentCredentials()
+    const region = credentials.identityId.split(':')[0]
+    transcribeClient = new TranscribeStreamingClient({
+      region: region,
+      credentials
+    })
+  } catch (error) {
+    throw new Error(`Error creating Transcribe client: ${error.message}`)
+  }
 }
 
 const createMicrophoneStream = async () => {
-  microphoneStream = new MicrophoneStream()
-  microphoneStream.setStream(
-    await window.navigator.mediaDevices.getUserMedia({
-      video: false,
-      audio: true
-    })
-  )
+  try {
+    microphoneStream = new MicrophoneStream()
+    microphoneStream.setStream(
+      await window.navigator.mediaDevices.getUserMedia({
+        video: false,
+        audio: true
+      })
+    )
+  } catch (error) {
+    throw new Error(`Error creating microphone stream: ${error.message}`)
+  }
 }
 
 const startStreaming = async (language, callback) => {
@@ -75,21 +83,23 @@ const startStreaming = async (language, callback) => {
     AudioStream: getAudioStream()
   })
 
-  const data = await transcribeClient.send(command)
+  try {
+    const data = await transcribeClient.send(command)
 
-  console.log(data)
-
-  for await (const event of data.TranscriptResultStream) {
-    for (const result of event.TranscriptEvent.Transcript.Results || []) {
-      if (result.IsPartial === false) {
-        const noOfResults = result.Alternatives[0].Items.length
-        for (let i = 0; i < noOfResults; i++) {
-          const content = result.Alternatives[0].Items[i].Content
-          transcribedText += content + ' '
-          callback(transcribedText)
+    for await (const event of data.TranscriptResultStream) {
+      for (const result of event.TranscriptEvent.Transcript.Results || []) {
+        if (result.IsPartial === false) {
+          const noOfResults = result.Alternatives[0].Items.length
+          for (let i = 0; i < noOfResults; i++) {
+            const content = result.Alternatives[0].Items[i].Content
+            transcribedText += content + ' '
+            callback(transcribedText)
+          }
         }
       }
     }
+  } catch (error) {
+    throw new Error(`Error in transcription: ${error.message}`)
   }
 }
 

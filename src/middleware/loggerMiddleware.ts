@@ -13,52 +13,30 @@ export function setLogLevel(level: LogLevel): void {
   logLevel = level
 }
 
-export function debug(message: any, obj?: any): void {
-  if (logLevel <= LogLevel.DEBUG) {
+function log(level: LogLevel, levelStr: string, color: (s: string) => string, ...messages: any[]): void {
+  if (logLevel <= level) {
     const functionName = getFunctionName()
     console.log(
-      chalk.gray(`[${new Date().toISOString()}] [DEBUG] [${functionName}]`) + ' ' + JSON.stringify(message, null, 2)
+      color(`[${new Date().toISOString()}] [${levelStr}] [${functionName}]`),
+      ...messages.map(m => (typeof m === 'string' ? m : JSON.stringify(m, null, 2)))
     )
-    if (obj) {
-      console.log(obj)
-    }
   }
 }
 
-export function info(message: any, obj?: any): void {
-  if (logLevel <= LogLevel.INFO) {
-    const functionName = getFunctionName()
-    console.log(
-      chalk.cyan(`[${new Date().toISOString()}] [INFO] [${functionName}]`) + ' ' + JSON.stringify(message, null, 2)
-    )
-    if (obj) {
-      console.log(obj)
-    }
-  }
+export function debug(...messages: any[]): void {
+  log(LogLevel.DEBUG, 'DEBUG', chalk.gray, ...messages)
 }
 
-export function warn(message: any, obj?: any): void {
-  if (logLevel <= LogLevel.WARN) {
-    const functionName = getFunctionName()
-    console.log(
-      chalk.yellow(`[${new Date().toISOString()}] [WARN] [${functionName}]`) + ' ' + JSON.stringify(message, null, 2)
-    )
-    if (obj) {
-      console.log(obj)
-    }
-  }
+export function info(...messages: any[]): void {
+  log(LogLevel.INFO, 'INFO', chalk.cyan, ...messages)
 }
 
-export function error(message: any, obj?: any): void {
-  if (logLevel <= LogLevel.ERROR) {
-    const functionName = getFunctionName()
-    console.log(
-      chalk.red(`[${new Date().toISOString()}] [ERROR] [${functionName}]`) + ' ' + JSON.stringify(message, null, 2)
-    )
-    if (obj) {
-      console.log(obj)
-    }
-  }
+export function warn(...messages: any[]): void {
+  log(LogLevel.WARN, 'WARN', chalk.yellow, ...messages)
+}
+
+export function error(...messages: any[]): void {
+  log(LogLevel.ERROR, 'ERROR', chalk.red, ...messages)
 }
 
 function getFunctionName(): string {
@@ -67,7 +45,6 @@ function getFunctionName(): string {
   if (stack) {
     const functionName = stack[3].trim().split(' ')[1]
 
-    // return functionName.substring(0, functionName.length - 1)
     return functionName ? functionName : ''
   } else {
     return ''

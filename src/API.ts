@@ -18,6 +18,7 @@ export type Interview = {
   interviewQuestionTitle?: string | null,
   interviewQuestionType?: string | null,
   interviewFeedback?: string | null,
+  interviewPerformance?: string | null,
 };
 
 export type ResumeScan = {
@@ -34,8 +35,8 @@ export type Profile = {
   __typename: "Profile",
   fName?: string | null,
   lName?: string | null,
-  photoImgURL?: string | null,
-  coverImgURL?: string | null,
+  photoImgKey?: string | null,
+  coverImgKey?: string | null,
   resumeKey?: string | null,
   addressLine1?: string | null,
   addressLine2?: string | null,
@@ -134,7 +135,7 @@ export type ResumeScanList = {
 
 export type CreateNewGuestUserMutationVariables = {
   emailAddress: string,
-  userName?: string | null,
+  userName: string,
   fName: string,
   lName: string,
 };
@@ -163,6 +164,7 @@ export type CreateUserInterviewWithQuestionMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -185,6 +187,7 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -195,10 +198,10 @@ export type UpdateUserProfileMutationVariables = {
   city?: string | null,
   contact?: string | null,
   country?: string | null,
-  coverImgURL?: string | null,
+  coverImgKey?: string | null,
   fName?: string | null,
   lName?: string | null,
-  photoImgURL?: string | null,
+  photoImgKey?: string | null,
   postalCode?: string | null,
   resumeKey?: string | null,
   state?: string | null,
@@ -288,8 +291,8 @@ export type GetUserProfileQuery = {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
-    photoImgURL?: string | null,
-    coverImgURL?: string | null,
+    photoImgKey?: string | null,
+    coverImgKey?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,
@@ -315,8 +318,8 @@ export type GetUserProfileByUsernameQuery = {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
-    photoImgURL?: string | null,
-    coverImgURL?: string | null,
+    photoImgKey?: string | null,
+    coverImgKey?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,
@@ -388,6 +391,7 @@ export type GetUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -411,6 +415,7 @@ export type GetUserInterviewsByMonthQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };
@@ -432,6 +437,7 @@ export type GetUserInterviewMetaDataQuery = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -453,6 +459,7 @@ export type SearchUserInterviewsQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };
@@ -475,6 +482,7 @@ export type SearchUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -607,6 +615,7 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };

@@ -9,18 +9,27 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Demo Components Imports
 import UserProfile from 'src/components/profile/UserProfile'
+import PublicProfile from "../../components/profile/PublicProfile";
 
 const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
+  const test = true;
+
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
   console.log(data)
 
   // If user is current user or profile is public, display profile
-  if (data.isPublic || user === auth.user?.userName) {
+  if (user === auth.user?.userName) {
     return <UserProfile user={user} data={data} />
+  } else if(test || data.isPublic){
+    if(auth.user){
+      return <PublicProfile user={user} data = {data}/>
+    }else{
+      router.replace(`/`+user)
+    }
   } else {
     // If user is unauthorized, redirect to 401 page
     router.replace('/401')
