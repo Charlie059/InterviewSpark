@@ -59,3 +59,12 @@ export type Education = {
   eduActivities?: string
   eduDescription?: string
 }
+
+export type WorkHistory = {
+  workHistoryJobTitle: string
+  workHistoryEmployer: string
+  workHistoryStartDate: string
+  workHistoryEndDate: string
+  workHistoryJobDescription?: string
+  workHistoryIcon?: string
+}
