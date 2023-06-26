@@ -85,10 +85,8 @@ const Tutorial = () => {
     // Get userProfile data from GraphQL
     let data = null
     const userDatastore = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
-    console.log('datastore:', userDatastore)
     if ('data' in userDatastore) {
       data = userDatastore.data.getUserProfileByUsername
-      console.log('data get:', data)
 
       return data
     }
