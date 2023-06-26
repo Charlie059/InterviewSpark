@@ -1,5 +1,5 @@
 // ** React Imports
-import {ReactNode, useState} from 'react'
+import { ReactNode, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -10,48 +10,48 @@ import Divider from '@mui/material/Divider'
 import CardContent from '@mui/material/CardContent'
 
 // ** Types Import
-import {Education, WorkHistory} from "../../context/types";
+import { Education, WorkHistory } from '../../context/types'
 
 // ** Layout & Component Import
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
-import BlankLayout from "../../@core/layouts/BlankLayout";
+import BlankLayout from '../../@core/layouts/BlankLayout'
 import EducationCard from './profile-cards/EducationCard'
-import WorkHistoryCard from "./profile-cards/WorkHistoryCard";
+import WorkHistoryCard from './profile-cards/WorkHistoryCard'
 
 // @ts-ignore
-const PublicProfile = ({ user, data }) => {
+const PublicProfile = ({ user, data, type }) => {
   // ** State
 
   console.log('current profile page is for', user)
   console.log('current data is:', data)
 
-  const educationTestData:Education[] = [
+  const educationTestData: Education[] = [
     {
-      eduDegree : "Masters",
-      eduFieldStudy : "Computer Science",
-      eduSchool : "Rutgers University",
-      eduStartDate : "2021",
-      eduEndDate : "2023",
-      eduActivities:"testing Activities",
-      eduDescription:"testing description",
+      eduDegree: 'Masters',
+      eduFieldStudy: 'Computer Science',
+      eduSchool: 'Rutgers University',
+      eduStartDate: '2021',
+      eduEndDate: '2023',
+      eduActivities: 'testing Activities',
+      eduDescription: 'testing description'
     },
     {
-      eduDegree : "Bachelors",
-      eduFieldStudy : "Computer Science",
-      eduSchool : "Ohio State University",
-      eduStartDate : "2019",
-      eduEndDate : "2021",
-    },
+      eduDegree: 'Bachelors',
+      eduFieldStudy: 'Computer Science',
+      eduSchool: 'Ohio State University',
+      eduStartDate: '2019',
+      eduEndDate: '2021'
+    }
   ]
 
-  const workHistoryTestData:WorkHistory[] = [
+  const workHistoryTestData: WorkHistory[] = [
     {
-      workHistoryJobTitle: "Full Stack Developer",
-      workHistoryEmployer: "HireBeat",
-      workHistoryStartDate: "May 2021",
-      workHistoryEndDate: "",
-      workHistoryJobDescription:"",
-    },
+      workHistoryJobTitle: 'Full Stack Developer',
+      workHistoryEmployer: 'HireBeat',
+      workHistoryStartDate: 'May 2021',
+      workHistoryEndDate: '',
+      workHistoryJobDescription: ''
+    }
   ]
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,15 +61,13 @@ const PublicProfile = ({ user, data }) => {
   console.log(data)
   const dashwidth = 12
 
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const defaultValues = data
-
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={"profile"}/>
+        <UserProfileHeader data={data} type={'profile'} />
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}
@@ -123,10 +121,10 @@ const PublicProfile = ({ user, data }) => {
         </Card>
       </Grid>
       <Grid item xs={8}>
-        <EducationCard eduData={educationTestData}/>
+        <EducationCard type='public' eduDatas={educationTestData} />
       </Grid>
       <Grid item xs={8}>
-        <WorkHistoryCard workData={workHistoryTestData}/>
+        <WorkHistoryCard type='public' workData={workHistoryTestData} />
       </Grid>
     </Grid>
   )

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState} from 'react'
+import { useState } from 'react'
 
 // ** Next Import
 // import { useRouter } from 'next/router'
@@ -29,8 +29,15 @@ import DialogContentText from '@mui/material/DialogContentText'
 // ** Utils Import
 import { Controller, useForm } from 'react-hook-form'
 
+// ** Layout & Component Import
+import EducationCard from './profile-cards/EducationCard'
+import WorkHistoryCard from './profile-cards/WorkHistoryCard'
+
 // ** Type Import
 //import { ProfileTabType, UserProfileActiveTab } from 'src/@fake-db/types'
+
+// ** Types Import
+import { Education, WorkHistory } from '../../context/types'
 
 // ** Icon Imports
 // import Icon from 'src/@core/components/icon'
@@ -135,15 +142,41 @@ const UserProfile = ({ user, data }) => {
 
   const defaultValues = data
 
-  const {
-    control,
-    handleSubmit
-  } = useForm({ defaultValues })
+  const { control, handleSubmit } = useForm({ defaultValues })
+
+  const educationTestData: Education[] = [
+    {
+      eduDegree: 'Masters',
+      eduFieldStudy: 'Computer Science',
+      eduSchool: 'Rutgers University',
+      eduStartDate: '2021',
+      eduEndDate: '2023',
+      eduActivities: 'testing Activities',
+      eduDescription: 'testing description'
+    },
+    {
+      eduDegree: 'Bachelors',
+      eduFieldStudy: 'Computer Science',
+      eduSchool: 'Ohio State University',
+      eduStartDate: '2019',
+      eduEndDate: '2021'
+    }
+  ]
+
+  const workHistoryTestData: WorkHistory[] = [
+    {
+      workHistoryJobTitle: 'Full Stack Developer',
+      workHistoryEmployer: 'HireBeat',
+      workHistoryStartDate: 'May 2021',
+      workHistoryEndDate: '',
+      workHistoryJobDescription: ''
+    }
+  ]
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={"profile"}/>
+        <UserProfileHeader data={data} type={'profile'} />
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}
@@ -400,6 +433,12 @@ const UserProfile = ({ user, data }) => {
               </form>
             </DialogContent>
           </Dialog>
+        </Card>
+        <Card sx={{ mt: 6 }}>
+          <EducationCard type='private' eduDatas={educationTestData} />
+        </Card>
+        <Card sx={{ mt: 6 }}>
+          <WorkHistoryCard type='private' workData={workHistoryTestData} />
         </Card>
       </Grid>
       <Grid item xs={8}>
