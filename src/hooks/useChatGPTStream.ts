@@ -91,12 +91,30 @@ const useChatGPTStream = (addToQueue: (sentence: string) => void, start: () => v
     }
   }
 
+  // This function will wrap fetch call and retry once if it fails
+  const fetchWithRetry = async (url: string, options: RequestInit, retryCount = 1): Promise<Response> => {
+    try {
+      const response = await fetch(url, options)
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`)
+      }
+
+      return response
+    } catch (error) {
+      if (retryCount <= 0) {
+        throw error
+      }
+
+      return fetchWithRetry(url, options, retryCount - 1)
+    }
+  }
+
   // A function to generate a response from the chatbot
   const generateResponse = async (interviewQuestion: string, interviewAnswer: string) => {
     const JWTToken = await getJwtToken()
 
     try {
-      const res = await fetch(process.env.NEXT_PUBLIC_CHAT_URL as string, {
+      const res = await fetchWithRetry(process.env.NEXT_PUBLIC_CHAT_URL as string, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
