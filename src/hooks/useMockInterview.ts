@@ -240,13 +240,10 @@ const useMockInterview = (interviews: Interview[]) => {
   const finishQuestion = async () => {
     stopTranscribingAndRecording()
     setReading(true)
-    const prompt = generateGptPrompt(
-      interviews[interviewState.currentQuestionIndex].interviewQuestion,
-      transcribedText.current
-    )
 
-    console.log('prompt', prompt)
-    generateResponse(prompt)
+    const interviewQuestion = interviews[interviewState.currentQuestionIndex].interviewQuestion
+    const interviewAnswer = transcribedText.current
+    generateResponse(interviewQuestion, interviewAnswer)
     dispatch({ type: FINISH_QUESTION })
   }
 

@@ -11,6 +11,7 @@
 
 import { useState } from 'react'
 import Logger from '../middleware/loggerMiddleware'
+import { Auth } from 'aws-amplify'
 
 // Define the error state
 interface ErrorState {
@@ -73,16 +74,35 @@ const useChatGPTStream = (addToQueue: (sentence: string) => void, start: () => v
     }
   }
 
+  // Get the JWT token from the current session
+  const getJwtToken = async () => {
+    try {
+      const session = await Auth.currentSession()
+
+      // Request a new JWT token
+      await Auth.currentAuthenticatedUser()
+
+      return session.getIdToken().getJwtToken()
+    } catch (error: any) {
+      setStreamError({ type: 'ChatGPT-Error', message: error })
+      Logger.error('An error occurred while getting the JWT token:', error)
+    }
+  }
+
   // A function to generate a response from the chatbot
-  const generateResponse = async (prompt: string) => {
+  const generateResponse = async (interviewQuestion: string, interviewAnswer: string) => {
+    const JWTToken = await getJwtToken()
+
     try {
       const res = await fetch(process.env.NEXT_PUBLIC_CHAT_URL as string, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: JWTToken
         },
         body: JSON.stringify({
-          prompt: prompt
+          interviewQuestion: interviewQuestion,
+          interviewAnswer: interviewAnswer
         })
       })
 
