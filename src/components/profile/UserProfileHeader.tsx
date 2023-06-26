@@ -1,4 +1,6 @@
 // ** MUI Components
+// noinspection TypeScriptValidateTypes
+
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import { styled } from '@mui/material/styles'
@@ -55,39 +57,17 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   const [coverPicUrl, setCoverPicUrl] = useState<string>('')
 
   useEffect(() => {
-    if(type == "Dashboard"){
+    if(type == "Dashboard" || type == "Profile"){
       setShowCover(true)
     }else{
       setShowCover(false)
     }
-
-    function isUrl(input: string): boolean {
-      const urlPattern = /^(?:\w+:)?\/\/([^\s.]+\.\S{2}|localhost[:?\d]*)\S*$/;
-
-      return urlPattern.test(input);
-    }
-
-
-    const fetchProPicUrl = async () => {
-      try {
-        if(isUrl(data.photoImgURL)){
-          setProPicUrl(data.photoImgURL)
-        }else{
-          const url = await Storage.get(data.photoImgURL);
-          setProPicUrl(url);
-        }
-
-        if(isUrl(data.coverImgURL)){
-          setCoverPicUrl(data.coverImgURL)
-        }else{
-          const url = await Storage.get(data.coverImgURL);
-          setCoverPicUrl(url);
-        }
-      } catch (error) {
-        console.error("Error fetching profile picture URL:", error);
-      }
-    };
-    fetchProPicUrl();
+    console.log(process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL)
+    const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey;
+    console.log(proPicUrl)
+    const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey;
+    setProPicUrl(proPicUrl)
+    setCoverPicUrl(coverPicUrl)
   }, []);
 
   const handleProPicOpen = () => {
@@ -108,26 +88,23 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
       const dateStamp = Date.now();
       const fileType = file.name.split(".").pop();
       const key = `${dateStamp}.${fileType}`;
-      await Storage.put(key, file)
+      await Storage.put(key, file, {level:"public"}) //public bucket
         .then(async result => {
           console.log("Upload successful:", result);
           if(dialogType == "profile"){
             data.photoImgKey = key
-            data.photoImgURL = await Storage.get(key)
           }else{
             data.coverImgKey = key
-            data.coverImgURL = await Storage.get(key)
           }
           data.emailAddress = data.userEmailAddress
           console.log("data to update:",data)
           await API.graphql(graphqlOperation(updateUserProfile, data))
-          await Storage.get(key).then(newUrl => {
+          await Storage.get(key,{level:"public"}).then(newUrl => {
             if(dialogType == "profile"){
               setProPicUrl(newUrl)
             }else{
               setCoverPicUrl(newUrl)
             }
-
             setOpenProfilePicture(false)
           })
         })

@@ -27,7 +27,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import DialogContentText from '@mui/material/DialogContentText'
 
 // ** Utils Import
-import { Controller, useForm } from 'react-hook-form'
+import {Control, Controller, useForm} from 'react-hook-form'
 
 // ** Type Import
 //import { ProfileTabType, UserProfileActiveTab } from 'src/@fake-db/types'
@@ -138,12 +138,12 @@ const UserProfile = ({ user, data }) => {
   const {
     control,
     handleSubmit
-  } = useForm({ defaultValues })
+  }:{control:Control } = useForm({ defaultValues })
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={"profile"}/>
+        <UserProfileHeader data={data} type={"Dashboard"}/>
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}

@@ -1,4 +1,6 @@
 // ** React Imports
+// noinspection TypeScriptValidateTypes
+
 import { useState } from 'react'
 
 // ** MUI Imports
@@ -188,8 +190,9 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload }) => {
     const suffix = docType == 'pdf' ? '.pdf' : '.docx'
     const cvName = timestamp + suffix
     try {
+
       await Storage.put(cvName, resume).catch(e => console.log(e))
-      const url = await Storage.get(cvName, { expires: 604800 })
+      const url = await Storage.get(cvName, {expires: 604800 })
       data.resume_url = url
       data.resume_name = cvName
       data.display_name = name
