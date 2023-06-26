@@ -20,6 +20,7 @@ import { createNewGuestUser } from 'src/graphql/mutations'
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
     const currentSession = await Auth.currentSession()
+    console.log('currentSession', currentSession)
 
     if (currentSession.isValid()) {
       const userInfo = await Auth.currentUserInfo()
