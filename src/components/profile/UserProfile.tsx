@@ -26,6 +26,12 @@ import DialogActions from '@mui/material/DialogActions'
 import InputAdornment from '@mui/material/InputAdornment'
 import DialogContentText from '@mui/material/DialogContentText'
 import Fab from '@mui/material/Fab'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import MuiAvatar from '@mui/material/Avatar'
 
 import Icon from 'src/@core/components/icon'
 
@@ -77,6 +83,7 @@ const UserProfile = ({ user, data, type }) => {
 
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
+  const [openAdd, setOpenAdd] = useState(false)
   const [profileData, setProfileData] = useState(data)
 
   console.log('initial data')
@@ -93,6 +100,9 @@ const UserProfile = ({ user, data, type }) => {
     setProfileData(data)
   }
   const handleEditClose = () => setOpenEdit(false)
+
+  const handleAddClickOpen = () => setOpenAdd(true)
+  const handleAddClose = () => setOpenAdd(false)
 
   // @ts-ignore
   const updateProfile = async data => {
@@ -158,6 +168,10 @@ const UserProfile = ({ user, data, type }) => {
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant='h6'>Details</Typography>
               <CardActions sx={{ display: 'flex' }}>
+                <Fab size='medium' variant='extended' onClick={handleAddClickOpen} sx={{ '& svg': { mr: 1 } }}>
+                  <Icon icon='mdi:plus' />
+                  Add Profile Section
+                </Fab>
                 <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
                   <Icon icon='mdi:pencil' />
                 </Fab>
@@ -400,6 +414,22 @@ const UserProfile = ({ user, data, type }) => {
                 </Grid>
               </form>
             </DialogContent>
+          </Dialog>
+
+          <Dialog onClose={handleAddClose} aria-labelledby='simple-dialog-title' open={openAdd}>
+            <DialogTitle id='simple-dialog-title'>Add Profile Section</DialogTitle>
+            <List sx={{ pt: 0, px: '0 !important' }}>
+              <ListItem disablePadding onClick={() => handleAddClose()}>
+                <ListItemButton>
+                  <ListItemAvatar>
+                    <MuiAvatar>
+                      <Icon icon='mdi:plus' />
+                    </MuiAvatar>
+                  </ListItemAvatar>
+                  <ListItemText primary='Add Experience' />
+                </ListItemButton>
+              </ListItem>
+            </List>
           </Dialog>
         </Card>
       </Grid>
