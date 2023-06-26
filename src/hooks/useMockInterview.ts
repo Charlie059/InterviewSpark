@@ -22,7 +22,6 @@ import { updateInterviewVideoKey } from 'src/graphql/mutations'
 // import { usePollyByQueue } from './usePollyByQueue'
 import useChatGPTStream from './useChatGPTStream'
 import { usePollyByQueueTest } from './usePollyTest'
-import { generateGptPrompt } from 'src/utils/InterviewGPTPrompt'
 
 // Define states for the mock interview process
 enum InterviewStatus {
@@ -240,13 +239,10 @@ const useMockInterview = (interviews: Interview[]) => {
   const finishQuestion = async () => {
     stopTranscribingAndRecording()
     setReading(true)
-    const prompt = generateGptPrompt(
-      interviews[interviewState.currentQuestionIndex].interviewQuestion,
-      transcribedText.current
-    )
 
-    console.log('prompt', prompt)
-    generateResponse(prompt)
+    const interviewQuestion = interviews[interviewState.currentQuestionIndex].interviewQuestion
+    const interviewAnswer = transcribedText.current
+    generateResponse(interviewQuestion, interviewAnswer)
     dispatch({ type: FINISH_QUESTION })
   }
 
