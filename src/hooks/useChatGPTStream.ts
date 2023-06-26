@@ -11,6 +11,7 @@
 
 import { useState } from 'react'
 import Logger from '../middleware/loggerMiddleware'
+import { Auth } from 'aws-amplify'
 
 // Define the error state
 interface ErrorState {
@@ -43,6 +44,7 @@ const handleStreamReading = async (
         break
       }
       const decodedValue = new TextDecoder().decode(value)
+      console.log('decodedValue', decodedValue)
       callback(decodedValue)
     }
   } catch (error) {
@@ -72,17 +74,55 @@ const useChatGPTStream = (addToQueue: (sentence: string) => void, start: () => v
     }
   }
 
-  // A function to generate a response from the chatbot
-  const generateResponse = async (question: string) => {
+  // Get the JWT token from the current session
+  const getJwtToken = async () => {
     try {
-      const res = await fetch('/api/chat', {
+      const session = await Auth.currentSession()
+
+      // Request a new JWT token
+      await Auth.currentAuthenticatedUser()
+
+      return session.getIdToken().getJwtToken()
+    } catch (error: any) {
+      setStreamError({ type: 'ChatGPT-Error', message: error })
+      Logger.error('An error occurred while getting the JWT token:', error)
+
+      return ''
+    }
+  }
+
+  // This function will wrap fetch call and retry once if it fails
+  const fetchWithRetry = async (url: string, options: RequestInit, retryCount = 1): Promise<Response> => {
+    try {
+      const response = await fetch(url, options)
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`)
+      }
+
+      return response
+    } catch (error) {
+      if (retryCount <= 0) {
+        throw error
+      }
+
+      return fetchWithRetry(url, options, retryCount - 1)
+    }
+  }
+
+  // A function to generate a response from the chatbot
+  const generateResponse = async (interviewQuestion: string, interviewAnswer: string) => {
+    const JWTToken = await getJwtToken()
+
+    try {
+      const res = await fetchWithRetry(process.env.NEXT_PUBLIC_CHAT_URL as string, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: JWTToken
         },
         body: JSON.stringify({
-          query: question,
-          history: []
+          interviewQuestion: interviewQuestion,
+          interviewAnswer: interviewAnswer
         })
       })
 
