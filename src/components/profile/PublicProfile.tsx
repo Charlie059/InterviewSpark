@@ -1,37 +1,27 @@
 // ** React Imports
 import {ReactNode, useState} from 'react'
 
-// ** Next Import
-// import { useRouter } from 'next/router'
-
-// ** MUI Components
-// import Tab from '@mui/material/Tab'
+// ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
-
 import Divider from '@mui/material/Divider'
-
 import CardContent from '@mui/material/CardContent'
 
+// ** Types Import
+import {Education, WorkHistory} from "../../context/types";
 
-
+// ** Layout & Component Import
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import BlankLayout from "../../@core/layouts/BlankLayout";
 import EducationCard from './profile-cards/EducationCard'
-import {Education} from "../../context/types";
-
-// import { API, graphqlOperation } from 'aws-amplify'
-// import { updateUserProfile } from 'src/graphql/mutations'
+import WorkHistoryCard from "./profile-cards/WorkHistoryCard";
 
 // @ts-ignore
 const PublicProfile = ({ user, data }) => {
   // ** State
 
-  //data.email = auth.user?.userEmailAddress
-
-  // const [isLoading, setIsLoading] = useState<boolean>(true)
   console.log('current profile page is for', user)
   console.log('current data is:', data)
 
@@ -54,7 +44,7 @@ const PublicProfile = ({ user, data }) => {
     },
   ]
 
-  const workHistoryTestData = [
+  const workHistoryTestData:WorkHistory[] = [
     {
       workHistoryJobTitle: "Full Stack Developer",
       workHistoryEmployer: "HireBeat",
@@ -134,6 +124,9 @@ const PublicProfile = ({ user, data }) => {
       </Grid>
       <Grid item xs={8}>
         <EducationCard eduData={educationTestData}/>
+      </Grid>
+      <Grid item xs={8}>
+        <WorkHistoryCard workData={workHistoryTestData}/>
       </Grid>
     </Grid>
   )
