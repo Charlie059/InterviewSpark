@@ -38,10 +38,10 @@ const ResumeScanPage = ({ type }) => {
       <Grid container spacing={6} className='match-height'>
         <PageHeader
           title={<Typography variant='h5'>Resume Upload</Typography>}
-          subtitle={<Typography variant='body2'>Upload Your Resume Here</Typography>}
+          subtitle={<Typography variant='body2'>Try our AI Resume Parser</Typography>}
         />
         <Grid item xs={12}>
-          <ResumeScan nocollapse={true} />
+          <ResumeScan nocollapse={true} type={type}/>
         </Grid>
       </Grid>
     </DropzoneWrapper>
