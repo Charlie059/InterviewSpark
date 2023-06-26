@@ -22,7 +22,6 @@ import { updateInterviewVideoKey } from 'src/graphql/mutations'
 // import { usePollyByQueue } from './usePollyByQueue'
 import useChatGPTStream from './useChatGPTStream'
 import { usePollyByQueueTest } from './usePollyTest'
-import { generateGptPrompt } from 'src/utils/InterviewGPTPrompt'
 
 // Define states for the mock interview process
 enum InterviewStatus {
