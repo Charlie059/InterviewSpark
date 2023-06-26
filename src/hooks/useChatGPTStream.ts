@@ -86,6 +86,8 @@ const useChatGPTStream = (addToQueue: (sentence: string) => void, start: () => v
     } catch (error: any) {
       setStreamError({ type: 'ChatGPT-Error', message: error })
       Logger.error('An error occurred while getting the JWT token:', error)
+
+      return ''
     }
   }
 
