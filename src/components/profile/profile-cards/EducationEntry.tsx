@@ -6,15 +6,16 @@ import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
 import Icon from '../../../@core/components/icon'
 import { styled } from '@mui/material/styles'
+import LetterIcon from 'src/components/custom-icon/LetterIcon'
 
 interface EducationEntryProps {
   eduData: Education
   edit: boolean
   handleEditClick: (eduData: Education) => void
-  handleEntryRemove: (ID:string) => void
+  handleEntryRemove: (ID: string) => void
 }
 
-const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove}: EducationEntryProps) => {
+const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: EducationEntryProps) => {
   const StyledBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       borderTop: `2px solid ${theme.palette.divider}`
@@ -24,14 +25,22 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove}: Ed
   return (
     <StyledBox sx={{ mt: 4 }}>
       <Grid container spacing={2}>
-        {eduData.eduIcon && (
-          <Grid item xs={1.5}>
-            <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
+        <Box
+          component={Grid}
+          item
+          lg={3}
+          display={{ md: 'none', lg: 'flex' }}
+          sx={{ alignItems: 'flex-start', justifyContent: 'flex-start' }}
+        >
+          <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+            {eduData.eduIcon ? (
               <img alt='University Logo' src={eduData.eduIcon} style={{ width: 56, height: 56 }} />
-            </CardContent>
-          </Grid>
-        )}
-        <Grid item xs={10.5}>
+            ) : (
+              <LetterIcon letter={eduData.eduSchool.charAt(0)}></LetterIcon>
+            )}
+          </CardContent>
+        </Box>
+        <Grid item lg={7}>
           <Typography variant='h6' sx={{ mt: 3, mb: 1 }}>
             {eduData.eduSchool}
           </Typography>
@@ -65,9 +74,13 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove}: Ed
           >
             <Icon icon='mdi:pencil' />
           </Fab>
-          <Fab aria-label='add' size='small' onClick={()=>{
-            handleEntryRemove(eduData.eduID)
-          }}>
+          <Fab
+            aria-label='add'
+            size='small'
+            onClick={() => {
+              handleEntryRemove(eduData.eduID)
+            }}
+          >
             <Icon icon='mdi:trash' />
           </Fab>
         </Box>

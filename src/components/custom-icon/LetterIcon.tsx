@@ -1,8 +1,16 @@
 import React from 'react'
 import { Paper, Typography } from '@mui/material'
 
-const SquareWithLetter = (letter: string) => {
-  const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16)
+const getRandomColor = () => {
+  const r = Math.floor(Math.random() * 155 + 100) // Random value between 100 and 255
+  const g = Math.floor(Math.random() * 155 + 100) // Random value between 100 and 255
+  const b = Math.floor(Math.random() * 155 + 100) // Random value between 100 and 255
+
+  return `rgb(${r}, ${g}, ${b})`
+}
+
+const SquareWithLetter = ({ letter }: { letter: string }) => {
+  const randomColor = getRandomColor()
 
   const squareStyle = {
     width: 56,
@@ -11,11 +19,10 @@ const SquareWithLetter = (letter: string) => {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: randomColor,
-    border: '4px solid'
+    borderRadius: 2
   }
 
   const letterStyle = {
-    color: squareStyle.border,
     fontSize: 24,
     fontWeight: 'bold'
   }
@@ -23,10 +30,14 @@ const SquareWithLetter = (letter: string) => {
   return (
     <Paper style={squareStyle} elevation={3}>
       <Typography variant='h6' component='span' style={letterStyle}>
-        A
+        {letter}
       </Typography>
     </Paper>
   )
 }
 
-export default SquareWithLetter
+const LetterIcon = ({ letter }: { letter: string }) => {
+  return <SquareWithLetter letter={letter} />
+}
+
+export default LetterIcon
