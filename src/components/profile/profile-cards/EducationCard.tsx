@@ -5,7 +5,6 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContentText from '@mui/material/DialogContentText'
@@ -14,7 +13,6 @@ import Button from '@mui/material/Button'
 import Icon from 'src/@core/components/icon'
 import TableContainer from '@mui/material/TableContainer'
 import Fab from '@mui/material/Fab'
-import { styled } from '@mui/material/styles'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -23,14 +21,11 @@ import DatePicker from 'react-datepicker'
 import CustomInput from '../../date-picker/PickersCustomInput'
 
 // ** React Imports
-import { useEffect, useState } from 'react'
+import {useState } from 'react'
 
 // ** Types Import
 import { Education } from 'src/context/types'
-import { DateType } from 'src/types/reactDatepickerTypes'
 
-// ** Utils Import
-import { Controller, useForm } from 'react-hook-form'
 
 // ** Demo Components
 import EducationEntry from './EducationEntry'
@@ -49,7 +44,8 @@ const EducationCard = ({ eduDatas, type, setEduDatas, refresh }: { eduDatas: Edu
   }
   const handleAddOpen = () => {
     setOpenEdit(true)
-    setEduD()
+
+    setEduD(undefined)
   }
   const handleClickClose = () => setEdit(false)
 
@@ -98,6 +94,8 @@ const EducationCard = ({ eduDatas, type, setEduDatas, refresh }: { eduDatas: Edu
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
+
+    // noinspection TypeScriptValidateTypes
     setEduD(prevData => ({ ...prevData, [name]: value }))
   }
 
@@ -209,6 +207,8 @@ const EducationCard = ({ eduDatas, type, setEduDatas, refresh }: { eduDatas: Edu
                         dateFormat='MM/yyyy'
                         popperPlacement='bottom-end'
                         onChange={newDate => {
+
+                          // noinspection TypeScriptValidateTypes
                           setEduD({ ...eduD, ...(newDate && { eduStartDate: newDate }) })
                         }}
                         customInput={<CustomInput label='Start Date' />}
@@ -222,7 +222,8 @@ const EducationCard = ({ eduDatas, type, setEduDatas, refresh }: { eduDatas: Edu
                         dateFormat='MM/yyyy'
                         popperPlacement='bottom-end'
                         onChange={newDate => {
-                          setEduD({ ...eduD, ...(newDate && { eduEndDate: newDate }) })
+                          // noinspection TypeScriptValidateTypes
+                          setEduD({...eduD, ...(newDate && { eduEndDate: newDate }) })
                         }}
                         customInput={<CustomInput label='End Date' />}
                       />
