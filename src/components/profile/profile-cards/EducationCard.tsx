@@ -95,7 +95,7 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
               <Fab aria-label='add' size='small' style={{ marginRight: '10px' }}>
                 <Icon icon='mdi:plus' />
               </Fab>
-              {edit == false ? (
+              {!edit ? (
                 <Fab size='small' aria-label='edit' onClick={handleClickOpen}>
                   <Icon icon='mdi:pencil' />
                 </Fab>

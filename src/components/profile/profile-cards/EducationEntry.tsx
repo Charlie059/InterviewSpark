@@ -52,7 +52,7 @@ const EducationEntry = ({eduData,handleEditClick, edit}:EducationEntryProps) => 
           )}
         </Grid>
       </Grid>
-      {edit == true && (
+      {edit && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Fab
             size='small'
