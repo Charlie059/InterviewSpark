@@ -31,16 +31,22 @@ import { Education } from 'src/context/types'
 import { Controller, useForm } from 'react-hook-form'
 
 // ** Demo Components
-import { API, graphqlOperation } from 'aws-amplify'
-import { updateUserProfile } from 'src/graphql/mutations'
+import EducationEntry from "./EducationEntry";
 
 const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string }) => {
   // States
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
-  const [eduD, setEduD] = useState<Education>()
+  const [eduD, setEduD] = useState<Education>({
+    eduDegree: '',
+    eduFieldStudy: '',
+    eduSchool: '',
+    eduStartDate: '',
+    eduEndDate: '',
+    eduActivities:'',
+    eduDescription:'',
+  })
   const [eduDataArr, setEduDataArr] = useState<Education[]>()
-  const [refreshKey, setKey] = useState(Date.now())
 
   useEffect(() => {
     setEduDataArr(eduDatas)
@@ -52,88 +58,31 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
   const handleClickClose = () => setEdit(false)
 
   const handleEditClose = () => setOpenEdit(false)
-
-  const updateEduProfile = async eduData => {
+  const handleEditOpen = (eduData:Education) =>{
+    setOpenEdit(true)
+    setEduD(eduData)
+    console.log("passing edudata:",eduD)
+  }
+  const updateEduProfile = async eduDatas => {
     //#TODO waiting on api changes
   }
 
-  const handleEditSubmit = async (formData: any) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setEduD((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+
+  const handleEditSubmit = async () => {
     setOpenEdit(false)
-    console.log('bbb', formData)
-    updateEduProfile(formData)
+    console.log('bbb', eduD)
+    updateEduProfile(eduD)
       .then(response => {
         console.log(response)
       })
       .catch(e => {
         console.log(e)
       })
-  }
-
-  const defaultValues = eduD
-
-  const { control, handleSubmit } = useForm({ defaultValues })
-
-  const StyledBox = styled(Box)(({ theme }) => ({
-    [theme.breakpoints.up('sm')]: {
-      borderTop: `2px solid ${theme.palette.divider}`
-    }
-  }))
-
-  const eachEducation = (eduData: Education) => {
-    return (
-      <StyledBox sx={{ mt: 4 }}>
-        <Grid container spacing={2}>
-          {eduData.eduIcon && (
-            <Grid item xs={1.5}>
-              <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                <img alt='University Logo' src={eduData.eduIcon} style={{ width: 56, height: 56 }} />
-              </CardContent>
-            </Grid>
-          )}
-          <Grid item xs={10.5}>
-            <Typography variant='h6' sx={{ mt: 3, mb: 1 }}>
-              {eduData.eduSchool}
-            </Typography>
-            {edit == true && (
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Fab
-                  size='small'
-                  aria-label='edit'
-                  onClick={() => {
-                    setEduD(eduData)
-                    setOpenEdit(true)
-                    setKey(Date.now())
-                    console.log('edudata set:', eduD)
-                  }}
-                >
-                  <Icon icon='mdi:pencil' />
-                </Fab>
-                <Fab aria-label='add' size='small'>
-                  <Icon icon='mdi:trash' />
-                </Fab>
-              </Box>
-            )}
-
-            <Typography variant='body1' sx={{ mb: 1 }}>
-              {eduData.eduDegree}, {eduData.eduFieldStudy}
-            </Typography>
-            <Typography variant='body2' sx={{ mb: 1 }}>
-              {eduData.eduStartDate} - {eduData.eduEndDate}
-            </Typography>
-            {eduData.eduActivities && (
-              <Typography variant='body1' sx={{ mb: 5 }}>
-                Activities and Societies: {eduData.eduActivities}
-              </Typography>
-            )}
-            {eduData.eduDescription && (
-              <Typography variant='body1' sx={{ mb: 5 }}>
-                Description: {eduData.eduDescription}
-              </Typography>
-            )}
-          </Grid>
-        </Grid>
-      </StyledBox>
-    )
   }
 
   return (
@@ -158,9 +107,16 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
             </Box>
           )}
         </Box>
-        <TableContainer>{eduDataArr?.map(eduData => eachEducation(eduData))}</TableContainer>
+        <TableContainer>{eduDataArr?.map((eduData,index) => (
+          <EducationEntry
+            key={index}
+            edit={edit}
+            eduData={eduData}
+            handleEditClick={handleEditOpen}/>
+        ))}
+        </TableContainer>
 
-        <Dialog key={refreshKey} onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
+        <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
           <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
             Edit User Information
           </DialogTitle>
@@ -170,146 +126,58 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
               id='user-view-edit-description'
               sx={{ textAlign: 'center', mb: 7 }}
             ></DialogContentText>
-            <form onSubmit={handleSubmit(handleEditSubmit)}>
               <Grid container spacing={6}>
                 <Grid item xs={12} sm={6}>
-                  <FormControl>
-                    <Controller
-                      name='eduSchool'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <TextField
-                          fullWidth
-                          label='School'
-                          value={value}
-                          defaultValue={eduD?.eduSchool}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  </FormControl>
+                  <TextField
+                    fullWidth
+                    name='eduSchool'
+                    label='School'
+                    value={eduD?.eduSchool}
+                    onChange={handleInputChange}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <FormControl>
-                    <Controller
+                    <TextField
+                      fullWidth
                       name='eduDegree'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <TextField
-                          fullWidth
-                          label='Degree'
-                          value={value}
-                          defaultValue={eduD.eduDegree}
-                          onChange={onChange}
-                        />
-                      )}
+                      label='Degree'
+                      value={eduD?.eduDegree}
+                      onChange={handleInputChange}
                     />
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <FormControl>
-                    <Controller
-                      name='eduFieldStudy'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <TextField
-                          fullWidth
-                          label='Field of Study'
-                          value={value}
-                          defaultValue={eduD.eduFieldStudy}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  </FormControl>
-                </Grid>
-                {/*<Grid item xs={12} sm={6}>*/}
-                {/*  <FormControl fullWidth>*/}
-                {/*    <InputLabel id='user-view-status-label'>Status</InputLabel>*/}
-                {/*    <Controller*/}
-                {/*      name='status'*/}
-                {/*      control={control}*/}
-                {/*      render={({ field: { value, onChange } }) => (*/}
-                {/*        <Select*/}
-                {/*          label='status'*/}
-                {/*          defaultValue={data.status}*/}
-                {/*          value={value}*/}
-                {/*          onChange={onChange}*/}
-                {/*          id='user-view-status'*/}
-                {/*          labelId='user-view-status-label'*/}
-                {/*        >*/}
-                {/*          <MenuItem value='pending'>Pending</MenuItem>*/}
-                {/*          <MenuItem value='active'>Active</MenuItem>*/}
-                {/*          <MenuItem value='inactive'>Inactive</MenuItem>*/}
-                {/*        </Select>*/}
-                {/*      )}*/}
-                {/*    />*/}
-                {/*  </FormControl>*/}
-                {/*</Grid>*/}
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <Controller
-                      name='eduActivities'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <TextField
-                          fullWidth
-                          label='Activities and Societies'
-                          defaultValue={eduD.eduActivities}
-                          value={value}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  </FormControl>
+                  <TextField
+                    fullWidth
+                    name='eduFieldStudy'
+                    label='Field Of Study'
+                    value={eduD?.eduFieldStudy}
+                    onChange={handleInputChange}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <Controller
-                      name='eduDescription'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <TextField
-                          fullWidth
-                          label='Description'
-                          defaultValue={eduD.eduDescription}
-                          value={value}
-                          onChange={onChange}
-                        />
-                      )}
-                    />
-                  </FormControl>
+                  <TextField
+                    fullWidth
+                    name='eduActivities'
+                    label='Activities and Other'
+                    value={eduD?.eduActivities}
+                    onChange={handleInputChange}
+                  />
                 </Grid>
-                {/*<Grid item xs={12} sm={6}>*/}
-                {/*              <FormControl fullWidth>*/}
-                {/*                <InputLabel id='user-view-language-label'>Language</InputLabel>*/}
-                {/*                <Controller*/}
-                {/*                  name='language'*/}
-                {/*                  control={control}*/}
-                {/*                  render={({ field: { value, onChange } }) => (*/}
-                {/*                    <Select*/}
-                {/*                      label='language'*/}
-                {/*                      defaultValue={profileData.language}*/}
-                {/*                      value={value}*/}
-                {/*                      onChange={onChange}*/}
-                {/*                      id='user-view-language'*/}
-                {/*                      labelId='user-view-language-label'*/}
-                {/*                    >*/}
-                {/*                      <MenuItem value='English'>English</MenuItem>*/}
-                {/*                      <MenuItem value='Spanish'>Spanish</MenuItem>*/}
-                {/*                      <MenuItem value='Portuguese'>Portuguese</MenuItem>*/}
-                {/*                      <MenuItem value='Russian'>Russian</MenuItem>*/}
-                {/*                      <MenuItem value='French'>French</MenuItem>*/}
-                {/*                      <MenuItem value='German'>German</MenuItem>*/}
-                {/*                    </Select>*/}
-                {/*                  )}*/}
-                {/*                />*/}
-                {/*              </FormControl>*/}
-                {/*            </Grid>*/}
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    name='eduDescription'
+                    label='Description'
+                    value={eduD?.eduDescription}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
                 <Grid item xs={12} sm={6}></Grid>
                 <Grid item xs={12} sx={{ justifyContent: 'center' }}>
                   <DialogActions sx={{ justifyContent: 'center' }}>
-                    <Button variant='contained' type='submit' sx={{ mr: 1 }}>
+                    <Button variant='contained' onClick={handleEditSubmit} sx={{ mr: 1 }}>
                       Submit
                     </Button>
                     <Button variant='outlined' color='secondary' onClick={handleEditClose}>
@@ -318,7 +186,6 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
                   </DialogActions>
                 </Grid>
               </Grid>
-            </form>
           </DialogContent>
         </Dialog>
       </CardContent>

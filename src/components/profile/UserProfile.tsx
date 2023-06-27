@@ -48,6 +48,7 @@ import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import ProfileViewRight from './ProfileViewRight'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
+import TestTable from "./profile-cards/TestTable";
 
 // @ts-ignore
 const UserProfile = ({ user, data }) => {
@@ -439,6 +440,9 @@ const UserProfile = ({ user, data }) => {
         </Card>
         <Card sx={{ mt: 6 }}>
           <WorkHistoryCard type='private' workData={workHistoryTestData} />
+        </Card>
+        <Card sx={{ mt: 6 }}>
+          <TestTable />
         </Card>
       </Grid>
       <Grid item xs={8}>
