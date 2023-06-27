@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 import { styled } from '@mui/material/styles'
 
-import { WorkHistory } from 'src/context/types'
+import {Education, WorkHistory} from 'src/context/types'
 import Fab from '@mui/material/Fab'
 
 import Icon from 'src/@core/components/icon'
@@ -16,14 +16,10 @@ import TableContainer from '@mui/material/TableContainer'
 // ** Demo Components
 import WorkHistoryEntry from './WorkHistoryEntry'
 
-const WorkHistoryCard = ({ workData, type }: { workData: WorkHistory[]; type: string }) => {
+const WorkHistoryCard = ({ workDatas, type, setWorkDatas }: { workDatas: WorkHistory[]; type: string ;
+  setWorkDatas: React.Dispatch<React.SetStateAction<Education[]>>;}) => {
   //#TODO If type != public, show delete button & edit dialog
-
-  const [workDatas, setWorkDatas] = useState<Array<WorkHistory>>([])
-  useEffect(() => {
-    setWorkDatas(workData)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  console.log(workDatas)
 
   const StyledBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
@@ -38,7 +34,7 @@ const WorkHistoryCard = ({ workData, type }: { workData: WorkHistory[]; type: st
           {workData.workHistoryIcon && (
             <Grid item xs={1.5}>
               <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
-                <img alt='University Logo' src={workData.workHistoryIcon} style={{ width: 56, height: 56 }} />
+                <img alt='Company Logo' src={workData.workHistoryIcon} style={{ width: 56, height: 56 }} />
               </CardContent>
             </Grid>
           )}

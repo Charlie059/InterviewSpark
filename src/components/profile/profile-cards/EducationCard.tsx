@@ -36,19 +36,20 @@ import { Controller, useForm } from 'react-hook-form'
 import EducationEntry from './EducationEntry'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
-const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string }) => {
+const EducationCard = ({ eduDatas, type, setEduDatas, refresh }: { eduDatas: Education[]; type: string;
+  setEduDatas: React.Dispatch<React.SetStateAction<Education[]>>; refresh: () => void}) => {
   // States
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [eduD, setEduD] = useState<Education>()
-  const [eduDataArr, setEduDataArr] = useState<Education[]>()
 
-  useEffect(() => {
-    setEduDataArr(eduDatas)
-  }, [eduDatas])
 
   const handleClickOpen = () => {
     setEdit(true)
+  }
+  const handleAddOpen = () => {
+    setOpenEdit(true)
+    setEduD()
   }
   const handleClickClose = () => setEdit(false)
 
@@ -58,23 +59,41 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
     setEduD(eduData)
     console.log('passing edudata:', eduD)
   }
-  const updateEduProfile = async eduDatas => {
-    //for each Educationentry in eduDataArr
-    //if educationentry.eduID = eduD.ID
-    // update Educationentry
-    //else
-    // eduD.ID= api create Education //api create returns ID
-    // eduDataArr = {...eduDataArr, eduD}
-    //
-    //setEduDatas(eduDataArr)
-    //refresh component
-  }
+  const updateEduProfile = async (eduData) => {
+    // Clone the eduDatas array to avoid modifying the state directly
+    const updatedEduDatas = [...eduDatas];
+
+    // Find the index of the existing education entry in eduDatas
+    const existingEduIndex = updatedEduDatas.findIndex((eduEntry) => eduEntry.eduID === eduData.eduID);
+
+    if (existingEduIndex !== -1) {
+      // If an existing education entry is found, update it
+      updatedEduDatas[existingEduIndex] = eduData;
+    } else {
+      // If no existing education entry is found, create a new one
+      const createdEduID = "testadd"+eduDatas.length// Assuming api.createEducation returns the ID
+      eduData.eduID = createdEduID;
+      updatedEduDatas.push(eduData);
+    }
+
+    setEduDatas(updatedEduDatas);
+    console.log(eduDatas)
+    refresh()
+  };
 
   const removeEducationEntryByID = (ID: string) => {
-    //for each EducationEntry in eduDataArr
-    // if educationentry.eduID = eduD.ID
-    // eduDataArr.splice(index of educationEntry, 1)
-    //
+    // Find the index of the education entry with the given ID
+    if (eduDatas) {
+      const index = eduDatas.findIndex(educationEntry => educationEntry.eduID === ID);
+
+      // If the education entry was found, remove it from the array
+      if (index !== -1) {
+        eduDatas.splice(index, 1);
+        console.log(eduDatas)
+        setEduDatas(eduDatas)
+        refresh()
+      }
+    }
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +120,7 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
           <Typography variant='h5'>Education</Typography>
           {type != 'public' && (
             <Box>
-              <Fab aria-label='add' size='small' style={{ marginRight: '10px' }}>
+              <Fab aria-label='add' size='small' style={{ marginRight: '10px' }} onClick={handleAddOpen}>
                 <Icon icon='mdi:plus' />
               </Fab>
               {!edit ? (
@@ -117,8 +136,8 @@ const EducationCard = ({ eduDatas, type }: { eduDatas: Education[]; type: string
           )}
         </Box>
         <TableContainer>
-          {eduDataArr?.map((eduData, index) => (
-            <EducationEntry key={index} edit={edit} eduData={eduData} handleEditClick={handleEditOpen} />
+          {eduDatas?.map((eduData, index) => (
+            <EducationEntry key={index} edit={edit} eduData={eduData} handleEditClick={handleEditOpen} handleEntryRemove={removeEducationEntryByID}/>
           ))}
         </TableContainer>
 

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 
 // ** Next Import
 // import { useRouter } from 'next/router'
@@ -84,6 +84,13 @@ const UserProfile = ({ user, data }) => {
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
   const [profileData, setProfileData] = useState(data)
+  const [educations, setEducations] = useState<Education[]>()
+  const [workHistories, setWorkHistories]= useState<WorkHistory[]>()
+  const [refresh, setRefresh] = useState(false);
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
 
   console.log('initial data')
   console.log(data)
@@ -167,6 +174,7 @@ const UserProfile = ({ user, data }) => {
     }
   ]
 
+
   const emptyEdu: Education[] = []
 
   const workHistoryTestData: WorkHistory[] = [
@@ -178,6 +186,12 @@ const UserProfile = ({ user, data }) => {
       workHistoryJobDescription: ''
     }
   ]
+
+
+  useEffect(() => {
+    setEducations(educationTestData)
+    setWorkHistories(workHistoryTestData)
+  }, [])
 
   return (
     <Grid container spacing={6}>
@@ -441,10 +455,12 @@ const UserProfile = ({ user, data }) => {
           </Dialog>
         </Card>
         <Card sx={{ mt: 6 }}>
-          <EducationCard type='private' eduDatas={educationTestData} setEduDatas />
+          {educations &&
+            <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />}
         </Card>
         <Card sx={{ mt: 6 }}>
-          <WorkHistoryCard type='private' workData={workHistoryTestData} />
+          {workHistories&&
+            <WorkHistoryCard type='private' workDatas={workHistories} setWorkHistories={setWorkHistories} />}
         </Card>
         {/* <Card sx={{ mt: 6 }}>
           <TestTable />

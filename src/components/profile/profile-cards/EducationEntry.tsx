@@ -11,9 +11,10 @@ interface EducationEntryProps {
   eduData: Education
   edit: boolean
   handleEditClick: (eduData: Education) => void
+  handleEntryRemove: (ID:string) => void
 }
 
-const EducationEntry = ({ eduData, handleEditClick, edit }: EducationEntryProps) => {
+const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove}: EducationEntryProps) => {
   const StyledBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       borderTop: `2px solid ${theme.palette.divider}`
@@ -64,7 +65,9 @@ const EducationEntry = ({ eduData, handleEditClick, edit }: EducationEntryProps)
           >
             <Icon icon='mdi:pencil' />
           </Fab>
-          <Fab aria-label='add' size='small'>
+          <Fab aria-label='add' size='small' onClick={()=>{
+            handleEntryRemove(eduData.eduID)
+          }}>
             <Icon icon='mdi:trash' />
           </Fab>
         </Box>
