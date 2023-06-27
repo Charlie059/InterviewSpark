@@ -28,7 +28,7 @@ import Collapse from '@mui/material/Collapse'
 import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 
-// @ts-ignore
+
 import { API, graphqlOperation } from 'aws-amplify'
 import { useRouter } from 'next/router'
 import { useAuth } from '../../hooks/useAuth'
@@ -36,6 +36,7 @@ import Auth from '@aws-amplify/auth'
 
 import { createUserResumeScan } from 'src/graphql/mutations'
 import { Lambda } from 'aws-sdk'
+import ResumeResults from "./ResumeResults";
 
 // Styled component for the heading inside the dropzone area
 
@@ -62,12 +63,22 @@ const defaultValues: ResumePack = {
 interface ResumeScanProps {
   nocollapse: boolean
   reload?: () => void //optional. for refreshing another component
+  type?: string
 }
 
-const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload }) => {
+const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => {
   const router = useRouter()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuth()
+
+
+  // ** States
+  const [files, setFiles] = useState<File[]>([])
+  const [collapsed, setCollapsed] = useState<boolean>(nocollapse)
+  const [resumeResult, setResumeResult] = useState<string>('');
+  const [showResult, setShowResult] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [show, setShow] = useState<boolean>(!nocollapse)
 
   async function putResume(resumePack: ResumePack) {
     console.log('resumePack: ')
@@ -93,7 +104,6 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload }) => {
 
     return result
 
-    //GraphQL mutation for resume db storage
   }
 
   async function scanResume(resumePack: ResumePack) {
@@ -128,6 +138,13 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload }) => {
             if (router.route == '/resume') {
               await router.replace('/resume/list')
             } else {
+              if(type == "tutorial"){
+                setResumeResult(resumePack.resume_results)
+                setCollapsed(false)
+                setShowResult(true)
+
+                return
+              }
               if (reload) {
                 reload()
               }
@@ -154,11 +171,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload }) => {
     })
   }
 
-  // ** States
-  const [files, setFiles] = useState<File[]>([])
-  const [collapsed, setCollapsed] = useState<boolean>(nocollapse)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [show, setShow] = useState<boolean>(!nocollapse)
+
 
   // ** Hooks
   const {
@@ -296,6 +309,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload }) => {
           </form>
         </CardContent>
       </Collapse>
+      {showResult&& <CardContent><ResumeResults resumeResults={resumeResult}/></CardContent>}
     </Card>
   )
 }

@@ -1,5 +1,7 @@
 // ** React Imports
-import { useState} from 'react'
+// noinspection TypeScriptValidateTypes
+
+import { useState } from 'react'
 
 // ** Next Import
 // import { useRouter } from 'next/router'
@@ -25,9 +27,18 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import InputAdornment from '@mui/material/InputAdornment'
 import DialogContentText from '@mui/material/DialogContentText'
+import Fab from '@mui/material/Fab'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemText from '@mui/material/ListItemText'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import MuiAvatar from '@mui/material/Avatar'
+
+import Icon from 'src/@core/components/icon'
 
 // ** Utils Import
-import {Control, Controller, useForm} from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 
 // ** Type Import
 //import { ProfileTabType, UserProfileActiveTab } from 'src/@fake-db/types'
@@ -43,7 +54,7 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
 
 // @ts-ignore
-const UserProfile = ({ user, data }) => {
+const UserProfile = ({ user, data, type }) => {
   // ** State
 
   //data.email = auth.user?.userEmailAddress
@@ -74,6 +85,7 @@ const UserProfile = ({ user, data }) => {
 
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
+  const [openAdd, setOpenAdd] = useState(false)
   const [profileData, setProfileData] = useState(data)
 
   console.log('initial data')
@@ -90,6 +102,9 @@ const UserProfile = ({ user, data }) => {
     setProfileData(data)
   }
   const handleEditClose = () => setOpenEdit(false)
+
+  const handleAddClickOpen = () => setOpenAdd(true)
+  const handleAddClose = () => setOpenAdd(false)
 
   // @ts-ignore
   const updateProfile = async data => {
@@ -135,17 +150,14 @@ const UserProfile = ({ user, data }) => {
 
   const defaultValues = data
 
-  const {
-    control,
-    handleSubmit
-  }:{control:Control } = useForm({ defaultValues })
+  const { control, handleSubmit } = useForm({ defaultValues })
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={"Dashboard"}/>
+        <UserProfileHeader data={data} type={'profile'} />
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={type === 'tutorial' ? 12 : 4}>
         {/*{isLoading ? (*/}
         {/*  <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>*/}
         {/*    <CircularProgress sx={{ mb: 4 }} />*/}
@@ -155,7 +167,18 @@ const UserProfile = ({ user, data }) => {
         {/* <Profile data={data} />*/}
         <Card>
           <CardContent>
-            <Typography variant='h6'>Details</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant='h6'>Details</Typography>
+              <CardActions sx={{ display: 'flex' }}>
+                <Fab size='medium' variant='extended' onClick={handleAddClickOpen} sx={{ '& svg': { mr: 1 } }}>
+                  <Icon icon='mdi:plus' />
+                  Add Profile Section
+                </Fab>
+                <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
+                  <Icon icon='mdi:pencil' />
+                </Fab>
+              </CardActions>
+            </Box>
             <Divider sx={{ mt: 4 }} />
             <Grid container spacing={1}>
               <Grid item xs={6} lg={dashwidth}>
@@ -195,12 +218,6 @@ const UserProfile = ({ user, data }) => {
               </Grid>
             </Grid>
           </CardContent>
-
-          <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-              Edit
-            </Button>
-          </CardActions>
 
           <Dialog
             open={openEdit}
@@ -400,10 +417,26 @@ const UserProfile = ({ user, data }) => {
               </form>
             </DialogContent>
           </Dialog>
+
+          <Dialog onClose={handleAddClose} aria-labelledby='simple-dialog-title' open={openAdd}>
+            <DialogTitle id='simple-dialog-title'>Add Profile Section</DialogTitle>
+            <List sx={{ pt: 0, px: '0 !important' }}>
+              <ListItem disablePadding onClick={() => handleAddClose()}>
+                <ListItemButton>
+                  <ListItemAvatar>
+                    <MuiAvatar>
+                      <Icon icon='mdi:plus' />
+                    </MuiAvatar>
+                  </ListItemAvatar>
+                  <ListItemText primary='Add Experience' />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Dialog>
         </Card>
       </Grid>
       <Grid item xs={8}>
-        <ProfileViewRight profileData={data} />
+        {type != 'tutorial' && <ProfileViewRight profileData={data} />}
       </Grid>
     </Grid>
   )
