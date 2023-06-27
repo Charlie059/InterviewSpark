@@ -1,16 +1,16 @@
 import React from 'react'
 import { Paper, Typography } from '@mui/material'
 
-const getRandomColor = () => {
-  const r = Math.floor(Math.random() * 155 + 100) // Random value between 100 and 255
-  const g = Math.floor(Math.random() * 155 + 100) // Random value between 100 and 255
-  const b = Math.floor(Math.random() * 155 + 100) // Random value between 100 and 255
+const getRandomColor = letter => {
+  const r = Math.floor(((letter.charCodeAt(0) % 26) / 25) * 15 + 100)
+  const g = Math.floor(((letter.charCodeAt(0) % 26) / 25) * 55 + 100) // Random value between 100 and 255
+  const b = Math.floor(((letter.charCodeAt(0) % 26) / 25) * 155 + 100) // Random value between 100 and 255
 
   return `rgb(${r}, ${g}, ${b})`
 }
 
 const SquareWithLetter = ({ letter }: { letter: string }) => {
-  const randomColor = getRandomColor()
+  const randomColor = getRandomColor(letter)
 
   const squareStyle = {
     width: 56,
