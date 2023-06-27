@@ -50,11 +50,12 @@ export type AuthValuesType = {
 }
 
 export type Education = {
+  eduID: string
   eduDegree: string
   eduSchool: string
-  eduStartDate: string
+  eduStartDate: Date
   eduFieldStudy: string
-  eduEndDate: string
+  eduEndDate: Date
   eduIcon?: string
   eduActivities?: string
   eduDescription?: string

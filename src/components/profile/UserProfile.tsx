@@ -48,7 +48,8 @@ import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import ProfileViewRight from './ProfileViewRight'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
-import TestTable from "./profile-cards/TestTable";
+
+// import TestTable from "./profile-cards/TestTable";
 
 // @ts-ignore
 const UserProfile = ({ user, data }) => {
@@ -147,22 +148,26 @@ const UserProfile = ({ user, data }) => {
 
   const educationTestData: Education[] = [
     {
+      eduID: 'test1',
       eduDegree: 'Masters',
       eduFieldStudy: 'Computer Science',
       eduSchool: 'Rutgers University',
-      eduStartDate: '2021',
-      eduEndDate: '2023',
+      eduStartDate: new Date('2021-09-01'),
+      eduEndDate: new Date('2023-06-01'),
       eduActivities: 'testing Activities',
       eduDescription: 'testing description'
     },
     {
+      eduID: 'test2',
       eduDegree: 'Bachelors',
       eduFieldStudy: 'Computer Science',
       eduSchool: 'Ohio State University',
-      eduStartDate: '2019',
-      eduEndDate: '2021'
+      eduStartDate: new Date('2019-09-01'),
+      eduEndDate: new Date('2021-08-08')
     }
   ]
+
+  const emptyEdu: Education[] = []
 
   const workHistoryTestData: WorkHistory[] = [
     {
@@ -436,14 +441,14 @@ const UserProfile = ({ user, data }) => {
           </Dialog>
         </Card>
         <Card sx={{ mt: 6 }}>
-          <EducationCard type='private' eduDatas={educationTestData} />
+          <EducationCard type='private' eduDatas={educationTestData} setEduDatas />
         </Card>
         <Card sx={{ mt: 6 }}>
           <WorkHistoryCard type='private' workData={workHistoryTestData} />
         </Card>
-        <Card sx={{ mt: 6 }}>
+        {/* <Card sx={{ mt: 6 }}>
           <TestTable />
-        </Card>
+        </Card> */}
       </Grid>
       <Grid item xs={8}>
         <ProfileViewRight profileData={data} />

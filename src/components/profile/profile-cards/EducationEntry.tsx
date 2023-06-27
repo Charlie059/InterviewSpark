@@ -1,19 +1,19 @@
-import {Education} from "../../../context/types";
-import Grid from "@mui/material/Grid";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Fab from "@mui/material/Fab";
-import Icon from "../../../@core/components/icon";
-import {styled} from "@mui/material/styles";
+import { Education } from '../../../context/types'
+import Grid from '@mui/material/Grid'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Fab from '@mui/material/Fab'
+import Icon from '../../../@core/components/icon'
+import { styled } from '@mui/material/styles'
 
 interface EducationEntryProps {
-  eduData: Education;
+  eduData: Education
   edit: boolean
-  handleEditClick: (eduData: Education) => void;
+  handleEditClick: (eduData: Education) => void
 }
 
-const EducationEntry = ({eduData,handleEditClick, edit}:EducationEntryProps) => {
+const EducationEntry = ({ eduData, handleEditClick, edit }: EducationEntryProps) => {
   const StyledBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       borderTop: `2px solid ${theme.palette.divider}`
@@ -38,7 +38,8 @@ const EducationEntry = ({eduData,handleEditClick, edit}:EducationEntryProps) => 
             {eduData.eduDegree}, {eduData.eduFieldStudy}
           </Typography>
           <Typography variant='body2' sx={{ mb: 1 }}>
-            {eduData.eduStartDate} - {eduData.eduEndDate}
+            {eduData.eduStartDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })} -{' '}
+            {eduData.eduEndDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
           </Typography>
           {eduData.eduActivities && (
             <Typography variant='body1' sx={{ mb: 5 }}>
@@ -57,7 +58,9 @@ const EducationEntry = ({eduData,handleEditClick, edit}:EducationEntryProps) => 
           <Fab
             size='small'
             aria-label='edit'
-            onClick={() => {handleEditClick(eduData)}}
+            onClick={() => {
+              handleEditClick(eduData)
+            }}
           >
             <Icon icon='mdi:pencil' />
           </Fab>

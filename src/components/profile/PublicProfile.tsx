@@ -27,20 +27,22 @@ const PublicProfile = ({ user, data, type }) => {
 
   const educationTestData: Education[] = [
     {
+      eduID: 'test1',
       eduDegree: 'Masters',
       eduFieldStudy: 'Computer Science',
       eduSchool: 'Rutgers University',
-      eduStartDate: '2021',
-      eduEndDate: '2023',
+      eduStartDate: new Date('2021-09-01'),
+      eduEndDate: new Date('2023-06-01'),
       eduActivities: 'testing Activities',
       eduDescription: 'testing description'
     },
     {
+      eduID: 'test2',
       eduDegree: 'Bachelors',
       eduFieldStudy: 'Computer Science',
       eduSchool: 'Ohio State University',
-      eduStartDate: '2019',
-      eduEndDate: '2021'
+      eduStartDate: new Date('2019-09-01'),
+      eduEndDate: new Date('2021-08-08')
     }
   ]
 
