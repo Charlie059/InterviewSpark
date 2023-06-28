@@ -1,4 +1,6 @@
 // ** React Imports
+// noinspection TypeScriptValidateTypes
+
 import { Fragment, useEffect, useState } from 'react'
 
 // ** MUI Imports
@@ -63,7 +65,7 @@ const ProfileViewRight = profileData => {
 
   useEffect(() => {
     const getUrl = async () => {
-      await Storage.get(profileData.profileData.resumeKey, { expires: 604800 }).then(url => {
+      await Storage.get(profileData.profileData.resumeKey, { level:"public", expires: 604800 }).then(url => {
         setUrl(url)
         setShowResume(true)
       })
@@ -90,8 +92,8 @@ const ProfileViewRight = profileData => {
       const suffix = docType == 'pdf' ? '.pdf' : '.docx'
       const cvName = timestamp + suffix
       try {
-        await Storage.put(cvName, resume).catch(e => console.log(e))
-        setUrl(await Storage.get(cvName, { expires: 604800 }))
+        await Storage.put(cvName, resume,{level:"public"}).catch(e => console.log(e))
+        setUrl(await Storage.get(cvName, { level:"public",expires: 604800 }))
 
         profileData.profileData.resumeKey = cvName
         profileData.profileData.emailAddress = profileData.profileData.userEmailAddress
