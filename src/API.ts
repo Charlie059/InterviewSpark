@@ -31,6 +31,29 @@ export type ResumeScan = {
   resumeScanID: string,
 };
 
+export type Education = {
+  __typename: "Education",
+  eduID?: string | null,
+  eduDegree?: string | null,
+  eduFieldStudy?: string | null,
+  eduSchool?: string | null,
+  eduStartDate?: string | null,
+  eduEndDate?: string | null,
+  eduIcon?: string | null,
+  eduActivity?: string | null,
+};
+
+export type WorkHistory = {
+  __typename: "WorkHistory",
+  workHistoryID?: string | null,
+  workHistoryJobTitle?: string | null,
+  workHistoryEmployer?: string | null,
+  workHistoryStartDate?: string | null,
+  workHistoryEndDate?: string | null,
+  workHistoryJobDescription?: string | null,
+  workHistoryIcon?: string | null,
+};
+
 export type Profile = {
   __typename: "Profile",
   fName?: string | null,
@@ -57,27 +80,9 @@ export type WorkHistories = {
   workHistory?:  Array<WorkHistory | null > | null,
 };
 
-export type WorkHistory = {
-  __typename: "WorkHistory",
-  workHistoryJobTitle?: string | null,
-  workHistoryEmployer?: string | null,
-  workHistoryStartDate?: string | null,
-  workHistoryEndDate?: string | null,
-  workHistoryJobDescription?: string | null,
-};
-
 export type Educations = {
   __typename: "Educations",
   educations?:  Array<Education | null > | null,
-};
-
-export type Education = {
-  __typename: "Education",
-  eduDegree?: string | null,
-  eduFieldStudy?: string | null,
-  eduSchool?: string | null,
-  eduStartDate?: string | null,
-  eduEndDate?: string | null,
 };
 
 export type PaginatedInterviewList = {
@@ -282,6 +287,124 @@ export type UpdateUserResumeScanURLMutation = {
   },
 };
 
+export type CreateUserEducationMutationVariables = {
+  emailAddress: string,
+  eduDegree: string,
+  eduFieldStudy: string,
+  eduSchool: string,
+  eduStartDate: string,
+  eduEndDate: string,
+};
+
+export type CreateUserEducationMutation = {
+  createUserEducation:  {
+    __typename: "Education",
+    eduID?: string | null,
+    eduDegree?: string | null,
+    eduFieldStudy?: string | null,
+    eduSchool?: string | null,
+    eduStartDate?: string | null,
+    eduEndDate?: string | null,
+    eduIcon?: string | null,
+    eduActivity?: string | null,
+  },
+};
+
+export type UpdateUserEducationMutationVariables = {
+  emailAddress: string,
+  eduID: string,
+  eduDegree: string,
+  eduFieldStudy: string,
+  eduSchool: string,
+  eduStartDate: string,
+  eduEndDate: string,
+};
+
+export type UpdateUserEducationMutation = {
+  updateUserEducation:  {
+    __typename: "Education",
+    eduID?: string | null,
+    eduDegree?: string | null,
+    eduFieldStudy?: string | null,
+    eduSchool?: string | null,
+    eduStartDate?: string | null,
+    eduEndDate?: string | null,
+    eduIcon?: string | null,
+    eduActivity?: string | null,
+  },
+};
+
+export type RemoveUserEducationByIDMutationVariables = {
+  emailAddress: string,
+  eduID: string,
+};
+
+export type RemoveUserEducationByIDMutation = {
+  removeUserEducationByID:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+  },
+};
+
+export type CreateUserWorkHistoryMutationVariables = {
+  emailAddress: string,
+  workCompany: string,
+  workPosition: string,
+  workStartDate: string,
+  workEndDate: string,
+  workDescription: string,
+};
+
+export type CreateUserWorkHistoryMutation = {
+  createUserWorkHistory:  {
+    __typename: "WorkHistory",
+    workHistoryID?: string | null,
+    workHistoryJobTitle?: string | null,
+    workHistoryEmployer?: string | null,
+    workHistoryStartDate?: string | null,
+    workHistoryEndDate?: string | null,
+    workHistoryJobDescription?: string | null,
+    workHistoryIcon?: string | null,
+  },
+};
+
+export type UpdateUserWorkHistoryMutationVariables = {
+  emailAddress: string,
+  workHistoryID: string,
+  workCompany: string,
+  workPosition: string,
+  workStartDate: string,
+  workEndDate: string,
+  workDescription: string,
+};
+
+export type UpdateUserWorkHistoryMutation = {
+  updateUserWorkHistory:  {
+    __typename: "WorkHistory",
+    workHistoryID?: string | null,
+    workHistoryJobTitle?: string | null,
+    workHistoryEmployer?: string | null,
+    workHistoryStartDate?: string | null,
+    workHistoryEndDate?: string | null,
+    workHistoryJobDescription?: string | null,
+    workHistoryIcon?: string | null,
+  },
+};
+
+export type RemoveUserWorkHistoryByIDMutationVariables = {
+  emailAddress: string,
+  workHistoryID: string,
+};
+
+export type RemoveUserWorkHistoryByIDMutation = {
+  removeUserWorkHistoryByID:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+  },
+};
+
 export type GetUserProfileQueryVariables = {
   emailAddress: string,
 };
@@ -345,11 +468,13 @@ export type GetUserWorkHistoriesQuery = {
     __typename: "WorkHistories",
     workHistory?:  Array< {
       __typename: "WorkHistory",
+      workHistoryID?: string | null,
       workHistoryJobTitle?: string | null,
       workHistoryEmployer?: string | null,
       workHistoryStartDate?: string | null,
       workHistoryEndDate?: string | null,
       workHistoryJobDescription?: string | null,
+      workHistoryIcon?: string | null,
     } | null > | null,
   },
 };
@@ -363,11 +488,14 @@ export type GetUserEducationsQuery = {
     __typename: "Educations",
     educations?:  Array< {
       __typename: "Education",
+      eduID?: string | null,
       eduDegree?: string | null,
       eduFieldStudy?: string | null,
       eduSchool?: string | null,
       eduStartDate?: string | null,
       eduEndDate?: string | null,
+      eduIcon?: string | null,
+      eduActivity?: string | null,
     } | null > | null,
   },
 };
@@ -636,5 +764,42 @@ export type GetUserResumeScansQuery = {
       resumeUrl?: string | null,
       resumeScanID: string,
     } | null > | null,
+  },
+};
+
+export type GetUserEducationByIDQueryVariables = {
+  emailAddress: string,
+  eduID: string,
+};
+
+export type GetUserEducationByIDQuery = {
+  getUserEducationByID:  {
+    __typename: "Education",
+    eduID?: string | null,
+    eduDegree?: string | null,
+    eduFieldStudy?: string | null,
+    eduSchool?: string | null,
+    eduStartDate?: string | null,
+    eduEndDate?: string | null,
+    eduIcon?: string | null,
+    eduActivity?: string | null,
+  },
+};
+
+export type GetUserWorkHistoryByIDQueryVariables = {
+  emailAddress: string,
+  workHistoryID: string,
+};
+
+export type GetUserWorkHistoryByIDQuery = {
+  getUserWorkHistoryByID:  {
+    __typename: "WorkHistory",
+    workHistoryID?: string | null,
+    workHistoryJobTitle?: string | null,
+    workHistoryEmployer?: string | null,
+    workHistoryStartDate?: string | null,
+    workHistoryEndDate?: string | null,
+    workHistoryJobDescription?: string | null,
+    workHistoryIcon?: string | null,
   },
 };

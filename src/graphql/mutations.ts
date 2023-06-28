@@ -182,3 +182,139 @@ export const updateUserResumeScanURL = /* GraphQL */ `
     }
   }
 `;
+export const createUserEducation = /* GraphQL */ `
+  mutation CreateUserEducation(
+    $emailAddress: AWSEmail!
+    $eduDegree: String!
+    $eduFieldStudy: String!
+    $eduSchool: String!
+    $eduStartDate: AWSDate!
+    $eduEndDate: AWSDate!
+  ) {
+    createUserEducation(
+      emailAddress: $emailAddress
+      eduDegree: $eduDegree
+      eduFieldStudy: $eduFieldStudy
+      eduSchool: $eduSchool
+      eduStartDate: $eduStartDate
+      eduEndDate: $eduEndDate
+    ) {
+      eduID
+      eduDegree
+      eduFieldStudy
+      eduSchool
+      eduStartDate
+      eduEndDate
+      eduIcon
+      eduActivity
+    }
+  }
+`;
+export const updateUserEducation = /* GraphQL */ `
+  mutation UpdateUserEducation(
+    $emailAddress: AWSEmail!
+    $eduID: String!
+    $eduDegree: String!
+    $eduFieldStudy: String!
+    $eduSchool: String!
+    $eduStartDate: AWSDate!
+    $eduEndDate: AWSDate!
+  ) {
+    updateUserEducation(
+      emailAddress: $emailAddress
+      eduID: $eduID
+      eduDegree: $eduDegree
+      eduFieldStudy: $eduFieldStudy
+      eduSchool: $eduSchool
+      eduStartDate: $eduStartDate
+      eduEndDate: $eduEndDate
+    ) {
+      eduID
+      eduDegree
+      eduFieldStudy
+      eduSchool
+      eduStartDate
+      eduEndDate
+      eduIcon
+      eduActivity
+    }
+  }
+`;
+export const removeUserEducationByID = /* GraphQL */ `
+  mutation RemoveUserEducationByID($emailAddress: AWSEmail!, $eduID: String!) {
+    removeUserEducationByID(emailAddress: $emailAddress, eduID: $eduID) {
+      isSuccessful
+      error
+    }
+  }
+`;
+export const createUserWorkHistory = /* GraphQL */ `
+  mutation CreateUserWorkHistory(
+    $emailAddress: AWSEmail!
+    $workCompany: String!
+    $workPosition: String!
+    $workStartDate: AWSDate!
+    $workEndDate: AWSDate!
+    $workDescription: String!
+  ) {
+    createUserWorkHistory(
+      emailAddress: $emailAddress
+      workCompany: $workCompany
+      workPosition: $workPosition
+      workStartDate: $workStartDate
+      workEndDate: $workEndDate
+      workDescription: $workDescription
+    ) {
+      workHistoryID
+      workHistoryJobTitle
+      workHistoryEmployer
+      workHistoryStartDate
+      workHistoryEndDate
+      workHistoryJobDescription
+      workHistoryIcon
+    }
+  }
+`;
+export const updateUserWorkHistory = /* GraphQL */ `
+  mutation UpdateUserWorkHistory(
+    $emailAddress: AWSEmail!
+    $workHistoryID: String!
+    $workCompany: String!
+    $workPosition: String!
+    $workStartDate: AWSDate!
+    $workEndDate: AWSDate!
+    $workDescription: String!
+  ) {
+    updateUserWorkHistory(
+      emailAddress: $emailAddress
+      workHistoryID: $workHistoryID
+      workCompany: $workCompany
+      workPosition: $workPosition
+      workStartDate: $workStartDate
+      workEndDate: $workEndDate
+      workDescription: $workDescription
+    ) {
+      workHistoryID
+      workHistoryJobTitle
+      workHistoryEmployer
+      workHistoryStartDate
+      workHistoryEndDate
+      workHistoryJobDescription
+      workHistoryIcon
+    }
+  }
+`;
+export const removeUserWorkHistoryByID = /* GraphQL */ `
+  mutation RemoveUserWorkHistoryByID(
+    $emailAddress: AWSEmail!
+    $workHistoryID: String!
+  ) {
+    removeUserWorkHistoryByID(
+      emailAddress: $emailAddress
+      workHistoryID: $workHistoryID
+    ) {
+      isSuccessful
+      error
+    }
+  }
+`;
