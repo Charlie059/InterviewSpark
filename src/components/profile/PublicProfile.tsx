@@ -46,6 +46,8 @@ const PublicProfile = ({ user, data, type }) => {
     }
   ]
 
+  const emptyEdu: Education[] = []
+
   const workHistoryTestData: WorkHistory[] = [
     {
       workHistoryID: 'test3',
@@ -53,9 +55,13 @@ const PublicProfile = ({ user, data, type }) => {
       workHistoryEmployer: 'HireBeat',
       workHistoryStartDate: new Date('2021-09-01'),
       workHistoryEndDate: new Date('2023-06-30'),
-      workHistoryJobDescription: ''
+      workHistoryJobDescription: 'testing Description'
     }
   ]
+
+  const emptyWorkHistory: WorkHistory[] = []
+
+  const refresh = () => { };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profileData, setProfileData] = useState(data)
@@ -68,7 +74,7 @@ const PublicProfile = ({ user, data, type }) => {
   const defaultValues = data
 
   return (
-    <Grid container spacing={6}>
+    <Grid container spacing={8}>
       <Grid item xs={12}>
         <UserProfileHeader data={data} type={'profile'} />
       </Grid>
@@ -123,11 +129,13 @@ const PublicProfile = ({ user, data, type }) => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={8}>
-        <EducationCard type='public' eduDatas={educationTestData} />
-      </Grid>
-      <Grid item xs={8}>
-        <WorkHistoryCard type='public' workDatas={workHistoryTestData} />
+        <Grid item xs={8}>
+          <Grid item sx={{mb:8}}>
+            <EducationCard type="public" eduDatas={emptyEdu} refresh={refresh} />
+          </Grid>
+          <Grid>
+            <WorkHistoryCard type="public" workDatas={emptyWorkHistory} refresh={refresh} />
+          </Grid>
       </Grid>
     </Grid>
   )

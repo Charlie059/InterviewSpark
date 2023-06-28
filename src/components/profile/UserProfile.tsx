@@ -188,10 +188,11 @@ const UserProfile = ({ user, data }) => {
     }
   ]
 
+  const emptyWorkHistory: WorkHistory[] = []
 
   useEffect(() => {
-    setEducations(educationTestData)
-    setWorkHistories(workHistoryTestData)
+    setEducations(emptyEdu)
+    setWorkHistories(emptyWorkHistory)
   }, [])
 
   return (

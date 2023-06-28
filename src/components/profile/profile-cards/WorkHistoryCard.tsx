@@ -29,6 +29,7 @@ import {WorkHistory} from 'src/context/types'
 // ** Demo Components
 import WorkHistoryEntry from './WorkHistoryEntry'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import EducationEntry from "./EducationEntry";
 
 const WorkHistoryCard = ({
   workDatas,
@@ -45,6 +46,7 @@ const WorkHistoryCard = ({
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [workD, setWorkD] = useState<WorkHistory>()
+  const [isEmpty, setIsEmpty] = useState(workDatas.length == 0);
 
   const handleClickOpen = () => {
     setEdit(true)
@@ -127,29 +129,38 @@ const WorkHistoryCard = ({
               <Fab aria-label='add' size='small' style={{ marginRight: '10px' }} onClick={handleAddOpen}>
                 <Icon icon='mdi:plus' />
               </Fab>
-              {!edit ? (
-                <Fab size='small' aria-label='edit' onClick={handleClickOpen}>
-                  <Icon icon='mdi:pencil' />
-                </Fab>
-              ) : (
-                <Fab size='small' aria-label='edit' onClick={handleClickClose}>
-                  <Icon icon='iconamoon:check-fill' />
+              {!isEmpty && (
+                <Fab size='small' aria-label='edit' onClick={!edit ? handleClickOpen : handleClickClose}>
+                  <Icon icon={!edit ? 'mdi:pencil' : 'iconamoon:check-fill'} />
                 </Fab>
               )}
             </Box>
           )}
         </Box>
-        <TableContainer>
-          {workDatas?.map((workData, index) => (
-            <WorkHistoryEntry
-              key={index}
-              edit={edit}
-              workData={workData}
-              handleEditClick={handleEditOpen}
-              handleEntryRemove={removeWorkHistoryEntryByID}
-            />
-          ))}
-        </TableContainer>
+        {!isEmpty ? (
+          <TableContainer>
+            {workDatas?.map((workData, index) => (
+              <WorkHistoryEntry
+                key={index}
+                edit={edit}
+                workData={workData}
+                handleEditClick={handleEditOpen}
+                handleEntryRemove={removeWorkHistoryEntryByID}
+              />
+            ))}
+          </TableContainer>
+        ):(
+          <Grid container sx={{ml:2, mt:8, mb:5}} spacing={3}>
+            <Grid item xs={1.5}>
+              <Icon fontSize='large' icon='majesticons:data-plus-line' />
+            </Grid>
+            <Grid item xs={10.5}>
+              <Typography variant='body1'>
+                No Experience Information Available
+              </Typography>
+            </Grid>
+          </Grid>
+        )}
 
         <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
           <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
