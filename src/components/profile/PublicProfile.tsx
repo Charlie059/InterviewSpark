@@ -48,10 +48,11 @@ const PublicProfile = ({ user, data, type }) => {
 
   const workHistoryTestData: WorkHistory[] = [
     {
+      workHistoryID: 'test3',
       workHistoryJobTitle: 'Full Stack Developer',
       workHistoryEmployer: 'HireBeat',
-      workHistoryStartDate: 'May 2021',
-      workHistoryEndDate: '',
+      workHistoryStartDate: new Date('2021-09-01'),
+      workHistoryEndDate: new Date('2023-06-30'),
       workHistoryJobDescription: ''
     }
   ]
@@ -126,7 +127,7 @@ const PublicProfile = ({ user, data, type }) => {
         <EducationCard type='public' eduDatas={educationTestData} />
       </Grid>
       <Grid item xs={8}>
-        <WorkHistoryCard type='public' workData={workHistoryTestData} />
+        <WorkHistoryCard type='public' workDatas={workHistoryTestData} />
       </Grid>
     </Grid>
   )

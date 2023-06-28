@@ -59,11 +59,13 @@ export type WorkHistories = {
 
 export type WorkHistory = {
   __typename: "WorkHistory",
+  workHistoryID: string
   workHistoryJobTitle?: string | null,
   workHistoryEmployer?: string | null,
   workHistoryStartDate?: string | null,
   workHistoryEndDate?: string | null,
   workHistoryJobDescription?: string | null,
+  workHistoryIcon?: string | null,
 };
 
 export type Educations = {
@@ -78,6 +80,7 @@ export type Education = {
   eduSchool?: string | null,
   eduStartDate?: string | null,
   eduEndDate?: string | null,
+  eduIcon? : string | null
 };
 
 export type PaginatedInterviewList = {

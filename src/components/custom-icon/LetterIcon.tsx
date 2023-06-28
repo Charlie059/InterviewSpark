@@ -1,12 +1,38 @@
 import React from 'react'
 import { Paper, Typography } from '@mui/material'
 
-const getRandomColor = letter => {
-  const r = Math.floor(((letter.charCodeAt(0) % 26) / 25) * 19 + 100)
-  const g = Math.floor(((letter.charCodeAt(0) % 26) / 25) * 55 + 100) // Random value between 100 and 255
-  const b = Math.floor(((letter.charCodeAt(0) % 26) / 25) * 155 + 100) // Random value between 100 and 255
+const getRandomColor = (letter: string) => {
+  const index = letter.toUpperCase().charCodeAt(0) - 65;
+  const colors: string[] = [
+    'rgb(250, 200, 100)',
+    'rgb(250, 200, 250)',
+    'rgb(150, 200, 210)',
+    'rgb(200, 200, 240)',
+    'rgb(255, 155, 100)',
+    'rgb(255, 170, 255)',
+    'rgb(255, 255, 150)',
+    'rgb(170, 230, 230)',
+    'rgb(100, 210, 100)',
+    'rgb(190, 180, 100)',
+    'rgb(250, 235, 215)',
+    'rgb(100, 210, 255)',
+    'rgb(160, 240, 240)',
+    'rgb(230, 230, 250)',
+    'rgb(200, 255, 230)',
+    'rgb(200, 200, 255)',
+    'rgb(200, 200, 0)',
+    'rgb(255, 200, 180)',
+    'rgb(255, 100, 180)',
+    'rgb(155, 200, 255)',
+    'rgb(255, 215, 0)',
+    'rgb(220, 220, 210)',
+    'rgb(222,184, 140)',
+    'rgb(155, 210, 100)',
+    'rgb(240, 255, 240)',
+    'rgb(250, 120, 120)'
+  ];
 
-  return `rgb(${r}, ${g}, ${b})`
+  return colors[index];
 }
 
 const SquareWithLetter = ({ letter }: { letter: string }) => {

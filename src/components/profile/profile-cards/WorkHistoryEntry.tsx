@@ -1,4 +1,3 @@
-import { Education } from '../../../context/types'
 import Grid from '@mui/material/Grid'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
@@ -7,14 +6,16 @@ import Fab from '@mui/material/Fab'
 import Icon from '../../../@core/components/icon'
 import { styled } from '@mui/material/styles'
 import { WorkHistory } from 'src/API'
+import LetterIcon from "../../custom-icon/LetterIcon";
 
 interface WorkHistoryEntryProps {
   workData: WorkHistory
   edit: boolean
   handleEditClick: (workData: WorkHistory) => void
+  handleEntryRemove: (ID: string) => void
 }
 
-const WorkHistoryEntry = ({ workData, handleEditClick, edit }: WorkHistoryEntryProps) => {
+const WorkHistoryEntry = ({ workData, handleEditClick, edit, handleEntryRemove }: WorkHistoryEntryProps) => {
   const StyledBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       borderTop: `2px solid ${theme.palette.divider}`
@@ -22,22 +23,40 @@ const WorkHistoryEntry = ({ workData, handleEditClick, edit }: WorkHistoryEntryP
   }))
 
   return (
-    <StyledBox sx={{ mt: 4 }}>
-      <Grid item xs={10.5}>
-        <Typography variant='h6' sx={{ mt: 3, mb: 1 }}>
-          {workData.workHistoryEmployer}
-        </Typography>
-        <Typography variant='body1' sx={{ mb: 1 }}>
-          {workData.workHistoryJobTitle}
-        </Typography>
-        <Typography variant='body2' sx={{ mb: 1 }}>
-          {workData.workHistoryStartDate} - {workData.workHistoryEndDate}
-        </Typography>
-        {workData.workHistoryJobDescription && (
-          <Typography variant='body1' sx={{ mb: 5 }}>
-            Description: {workData.workHistoryJobDescription}
+    <StyledBox sx={{ mt: 4, mb: 1, mr: 4}}>
+      <Grid container spacing={2}>
+        <Box
+          component={Grid}
+          item
+          lg={3}
+          display={{ md: 'none', lg: 'flex' }}
+          sx={{ mb: 10, alignItems: 'flex-start', justifyContent: 'flex-start' }}
+        >
+          <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center'}}>
+            {workData.workHistoryIcon ? (
+              <img alt='Company Logo' src={workData.workHistoryIcon} style={{ width: 56, height: 56 }} />
+            ) : (
+              <LetterIcon letter={workData.workHistoryEmployer.charAt(0)}></LetterIcon>
+            )}
+          </CardContent>
+        </Box>
+        <Grid item lg={7}>
+          <Typography variant='h6' sx={{ mt: 3, mb: 1 }}>
+            {workData.workHistoryEmployer}
           </Typography>
-        )}
+          <Typography variant='body1' sx={{ mb: 1 }}>
+            {workData.workHistoryJobTitle}
+          </Typography>
+          <Typography variant='body2' sx={{ mb: 1 }}>
+            {workData.workHistoryStartDate && workData.workHistoryStartDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })} -{' '}
+            {workData.workHistoryEndDate && workData.workHistoryEndDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+          </Typography>
+          {workData.workHistoryJobDescription && (
+            <Typography variant='body1' sx={{ mb: 5 }}>
+              Description: {workData.workHistoryJobDescription}
+            </Typography>
+          )}
+        </Grid>
       </Grid>
       {edit && (
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -50,7 +69,14 @@ const WorkHistoryEntry = ({ workData, handleEditClick, edit }: WorkHistoryEntryP
           >
             <Icon icon='mdi:pencil' />
           </Fab>
-          <Fab aria-label='add' size='small'>
+          <Fab
+            aria-label='add'
+            size='small'
+            sx={{marginLeft: '10px'}}
+            onClick={() => {
+              handleEntryRemove(workData.workHistoryID)
+            }}
+          >
             <Icon icon='mdi:trash' />
           </Fab>
         </Box>

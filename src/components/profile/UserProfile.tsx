@@ -179,11 +179,12 @@ const UserProfile = ({ user, data }) => {
 
   const workHistoryTestData: WorkHistory[] = [
     {
+      workHistoryID: 'test3',
       workHistoryJobTitle: 'Full Stack Developer',
       workHistoryEmployer: 'HireBeat',
-      workHistoryStartDate: 'May 2021',
-      workHistoryEndDate: '',
-      workHistoryJobDescription: ''
+      workHistoryStartDate: new Date('2021-09-01'),
+      workHistoryEndDate: new Date('2023-06-30'),
+      workHistoryJobDescription: 'testing Description'
     }
   ]
 
@@ -460,7 +461,7 @@ const UserProfile = ({ user, data }) => {
         </Card>
         <Card sx={{ mt: 6 }}>
           {workHistories&&
-            <WorkHistoryCard type='private' workDatas={workHistories} setWorkHistories={setWorkHistories} />}
+            <WorkHistoryCard type='private' workDatas={workHistories} setWorkDatas={setWorkHistories} refresh={handleRefresh}/>}
         </Card>
         {/* <Card sx={{ mt: 6 }}>
           <TestTable />

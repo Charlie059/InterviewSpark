@@ -23,7 +23,7 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: E
   }))
 
   return (
-    <StyledBox sx={{ mt: 4 }}>
+    <StyledBox sx={{ mt: 4, mb: 1, mr: 2}}>
       <Grid container spacing={2}>
         <Box
           component={Grid}
@@ -64,7 +64,7 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: E
         </Grid>
       </Grid>
       {edit && (
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
           <Fab
             size='small'
             aria-label='edit'
@@ -77,6 +77,7 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: E
           <Fab
             aria-label='add'
             size='small'
+            sx={{marginLeft: '10px'}}
             onClick={() => {
               handleEntryRemove(eduData.eduID)
             }}

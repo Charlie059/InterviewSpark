@@ -62,10 +62,11 @@ export type Education = {
 }
 
 export type WorkHistory = {
+  workHistoryID: string
   workHistoryJobTitle: string
   workHistoryEmployer: string
-  workHistoryStartDate: string
-  workHistoryEndDate: string
+  workHistoryStartDate: Date
+  workHistoryEndDate: Date
   workHistoryJobDescription?: string
   workHistoryIcon?: string
 }
