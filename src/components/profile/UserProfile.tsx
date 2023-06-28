@@ -188,10 +188,11 @@ const UserProfile = ({ user, data }) => {
     }
   ]
 
+  const emptyWorkHistory: WorkHistory[] = []
 
   useEffect(() => {
-    setEducations(educationTestData)
-    setWorkHistories(workHistoryTestData)
+    setEducations(emptyEdu)
+    setWorkHistories(emptyWorkHistory)
   }, [])
 
   return (
@@ -460,7 +461,7 @@ const UserProfile = ({ user, data }) => {
             <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />}
         </Card>
         <Card sx={{ mt: 6 }}>
-          {workHistories&&
+          {workHistories &&
             <WorkHistoryCard type='private' workDatas={workHistories} setWorkDatas={setWorkHistories} refresh={handleRefresh}/>}
         </Card>
         {/* <Card sx={{ mt: 6 }}>

@@ -45,6 +45,7 @@ const EducationCard = ({
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [eduD, setEduD] = useState<Education>()
+  const [isEmpty, setIsEmpty] = useState(eduDatas.length == 0);
 
   const handleClickOpen = () => {
     setEdit(true)
@@ -76,10 +77,11 @@ const EducationCard = ({
       const createdEduID = 'testadd' + eduDatas.length // Assuming api.createEducation returns the ID
       eduData.eduID = createdEduID
       updatedEduDatas.push(eduData)
+      console.log('updated edu data: ', updatedEduDatas) // Outputs correct data
     }
 
     setEduDatas(updatedEduDatas)
-    console.log(eduDatas)
+    console.log('updated data: ', eduDatas) // Empty array
     refresh()
   }
 
@@ -125,19 +127,16 @@ const EducationCard = ({
               <Fab aria-label='add' size='small' style={{ marginRight: '10px' }} onClick={handleAddOpen}>
                 <Icon icon='mdi:plus' />
               </Fab>
-              {!edit ? (
-                <Fab size='small' aria-label='edit' onClick={handleClickOpen}>
-                  <Icon icon='mdi:pencil' />
-                </Fab>
-              ) : (
-                <Fab size='small' aria-label='edit' onClick={handleClickClose}>
-                  <Icon icon='iconamoon:check-fill' />
+              {!isEmpty && (
+                <Fab size='small' aria-label='edit' onClick={!edit ? handleClickOpen : handleClickClose}>
+                  <Icon icon={!edit ? 'mdi:pencil' : 'iconamoon:check-fill'} />
                 </Fab>
               )}
             </Box>
           )}
         </Box>
-        <TableContainer>
+        {!isEmpty ? (
+          <TableContainer>
           {eduDatas?.map((eduData, index) => (
             <EducationEntry
               key={index}
@@ -148,6 +147,18 @@ const EducationCard = ({
             />
           ))}
         </TableContainer>
+        ) : (
+          <Grid container sx={{ml:2, mt:8, mb:5}} spacing={3}>
+            <Grid item xs={1.5}>
+              <Icon fontSize='large' icon='majesticons:data-plus-line' />
+            </Grid>
+            <Grid item xs={10.5}>
+              <Typography variant='body1'>
+                No Education Information Available
+              </Typography>
+            </Grid>
+          </Grid>
+        )}
 
         <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
           <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
