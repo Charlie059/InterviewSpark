@@ -1,8 +1,8 @@
 import React, { ReactNode, useState } from 'react'
-import { Box, Modal, Grid } from '@mui/material'
+import { Box, Modal, Grid, Typography, Avatar } from '@mui/material'
 import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import InterviewFeedbackCardDetail from 'src/components/interviewFeedback/FeedbackCardDetail'
+import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
 
 // Mock data
 const feedbackData = {
@@ -37,7 +37,8 @@ const feedbackData = {
     'Great job! Your pace of speech is within the optimal range for listener comprehension and engagement.',
   volumeFeedback:
     'Your volume is perceived as too low. Consider increasing it to ensure listeners can hear you clearly.',
-  transcribeText: 'Uh Hello everyone..',
+  transcribeText:
+    'Uh Hello everUh HelleverUh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyUh Hello everyone..UhryUh Hello everyone..UhUh Hello everyoryUh Hello everyone..UhUh Helloo everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyUh Hello everyone..UhryUh Hello everyone..UhUh Hello everyoryUh Hello everyone..UhUh Hello everyoryUh Hello everyone..UhUh Hello everyoUh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone. Hello everyone.yone..',
   rekognitionScores: {
     eye_contact_score: 0.7363847953413598,
     eye_contact_score_feedback: 'Good eye contact. Try to focus a bit more on the camera.',
@@ -52,6 +53,15 @@ const feedbackData = {
 }
 
 const cardData = [
+  {
+    cardName: 'Video',
+    cardText:
+      'Your mock interview video is here. We have also included a transcript of your interview below: ' +
+      feedbackData.transcribeText,
+    cardValue: null,
+    extraInfo: null,
+    videoUrl: 'https://www.youtube.com/watch?v=7Xc5wIpUenQ'
+  },
   {
     cardName: 'UM Counter',
     cardText: feedbackData.umFeedback,
@@ -134,14 +144,17 @@ const cardData = [
 
 type CardDataType = {
   cardName: string
-  cardText: string | null
-  cardValue: number | null
+  cardText?: string
+  cardValue?: number | null
   extraInfo: any
+  onDetailClick?: () => void
+  videoUrl?: string
+  isDetailPage?: boolean
 }
 
 const InterviewDetails = () => {
   const [modalOpen, setModalOpen] = useState(false)
-  const [currentCard, setCurrentCard] = useState<CardDataType | null>(null)
+  const [currentCard, setCurrentCard] = useState<CardDataType>(cardData[0])
 
   const handleCardClick = (index: number) => {
     setCurrentCard(cardData[index])
@@ -153,7 +166,21 @@ const InterviewDetails = () => {
   }
 
   return (
-    <Box>
+    <div style={{ backgroundColor: '#F2F7FE' }}>
+      <Box padding={10}>
+        <NavBar
+          navBarElements={[
+            { name: 'HomePage', path: '/interview' },
+            { name: 'Interview Question Review', path: undefined }
+          ]}
+          closeNavLink='/interview'
+        />
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+          <Typography sx={{ fontFamily: 'Montserrat', fontSize: 36, mt: 2 }}>Question Review</Typography>
+          {/* // TODO: Replace actual user avatar */}
+          <Avatar src='/images/avatars/1.png' sx={{ width: '3.5rem', height: '3.5rem' }} />
+        </Box>
+      </Box>
       <Grid container>
         {cardData.map((card, index) => (
           <Grid xs={12} sm={6} md={4} lg={3} key={index}>
@@ -162,9 +189,9 @@ const InterviewDetails = () => {
         ))}
       </Grid>
       <Modal open={modalOpen} onClose={handleClose}>
-        <InterviewFeedbackCardDetail card={currentCard} />
+        <InterviewFeedbackCard {...currentCard} isDetailPage={true} />
       </Modal>
-    </Box>
+    </div>
   )
 }
 

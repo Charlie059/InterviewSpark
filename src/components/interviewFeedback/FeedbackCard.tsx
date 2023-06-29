@@ -7,6 +7,8 @@ import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { Box, Button } from '@mui/material'
 import ClampLines from 'react-clamp-lines'
 import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
+import ReactPlayer from 'react-player'
+import styled from 'styled-components'
 
 interface Props {
   cardName: string
@@ -14,10 +16,54 @@ interface Props {
   cardValue?: number | null
   extraInfo: any
   onDetailClick?: () => void
+  videoUrl?: string
+  isDetailPage?: boolean
 }
 
+const videoTranscriptionHint =
+  'Our video transcription tool uses sophisticated artificial intelligence to convert your spoken words into written text. This is a critical part of our system since it enables other functionalities, such as answer relevance, to perform their analysis. If your video transcription score is commendable, it means our technology was able to fully and accurately transcribe your speech. The clarity of speech, pronunciation, and the absence of heavy accents play major roles in achieving a high score. If the score is low, the transcription may have encountered problems like extensive use of filler words, mumbling, or an accent that the AI had difficulty processing. This may also hinder the effectiveness of other analyses such as Authenticity Score or Answer Relevance. To improve, consider speaking more clearly and directly. Enunciate and avoid use of excessive slang or colloquial language. Practising can improve your spoken English skills and ultimately, your transcription score.'
+
+const umCounterHint =
+  'Our Um Counter uses artificial intelligence to track how often you use filler words such as "um", "uh", "like", etc. These words, while a natural part of speech, can become distracting if overused. A low score on the Um Counter is excellent performance. It shows you speak fluently and confidently without leaning on filler words. A high score suggests excessive use of filler words, which can muddle your message and detract from the clarity of your presentation. To improve, start by consciously noticing your use of filler words in everyday life. Giving speeches or presentations in front of others can provide feedback and help reduce filler word usage.'
+
+const vocabularyHint =
+  'Our Vocabulary tool analyzes the range and complexity of the words you use in your speaking. A varied and advanced vocabulary demonstrates a strong command of language, boosting your credibility and engagement. A high score indicates a broad vocabulary and excellent word choice in your answers. A low score might reveal a limited vocabulary or a reliance on simple, repetitive language. To improve, work on expanding your vocabulary. This can be done by reading a diverse range of materials, learning new words, and practicing them in your speech.'
+
+const powerWordHint =
+  'The Power Word analysis aspect of our AI system checks the use of words that display confidence, decisiveness, and, thus, convey a powerful message.'
+
+const answerRelevanceHint =
+  'Your answer relevance score is based on the analysis of an artificial intelligence program that has been trained on a massive data set of text from a wide range of sources, fine tuned by human feedback.'
+
+const authenticityScoreHint =
+  'Our system measures the authenticity of your answers, assessing whether they sound genuine, honest and convincing or if they sound rehearsed and exaggerated.'
+
+const fillerWordsHint =
+  'Our filler words counter identifies and enumerates every time you say "um," "uh," "like," etc., in your speech, which while natural in conversation, can become distracting when overused.'
+
+const negativeToneHint =
+  'Our technology scans the tone of your voice, focusing on whether your tone is positive, neutral or negative. The more positive your tone, the more engaging and professional your message seems.'
+
+const volumeHint =
+  'Volume here refers to the loudness or quietness of your speaking voice. An appropriate volume is crucial for clarity, audibility, and effectiveness in conversations and presentations.'
+
+const paceOfSpeechHint =
+  'This looks at your speaking speed, counting the number of words spoken per minute. Speaking too fast can lead to confusion for the listener, while speaking too slow can bore the audience.'
+
+const lightingHint =
+  'Lighting quality is crucial for video calls or virtual meetings. Good lighting enhances visibility and clarity, making you look more professional.'
+
+const eyeContactHint =
+  'Eye contact during speeches or presentations is important as it builds trust and engagement with your audience.'
+
+const smileHint =
+  'Smiling has been scientifically proven to show positivity and create an appealing and friendly perception.'
+
+const calmHint =
+  'Calmness is a trait that exudes composure, confidence and credibility. Staying calm during presentations or speeches creates a peaceful, engaging and positive atmosphere.'
+
 export default function InterviewFeedbackCard(props: Props) {
-  const { cardName, cardText, cardValue, extraInfo } = props
+  const { cardName, cardText, cardValue, extraInfo, videoUrl, isDetailPage } = props
 
   const shouldDisplayIcon = ['Volume', 'Lighting', 'Eye Contact', 'Smile', 'Calm'].includes(cardName)
 
@@ -295,8 +341,49 @@ export default function InterviewFeedbackCard(props: Props) {
     }
   }
 
+  const getHintText = () => {
+    switch (cardName) {
+      case 'Video':
+        return videoTranscriptionHint
+      case 'UM Counter':
+        return umCounterHint
+      case 'Vocabulary':
+        return vocabularyHint
+      case 'Power Word':
+        return powerWordHint
+      case 'Answer Relevance':
+        return answerRelevanceHint
+      case 'Authenticity Score':
+        return authenticityScoreHint
+      case 'Filler Words':
+        return fillerWordsHint
+      case 'Negative Tone':
+        return negativeToneHint
+      case 'Volume':
+        return volumeHint
+      case 'Pace of Speech':
+        return paceOfSpeechHint
+      case 'Lighting':
+        return lightingHint
+      case 'Eye Contact':
+        return eyeContactHint
+      case 'Smile':
+        return smileHint
+      case 'Calm':
+        return calmHint
+
+      default:
+        return ''
+    }
+  }
+
+  const StyledDiv = styled.div`
+    max-height: 300px;
+    overflow-y: auto;
+  `
+
   return (
-    <Card sx={{ margin: 10 }}>
+    <Card sx={{ margin: 10, boxShadow: '2px 3px 2px rgba(0, 0, 0, 0.2)' }}>
       <CardContent>
         <Typography
           variant='h5'
@@ -307,7 +394,9 @@ export default function InterviewFeedbackCard(props: Props) {
         </Typography>
       </CardContent>
 
-      {shouldDisplayIcon ? (
+      {videoUrl ? (
+        <ReactPlayer url={videoUrl} controls width='100%' height='179px' />
+      ) : shouldDisplayIcon ? (
         <Box style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>{getIcon()}</Box>
       ) : (
         getChartOptions() && (
@@ -320,23 +409,36 @@ export default function InterviewFeedbackCard(props: Props) {
         )
       )}
 
-      <CardContent sx={{ height: '125px' }}>
-        <p style={{ fontFamily: 'Montserrat', fontSize: '12px' }}>
-          <ClampLines
-            buttons={false}
-            text={cardText!}
-            id='really-unique-id'
-            lines={4}
-            ellipsis='...'
-            innerElement='p'
-          />
-        </p>
+      <CardContent sx={{ height: isDetailPage ? '100%' : '125px', maxHeight: '300px' }}>
+        {isDetailPage ? (
+          <StyledDiv>
+            <Typography color='text.secondary' sx={{ fontSize: 16, fontFamily: 'Montserrat', fontWeight: 400 }}>
+              {getHintText()}
+              <br />
+              <br />
+              {cardText}
+            </Typography>
+          </StyledDiv>
+        ) : (
+          <p style={{ fontFamily: 'Montserrat', fontSize: '12px' }}>
+            <ClampLines
+              buttons={false}
+              text={cardText!}
+              id='really-unique-id'
+              lines={3}
+              ellipsis='...'
+              innerElement='p'
+            />
+          </p>
+        )}
       </CardContent>
 
       <CardActions disableSpacing>
-        <Button sx={{ fontFamily: 'Montserrat', fontSize: 14 }} onClick={props.onDetailClick}>
-          Detail
-        </Button>
+        {!isDetailPage && (
+          <Button sx={{ fontFamily: 'Montserrat', fontSize: 14 }} onClick={props.onDetailClick}>
+            Detail
+          </Button>
+        )}
       </CardActions>
     </Card>
   )
