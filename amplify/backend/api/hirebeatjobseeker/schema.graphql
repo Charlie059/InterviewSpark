@@ -1,9 +1,12 @@
 type Education {
+  eduID: String
   eduDegree: String
   eduFieldStudy: String
   eduSchool: String
   eduStartDate: AWSDate
   eduEndDate: AWSDate
+  eduIcon: String
+  eduActivity: String
 }
 
 type Educations {
@@ -217,6 +220,42 @@ type Mutation {
     resumeResults: String!
   ): ResumeScan!
   updateUserResumeScanURL(emailAddress: AWSEmail!, resumeID: String, resumeUrl: String!): ResumeScan!
+  createUserEducation(
+    emailAddress: AWSEmail!
+    eduDegree: String!
+    eduFieldStudy: String!
+    eduSchool: String!
+    eduStartDate: AWSDate!
+    eduEndDate: AWSDate!
+  ): Education!
+  updateUserEducation(
+    emailAddress: AWSEmail!
+    eduID: String!
+    eduDegree: String!
+    eduFieldStudy: String!
+    eduSchool: String!
+    eduStartDate: AWSDate!
+    eduEndDate: AWSDate!
+  ): Education!
+  removeUserEducationByID(emailAddress: AWSEmail!, eduID: String!): OperationResult!
+  createUserWorkHistory(
+    emailAddress: AWSEmail!
+    workCompany: String!
+    workPosition: String!
+    workStartDate: AWSDate!
+    workEndDate: AWSDate!
+    workDescription: String!
+  ): WorkHistory!
+  updateUserWorkHistory(
+    emailAddress: AWSEmail!
+    workHistoryID: String!
+    workCompany: String!
+    workPosition: String!
+    workStartDate: AWSDate!
+    workEndDate: AWSDate!
+    workDescription: String!
+  ): WorkHistory!
+  removeUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): OperationResult!
 }
 
 type OperationResult {
@@ -274,6 +313,8 @@ type Query {
   searchQuestionsPaginated(keyword: String!, limit: Int!, nextToken: String): PaginatedQuestionList!
   getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
   getUserResumeScans(emailAddress: AWSEmail!): ResumeScanList!
+  getUserEducationByID(emailAddress: AWSEmail!, eduID: String!): Education!
+  getUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): WorkHistory!
 }
 
 type Question {
@@ -326,9 +367,11 @@ type WorkHistories {
 }
 
 type WorkHistory {
+  workHistoryID: String
   workHistoryJobTitle: String
   workHistoryEmployer: String
   workHistoryStartDate: AWSDate
   workHistoryEndDate: AWSDate
   workHistoryJobDescription: String
+  workHistoryIcon: String
 }
