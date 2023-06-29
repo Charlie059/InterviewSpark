@@ -29,6 +29,10 @@ import { Education } from 'src/context/types'
 // ** Demo Components
 import EducationEntry from './EducationEntry'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { API, graphqlOperation } from 'aws-amplify'
+import {createUserEducation, removeUserEducationByID} from 'src/graphql/mutations'
+import {useAuth} from "../../../hooks/useAuth"
+
 
 const EducationCard = ({
   eduDatas,
@@ -46,6 +50,8 @@ const EducationCard = ({
   const [openEdit, setOpenEdit] = useState(false)
   const [eduD, setEduD] = useState<Education>()
   const [isEmpty, setIsEmpty] = useState(eduDatas.length == 0);
+
+  const auth = useAuth()
 
   const handleClickOpen = () => {
     setEdit(true)
@@ -74,196 +80,241 @@ const EducationCard = ({
       updatedEduDatas[existingEduIndex] = eduData
     } else {
       // If no existing education entry is found, create a new one
-      const createdEduID = 'testadd' + eduDatas.length // Assuming api.createEducation returns the ID
-      eduData.eduID = createdEduID
-      updatedEduDatas.push(eduData)
-      console.log('updated edu data: ', updatedEduDatas) // Outputs correct data
+      console.log(eduData.eduStartDate.toISOString())
+      const eduInput = {
+        emailAddress: auth.user?.userEmailAddress,
+        eduDegree: eduData.eduDegree,
+        eduFieldStudy: eduData.eduFieldStudy,
+        eduSchool: eduData.eduSchool,
+        eduStartDate: eduData.eduStartDate.toISOString().split('T')[0],
+        eduEndDate: eduData.eduEndDate.toISOString().split('T')[0]
+      }
+
+      try {
+        const eduResult = await API.graphql(graphqlOperation(createUserEducation, eduInput))
+        console.log(eduResult)
+        const createdEdu = eduResult.data.createUserEducation
+        const createdEduID = createdEdu.eduID
+
+        eduData.eduID = createdEduID
+        updatedEduDatas.push(eduData)
+        console.log('updated edu data: ', updatedEduDatas)
+      } catch (e) {
+        console.error('Error creating education entry:', e)
+      }
     }
 
     setEduDatas(updatedEduDatas)
-    console.log('updated data: ', eduDatas) // Empty array
+    setIsEmpty(false)
+    console.log('updated data: ', updatedEduDatas)
     refresh()
   }
 
-  const removeEducationEntryByID = (ID: string) => {
+  const removeEducationEntryByID = async (ID: string) => {
     // Find the index of the education entry with the given ID
     if (eduDatas) {
       const index = eduDatas.findIndex(educationEntry => educationEntry.eduID === ID)
 
-      // If the education entry was found, remove it from the array
+      //#TODO if Entry was found, use graphql api to remove it from database
       if (index !== -1) {
         eduDatas.splice(index, 1)
         console.log(eduDatas)
         setEduDatas(eduDatas)
-        refresh()
+
+        if (eduDatas.length === 0) {
+          setIsEmpty(true)
+        }
+
+        refresh();
+
+        try {
+          // Execute the GraphQL mutation to remove the education entry from the database
+          const result = await API.graphql({
+            query: removeUserEducationByID,
+            variables: {
+              emailAddress: auth.user?.userEmailAddress,
+              eduID: ID,
+            },
+          });
+
+          // Check the result of the mutation
+          const {isSuccessful, error} = result.data.removeUserEducationByID;
+          if (isSuccessful) {
+            console.log('Education entry removed successfully from the database.');
+          } else {
+            console.error('Failed to remove education entry from the database:', error);
+          }
+        } catch (error) {
+          console.error('An error occurred while executing the GraphQL mutation:', error);
+        }
       }
+    }}
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const {name, value} = event.target
+      setEduD(prevData => ({...prevData, [name]: value}))
     }
-  }
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setEduD(prevData => ({ ...prevData, [name]: value }))
-  }
+    const handleEditSubmit = async () => {
+      setOpenEdit(false)
+      console.log('bbb', eduD)
+      updateEduProfile(eduD)
+        .then(response => {
+          console.log(response)
+        })
+        .catch(e => {
+          console.log(e)
+        })
+    }
 
-  const handleEditSubmit = async () => {
-    setOpenEdit(false)
-    console.log('bbb', eduD)
-    updateEduProfile(eduD)
-      .then(response => {
-        console.log(response)
-      })
-      .catch(e => {
-        console.log(e)
-      })
-  }
-
-  return (
-    <Card>
-      <CardContent>
-        <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant='h5'>Education</Typography>
-          {type != 'public' && (
-            <Box>
-              <Fab aria-label='add' size='small' style={{ marginRight: '10px' }} onClick={handleAddOpen}>
-                <Icon icon='mdi:plus' />
-              </Fab>
-              {!isEmpty && (
-                <Fab size='small' aria-label='edit' onClick={!edit ? handleClickOpen : handleClickClose}>
-                  <Icon icon={!edit ? 'mdi:pencil' : 'iconamoon:check-fill'} />
+    return (
+      <Card>
+        <CardContent>
+          <Box sx={{mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+            <Typography variant='h5'>Education</Typography>
+            {type != 'public' && (
+              <Box>
+                <Fab aria-label='add' size='small' style={{marginRight: '10px'}} onClick={handleAddOpen}>
+                  <Icon icon='mdi:plus'/>
                 </Fab>
-              )}
-            </Box>
+                {!isEmpty && (
+                  <Fab size='small' aria-label='edit' onClick={!edit ? handleClickOpen : handleClickClose}>
+                    <Icon icon={!edit ? 'mdi:pencil' : 'iconamoon:check-fill'}/>
+                  </Fab>
+                )}
+              </Box>
+            )}
+          </Box>
+          {!isEmpty ? (
+            <TableContainer>
+              {eduDatas?.map((eduData, index) => (
+                <EducationEntry
+                  key={index}
+                  edit={edit}
+                  eduData={eduData}
+                  handleEditClick={handleEditOpen}
+                  handleEntryRemove={removeEducationEntryByID}
+                />
+              ))}
+            </TableContainer>
+          ) : (
+            <Grid container sx={{ml: 2, mt: 8, mb: 5}} spacing={3}>
+              <Grid item xs={1.5}>
+                <Icon fontSize='large' icon='majesticons:data-plus-line'/>
+              </Grid>
+              <Grid item xs={10.5}>
+                <Typography variant='body1'>
+                  No Education Information Available
+                </Typography>
+              </Grid>
+            </Grid>
           )}
-        </Box>
-        {!isEmpty ? (
-          <TableContainer>
-          {eduDatas?.map((eduData, index) => (
-            <EducationEntry
-              key={index}
-              edit={edit}
-              eduData={eduData}
-              handleEditClick={handleEditOpen}
-              handleEntryRemove={removeEducationEntryByID}
-            />
-          ))}
-        </TableContainer>
-        ) : (
-          <Grid container sx={{ml:2, mt:8, mb:5}} spacing={3}>
-            <Grid item xs={1.5}>
-              <Icon fontSize='large' icon='majesticons:data-plus-line' />
-            </Grid>
-            <Grid item xs={10.5}>
-              <Typography variant='body1'>
-                No Education Information Available
-              </Typography>
-            </Grid>
-          </Grid>
-        )}
 
-        <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
-          <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-            Edit User Information
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText
-              variant='body2'
-              id='user-view-edit-description'
-              sx={{ textAlign: 'center', mb: 7 }}
-            ></DialogContentText>
-            <Grid container spacing={6}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  name='eduSchool'
-                  label='School'
-                  value={eduD?.eduSchool}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  name='eduDegree'
-                  label='Degree'
-                  value={eduD?.eduDegree}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  name='eduFieldStudy'
-                  label='Field Of Study'
-                  value={eduD?.eduFieldStudy}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  name='eduActivities'
-                  label='Activities and Other'
-                  value={eduD?.eduActivities}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  name='eduDescription'
-                  label='Description'
-                  value={eduD?.eduDescription}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}></Grid>
-              <Grid item xs={12} sm={12}>
-                <DatePickerWrapper>
-                  <Grid container spacing={5}>
-                    <Grid item xs={6}>
-                      <DatePicker
-                        selected={eduD?.eduStartDate}
-                        id='month-picker'
-                        showMonthYearPicker
-                        dateFormat='MM/yyyy'
-                        popperPlacement='bottom-end'
-                        onChange={newDate => {
-                          setEduD({ ...eduD, ...(newDate && { eduStartDate: newDate }) })
-                        }}
-                        customInput={<CustomInput label='Start Date' />}
-                      />
+          <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
+            <DialogTitle id='user-view-edit' sx={{textAlign: 'center', fontSize: '1.5rem !important'}}>
+              Edit User Information
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText
+                variant='body2'
+                id='user-view-edit-description'
+                sx={{textAlign: 'center', mb: 7}}
+              ></DialogContentText>
+              <Grid container spacing={6}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    name='eduSchool'
+                    label='School'
+                    value={eduD?.eduSchool}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    name='eduDegree'
+                    label='Degree'
+                    value={eduD?.eduDegree}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    name='eduFieldStudy'
+                    label='Field Of Study'
+                    value={eduD?.eduFieldStudy}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    name='eduActivities'
+                    label='Activities and Other'
+                    value={eduD?.eduActivities}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    fullWidth
+                    name='eduDescription'
+                    label='Description'
+                    value={eduD?.eduDescription}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}></Grid>
+                <Grid item xs={12} sm={12}>
+                  <DatePickerWrapper>
+                    <Grid container spacing={5}>
+                      <Grid item xs={6}>
+                        <DatePicker
+                          selected={eduD?.eduStartDate}
+                          id='month-picker'
+                          showMonthYearPicker
+                          dateFormat='MM/yyyy'
+                          popperPlacement='bottom-end'
+                          onChange={newDate => {
+                            setEduD({...eduD, ...(newDate && {eduStartDate: newDate})})
+                          }}
+                          customInput={<CustomInput label='Start Date'/>}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <DatePicker
+                          selected={eduD?.eduEndDate}
+                          id='month-picker'
+                          showMonthYearPicker
+                          dateFormat='MM/yyyy'
+                          popperPlacement='bottom-end'
+                          onChange={newDate => {
+                            setEduD({...eduD, ...(newDate && {eduEndDate: newDate})})
+                          }}
+                          customInput={<CustomInput label='End Date'/>}
+                        />
+                      </Grid>
                     </Grid>
-                    <Grid item xs={6}>
-                      <DatePicker
-                        selected={eduD?.eduEndDate}
-                        id='month-picker'
-                        showMonthYearPicker
-                        dateFormat='MM/yyyy'
-                        popperPlacement='bottom-end'
-                        onChange={newDate => {
-                          setEduD({ ...eduD, ...(newDate && { eduEndDate: newDate }) })
-                        }}
-                        customInput={<CustomInput label='End Date' />}
-                      />
-                    </Grid>
-                  </Grid>
-                </DatePickerWrapper>
+                  </DatePickerWrapper>
+                </Grid>
+                <Grid item xs={12} sx={{justifyContent: 'center'}}>
+                  <DialogActions sx={{justifyContent: 'center'}}>
+                    <Button variant='contained' onClick={handleEditSubmit} sx={{mr: 1}}>
+                      Submit
+                    </Button>
+                    <Button variant='outlined' color='secondary' onClick={handleEditClose}>
+                      Discard
+                    </Button>
+                  </DialogActions>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sx={{ justifyContent: 'center' }}>
-                <DialogActions sx={{ justifyContent: 'center' }}>
-                  <Button variant='contained' onClick={handleEditSubmit} sx={{ mr: 1 }}>
-                    Submit
-                  </Button>
-                  <Button variant='outlined' color='secondary' onClick={handleEditClose}>
-                    Discard
-                  </Button>
-                </DialogActions>
-              </Grid>
-            </Grid>
-          </DialogContent>
-        </Dialog>
-      </CardContent>
-    </Card>
-  )
-}
+            </DialogContent>
+          </Dialog>
+        </CardContent>
+      </Card>
+    )
+  }
+
 export default EducationCard
