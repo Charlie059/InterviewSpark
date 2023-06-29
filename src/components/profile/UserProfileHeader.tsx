@@ -25,9 +25,10 @@ import { Storage } from "@aws-amplify/storage"
 import {API, graphqlOperation} from "aws-amplify";
 import {updateUserProfile} from "../../graphql/mutations";
 import toast from "react-hot-toast";
+import Avatar from "@mui/material/Avatar";
 
 
-const ProfilePicture = styled('img')(({ theme }) => ({
+const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
   height: 120,
   borderRadius: theme.shape.borderRadius,
