@@ -1,16 +1,14 @@
-import { Box, IconButton, Typography, Link, Grid } from '@mui/material'
+import { Box,  Typography,  Grid } from '@mui/material'
 import Icon from 'src/@core/components/icon'
 import { useRouter } from 'next/router'
 import { ReactNode, useState } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import CloseIcon from '@mui/icons-material/Close'
-import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material'
+import { Card, CardContent, CardMedia } from '@mui/material'
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import { styled } from '@mui/material/styles'
 
 import Tab from '@mui/material/Tab'
 import MuiTabList from '@mui/lab/TabList'
-import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
 
 const TabList = styled(MuiTabList)(({ theme }) => ({
@@ -56,6 +54,8 @@ const alphabet = 'abcdefghijklmnopqrstuvwxyz'.toLocaleUpperCase().split('')
 const Filter = [...alphabet, '#', 'All']
 
 const AlphabeticSelectList = (props: Props) => {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const router = useRouter()
   const [tab, setTab] = useState('A')
 
@@ -79,7 +79,8 @@ const AlphabeticSelectList = (props: Props) => {
           aria-label='Alphabet Filter'
           sx={{ mt: 0 }}
         >
-          {Filter.map((item, index) => (
+
+          {Filter.map((item) => (
             <Tab value={item} key={item} label={item} />
           ))}
         </TabList>

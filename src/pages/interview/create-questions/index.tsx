@@ -1,22 +1,23 @@
 import React, { useState } from 'react'
-import { Box, Button, Grid, Card, IconButton, TextField } from '@mui/material'
+import { Box, Grid, IconButton, TextField } from '@mui/material'
 import MuiTypography, { TypographyProps } from '@mui/material/Typography'
 import { ReactNode } from 'react'
 import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import {
-  InterviewQuestionList,
-  InterviewQuestion
-} from 'src/components/interview/createInterview/interview-question-selection-result-list'
-import Logo from 'src/components/interview/createInterview/logo'
-import InterviewQuestionSummary from 'src/components/interview/createInterview/interview-question-summary'
-import QuestionList from 'src/components/interview/createInterview/question-list'
-import router from 'next/router'
-import { API, graphqlOperation } from 'aws-amplify'
-import { createUserInterviewWithQuestion } from 'src/graphql/mutations'
-import QuickViewQuestion from 'src/components/interview/createInterview/quick-view-question'
 
-import { NavBar, NavBarElement } from 'src/components/interview/createInterview/navigation-bar'
+// import {
+//   InterviewQuestionList,
+//   InterviewQuestion
+// } from 'src/components/interview/createInterview/interview-question-selection-result-list'
+// import Logo from 'src/components/interview/createInterview/logo'
+// import InterviewQuestionSummary from 'src/components/interview/createInterview/interview-question-summary'
+// import QuestionList from 'src/components/interview/createInterview/question-list'
+// import router from 'next/router'
+// import { API, graphqlOperation } from 'aws-amplify'
+// import { createUserInterviewWithQuestion } from 'src/graphql/mutations'
+// import QuickViewQuestion from 'src/components/interview/createInterview/quick-view-question'
+
+import { NavBar} from 'src/components/interview/createInterview/navigation-bar'
 import MockInterviewCard from 'src/components/interview/createInterview/mock-interview-card'
 import AlphabeticSelectList from 'src/components/interview/createInterview/alphabetic-select-list'
 
@@ -153,7 +154,7 @@ const top100Films = [
   { label: 'Monty Python and the Holy Grail', year: 1975 }
 ]
 
-const Typography = styled(MuiTypography)<TypographyProps>(({ theme }) => ({
+const Typography = styled(MuiTypography)<TypographyProps>(() => ({
   fontFamily: 'Montserrat',
   color: 'black',
   fontWeight: 600
@@ -165,14 +166,20 @@ interface CardItem {
 }
 
 const CreateQuestionsPage = () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuth()
+
   // TODO: Replace this with actual recommendations and job titles
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [recommendations, setRecommendations] = useState<CardItem[]>([
     { jobTitle: 'Software Engineer', imageSrc: '/images/cards/orange-candy.png' },
     { jobTitle: 'Data Science Engineer', imageSrc: '/images/cards/orange-candy.png' },
     { jobTitle: 'Mechanic Engineer', imageSrc: '/images/cards/orange-candy.png' },
     { jobTitle: 'Math Teacher', imageSrc: '/images/cards/orange-candy.png' }
   ])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [allJobTitles, setAllJobTitles] = useState<{ name: string }[]>(
     top100Films.map(item => {
       return { name: item.label }
