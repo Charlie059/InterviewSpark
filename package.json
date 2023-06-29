@@ -46,7 +46,7 @@
     "@types/winston": "^2.4.4",
     "apexcharts": "^3.41.0",
     "apexcharts-clevision": "^3.28.5",
-    "aws-amplify": "^5.3.1",
+    "aws-amplify": "^5.3.3",
     "aws-crt": "^1.15.13",
     "aws-sdk": "^2.1404.0",
     "axios": "1.1.3",
