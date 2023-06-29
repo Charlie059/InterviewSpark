@@ -1,357 +1,197 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/router'
-import { API, graphqlOperation } from 'aws-amplify'
-import { Box, DialogContent, Grid, IconButton, IconButtonProps, Typography, styled } from '@mui/material'
-import { getUserInterviewMetaData } from 'src/graphql/queries'
-import { useAuth } from 'src/hooks/useAuth'
-import { Storage } from 'aws-amplify'
-import MenuOpenIcon from '@mui/icons-material/MenuOpen'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import PauseIcon from '@mui/icons-material/Pause'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import React, { ReactNode, useState } from 'react'
+import { Box, Modal, Grid, Typography, Avatar } from '@mui/material'
+import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
+import BlankLayout from 'src/@core/layouts/BlankLayout'
+import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
 
-interface Interview {
-  interviewID: string
-  interviewDateTime: string
-  interviewQuestionID: string
-  interviewVideoKey: string
-  interviewQuestion: string
-  interviewQuestionTitle: string
-  interviewQuestionType: string
-  interviewQuestionSampleAns: string
-  interviewFeedback: string
+// Mock data
+const feedbackData = {
+  umCounter: 29,
+  umFeedback:
+    "You used a significant number of 'um's and 'uh's in your speech. Try to be more conscious of these filler words and work on reducing them to sound more polished.",
+  vocabularyScore: 60,
+  vocabularyKeywords: ['graduation', 'recruiting', 'navigating', 'availability', 'real-time'],
+  vocabularyFeedback:
+    'Your vocabulary usage is average. To improve, try incorporating more sophisticated words and phrases into your speech.',
+  powerWordsScore: 55,
+  powerWords: ["master's student", 'networking', 'hiring manager', 'career coach', 'workshop'],
+  powerWordsFeedback:
+    'You used some power words, but there is room for improvement. Incorporate more positive and confident language to present yourself as a more capable and engaging candidate.',
+  answerRelevanceScore: 75,
+  answerRelevanceFeedback:
+    'Your answer was mostly relevant to the topic, but there were some instances where you veered off course. Stay focused on the main points to maintain relevance.',
+  authenticityScore: 70,
+  authenticityFeedback:
+    'Your speech was somewhat authentic, but there were moments where it sounded scripted or robotic. Practice speaking more naturally and conversationally to improve your authenticity.',
+  fillerWordsScore: 40,
+  fillerWordsFeedback:
+    'You used a significant number of filler words and speech disfluencies. Work on reducing these to improve the overall quality of your speech.',
+  negativeToneScore: 80,
+  negativeToneFeedback:
+    'Your speech had a few instances of negative tone, but overall it was mostly positive. Continue to focus on maintaining a positive and confident attitude.',
+  interviewFeedback: 'Overall, your interview had both advantages and disadvantages. .',
+  loudness: -30.0,
+  videoDuration: 486.15619,
+  paceOfSpeech: 147.23663191452937,
+  paceOfSpeechFeedback:
+    'Great job! Your pace of speech is within the optimal range for listener comprehension and engagement.',
+  volumeFeedback:
+    'Your volume is perceived as too low. Consider increasing it to ensure listeners can hear you clearly.',
+  transcribeText:
+    'Uh Hello everUh HelleverUh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyUh Hello everyone..UhryUh Hello everyone..UhUh Hello everyoryUh Hello everyone..UhUh Helloo everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyUh Hello everyone..UhryUh Hello everyone..UhUh Hello everyoryUh Hello everyone..UhUh Hello everyoryUh Hello everyone..UhUh Hello everyoUh Hello everyone.Uh Hello everyone.Uh Hello everyone.Uh Hello everyone. Hello everyone.yone..',
+  rekognitionScores: {
+    eye_contact_score: 0.7363847953413598,
+    eye_contact_score_feedback: 'Good eye contact. Try to focus a bit more on the camera.',
+    smile_score: 91.89256029891968,
+    smile_score_feedback: 'Great job on keeping a positive and engaging facial expression throughout!',
+    brightness_score: 75.98750651168824,
+    brightness_score_feedback:
+      'Good lighting. Consider improving the lighting conditions for an even better impression.',
+    emotions: 'CALM',
+    emotions_feedback: 'Excellent, your calm demeanor is impressive.'
+  }
 }
 
-interface InterviewDetailsProps {
-  interview: Interview
+const cardData = [
+  {
+    cardName: 'Video',
+    cardText:
+      'Your mock interview video is here. We have also included a transcript of your interview below: ' +
+      feedbackData.transcribeText,
+    cardValue: null,
+    extraInfo: null,
+    videoUrl: 'https://www.youtube.com/watch?v=7Xc5wIpUenQ'
+  },
+  {
+    cardName: 'UM Counter',
+    cardText: feedbackData.umFeedback,
+    cardValue: feedbackData.umCounter,
+    extraInfo: null
+  },
+  {
+    cardName: 'Vocabulary',
+    cardText: feedbackData.vocabularyFeedback,
+    cardValue: feedbackData.vocabularyScore,
+    extraInfo: feedbackData.vocabularyKeywords
+  },
+  {
+    cardName: 'Power Word',
+    cardText: feedbackData.powerWordsFeedback,
+    cardValue: feedbackData.powerWordsScore,
+    extraInfo: feedbackData.powerWords
+  },
+  {
+    cardName: 'Answer Relevance',
+    cardText: feedbackData.answerRelevanceFeedback,
+    cardValue: feedbackData.answerRelevanceScore,
+    extraInfo: null
+  },
+  {
+    cardName: 'Authenticity Score',
+    cardText: feedbackData.authenticityFeedback,
+    cardValue: feedbackData.authenticityScore,
+    extraInfo: null
+  },
+  {
+    cardName: 'Filler Words',
+    cardText: feedbackData.fillerWordsFeedback,
+    cardValue: feedbackData.fillerWordsScore,
+    extraInfo: null
+  },
+  {
+    cardName: 'Negative Tone',
+    cardText: feedbackData.negativeToneFeedback,
+    cardValue: feedbackData.negativeToneScore,
+    extraInfo: null
+  },
+  {
+    cardName: 'Volume',
+    cardText: feedbackData.volumeFeedback,
+    cardValue: feedbackData.loudness,
+    extraInfo: null
+  },
+  {
+    cardName: 'Pace of Speech',
+    cardText: feedbackData.paceOfSpeechFeedback,
+    cardValue: feedbackData.paceOfSpeech,
+    extraInfo: null
+  },
+  {
+    cardName: 'Lighting',
+    cardText: feedbackData.rekognitionScores.brightness_score_feedback,
+    cardValue: feedbackData.rekognitionScores.brightness_score,
+    extraInfo: null
+  },
+  {
+    cardName: 'Eye Contact',
+    cardText: feedbackData.rekognitionScores.eye_contact_score_feedback,
+    cardValue: feedbackData.rekognitionScores.eye_contact_score,
+    extraInfo: null
+  },
+  {
+    cardName: 'Smile',
+    cardText: feedbackData.rekognitionScores.smile_score_feedback,
+    cardValue: feedbackData.rekognitionScores.smile_score,
+    extraInfo: null
+  },
+  {
+    cardName: 'Calm',
+    cardText: feedbackData.rekognitionScores.emotions_feedback,
+    cardValue: null,
+    extraInfo: feedbackData.rekognitionScores.emotions
+  }
+]
+
+type CardDataType = {
+  cardName: string
+  cardText?: string
+  cardValue?: number | null
+  extraInfo: any
+  onDetailClick?: () => void
+  videoUrl?: string
+  isDetailPage?: boolean
 }
 
-const StyledPlayButton = styled(({ ...props }: IconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
-  backgroundColor: '#CDCDCD',
+const InterviewDetails = () => {
+  const [modalOpen, setModalOpen] = useState(false)
+  const [currentCard, setCurrentCard] = useState<CardDataType>(cardData[0])
 
-  '& .MuiSvgIcon-root': {
-    fontSize: '2rem'
-  },
-  padding: theme.spacing(4.1),
-  margin: theme.spacing(0, 1.2)
-}))
-
-const StyledButton = styled(({ ...props }: IconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
-  backgroundColor: '#CDCDCD',
-
-  '& .MuiSvgIcon-root': {
-    fontSize: '1rem'
-  },
-  padding: theme.spacing(3.1),
-  margin: theme.spacing(0, 1.2)
-}))
-
-const InterviewDetails = ({}: InterviewDetailsProps) => {
-  const auth = useAuth()
-  const [interviewDetails, setInterviewDetails] = useState<Interview | null>(null)
-  const [videoUrl, setVideoUrl] = useState<string | null>(null)
-  const router = useRouter()
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [playing, setPlaying] = useState<boolean>(false)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [showDetail, setShowDetail] = useState(false)
-
-  useEffect(() => {
-    const interviewsParam = router.query.interview as any
-    const interviews = JSON.parse(interviewsParam)
-    const interviewID = interviewsParam ? interviews.interviewID : null
-    const interviewQuestionID = interviewsParam ? interviews.interviewQuestionID : null
-
-    const fetchInterviewDetails = async () => {
-      const userEmailAddress = auth.user?.userEmailAddress
-
-      // Fetch interview from the router query
-      try {
-        const result = await API.graphql(
-          graphqlOperation(getUserInterviewMetaData, {
-            emailAddress: userEmailAddress,
-            interviewID: interviewID,
-            interviewQuestionID: interviewQuestionID
-          })
-        )
-        if ('data' in result) {
-          console.log('Interview details:', result.data.getUserInterviewMetaData)
-          setInterviewDetails(result.data.getUserInterviewMetaData)
-        }
-      } catch (error) {
-        console.error('Error fetching interview details:', error)
-      }
-    }
-
-    if (interviewID) {
-      fetchInterviewDetails()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    // TODO: Change the url time
-    if (interviewDetails?.interviewVideoKey) {
-      Storage.get(interviewDetails.interviewVideoKey, { level: 'private' })
-        .then(url => setVideoUrl(url))
-        .catch(error => console.error('Error getting video URL:', error))
-    }
-  }, [interviewDetails])
-
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (playing) {
-        videoRef.current.pause()
-      } else {
-        videoRef.current.play()
-      }
-      setPlaying(!playing)
-    }
+  const handleCardClick = (index: number) => {
+    setCurrentCard(cardData[index])
+    setModalOpen(true)
   }
 
-  const renderPageContent = () => {
-    switch (currentPage) {
-      case 0:
-        return (
-          <>
-            <DialogContent
-              sx={{
-                position: 'relative',
-                pr: { xs: 5, sm: 12 },
-                pl: { xs: 4, sm: 11 },
-                pt: { xs: 8, sm: 12.5 },
-                pb: { xs: 5, sm: 12.5 },
-                height: '280px'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  sx={{
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'medium',
-                    fontSize: '20px',
-                    color: '#4C4E64B2' // 4C4E64 * 87%
-                  }}
-                >
-                  Question {interviewDetails?.interviewQuestionID}
-                </Typography>
-
-                <Typography
-                  variant='h3'
-                  sx={{
-                    lineHeight: '2.5rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'bold',
-                    fontSize: '15px',
-                    color: '#000000E0' // 000000 * 87%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestionTitle}
-                </Typography>
-                <br />
-                <Typography
-                  sx={{
-                    // mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'regular',
-                    fontSize: '18px',
-                    color: '#4C4E64A6' // 4C4E64 * 65%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestion}
-                </Typography>
-              </div>
-            </DialogContent>
-            <StyledButton onClick={() => setCurrentPage(currentPage + 1)}>
-              <ArrowForwardIosIcon />
-            </StyledButton>
-          </>
-        )
-      case 1:
-        return (
-          <>
-            <DialogContent
-              sx={{
-                position: 'relative',
-                pr: { xs: 5, sm: 12 },
-                pl: { xs: 4, sm: 11 },
-                pt: { xs: 8, sm: 12.5 },
-                pb: { xs: 5, sm: 12.5 },
-                height: '280px'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  variant='h3'
-                  sx={{
-                    lineHeight: '2.5rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'bold',
-                    fontSize: '15px',
-                    color: '#000000E0' // 000000 * 87%
-                  }}
-                >
-                  Feedback
-                </Typography>
-
-                <br />
-                <Typography
-                  sx={{
-                    mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'regular',
-                    fontSize: '18px',
-                    color: '#4C4E64A6' // 4C4E64 * 65%
-                  }}
-                >
-                  {interviewDetails?.interviewFeedback}
-                </Typography>
-              </div>
-            </DialogContent>
-
-            <StyledButton onClick={() => setCurrentPage(currentPage - 1)}>
-              <ArrowBackIosNewIcon />
-            </StyledButton>
-            {/* <StyledButton onClick={() => setCurrentPage(currentPage + 1)}>
-              <ArrowForwardIosIcon />
-            </StyledButton> */}
-          </>
-        )
-      case 2:
-        return (
-          <>
-            <DialogContent
-              sx={{
-                position: 'relative',
-                pr: { xs: 5, sm: 12 },
-                pl: { xs: 4, sm: 11 },
-                pt: { xs: 8, sm: 12.5 },
-                pb: { xs: 5, sm: 12.5 },
-                height: '280px'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  sx={{
-                    mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'medium',
-                    fontSize: '20px',
-                    color: '#4C4E64B2' // 4C4E64 * 87%
-                  }}
-                >
-                  Question {interviewDetails?.interviewQuestionID}
-                </Typography>
-
-                <Typography
-                  variant='h3'
-                  sx={{
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'bold',
-                    fontSize: '45px',
-                    color: '#000000E0' // 000000 * 87%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestionTitle}
-                </Typography>
-                <br />
-                <Typography
-                  sx={{
-                    // mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'regular',
-                    fontSize: '18px',
-                    color: '#4C4E64A6' // 4C4E64 * 65%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestion}
-                </Typography>
-              </div>
-            </DialogContent>
-
-            <StyledButton onClick={() => setCurrentPage(currentPage - 1)}>
-              <ArrowBackIosNewIcon />
-            </StyledButton>
-          </>
-        )
-      default:
-        return null
-    }
+  const handleClose = () => {
+    setModalOpen(false)
   }
 
   return (
-    <Box>
-      <Grid container direction='column' alignItems='center'>
-        <Box sx={{ margin: 20 }}></Box>
-        <Grid item xs={12}>
-          <Grid container spacing={5} alignItems='center'>
-            <Grid item xs={6}>
-              <Box width='500px' height='380px' sx={{ position: 'relative' }}>
-                {interviewDetails && (
-                  <div>
-                    {videoUrl ? (
-                      <video
-                        ref={videoRef}
-                        src={videoUrl}
-                        width='100%'
-                        height='auto'
-                        controls
-                        style={{ borderRadius: '15px' }}
-                      />
-                    ) : (
-                      <Typography variant='body1' gutterBottom>
-                        Interview Video Key: {interviewDetails.interviewVideoKey}
-                      </Typography>
-                    )}
-                  </div>
-                )}
-              </Box>
-            </Grid>
-            <Grid item xs={6}>
-              <Box
-                width='500px'
-                height='380px'
-                borderRadius={'15px'}
-                style={{ overflow: 'hidden', backgroundColor: '#EBEBEB', position: 'relative' }}
-              >
-                {!showDetail && (
-                  <MenuOpenIcon style={{ position: 'absolute', bottom: 0, right: 0, margin: 5, color: '#0f0f0f0f' }} />
-                )}
-                <Grid
-                  container
-                  alignItems='center'
-                  justifyContent='center'
-                  style={{ height: '100%' }}
-                  onClick={() => {
-                    setShowDetail(true)
-                  }}
-                >
-                  {!showDetail ? (
-                    <img src='/images/favicon.png' alt='logo' width={'15%'} height={'auto'} />
-                  ) : (
-                    renderPageContent()
-                  )}
-                </Grid>
-              </Box>
-            </Grid>
-          </Grid>
-        </Grid>
-
-        <Box margin={4}></Box>
-        <Box width='100%' height='100%' p={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <StyledPlayButton onClick={togglePlay}>{playing ? <PauseIcon /> : <PlayArrowIcon />}</StyledPlayButton>
+    <div style={{ backgroundColor: '#F2F7FE' }}>
+      <Box padding={10}>
+        <NavBar
+          navBarElements={[
+            { name: 'HomePage', path: '/interview' },
+            { name: 'Interview Question Review', path: undefined }
+          ]}
+          closeNavLink='/interview'
+        />
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+          <Typography sx={{ fontFamily: 'Montserrat', fontSize: 36, mt: 2 }}>Question Review</Typography>
+          {/* // TODO: Replace actual user avatar */}
+          <Avatar src='/images/avatars/1.png' sx={{ width: '3.5rem', height: '3.5rem' }} />
         </Box>
-
-        <Box margin={2}></Box>
+      </Box>
+      <Grid container>
+        {cardData.map((card, index) => (
+          <Grid xs={12} sm={6} md={4} lg={3} key={index}>
+            <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
+          </Grid>
+        ))}
       </Grid>
-    </Box>
+      <Modal open={modalOpen} onClose={handleClose}>
+        <InterviewFeedbackCard {...currentCard} isDetailPage={true} />
+      </Modal>
+    </div>
   )
 }
 
@@ -360,4 +200,5 @@ InterviewDetails.acl = {
   subject: 'acl-page'
 }
 
+InterviewDetails.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default InterviewDetails
