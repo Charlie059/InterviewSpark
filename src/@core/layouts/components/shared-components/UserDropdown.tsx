@@ -97,8 +97,8 @@ const UserDropdown = (props: Props) => {
         <Avatar
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-          alt={user?.fName +user?.lName}
-          src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + user.photoImgKey}
+          alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}
+          src={(process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL ||'') + (user?.photoImgKey ||'' )|| 'public/images/avatars/1.png'}
         />
       </Badge>
       <Menu
@@ -119,7 +119,10 @@ const UserDropdown = (props: Props) => {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt={user?.fName +user?.lName} src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + user.photoImgKey} sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar
+                alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}
+                src={(process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL ||'') + (user?.photoImgKey ||'' )|| 'public/images/avatars/1.png'}
+                sx={{ width: '2.5rem', height: '2.5rem' }} />
             </Badge>
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
               <Typography sx={{ fontWeight: 600 }}>{user!.userName}</Typography>
