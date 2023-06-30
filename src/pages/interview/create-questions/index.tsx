@@ -1,24 +1,11 @@
 import React, { useState } from 'react'
 import { Box, Grid, IconButton, TextField } from '@mui/material'
-import { Box, Grid, IconButton, TextField } from '@mui/material'
+
 import MuiTypography, { TypographyProps } from '@mui/material/Typography'
 import { ReactNode } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-// import {
-//   InterviewQuestionList,
-//   InterviewQuestion
-// } from 'src/components/interview/createInterview/interview-question-selection-result-list'
-// import Logo from 'src/components/interview/createInterview/logo'
-// import InterviewQuestionSummary from 'src/components/interview/createInterview/interview-question-summary'
-// import QuestionList from 'src/components/interview/createInterview/question-list'
-// import router from 'next/router'
-// import { API, graphqlOperation } from 'aws-amplify'
-// import { createUserInterviewWithQuestion } from 'src/graphql/mutations'
-// import QuickViewQuestion from 'src/components/interview/createInterview/quick-view-question'
-
 import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
-import { NavBar} from 'src/components/interview/createInterview/navigation-bar'
 import MockInterviewCard from 'src/components/interview/createInterview/mock-interview-card'
 import AlphabeticSelectList from 'src/components/interview/createInterview/alphabetic-select-list'
 import StartInterviewDialog from 'src/components/interview/createInterview/start-interview-dialog'
@@ -156,7 +143,6 @@ const top100Films = [
   { label: 'Monty Python and the Holy Grail', year: 1975 }
 ]
 
-const Typography = styled(MuiTypography)<TypographyProps>(({}) => ({
 const Typography = styled(MuiTypography)<TypographyProps>(() => ({
   fontFamily: 'Montserrat',
   color: 'black',
