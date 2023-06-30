@@ -30,8 +30,12 @@ import ResumeScan from 'src/components/resume/ResumeScan'
 //   </Grid>
 // </Grid>
 
-const ResumeScanPage = ({ type }) => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+interface ResumeScanPageProps {
+  type: any // Replace 'any' with the actual expected type of 'type'
+}
+
+const ResumeScanPage = (props: ResumeScanPageProps) => {
+  const { type } = props
 
   return (
     <DropzoneWrapper>
@@ -41,7 +45,7 @@ const ResumeScanPage = ({ type }) => {
           subtitle={<Typography variant='body2'>Try our AI Resume Parser</Typography>}
         />
         <Grid item xs={12}>
-          <ResumeScan nocollapse={true} type={type}/>
+          <ResumeScan nocollapse={true} type={type} />
         </Grid>
       </Grid>
     </DropzoneWrapper>

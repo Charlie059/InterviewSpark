@@ -11,23 +11,23 @@ import { format } from 'date-fns'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import IconButton from "@mui/material/IconButton";
-import Close from "mdi-material-ui/Close";
-import Pencil from 'mdi-material-ui/Pencil';
-import {useEffect, useState} from "react";
-import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton'
+import Close from 'mdi-material-ui/Close'
+import Pencil from 'mdi-material-ui/Pencil'
+import { useEffect, useState } from 'react'
+import Button from '@mui/material/Button'
 
 //** Component Imports
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DocumentUpload from "../uploaders/DocumentUpload";
-import { Storage } from "@aws-amplify/storage"
-import {API, graphqlOperation} from "aws-amplify";
-import {updateUserProfile} from "../../graphql/mutations";
-import toast from "react-hot-toast";
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DocumentUpload from '../uploaders/DocumentUpload'
+import { Storage } from '@aws-amplify/storage'
+import { API, graphqlOperation } from 'aws-amplify'
+import { updateUserProfile } from '../../graphql/mutations'
+import toast from 'react-hot-toast'
+import Avatar from '@mui/material/Avatar'
 
-
-const ProfilePicture = styled('img')(({ theme }) => ({
+const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
   height: 120,
   borderRadius: theme.shape.borderRadius,
@@ -37,8 +37,7 @@ const ProfilePicture = styled('img')(({ theme }) => ({
   }
 }))
 
-
-type diagTypes = 'profile' | 'cover';
+type diagTypes = 'profile' | 'cover'
 
 const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   // ** State
@@ -57,18 +56,19 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   const [coverPicUrl, setCoverPicUrl] = useState<string>('')
 
   useEffect(() => {
-    if(type == "Dashboard" || type == "Profile"){
+    if (type == 'Dashboard' || type == 'Profile') {
       setShowCover(true)
-    }else{
+    } else {
       setShowCover(false)
     }
     console.log(process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL)
-    const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey;
+    const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey
     console.log(proPicUrl)
-    const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey;
+    const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey
     setProPicUrl(proPicUrl)
     setCoverPicUrl(coverPicUrl)
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleProPicOpen = () => {
     setOpenProfilePicture(true)
@@ -80,54 +80,57 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   }
 
   const handleProPicClose = () => setOpenProfilePicture(false)
-  const handleProPicSubmit = async () =>{
-    if(!files[0]){
-      toast.error("no image selected")
-    }else{
-      const file = files[0];
-      const dateStamp = Date.now();
-      const fileType = file.name.split(".").pop();
-      const key = `${dateStamp}.${fileType}`;
-      await Storage.put(key, file, {level:"public"}) //public bucket
+  const handleProPicSubmit = async () => {
+    if (!files[0]) {
+      toast.error('no image selected')
+    } else {
+      const file = files[0]
+      const dateStamp = Date.now()
+      const fileType = file.name.split('.').pop()
+      const key = `${dateStamp}.${fileType}`
+      await Storage.put(key, file, { level: 'public' }) //public bucket
         .then(async result => {
-          console.log("Upload successful:", result);
-          if(dialogType == "profile"){
+          console.log('Upload successful:', result)
+          if (dialogType == 'profile') {
             data.photoImgKey = key
-          }else{
+          } else {
             data.coverImgKey = key
           }
           data.emailAddress = data.userEmailAddress
-          console.log("data to update:",data)
+          console.log('data to update:', data)
           await API.graphql(graphqlOperation(updateUserProfile, data))
-          await Storage.get(key,{level:"public"}).then(newUrl => {
-            if(dialogType == "profile"){
+          await Storage.get(key, { level: 'public' }).then(newUrl => {
+            if (dialogType == 'profile') {
               setProPicUrl(newUrl)
-            }else{
+            } else {
               setCoverPicUrl(newUrl)
             }
             setOpenProfilePicture(false)
           })
         })
         .catch(error => {
-          console.error("Error uploading file:", error);
-        });
+          console.error('Error uploading file:', error)
+        })
     }
-
   }
 
   return data !== null ? (
     <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
-      {showCover && <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
-        <Pencil/>
-      </IconButton>}
-      {showCover && <CardMedia
-        component='img'
-        alt='profile-cover-img'
-        image={coverPicUrl}
-        sx={{
-          height: { xs: 150, md: 250 }
-        }}
-      />}
+      {showCover && (
+        <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
+          <Pencil />
+        </IconButton>
+      )}
+      {showCover && (
+        <CardMedia
+          component='img'
+          alt='profile-cover-img'
+          image={coverPicUrl}
+          sx={{
+            height: { xs: 150, md: 250 }
+          }}
+        />
+      )}
       <CardContent
         sx={{
           pt: 0,
@@ -140,7 +143,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
       >
         <div>
           <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleProPicOpen}>
-            <Pencil/>
+            <Pencil />
           </IconButton>
           <ProfilePicture src={proPicUrl} alt='profile-picture' />
         </div>
@@ -202,17 +205,18 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
         aria-describedby='user-view-edit-description'
       >
         <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleProPicClose}>
-          <Close/>
+          <Close />
         </IconButton>
         <DialogContent>
-          <DocumentUpload type="image" files={files} setFiles={setFiles} />
+          <DocumentUpload type='image' files={files} setFiles={setFiles} />
         </DialogContent>
-        {files[0] &&<Button  size='large' variant='contained' onClick={handleProPicSubmit}>
-          Submit
-        </Button>}
+        {files[0] && (
+          <Button size='large' variant='contained' onClick={handleProPicSubmit}>
+            Submit
+          </Button>
+        )}
       </Dialog>
     </Card>
-
   ) : null
 }
 
