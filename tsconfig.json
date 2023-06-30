@@ -33,7 +33,7 @@
     "src",
     "declaration.d.ts",
     "styles/authCodeInputStyle.css.d.ts"
-  ],
+, "node_modules/@mui/material/forms"  ],
   "exclude": [
     "node_modules"
   ]

@@ -18,6 +18,10 @@ const UserThemeOptions = (): ThemeOptions => {
   // const palette = corePalette(mode, skin)
 
   return {
+    typography: {
+      fontFamily: 'Montserrat'
+    }
+
     /*
     palette:{
       primary: {

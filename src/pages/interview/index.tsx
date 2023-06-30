@@ -5,10 +5,14 @@ import InterviewUsageSummaryThisMonth from 'src/components/interview/interviewPr
 import InterviewProfileHeader from 'src/components/interview/interviewProfile/interview-profile-header'
 import InterviewPromotion from 'src/components/interview/interviewProfile/interview-promotion'
 import InterviewTotalSummaryCard from 'src/components/interview/interviewProfile/interview-total-summary-card/index'
+import UserProfileHeader from 'src/components/profile/UserProfileHeader'
+import { useAuth } from 'src/hooks/useAuth'
 
 const InterviewPage = () => {
   const cardRef = React.useRef<HTMLElement>(null)
   const [cardHeight, setCardHeight] = React.useState(0)
+  const auth = useAuth()
+  const [userProfileData] = React.useState<any>(auth.user)
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -39,6 +43,7 @@ const InterviewPage = () => {
   return (
     <div>
       <InterviewProfileHeader />
+      <UserProfileHeader data={userProfileData} type={'profile'} />
       <Grid container spacing={3.5}>
         <Grid item xs={6} sm={3.8} md={2.3} lg={2.4}>
           <Box sx={{ position: 'relative', paddingBottom: '100%' }}>

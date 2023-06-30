@@ -1,45 +1,26 @@
 // ** React Imports
-import {ReactNode, useState} from 'react'
+import { ReactNode, useState } from 'react'
 
-// ** Next Import
-// import { useRouter } from 'next/router'
-
-// ** MUI Components
-// import Tab from '@mui/material/Tab'
+// ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
-
 import Divider from '@mui/material/Divider'
-
 import CardContent from '@mui/material/CardContent'
 
-
-// ** Utils Import
-
-
-// ** Type Import
-//import { ProfileTabType, UserProfileActiveTab } from 'src/@fake-db/types'
-
-// ** Icon Imports
-// import Icon from 'src/@core/components/icon'
-
-// ** Demo Components
-//import Profile from 'src/views/pages/user-profile/profile'
+// ** Types Import
+// ** Layout & Component Import
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
-import BlankLayout from "../../@core/layouts/BlankLayout";
+import BlankLayout from '../../@core/layouts/BlankLayout'
+import EducationCard from './profile-cards/EducationCard'
+import WorkHistoryCard from './profile-cards/WorkHistoryCard'
 
-// import { API, graphqlOperation } from 'aws-amplify'
-// import { updateUserProfile } from 'src/graphql/mutations'
 
 // @ts-ignore
-const PublicProfile = ({ user, data }) => {
+const PublicProfile = ({ user, data }:{user:string, data:any}) => {
   // ** State
 
-  //data.email = auth.user?.userEmailAddress
-
-  // const [isLoading, setIsLoading] = useState<boolean>(true)
   console.log('current profile page is for', user)
   console.log('current data is:', data)
 
@@ -51,15 +32,13 @@ const PublicProfile = ({ user, data }) => {
   console.log(data)
   const dashwidth = 12
 
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const defaultValues = data
 
-
   return (
-    <Grid container spacing={6}>
+    <Grid container spacing={5}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={"profile"}/>
+        <UserProfileHeader data={data} type={'Public'} />
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}
@@ -111,7 +90,17 @@ const PublicProfile = ({ user, data }) => {
             </Grid>
           </CardContent>
         </Card>
-      </Grid>
+    </Grid>
+      <Grid item xs={8}>
+        <Grid item sx={{mb:5}}>
+          {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+          <EducationCard type="public" eduDatas={data.educations} refresh={()=>{}}/>
+        </Grid>
+        <Grid>
+          {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+          <WorkHistoryCard type="public" workDatas={data.workHistory} refresh={()=>{}}/>
+        </Grid>
+    </Grid>
     </Grid>
   )
 }

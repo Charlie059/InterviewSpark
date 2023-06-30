@@ -52,11 +52,13 @@ export const getUserWorkHistories = /* GraphQL */ `
   query GetUserWorkHistories($emailAddress: AWSEmail!) {
     getUserWorkHistories(emailAddress: $emailAddress) {
       workHistory {
+        workHistoryID
         workHistoryJobTitle
         workHistoryEmployer
         workHistoryStartDate
         workHistoryEndDate
         workHistoryJobDescription
+        workHistoryIcon
       }
     }
   }
@@ -65,11 +67,14 @@ export const getUserEducations = /* GraphQL */ `
   query GetUserEducations($emailAddress: AWSEmail!) {
     getUserEducations(emailAddress: $emailAddress) {
       educations {
+        eduID
         eduDegree
         eduFieldStudy
         eduSchool
         eduStartDate
         eduEndDate
+        eduIcon
+        eduActivity
       }
     }
   }
@@ -307,6 +312,39 @@ export const getUserResumeScans = /* GraphQL */ `
         resumeUrl
         resumeScanID
       }
+    }
+  }
+`;
+export const getUserEducationByID = /* GraphQL */ `
+  query GetUserEducationByID($emailAddress: AWSEmail!, $eduID: String!) {
+    getUserEducationByID(emailAddress: $emailAddress, eduID: $eduID) {
+      eduID
+      eduDegree
+      eduFieldStudy
+      eduSchool
+      eduStartDate
+      eduEndDate
+      eduIcon
+      eduActivity
+    }
+  }
+`;
+export const getUserWorkHistoryByID = /* GraphQL */ `
+  query GetUserWorkHistoryByID(
+    $emailAddress: AWSEmail!
+    $workHistoryID: String!
+  ) {
+    getUserWorkHistoryByID(
+      emailAddress: $emailAddress
+      workHistoryID: $workHistoryID
+    ) {
+      workHistoryID
+      workHistoryJobTitle
+      workHistoryEmployer
+      workHistoryStartDate
+      workHistoryEndDate
+      workHistoryJobDescription
+      workHistoryIcon
     }
   }
 `;
