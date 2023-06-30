@@ -1,10 +1,10 @@
 // ** MUI Imports
-import { Typography} from '@mui/material'
+import { Typography } from '@mui/material'
 
 import { ReactNode } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-import { Card, CardActionArea,CardMedia } from '@mui/material'
+import { Card, CardActionArea, CardMedia } from '@mui/material'
 
 interface Props {
   jobTitle: string
@@ -13,7 +13,6 @@ interface Props {
 }
 
 const MockInterviewCard = (props: Props) => {
-
   return (
     <Card sx={{}}>
       <CardActionArea
