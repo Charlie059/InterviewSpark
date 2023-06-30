@@ -34,6 +34,7 @@ const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
   height: 120,
   borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[5],
   border: `5px solid ${theme.palette.common.white}`,
   [theme.breakpoints.down('md')]: {
     marginBottom: theme.spacing(4)
@@ -43,13 +44,13 @@ const ProfilePicture = styled(Avatar)(({ theme }) => ({
 
 type diagTypes = 'profile' | 'cover';
 
-const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
+const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   // ** State
   console.log('date check:', data.joiningDate)
 
   const joiningDate = format(new Date(data.joiningDate), 'PP')
 
-  const [showCover, setShowCover] = useState<boolean>(true)
+  const [showCover, setShowCover] = useState<boolean>(false)
   const designationIcon = 'mdi:briefcase-outline'
   const [openProfilePicture, setOpenProfilePicture] = useState<boolean>(false)
   const [dialogType, setDialogType] = useState<diagTypes>('profile')
@@ -69,6 +70,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
       setShowCover(true)
       console.log("show cover: ", showCover)
     }else{
+      setEditable(false)
       setShowCover(false)
     }
     console.log(process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL)
@@ -151,7 +153,8 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
       <CardContent
         sx={{
           pt: 0,
-          mt: showCover ? -8 : 6,
+          mt: showCover ? -10 : 6,
+          marginLeft: showCover ? 0 : -5,
           display: 'flex',
           alignItems: 'flex-end',
           flexWrap: { xs: 'wrap', md: 'nowrap' },
@@ -206,7 +209,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
               </Box>
             </Box>
           </Box>
-          {type != 'Public' && <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>} label='Public'  />}
+          {type == 'Profile' && <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>} label='Public'  />}
         </Box>
       </CardContent>
       <Dialog
