@@ -1,6 +1,6 @@
-import { Box,  Typography,  Grid } from '@mui/material'
+import { Box, Typography, Grid } from '@mui/material'
 import Icon from 'src/@core/components/icon'
-import { useRouter } from 'next/router'
+
 import { ReactNode, useState } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { Card, CardContent, CardMedia } from '@mui/material'
@@ -46,7 +46,7 @@ interface ListItem {
 
 interface Props {
   list: ListItem[]
-  imageSrc: string
+  imageSrc: string[]
   onClickItem: (s: string) => void
 }
 
@@ -54,9 +54,6 @@ const alphabet = 'abcdefghijklmnopqrstuvwxyz'.toLocaleUpperCase().split('')
 const Filter = [...alphabet, '#', 'All']
 
 const AlphabeticSelectList = (props: Props) => {
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const router = useRouter()
   const [tab, setTab] = useState('A')
 
   const filterTitle = () => {
@@ -79,8 +76,7 @@ const AlphabeticSelectList = (props: Props) => {
           aria-label='Alphabet Filter'
           sx={{ mt: 0 }}
         >
-
-          {Filter.map((item) => (
+          {Filter.map(item => (
             <Tab value={item} key={item} label={item} />
           ))}
         </TabList>
@@ -108,7 +104,22 @@ const AlphabeticSelectList = (props: Props) => {
             </Grid>
           </PerfectScrollbar>
         </CardContent>
-        <CardMedia component='img' sx={{ width: '25%' }} image={props.imageSrc} />
+        <CardMedia component='img' sx={{ width: '25%' }} image={props.imageSrc[Filter.indexOf(tab)]} />
+        <Typography
+          variant='h2'
+          sx={{ fontFamily: 'lato', fontWeight: 600 }}
+          style={{
+            position: 'absolute',
+            top: '75%',
+            left: '85%',
+            transform: 'translate(-50%, -50%)',
+            color: '#000',
+            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+            padding: '2px'
+          }}
+        >
+          {tab}
+        </Typography>
       </Card>
     </Box>
   )

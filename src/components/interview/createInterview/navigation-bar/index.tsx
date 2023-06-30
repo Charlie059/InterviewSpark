@@ -18,11 +18,6 @@ interface Props {
 const NavBar = (props: Props) => {
   const router = useRouter()
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleClose = () => {
-    router.push('/interview') // Navigate to the home page
-  }
-
   return (
     <Box display='flex' justifyContent='space-between' alignItems={'center'}>
       <Box display='flex'>
