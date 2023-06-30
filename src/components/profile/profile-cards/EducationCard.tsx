@@ -78,6 +78,20 @@ const EducationCard = ({
     if (existingEduIndex !== -1) {
       // If an existing education entry is found, update it
       updatedEduDatas[existingEduIndex] = eduData
+      const eduInput = {
+        emailAddress: auth.user?.userEmailAddress,
+        eduDegree: eduData.eduDegree,
+        eduFieldStudy: eduData.eduFieldStudy,
+        eduSchool: eduData.eduSchool,
+        eduStartDate: eduData.eduStartDate.toISOString().split('T')[0],
+        eduEndDate: eduData.eduEndDate.toISOString().split('T')[0]
+      }
+
+      await API.graphql(graphqlOperation(updateEduProfile, eduInput)).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log("error updating", err)
+      })
     } else {
       // If no existing education entry is found, create a new one
       console.log(eduData.eduStartDate.toISOString())
@@ -125,7 +139,7 @@ const EducationCard = ({
           setIsEmpty(true)
         }
 
-        refresh();
+        refresh()
 
         try {
           // Execute the GraphQL mutation to remove the education entry from the database
@@ -144,6 +158,8 @@ const EducationCard = ({
           } else {
             console.error('Failed to remove education entry from the database:', error);
           }
+
+
         } catch (error) {
           console.error('An error occurred while executing the GraphQL mutation:', error);
         }

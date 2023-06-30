@@ -78,6 +78,21 @@ const WorkHistoryCard = ({
     if (existingWorkHistoryIndex !== -1) {
       // If an existing education entry is found, update it
       updatedWorkHistoryDatas[existingWorkHistoryIndex] = workData
+      const workHistoryInput = {
+        emailAddress: auth.user?.userEmailAddress,
+        workCompany: workData.workHistoryEmployer,
+        workPosition: workData.workHistoryJobTitle,
+        workStartDate: workData.workHistoryStartDate.toISOString().split('T')[0],
+        workEndDate: workData.workHistoryEndDate.toISOString().split('T')[0],
+        workDescription: workData.workHistoryJobDescription,
+        workHistoryID: workData.workHistoryID
+      }
+
+      await API.graphql(graphqlOperation(updateWorkHistoryProfile, workHistoryInput)).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log("error updating", err)
+      })
     } else {
       // If no existing education entry is found, create a new one
       const workHistoryInput = {
@@ -98,8 +113,8 @@ const WorkHistoryCard = ({
         workData.workHistoryID = createdWorkHistoryID
         updatedWorkHistoryDatas.push(workData)
         console.log('updated edu data: ', updatedWorkHistoryDatas) // Outputs correct data
-      } catch (e) {
-        console.error('Error creating work history entry:', e)
+      } catch (err) {
+        console.error('Error creating work history entry:', err)
       }
     }
 
@@ -124,8 +139,6 @@ const WorkHistoryCard = ({
           setIsEmpty(true)
         }
 
-        refresh()
-
         try {
           // Execute the GraphQL mutation to remove the education entry from the database
           const result = await API.graphql({
@@ -143,12 +156,15 @@ const WorkHistoryCard = ({
           } else {
             console.error('Failed to remove work history entry from the database:', error);
           }
+
+          refresh()
         } catch (error) {
           console.error('An error occurred while executing the GraphQL mutation:', error);
         }
+        }
       }
     }
-  }
+
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -167,6 +183,8 @@ const WorkHistoryCard = ({
       })
   }
 
+  console.log(isEmpty)
+  console.log(workDatas)
 
   return (
     <Card>

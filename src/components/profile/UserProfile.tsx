@@ -48,6 +48,8 @@ import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import ProfileViewRight from './ProfileViewRight'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
+import {getUserEducations, getUserWorkHistories} from "../../graphql/queries";
+import { useAuth } from '../../hooks/useAuth'
 
 // import TestTable from "./profile-cards/TestTable";
 
@@ -190,15 +192,44 @@ const UserProfile = ({ user, data }) => {
 
   const emptyWorkHistory: WorkHistory[] = []
 
+  const auth = useAuth()
+  const emailAddress = auth.user?.userEmailAddress
+
+  const getEducations = async () =>{
+    //getEducations API
+    const eduResponse = await API.graphql(
+      graphqlOperation(getUserEducations, {
+        emailAddress
+      })
+    )
+    console.log('Result:', eduResponse.data)
+
+    //setEducations
+    setEducations(eduResponse.data.getUserEducations.educations)
+  }
+
+  const getWorkHistories = async () =>{
+    //getWorkHistories API
+    const workHistoryResponse = await API.graphql(
+      graphqlOperation(getUserWorkHistories, {
+        emailAddress
+      })
+    )
+    console.log('Result:', workHistoryResponse)
+
+    //setEducations
+    setWorkHistories(workHistoryResponse.data.getUserWorkHistories.workHistory)
+  }
+
   useEffect(() => {
-    setEducations(emptyEdu)
-    setWorkHistories(emptyWorkHistory)
+    getEducations()
+    getWorkHistories()
   }, [])
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={'profile'} />
+        <UserProfileHeader data={data} type={'Profile'} />
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}
@@ -212,8 +243,8 @@ const UserProfile = ({ user, data }) => {
           <CardContent>
             <Typography variant='h6'>Details</Typography>
             <Divider sx={{ mt: 4 }} />
-            <Grid container spacing={1}>
-              <Grid item xs={6} lg={dashwidth}>
+            <Grid container spacing={1} >
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Username:
@@ -221,7 +252,7 @@ const UserProfile = ({ user, data }) => {
                   <Typography variant='body2'>{user}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Email:
@@ -230,19 +261,19 @@ const UserProfile = ({ user, data }) => {
                 </Box>
               </Grid>
 
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Contact:</Typography>
                   <Typography variant='body2'>{profileData.contact}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>City:</Typography>
                   <Typography variant='body2'>{profileData.city}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex' }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Country:</Typography>
                   <Typography variant='body2'>{profileData.country}</Typography>

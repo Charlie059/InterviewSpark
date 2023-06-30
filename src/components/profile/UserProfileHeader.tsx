@@ -7,6 +7,8 @@ import { styled } from '@mui/material/styles'
 import CardMedia from '@mui/material/CardMedia'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
+import Switch from '@mui/material/Switch'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import { format } from 'date-fns'
 
 // ** Icon Imports
@@ -27,6 +29,7 @@ import {updateUserProfile} from "../../graphql/mutations";
 import toast from "react-hot-toast";
 import Avatar from "@mui/material/Avatar";
 
+import {userDataType} from 'src/context/types'
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
@@ -47,8 +50,6 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
 
   const joiningDate = format(new Date(data.joiningDate), 'PP')
 
-  //const [editable, setEditable] = useState<boolean>(true)
-
   const [showCover, setShowCover] = useState<boolean>(true)
   const designationIcon = 'mdi:briefcase-outline'
   const [openProfilePicture, setOpenProfilePicture] = useState<boolean>(false)
@@ -56,10 +57,17 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   const [files, setFiles] = useState<File[]>([])
   const [proPicUrl, setProPicUrl] = useState<string>('')
   const [coverPicUrl, setCoverPicUrl] = useState<string>('')
+  const [editable, setEditable] = useState<boolean>(false)
+  const [refresh, setRefresh] = useState(Date.now())
 
   useEffect(() => {
     if(type == "Dashboard" || type == "Profile"){
+      setEditable(true)
       setShowCover(true)
+    }else if(type == "Public"){
+      setEditable(false)
+      setShowCover(true)
+      console.log("show cover: ", showCover)
     }else{
       setShowCover(false)
     }
@@ -67,6 +75,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
     const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey;
     console.log(proPicUrl)
     const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey;
+    data.emailAddress = data.userEmailAddress
     setProPicUrl(proPicUrl)
     setCoverPicUrl(coverPicUrl)
   }, []);
@@ -116,9 +125,19 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
 
   }
 
+  const toggle = async () => {
+
+    //use state to refresh component
+    setRefresh(Date.now())
+    data.isPublic=!data.isPublic
+    console.log("public to update:" , data)
+    await API.graphql(graphqlOperation(updateUserProfile, data))
+  };
+
+
   return data !== null ? (
     <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
-      {showCover && <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
+      {editable && <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
         <Pencil/>
       </IconButton>}
       {showCover && <CardMedia
@@ -140,9 +159,9 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
         }}
       >
         <div>
-          <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleProPicOpen}>
+          {editable && <IconButton sx={{position: 'absolute', zIndex: 1}} onClick={handleProPicOpen}>
             <Pencil/>
-          </IconButton>
+          </IconButton>}
           <ProfilePicture src={proPicUrl} alt='profile-picture' />
         </div>
 
@@ -187,6 +206,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
               </Box>
             </Box>
           </Box>
+          {type != 'Public' && <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>} label='Public'  />}
         </Box>
       </CardContent>
       <Dialog
