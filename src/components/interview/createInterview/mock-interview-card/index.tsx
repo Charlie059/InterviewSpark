@@ -1,12 +1,10 @@
 // ** MUI Imports
-import { Box, IconButton, Typography, Link } from '@mui/material'
+import { Typography} from '@mui/material'
 
-import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import CloseIcon from '@mui/icons-material/Close'
 
-import { Card, CardActionArea, CardContent, CardMedia } from '@mui/material'
+import { Card, CardActionArea,CardMedia } from '@mui/material'
 
 interface Props {
   jobTitle: string
@@ -15,7 +13,6 @@ interface Props {
 }
 
 const MockInterviewCard = (props: Props) => {
-  const router = useRouter()
 
   return (
     <Card sx={{}}>

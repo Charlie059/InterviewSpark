@@ -113,6 +113,7 @@ const Tutorial = () => {
       }
     }
     getStepContent(activeStep)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStep])
 
   const renderFooter = () => {
