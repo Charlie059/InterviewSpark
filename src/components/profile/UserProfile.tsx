@@ -458,11 +458,11 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
           </Dialog>
         </Card>
         <Card sx={{ mt: 6 }}>
-          {educations &&
+          {educations && type !== 'tutorial' &&
             <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />}
         </Card>
         <Card sx={{ mt: 6 }}>
-          {workHistories &&
+          {workHistories && type !== 'tutorial' &&
             <WorkHistoryCard type='private' workDatas={workHistories} setWorkDatas={setWorkHistories} refresh={handleRefresh}/>}
         </Card>
         {/* <Card sx={{ mt: 6 }}>

@@ -221,7 +221,7 @@ const EducationCard = ({
   ];
 
     return (
-      <Card>
+      <Card >
         <CardContent>
           <Box sx={{mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <Typography variant='h5'>Education</Typography>

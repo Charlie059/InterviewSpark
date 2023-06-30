@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
 import Stepper from '@mui/material/Stepper'
@@ -16,12 +17,14 @@ import MuiStep from '@mui/material/Step'
 import Icon from 'src/@core/components/icon'
 
 import { API, graphqlOperation } from 'aws-amplify'
-import { getUserProfileByUsername } from 'src/graphql/queries'
+import {getUserEducations, getUserProfileByUsername, getUserWorkHistories} from 'src/graphql/queries'
 
 // ** Step Components Imports
 import UserProfile from 'src/components/profile/UserProfile'
 import ResumeScanPage from '../resume'
 import InterviewPage from '../interview'
+import EducationCard from 'src/components/profile/profile-cards/EducationCard'
+import WorkHistoryCard from 'src/components/profile/profile-cards/WorkHistoryCard'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
@@ -31,6 +34,14 @@ const steps = [
   {
     title: 'Profile',
     subtitle: 'Fill out user profile'
+  },
+  {
+    title: 'Education',
+    subtitle: 'Fill out education'
+  },
+  {
+    title: 'Experience',
+    subtitle: 'Fill out work history'
   },
   {
     title: 'Resume',
@@ -87,6 +98,16 @@ const Tutorial = () => {
     const userDatastore = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
     if ('data' in userDatastore) {
       data = userDatastore.data.getUserProfileByUsername
+      const eduData = await API.graphql(graphqlOperation(getUserEducations, { emailAddress: data.userEmailAddress }))
+      const workData = await API.graphql(
+        graphqlOperation(getUserWorkHistories, { emailAddress: data.userEmailAddress })
+      )
+      if ('data' in eduData) {
+        data.educations = eduData.data.getUserEducations.educations
+      }
+      if ('data' in workData) {
+        data.workHistory = workData.data.getUserWorkHistories.workHistory
+      }
 
       return data
     }
@@ -96,15 +117,28 @@ const Tutorial = () => {
 
   useEffect(() => {
     const getStepContent = async (step: number) => {
+      const userData = await getData()
       switch (step) {
         case 0:
-          const userData = await getData()
           setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} />)
           break
         case 1:
-          setStepContent(<ResumeScanPage type={'tutorial'} />)
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          setStepContent(
+            <Grid container spacing={6}>
+              <Grid item xs={12} >
+              <EducationCard eduDatas={userData.educations} type={'tutorial'} refresh={()=>{}}/>
+              </Grid>
+            </Grid>)
           break
         case 2:
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          setStepContent(<WorkHistoryCard workDatas={userData.workHistory} type={'tutorial'} refresh={()=>{}}/>)
+          break
+        case 3:
+          setStepContent(<ResumeScanPage type={'tutorial'} />)
+          break
+        case 4:
           setStepContent(<InterviewPage />)
           break
         default:
@@ -169,10 +203,12 @@ const Tutorial = () => {
           </Stepper>
         </StepperWrapper>
       </StepperHeaderContainer>
-      <div>
+      <div style={{ width: '80%' }}>
         <CardContent>
-          {stepContent}
-          {renderFooter()}
+          <Grid container spacing={3}>
+            <Grid item xs={12}>{stepContent}</Grid>
+            <Grid item xs={12}>{renderFooter()}</Grid>
+          </Grid>
         </CardContent>
       </div>
     </Card>
