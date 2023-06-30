@@ -12,7 +12,7 @@ const InterviewPage = () => {
   const cardRef = React.useRef<HTMLElement>(null)
   const [cardHeight, setCardHeight] = React.useState(0)
   const auth = useAuth()
-  const [userProfileData, setUserProfileData] = React.useState<any>(auth.user)
+  const [userProfileData] = React.useState<any>(auth.user)
 
   React.useEffect(() => {
     const handleResize = () => {
