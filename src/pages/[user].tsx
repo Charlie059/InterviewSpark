@@ -17,13 +17,13 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
-  const test = true
+  const testmode = true
   console.log()
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
-  if (user === auth.user?.userName) {
-    router.replace('/user-profile/' + user)
-  } else if (test || data.isPublic) {
+  if (user === auth.user?.userName && !testmode) {
+    router.push('/user-profile/' + user)
+  } else if (data.isPublic) {
     return (
       <Grid container direction='row' justifyContent='center' alignItems='center' sx={{ mb: 2.7 }}>
         <Grid item xs={12} sm={10} md={8} lg={8} xl={8}>

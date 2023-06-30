@@ -74,9 +74,9 @@ const PublicProfile = ({ user, data, type }) => {
   const defaultValues = data
 
   return (
-    <Grid container spacing={8}>
+    <Grid container spacing={5}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={'profile'} />
+        <UserProfileHeader data={data} type={'Public'} />
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}
@@ -128,15 +128,15 @@ const PublicProfile = ({ user, data, type }) => {
             </Grid>
           </CardContent>
         </Card>
-      </Grid>
-        <Grid item xs={8}>
-          <Grid item sx={{mb:8}}>
-            <EducationCard type="public" eduDatas={emptyEdu} refresh={refresh} />
-          </Grid>
-          <Grid>
-            <WorkHistoryCard type="public" workDatas={emptyWorkHistory} refresh={refresh} />
-          </Grid>
-      </Grid>
+    </Grid>
+      <Grid item xs={8}>
+        <Grid item sx={{mb:5}}>
+          <EducationCard type="public" eduDatas={emptyEdu} refresh={refresh} />
+        </Grid>
+        <Grid>
+          <WorkHistoryCard type="public" workDatas={emptyWorkHistory} refresh={refresh} />
+        </Grid>
+    </Grid>
     </Grid>
   )
 }

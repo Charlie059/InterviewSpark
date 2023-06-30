@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
 
 // ** Aws-amplify
-import { API, Auth, graphqlOperation } from 'aws-amplify'
+import { API, Auth, graphqlOperation, Storage } from 'aws-amplify'
 
 // ** Logger
 import Log from 'src/middleware/loggerMiddleware'
@@ -119,6 +119,9 @@ const AuthProvider = ({ children }: Props) => {
 
           setUser(user)
           Log.info(user)
+
+          //set default S3 level to private
+          Storage.configure({ level: 'private' })
 
           // if user is null, return error
           if (!user) {

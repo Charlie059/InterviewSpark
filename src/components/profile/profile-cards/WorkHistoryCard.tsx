@@ -29,7 +29,9 @@ import {WorkHistory} from 'src/context/types'
 // ** Demo Components
 import WorkHistoryEntry from './WorkHistoryEntry'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import EducationEntry from "./EducationEntry";
+import { API, graphqlOperation } from 'aws-amplify'
+import {createUserWorkHistory, removeUserWorkHistoryByID} from 'src/graphql/mutations'
+import {useAuth} from "../../../hooks/useAuth"
 
 const WorkHistoryCard = ({
   workDatas,
@@ -47,6 +49,8 @@ const WorkHistoryCard = ({
   const [openEdit, setOpenEdit] = useState(false)
   const [workD, setWorkD] = useState<WorkHistory>()
   const [isEmpty, setIsEmpty] = useState(workDatas.length == 0);
+
+  const auth = useAuth()
 
   const handleClickOpen = () => {
     setEdit(true)
@@ -74,19 +78,53 @@ const WorkHistoryCard = ({
     if (existingWorkHistoryIndex !== -1) {
       // If an existing education entry is found, update it
       updatedWorkHistoryDatas[existingWorkHistoryIndex] = workData
+      const workHistoryInput = {
+        emailAddress: auth.user?.userEmailAddress,
+        workCompany: workData.workHistoryEmployer,
+        workPosition: workData.workHistoryJobTitle,
+        workStartDate: workData.workHistoryStartDate.toISOString().split('T')[0],
+        workEndDate: workData.workHistoryEndDate.toISOString().split('T')[0],
+        workDescription: workData.workHistoryJobDescription,
+        workHistoryID: workData.workHistoryID
+      }
+
+      await API.graphql(graphqlOperation(updateWorkHistoryProfile, workHistoryInput)).then(res => {
+        console.log(res)
+      }).catch(err => {
+        console.log("error updating", err)
+      })
     } else {
       // If no existing education entry is found, create a new one
-      const createdWorkHistoryID = 'testadd' + workDatas.length // Assuming api.createEducation returns the ID
-      workData.workHistoryID = createdWorkHistoryID
-      updatedWorkHistoryDatas.push(workData)
+      const workHistoryInput = {
+        emailAddress: auth.user?.userEmailAddress,
+        workCompany: workData.workHistoryEmployer,
+        workPosition: workData.workHistoryJobTitle,
+        workStartDate: workData.workHistoryStartDate.toISOString().split('T')[0],
+        workEndDate: workData.workHistoryEndDate.toISOString().split('T')[0],
+        workDescription: workData.workHistoryJobDescription
+      }
+
+      try {
+        const workHistoryResult = await API.graphql(graphqlOperation(createUserWorkHistory, workHistoryInput))
+
+        const createdWorkHistory = workHistoryResult.data.createUserWorkHistory
+        const createdWorkHistoryID = createdWorkHistory.workHistoryID
+
+        workData.workHistoryID = createdWorkHistoryID
+        updatedWorkHistoryDatas.push(workData)
+        console.log('updated edu data: ', updatedWorkHistoryDatas) // Outputs correct data
+      } catch (err) {
+        console.error('Error creating work history entry:', err)
+      }
     }
 
     setWorkDatas(updatedWorkHistoryDatas)
-    console.log(workData)
+    setIsEmpty(false)
+    console.log(updatedWorkHistoryDatas)
     refresh()
   }
 
-  const removeWorkHistoryEntryByID = (ID: string) => {
+  const removeWorkHistoryEntryByID = async (ID: string) => {
     // Find the index of the education entry with the given ID
     if (workDatas) {
       const index = workDatas.findIndex(workHistoryEntry => workHistoryEntry.workHistoryID === ID)
@@ -96,10 +134,37 @@ const WorkHistoryCard = ({
         workDatas.splice(index, 1)
         console.log(workDatas)
         setWorkDatas(workDatas)
-        refresh()
+
+        if (workDatas.length === 0) {
+          setIsEmpty(true)
+        }
+
+        try {
+          // Execute the GraphQL mutation to remove the education entry from the database
+          const result = await API.graphql({
+            query: removeUserWorkHistoryByID,
+            variables: {
+              emailAddress: auth.user?.userEmailAddress,
+              workHistoryID: ID,
+            },
+          });
+
+          // Check the result of the mutation
+          const {isSuccessful, error} = result.data.removeUserWorkHistoryByID;
+          if (isSuccessful) {
+            console.log('Work History entry removed successfully from the database.');
+          } else {
+            console.error('Failed to remove work history entry from the database:', error);
+          }
+
+          refresh()
+        } catch (error) {
+          console.error('An error occurred while executing the GraphQL mutation:', error);
+        }
+        }
       }
     }
-  }
+
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -118,6 +183,8 @@ const WorkHistoryCard = ({
       })
   }
 
+  console.log(isEmpty)
+  console.log(workDatas)
 
   return (
     <Card>
