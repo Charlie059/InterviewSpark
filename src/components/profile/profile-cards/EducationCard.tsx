@@ -13,6 +13,7 @@ import Button from '@mui/material/Button'
 import Icon from 'src/@core/components/icon'
 import TableContainer from '@mui/material/TableContainer'
 import Fab from '@mui/material/Fab'
+import MenuItem from '@mui/material/MenuItem'
 
 // ** Third Party Imports
 import DatePicker from 'react-datepicker'
@@ -30,7 +31,7 @@ import { Education } from 'src/context/types'
 import EducationEntry from './EducationEntry'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { API, graphqlOperation } from 'aws-amplify'
-import {createUserEducation, removeUserEducationByID} from 'src/graphql/mutations'
+import {createUserEducation, removeUserEducationByID, updateUserEducation} from 'src/graphql/mutations'
 import {useAuth} from "../../../hooks/useAuth"
 
 
@@ -42,7 +43,7 @@ const EducationCard = ({
 }: {
   eduDatas: Education[]
   type: string
-  setEduDatas: React.Dispatch<React.SetStateAction<Education[]>>
+  setEduDatas?: React.Dispatch<React.SetStateAction<Education[]|undefined>>
   refresh: () => void
 }) => {
   // States
@@ -50,6 +51,14 @@ const EducationCard = ({
   const [openEdit, setOpenEdit] = useState(false)
   const [eduD, setEduD] = useState<Education>()
   const [isEmpty, setIsEmpty] = useState(eduDatas.length == 0);
+  const emptyEdu:Education = {
+    eduDegree: "",
+    eduEndDate: new Date(Date.now()),
+    eduFieldStudy: "",
+    eduID: "",
+    eduSchool: "",
+    eduStartDate: new Date(Date.now())
+  }
 
   const auth = useAuth()
 
@@ -58,7 +67,7 @@ const EducationCard = ({
   }
   const handleAddOpen = () => {
     setOpenEdit(true)
-    setEduD()
+    setEduD(emptyEdu)
   }
   const handleClickClose = () => setEdit(false)
 
@@ -68,7 +77,7 @@ const EducationCard = ({
     setEduD(eduData)
     console.log('passing edudata:', eduD)
   }
-  const updateEduProfile = async eduData => {
+  const updateEduProfile = async (eduData: Education) => {
     // Clone the eduDatas array to avoid modifying the state directly
     const updatedEduDatas = [...eduDatas]
 
@@ -79,6 +88,7 @@ const EducationCard = ({
       // If an existing education entry is found, update it
       updatedEduDatas[existingEduIndex] = eduData
       const eduInput = {
+        eduID:eduData.eduID,
         emailAddress: auth.user?.userEmailAddress,
         eduDegree: eduData.eduDegree,
         eduFieldStudy: eduData.eduFieldStudy,
@@ -87,11 +97,7 @@ const EducationCard = ({
         eduEndDate: eduData.eduEndDate.toISOString().split('T')[0]
       }
 
-      await API.graphql(graphqlOperation(updateEduProfile, eduInput)).then(res => {
-        console.log(res)
-      }).catch(err => {
-        console.log("error updating", err)
-      })
+      await API.graphql(graphqlOperation(updateUserEducation, eduInput))
     } else {
       // If no existing education entry is found, create a new one
       console.log(eduData.eduStartDate.toISOString())
@@ -107,20 +113,27 @@ const EducationCard = ({
       try {
         const eduResult = await API.graphql(graphqlOperation(createUserEducation, eduInput))
         console.log(eduResult)
-        const createdEdu = eduResult.data.createUserEducation
-        const createdEduID = createdEdu.eduID
+        if('data' in eduResult){
+          const createdEdu = eduResult.data.createUserEducation
+          const createdEduID = createdEdu.eduID
 
-        eduData.eduID = createdEduID
-        updatedEduDatas.push(eduData)
-        console.log('updated edu data: ', updatedEduDatas)
+          eduData.eduID = createdEduID
+          updatedEduDatas.push(eduData)
+          console.log('updated edu data: ', updatedEduDatas)
+        }else{
+          throw('no data found')
+        }
       } catch (e) {
         console.error('Error creating education entry:', e)
       }
     }
 
-    setEduDatas(updatedEduDatas)
+
+    setEduDatas?.(updatedEduDatas)
+
     setIsEmpty(false)
-    console.log('updated data: ', updatedEduDatas)
+
+    // console.log('updated data: ', updatedEduDatas)
     refresh()
   }
 
@@ -133,7 +146,10 @@ const EducationCard = ({
       if (index !== -1) {
         eduDatas.splice(index, 1)
         console.log(eduDatas)
-        setEduDatas(eduDatas)
+
+
+        setEduDatas?.(eduDatas)
+
 
         if (eduDatas.length === 0) {
           setIsEmpty(true)
@@ -152,13 +168,14 @@ const EducationCard = ({
           });
 
           // Check the result of the mutation
-          const {isSuccessful, error} = result.data.removeUserEducationByID;
-          if (isSuccessful) {
-            console.log('Education entry removed successfully from the database.');
-          } else {
-            console.error('Failed to remove education entry from the database:', error);
+          if('data' in result){
+            const {isSuccessful, error} = result.data.removeUserEducationByID;
+            if (isSuccessful) {
+              console.log('Education entry removed successfully from the database.');
+            } else {
+              console.error('Failed to remove education entry from the database:', error);
+            }
           }
-
 
         } catch (error) {
           console.error('An error occurred while executing the GraphQL mutation:', error);
@@ -168,20 +185,40 @@ const EducationCard = ({
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const {name, value} = event.target
+
+      // @ts-ignore
       setEduD(prevData => ({...prevData, [name]: value}))
     }
 
-    const handleEditSubmit = async () => {
+    const handleEditSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault() // prevent defaukt form behavior
       setOpenEdit(false)
       console.log('bbb', eduD)
-      updateEduProfile(eduD)
-        .then(response => {
-          console.log(response)
-        })
-        .catch(e => {
-          console.log(e)
-        })
+      if(eduD){
+        updateEduProfile(eduD)
+          .then(response => {
+            console.log(response)
+          })
+          .catch(e => {
+            console.log(e)
+          })
+      }
     }
+
+  const degrees = [
+    {
+      value: 'Bachelor',
+      label: 'Bachelor',
+    },
+    {
+      value: 'Master',
+      label: 'Master',
+    },
+    {
+      value: 'PhD',
+      label: 'PhD',
+    },
+  ];
 
     return (
       <Card>
@@ -236,78 +273,81 @@ const EducationCard = ({
                 id='user-view-edit-description'
                 sx={{textAlign: 'center', mb: 7}}
               ></DialogContentText>
+              <form onSubmit={handleEditSubmit}>
               <Grid container spacing={6}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                   <TextField
                     fullWidth
+                    required
                     name='eduSchool'
                     label='School'
                     value={eduD?.eduSchool}
                     onChange={handleInputChange}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    name='eduDegree'
-                    label='Degree'
-                    value={eduD?.eduDegree}
-                    onChange={handleInputChange}
-                  />
+                <Grid item xs={12} sm={12}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={6}>
+                      <TextField
+                        id="outlined-select-degree"
+                        sx={{display:'flex'}}
+                        required
+                        select
+                        name='eduDegree'
+                        label="Degree"
+                        defaultValue={'Bachelors'}
+                        value={eduD?.eduDegree}
+                        onChange={handleInputChange}
+                      >
+                        {degrees.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <TextField
+                        fullWidth
+                        required
+                        name='eduFieldStudy'
+                        label='Field Of Study'
+                        value={eduD?.eduFieldStudy}
+                        onChange={handleInputChange}
+                      />
+                    </Grid>
+                  </Grid>
+
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    name='eduFieldStudy'
-                    label='Field Of Study'
-                    value={eduD?.eduFieldStudy}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    name='eduActivities'
-                    label='Activities and Other'
-                    value={eduD?.eduActivities}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    name='eduDescription'
-                    label='Description'
-                    value={eduD?.eduDescription}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}></Grid>
                 <Grid item xs={12} sm={12}>
                   <DatePickerWrapper>
-                    <Grid container spacing={5}>
+                    <Grid container spacing={3}>
                       <Grid item xs={6}>
                         <DatePicker
-                          selected={eduD?.eduStartDate}
+                          selected={new Date((eduD?.eduStartDate)||Date.now())}
                           id='month-picker'
                           showMonthYearPicker
                           dateFormat='MM/yyyy'
                           popperPlacement='bottom-end'
                           onChange={newDate => {
-                            setEduD({...eduD, ...(newDate && {eduStartDate: newDate})})
+                            if(eduD){
+                              setEduD({...eduD, ...(newDate && {eduStartDate: newDate})})
+                            }
                           }}
                           customInput={<CustomInput label='Start Date'/>}
                         />
                       </Grid>
                       <Grid item xs={6}>
                         <DatePicker
-                          selected={eduD?.eduEndDate}
+                          selected={new Date((eduD?.eduEndDate)||Date.now())}
                           id='month-picker'
                           showMonthYearPicker
                           dateFormat='MM/yyyy'
                           popperPlacement='bottom-end'
                           onChange={newDate => {
-                            setEduD({...eduD, ...(newDate && {eduEndDate: newDate})})
+                            if(eduD) {
+                              setEduD({...eduD, ...(newDate && {eduEndDate: newDate})})
+                            }
                           }}
                           customInput={<CustomInput label='End Date'/>}
                         />
@@ -315,9 +355,32 @@ const EducationCard = ({
                     </Grid>
                   </DatePickerWrapper>
                 </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={3}
+                    name='eduActivities'
+                    label='Activities and Other'
+                    value={eduD?.eduActivities}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={3}
+                    name='eduDescription'
+                    label='Description'
+                    value={eduD?.eduDescription}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}></Grid>
                 <Grid item xs={12} sx={{justifyContent: 'center'}}>
                   <DialogActions sx={{justifyContent: 'center'}}>
-                    <Button variant='contained' onClick={handleEditSubmit} sx={{mr: 1}}>
+                    <Button variant='contained'  type='submit' sx={{mr: 1}}>
                       Submit
                     </Button>
                     <Button variant='outlined' color='secondary' onClick={handleEditClose}>
@@ -326,6 +389,7 @@ const EducationCard = ({
                   </DialogActions>
                 </Grid>
               </Grid>
+              </form>
             </DialogContent>
           </Dialog>
         </CardContent>

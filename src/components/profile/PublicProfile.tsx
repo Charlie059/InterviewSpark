@@ -10,58 +10,24 @@ import Divider from '@mui/material/Divider'
 import CardContent from '@mui/material/CardContent'
 
 // ** Types Import
-import { Education, WorkHistory } from '../../context/types'
-
 // ** Layout & Component Import
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import BlankLayout from '../../@core/layouts/BlankLayout'
 import EducationCard from './profile-cards/EducationCard'
 import WorkHistoryCard from './profile-cards/WorkHistoryCard'
+import router from "next/router";
+
 
 // @ts-ignore
-const PublicProfile = ({ user, data, type }) => {
+const PublicProfile = ({ user, data, type }:{type?:string, user:string, data:any}) => {
   // ** State
 
   console.log('current profile page is for', user)
   console.log('current data is:', data)
+  if(type!='public'){
+    router.push('/user-profile/',user)
+  }
 
-  const educationTestData: Education[] = [
-    {
-      eduID: 'test1',
-      eduDegree: 'Masters',
-      eduFieldStudy: 'Computer Science',
-      eduSchool: 'Rutgers University',
-      eduStartDate: new Date('2021-09-01'),
-      eduEndDate: new Date('2023-06-01'),
-      eduActivities: 'testing Activities',
-      eduDescription: 'testing description'
-    },
-    {
-      eduID: 'test2',
-      eduDegree: 'Bachelors',
-      eduFieldStudy: 'Computer Science',
-      eduSchool: 'Ohio State University',
-      eduStartDate: new Date('2019-09-01'),
-      eduEndDate: new Date('2021-08-08')
-    }
-  ]
-
-  const emptyEdu: Education[] = []
-
-  const workHistoryTestData: WorkHistory[] = [
-    {
-      workHistoryID: 'test3',
-      workHistoryJobTitle: 'Full Stack Developer',
-      workHistoryEmployer: 'HireBeat',
-      workHistoryStartDate: new Date('2021-09-01'),
-      workHistoryEndDate: new Date('2023-06-30'),
-      workHistoryJobDescription: 'testing Description'
-    }
-  ]
-
-  const emptyWorkHistory: WorkHistory[] = []
-
-  const refresh = () => { };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profileData, setProfileData] = useState(data)
@@ -131,10 +97,12 @@ const PublicProfile = ({ user, data, type }) => {
     </Grid>
       <Grid item xs={8}>
         <Grid item sx={{mb:5}}>
-          <EducationCard type="public" eduDatas={emptyEdu} refresh={refresh} />
+          {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+          <EducationCard type="public" eduDatas={data.educations} refresh={()=>{}}/>
         </Grid>
         <Grid>
-          <WorkHistoryCard type="public" workDatas={emptyWorkHistory} refresh={refresh} />
+          {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
+          <WorkHistoryCard type="public" workDatas={data.workHistory} refresh={()=>{}}/>
         </Grid>
     </Grid>
     </Grid>

@@ -5,7 +5,7 @@ import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
 import Icon from '../../../@core/components/icon'
 import { styled } from '@mui/material/styles'
-import { WorkHistory } from 'src/API'
+import { WorkHistory } from 'src/context/types'
 import LetterIcon from "../../custom-icon/LetterIcon";
 
 interface WorkHistoryEntryProps {
@@ -16,6 +16,9 @@ interface WorkHistoryEntryProps {
 }
 
 const WorkHistoryEntry = ({ workData, handleEditClick, edit, handleEntryRemove }: WorkHistoryEntryProps) => {
+  workData.workHistoryStartDate = new Date(workData.workHistoryStartDate)
+  workData.workHistoryEndDate = new Date(workData.workHistoryEndDate)
+
   const StyledBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       borderTop: `2px solid ${theme.palette.divider}`
@@ -48,8 +51,8 @@ const WorkHistoryEntry = ({ workData, handleEditClick, edit, handleEntryRemove }
             {workData.workHistoryJobTitle}
           </Typography>
           <Typography variant='body2' sx={{ mb: 1 }}>
-            {workData.workHistoryStartDate && workData.workHistoryStartDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })} -{' '}
-            {workData.workHistoryEndDate && workData.workHistoryEndDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+            {workData.workHistoryStartDate.toLocaleString('en-US', { month: 'short', year: 'numeric' })} -{' '}
+            {workData.workHistoryEndDate.toLocaleString('en-US', { month: 'short', year: 'numeric' })}
           </Typography>
           {workData.workHistoryJobDescription && (
             <Typography variant='body1' sx={{ mb: 5 }}>

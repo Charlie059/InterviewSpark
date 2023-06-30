@@ -95,7 +95,7 @@ const Tutorial = () => {
   const [stepContent, setStepContent] = useState<React.ReactNode>()
 
   useEffect(() => {
-    const getStepContent = async step => {
+    const getStepContent = async (step: number) => {
       switch (step) {
         case 0:
           const userData = await getData()

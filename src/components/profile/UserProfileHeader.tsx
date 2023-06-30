@@ -29,8 +29,6 @@ import {updateUserProfile} from "../../graphql/mutations";
 import toast from "react-hot-toast";
 import Avatar from "@mui/material/Avatar";
 
-import {userDataType} from 'src/context/types'
-
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
   height: 120,
@@ -58,6 +56,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type: string }) => {
   const [proPicUrl, setProPicUrl] = useState<string>('')
   const [coverPicUrl, setCoverPicUrl] = useState<string>('')
   const [editable, setEditable] = useState<boolean>(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refresh, setRefresh] = useState(Date.now())
 
   useEffect(() => {

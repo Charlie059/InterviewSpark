@@ -16,6 +16,9 @@ interface EducationEntryProps {
 }
 
 const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: EducationEntryProps) => {
+  eduData.eduStartDate = new Date(eduData.eduStartDate)
+  eduData.eduEndDate = new Date(eduData.eduEndDate)
+
   const StyledBox = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('sm')]: {
       borderTop: `2px solid ${theme.palette.divider}`
@@ -48,8 +51,8 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: E
             {eduData.eduDegree}, {eduData.eduFieldStudy}
           </Typography>
           <Typography variant='body2' sx={{ mb: 1 }}>
-            {eduData.eduStartDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })} -{' '}
-            {eduData.eduEndDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })}
+            {eduData.eduStartDate.toLocaleString('en-US', { month: 'short', year: 'numeric' })} -{' '}
+            {eduData.eduEndDate.toLocaleString('en-US', { month: 'short', year: 'numeric' })}
           </Typography>
           {eduData.eduActivities && (
             <Typography variant='body1' sx={{ mb: 5 }}>
