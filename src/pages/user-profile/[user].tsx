@@ -10,12 +10,12 @@ import { useAuth } from 'src/hooks/useAuth'
 // ** Demo Components Imports
 import UserProfile from 'src/components/profile/UserProfile'
 import PublicProfile from '../../components/profile/PublicProfile'
+import toast from "react-hot-toast";
 
 const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
-  const test = true
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
   console.log(data)
@@ -23,15 +23,12 @@ const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getSe
   // If user is current user or profile is public, display profile
   if (user === auth.user?.userName) {
     return <UserProfile user={user} data={data} type={'profile'} />
-  } else if (test || data.isPublic) {
-    if (auth.user) {
-      return <PublicProfile user={user} data={data} />
-    } else {
-      router.replace(`/` + user)
-    }
+  } else if (data?.isPublic) {
+    return <PublicProfile user={user} data={data} />
   } else {
     // If user is unauthorized, redirect to 401 page
-    router.replace('/401')
+    toast.error('user not found')
+    router.replace(`/user-profile/` + auth.user?.userName)
   }
 }
 
@@ -49,6 +46,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
     }
   } catch (error) {
     console.error('Error fetching user data', error)
+  }
+
+  //if user data is private, return nothing
+  if(!data?.isPublic){
+    data={isPublic:false}
   }
 
   return {

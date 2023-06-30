@@ -15,18 +15,14 @@ import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import BlankLayout from '../../@core/layouts/BlankLayout'
 import EducationCard from './profile-cards/EducationCard'
 import WorkHistoryCard from './profile-cards/WorkHistoryCard'
-import router from "next/router";
 
 
 // @ts-ignore
-const PublicProfile = ({ user, data, type }:{type?:string, user:string, data:any}) => {
+const PublicProfile = ({ user, data }:{user:string, data:any}) => {
   // ** State
 
   console.log('current profile page is for', user)
   console.log('current data is:', data)
-  if(type!='public'){
-    router.push('/user-profile/',user)
-  }
 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

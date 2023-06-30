@@ -41,23 +41,21 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
-  const testmode = true
   console.log()
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
-  if (user === auth.user?.userName && !testmode) {
-    router.push('/user-profile/' + user)
+ if(auth.user){
+    router.push('/user-profile/'+user)
   } else if (data?.isPublic) {
     return (
       <Grid container direction='row' justifyContent='center' alignItems='center' sx={{ mb: 2.7 }}>
         <Grid item xs={12} sm={10} md={8} lg={8} xl={8}>
-          <PublicProfile user={user} data={data} type='public' />
+          <PublicProfile user={user} data={data}/>
         </Grid>
       </Grid>
     )
   } else {
     // If user is unauthorized, redirect to 401 page
-
     return(
       <Box className='content-center'>
         <Box sx={{ p: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
@@ -103,11 +101,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
       if ('data' in workData) {
         data.workHistory = workData.data.getUserWorkHistories.workHistory
       }
-
       console.log(data)
     }
   } catch (error) {
     console.error('Error fetching user data', error)
+  }
+
+  //if user data is private, return nothing
+  if(!data?.isPublic){
+    data={isPublic:false}
   }
 
   return {

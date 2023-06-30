@@ -50,7 +50,7 @@ const EducationCard = ({
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [eduD, setEduD] = useState<Education>()
-  const [isEmpty, setIsEmpty] = useState(eduDatas.length == 0);
+  const [isEmpty, setIsEmpty] = useState<boolean>(eduDatas==undefined);
   const emptyEdu:Education = {
     eduDegree: "",
     eduEndDate: new Date(Date.now()),

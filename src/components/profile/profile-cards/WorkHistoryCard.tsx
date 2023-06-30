@@ -48,7 +48,7 @@ const WorkHistoryCard = ({
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [workD, setWorkD] = useState<WorkHistory>()
-  const [isEmpty, setIsEmpty] = useState(workDatas.length == 0);
+  const [isEmpty, setIsEmpty] = useState(workDatas==undefined);
 
   const emptyWorkHistory: WorkHistory = {
     workHistoryID: "",
