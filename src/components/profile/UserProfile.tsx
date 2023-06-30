@@ -1,7 +1,5 @@
 // ** React Imports
-// noinspection TypeScriptValidateTypes
-
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 
 // ** Next Import
 // import { useRouter } from 'next/router'
@@ -27,21 +25,19 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import InputAdornment from '@mui/material/InputAdornment'
 import DialogContentText from '@mui/material/DialogContentText'
-import Fab from '@mui/material/Fab'
-import List from '@mui/material/List'
-import ListItem from '@mui/material/ListItem'
-import ListItemText from '@mui/material/ListItemText'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import MuiAvatar from '@mui/material/Avatar'
-
-import Icon from 'src/@core/components/icon'
 
 // ** Utils Import
 import { Controller, useForm } from 'react-hook-form'
 
+// ** Layout & Component Import
+import EducationCard from './profile-cards/EducationCard'
+import WorkHistoryCard from './profile-cards/WorkHistoryCard'
+
 // ** Type Import
 //import { ProfileTabType, UserProfileActiveTab } from 'src/@fake-db/types'
+
+// ** Types Import
+import { Education, WorkHistory } from '../../context/types'
 
 // ** Icon Imports
 // import Icon from 'src/@core/components/icon'
@@ -52,11 +48,16 @@ import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import ProfileViewRight from './ProfileViewRight'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
+import {getUserEducations, getUserWorkHistories} from "../../graphql/queries";
+import { useAuth } from '../../hooks/useAuth'
 
-// @ts-ignore
-const UserProfile = ({ user, data, type }) => {
+// import TestTable from "./profile-cards/TestTable";
+
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) => {
   // ** State
-
+  //#TODO Construct a tutorial version profile page
   //data.email = auth.user?.userEmailAddress
 
   // const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -85,8 +86,14 @@ const UserProfile = ({ user, data, type }) => {
 
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
-  const [openAdd, setOpenAdd] = useState(false)
   const [profileData, setProfileData] = useState(data)
+  const [educations, setEducations] = useState<Education[]>()
+  const [workHistories, setWorkHistories]= useState<WorkHistory[]>()
+  const [refresh, setRefresh] = useState(false);
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
+  };
 
   console.log('initial data')
   console.log(data)
@@ -102,9 +109,6 @@ const UserProfile = ({ user, data, type }) => {
     setProfileData(data)
   }
   const handleEditClose = () => setOpenEdit(false)
-
-  const handleAddClickOpen = () => setOpenAdd(true)
-  const handleAddClose = () => setOpenAdd(false)
 
   // @ts-ignore
   const updateProfile = async data => {
@@ -152,12 +156,52 @@ const UserProfile = ({ user, data, type }) => {
 
   const { control, handleSubmit } = useForm({ defaultValues })
 
+
+  const auth = useAuth()
+  const emailAddress = auth.user?.userEmailAddress
+
+  const getEducations = async () =>{
+    //getEducations API
+    const eduResponse = await API.graphql(
+      graphqlOperation(getUserEducations, {
+        emailAddress
+      })
+    )
+
+    //setEducations
+    if('data' in eduResponse){
+      setEducations(eduResponse.data.getUserEducations.educations)
+    }else{
+      throw('error get educations')
+    }
+  }
+
+  const getWorkHistories = async () =>{
+    //getWorkHistories API
+    const workHistoryResponse = await API.graphql(
+      graphqlOperation(getUserWorkHistories, {
+        emailAddress
+      })
+    )
+    console.log('Result:', workHistoryResponse)
+
+    //setEducations
+    if('data' in workHistoryResponse){
+      setWorkHistories(workHistoryResponse.data.getUserWorkHistories.workHistory)
+    }
+  }
+
+  useEffect(() => {
+    getEducations()
+    getWorkHistories()
+  }, [])
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={'profile'} />
+        <UserProfileHeader data={data} type={'Profile'} />
       </Grid>
-      <Grid item xs={type === 'tutorial' ? 12 : 4}>
+      <Grid item xs={4}>
         {/*{isLoading ? (*/}
         {/*  <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>*/}
         {/*    <CircularProgress sx={{ mb: 4 }} />*/}
@@ -167,21 +211,10 @@ const UserProfile = ({ user, data, type }) => {
         {/* <Profile data={data} />*/}
         <Card>
           <CardContent>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Typography variant='h6'>Details</Typography>
-              <CardActions sx={{ display: 'flex' }}>
-                <Fab size='medium' variant='extended' onClick={handleAddClickOpen} sx={{ '& svg': { mr: 1 } }}>
-                  <Icon icon='mdi:plus' />
-                  Add Profile Section
-                </Fab>
-                <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
-                  <Icon icon='mdi:pencil' />
-                </Fab>
-              </CardActions>
-            </Box>
+            <Typography variant='h6'>Details</Typography>
             <Divider sx={{ mt: 4 }} />
-            <Grid container spacing={1}>
-              <Grid item xs={6} lg={dashwidth}>
+            <Grid container spacing={1} >
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Username:
@@ -189,7 +222,7 @@ const UserProfile = ({ user, data, type }) => {
                   <Typography variant='body2'>{user}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Email:
@@ -198,19 +231,19 @@ const UserProfile = ({ user, data, type }) => {
                 </Box>
               </Grid>
 
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Contact:</Typography>
                   <Typography variant='body2'>{profileData.contact}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>City:</Typography>
                   <Typography variant='body2'>{profileData.city}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={6} lg={dashwidth}>
+              <Grid item xs={12} lg={dashwidth}>
                 <Box sx={{ display: 'flex' }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Country:</Typography>
                   <Typography variant='body2'>{profileData.country}</Typography>
@@ -218,6 +251,12 @@ const UserProfile = ({ user, data, type }) => {
               </Grid>
             </Grid>
           </CardContent>
+
+          <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
+              Edit
+            </Button>
+          </CardActions>
 
           <Dialog
             open={openEdit}
@@ -417,26 +456,21 @@ const UserProfile = ({ user, data, type }) => {
               </form>
             </DialogContent>
           </Dialog>
-
-          <Dialog onClose={handleAddClose} aria-labelledby='simple-dialog-title' open={openAdd}>
-            <DialogTitle id='simple-dialog-title'>Add Profile Section</DialogTitle>
-            <List sx={{ pt: 0, px: '0 !important' }}>
-              <ListItem disablePadding onClick={() => handleAddClose()}>
-                <ListItemButton>
-                  <ListItemAvatar>
-                    <MuiAvatar>
-                      <Icon icon='mdi:plus' />
-                    </MuiAvatar>
-                  </ListItemAvatar>
-                  <ListItemText primary='Add Experience' />
-                </ListItemButton>
-              </ListItem>
-            </List>
-          </Dialog>
         </Card>
+        <Card sx={{ mt: 6 }}>
+          {educations &&
+            <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />}
+        </Card>
+        <Card sx={{ mt: 6 }}>
+          {workHistories &&
+            <WorkHistoryCard type='private' workDatas={workHistories} setWorkDatas={setWorkHistories} refresh={handleRefresh}/>}
+        </Card>
+        {/* <Card sx={{ mt: 6 }}>
+          <TestTable />
+        </Card> */}
       </Grid>
       <Grid item xs={8}>
-        {type != 'tutorial' && <ProfileViewRight profileData={data} />}
+        <ProfileViewRight profileData={data} />
       </Grid>
     </Grid>
   )

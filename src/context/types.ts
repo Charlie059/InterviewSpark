@@ -48,3 +48,25 @@ export type AuthValuesType = {
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void
   currUser: () => Promise<UserDataType | null> // Check AWS currentSession
 }
+
+export type Education = {
+  eduID: string
+  eduDegree: string
+  eduSchool: string
+  eduStartDate: Date
+  eduFieldStudy: string
+  eduEndDate: Date
+  eduIcon?: string
+  eduActivities?: string
+  eduDescription?: string
+}
+
+export type WorkHistory = {
+  workHistoryID: string
+  workHistoryJobTitle: string
+  workHistoryEmployer: string
+  workHistoryStartDate: Date
+  workHistoryEndDate: Date
+  workHistoryJobDescription?: string
+  workHistoryIcon?: string
+}
