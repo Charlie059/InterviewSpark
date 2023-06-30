@@ -53,10 +53,11 @@ import { useAuth } from '../../hooks/useAuth'
 
 // import TestTable from "./profile-cards/TestTable";
 
-// @ts-ignore
-const UserProfile = ({ user, data }) => {
-  // ** State
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) => {
+  // ** State
+  //#TODO Construct a tutorial version profile page
   //data.email = auth.user?.userEmailAddress
 
   // const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -155,42 +156,6 @@ const UserProfile = ({ user, data }) => {
 
   const { control, handleSubmit } = useForm({ defaultValues })
 
-  const educationTestData: Education[] = [
-    {
-      eduID: 'test1',
-      eduDegree: 'Masters',
-      eduFieldStudy: 'Computer Science',
-      eduSchool: 'Rutgers University',
-      eduStartDate: new Date('2021-09-01'),
-      eduEndDate: new Date('2023-06-01'),
-      eduActivities: 'testing Activities',
-      eduDescription: 'testing description'
-    },
-    {
-      eduID: 'test2',
-      eduDegree: 'Bachelors',
-      eduFieldStudy: 'Computer Science',
-      eduSchool: 'Ohio State University',
-      eduStartDate: new Date('2019-09-01'),
-      eduEndDate: new Date('2021-08-08')
-    }
-  ]
-
-
-  const emptyEdu: Education[] = []
-
-  const workHistoryTestData: WorkHistory[] = [
-    {
-      workHistoryID: 'test3',
-      workHistoryJobTitle: 'Full Stack Developer',
-      workHistoryEmployer: 'HireBeat',
-      workHistoryStartDate: new Date('2021-09-01'),
-      workHistoryEndDate: new Date('2023-06-30'),
-      workHistoryJobDescription: 'testing Description'
-    }
-  ]
-
-  const emptyWorkHistory: WorkHistory[] = []
 
   const auth = useAuth()
   const emailAddress = auth.user?.userEmailAddress
@@ -202,10 +167,13 @@ const UserProfile = ({ user, data }) => {
         emailAddress
       })
     )
-    console.log('Result:', eduResponse.data)
 
     //setEducations
-    setEducations(eduResponse.data.getUserEducations.educations)
+    if('data' in eduResponse){
+      setEducations(eduResponse.data.getUserEducations.educations)
+    }else{
+      throw('error get educations')
+    }
   }
 
   const getWorkHistories = async () =>{
@@ -218,7 +186,9 @@ const UserProfile = ({ user, data }) => {
     console.log('Result:', workHistoryResponse)
 
     //setEducations
-    setWorkHistories(workHistoryResponse.data.getUserWorkHistories.workHistory)
+    if('data' in workHistoryResponse){
+      setWorkHistories(workHistoryResponse.data.getUserWorkHistories.workHistory)
+    }
   }
 
   useEffect(() => {
