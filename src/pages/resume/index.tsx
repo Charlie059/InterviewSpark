@@ -41,8 +41,8 @@ const ResumeScanPage = (props: ResumeScanPageProps) => {
     <DropzoneWrapper>
       <Grid container spacing={6} className='match-height'>
         <PageHeader
-          title={<Typography variant='h5'>Resume Upload</Typography>}
-          subtitle={<Typography variant='body2'>Try our AI Resume Parser</Typography>}
+          title={<Typography variant='h5'>Resume Parser</Typography>}
+          subtitle={<Typography variant='body1'>Try our AI Resume Parser and see if your resume would pass the first round of scrutiny!</Typography>}
         />
         <Grid item xs={12}>
           <ResumeScan nocollapse={true} type={type} />

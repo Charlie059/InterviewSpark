@@ -23,7 +23,7 @@ const ResumeListPage = () => {
     <DropzoneWrapper>
       <Grid container spacing={6} className='match-height'>
         <PageHeader
-          title={<Typography variant='h5'>Resume Analysis</Typography>}
+          title={<Typography variant='h5'>Resume Analysis History</Typography>}
           subtitle={<Typography variant='body2'>Upload Your Resume Here</Typography>}
         />
         <Grid item xs={12}>

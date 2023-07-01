@@ -18,7 +18,6 @@ import MenuItem from '@mui/material/MenuItem'
 import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import CardContent from '@mui/material/CardContent'
-import CardActions from '@mui/material/CardActions'
 import DialogTitle from '@mui/material/DialogTitle'
 import FormControl from '@mui/material/FormControl'
 import DialogContent from '@mui/material/DialogContent'
@@ -50,6 +49,8 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
 import {getUserEducations, getUserWorkHistories} from "../../graphql/queries";
 import { useAuth } from '../../hooks/useAuth'
+import Icon from "../../@core/components/icon";
+import Fab from "@mui/material/Fab";
 
 // import TestTable from "./profile-cards/TestTable";
 
@@ -64,25 +65,6 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
   console.log('current profile page is for', user)
   console.log('current data is:', data)
 
-  // ** Hooks
-  // const router = useRouter()
-  // const hideText = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
-
-  // const handleChange = (event: SyntheticEvent, value: string) => {
-  //   setIsLoading(true)
-  //   setActiveTab(value)
-  //   router
-  //     .push({
-  //       pathname: `/user-profile/${value.toLowerCase()}`
-  //     })
-  //     .then(() => setIsLoading(false))
-  // }
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setIsLoading(false)
-  //   }
-  // }, [data])
 
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
@@ -97,12 +79,7 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
 
   console.log('initial data')
   console.log(data)
-  const dashwidth = 12
 
-  // if(isDashboard){
-  //   dashwidth = 12
-  // }
-  // Handle Edit dialog
 
   const handleEditClickOpen = () => {
     setOpenEdit(true)
@@ -193,6 +170,7 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
 
   useEffect(() => {
     getEducations()
+    console.log(educations)
     getWorkHistories()
   }, [])
 
@@ -201,7 +179,7 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
       <Grid item xs={12}>
         <UserProfileHeader data={data} type={'Profile'} />
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={type !== 'tutorial' ? 4 : 12}>
         {/*{isLoading ? (*/}
         {/*  <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>*/}
         {/*    <CircularProgress sx={{ mb: 4 }} />*/}
@@ -211,10 +189,15 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
         {/* <Profile data={data} />*/}
         <Card>
           <CardContent>
+            <Box sx={{mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <Typography variant='h6'>Details</Typography>
+            <Fab  size='small' aria-label='edit' onClick={handleEditClickOpen}>
+              <Icon icon={'mdi:pencil' }/>
+            </Fab>
+            </Box>
             <Divider sx={{ mt: 4 }} />
             <Grid container spacing={1} >
-              <Grid item xs={12} lg={dashwidth}>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Username:
@@ -222,7 +205,7 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
                   <Typography variant='body2'>{user}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} lg={dashwidth}>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Email:
@@ -231,19 +214,19 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
                 </Box>
               </Grid>
 
-              <Grid item xs={12} lg={dashwidth}>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Contact:</Typography>
                   <Typography variant='body2'>{profileData.contact}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} lg={dashwidth}>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>City:</Typography>
                   <Typography variant='body2'>{profileData.city}</Typography>
                 </Box>
               </Grid>
-              <Grid item xs={12} lg={dashwidth}>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex' }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Country:</Typography>
                   <Typography variant='body2'>{profileData.country}</Typography>
@@ -251,12 +234,6 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
               </Grid>
             </Grid>
           </CardContent>
-
-          <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant='contained' sx={{ mr: 2 }} onClick={handleEditClickOpen}>
-              Edit
-            </Button>
-          </CardActions>
 
           <Dialog
             open={openEdit}
@@ -470,7 +447,7 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
         </Card> */}
       </Grid>
       <Grid item xs={8}>
-        <ProfileViewRight profileData={data} />
+        {type !== 'tutorial' &&<ProfileViewRight profileData={data} />}
       </Grid>
     </Grid>
   )

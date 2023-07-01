@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -29,6 +29,8 @@ import WorkHistoryCard from 'src/components/profile/profile-cards/WorkHistoryCar
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
+import {Education, WorkHistory} from "../../context/types";
+import {Profile} from "../../API";
 
 const steps = [
   {
@@ -89,64 +91,69 @@ const Tutorial = () => {
       setActiveStep(activeStep - 1)
     }
   }
+  const [stepContent, setStepContent] = useState<React.ReactNode>()
+  let userData: Profile;
+  let eduDatas: Education[]=[];
+  let workDatas: WorkHistory[]=[];
 
   async function getData() {
-    const userName = auth.user?.userName
 
     // Get userProfile data from GraphQL
-    let data = null
-    const userDatastore = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
+    const userDatastore = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: user }))
     if ('data' in userDatastore) {
-      data = userDatastore.data.getUserProfileByUsername
-      const eduData = await API.graphql(graphqlOperation(getUserEducations, { emailAddress: data.userEmailAddress }))
+      userData=userDatastore.data.getUserProfileByUsername
+      const eduData = await API.graphql(graphqlOperation(getUserEducations, { emailAddress: auth.user?.userEmailAddress }))
       const workData = await API.graphql(
-        graphqlOperation(getUserWorkHistories, { emailAddress: data.userEmailAddress })
+        graphqlOperation(getUserWorkHistories, { emailAddress: auth.user?.userEmailAddress  })
       )
       if ('data' in eduData) {
-        data.educations = eduData.data.getUserEducations.educations
+        eduDatas = eduData.data.getUserEducations.educations
+        console.log("eduData get", eduData)
       }
       if ('data' in workData) {
-        data.workHistory = workData.data.getUserWorkHistories.workHistory
+        workDatas = workData.data.getUserWorkHistories.workHistory
       }
 
-      return data
     }
   }
 
-  const [stepContent, setStepContent] = useState<React.ReactNode>()
+
+  const handleRefresh = () =>{
+    getData().then(()=>{
+      getStepContent(activeStep)
+    })
+  }
+
+  const getStepContent = (step: number) => {
+    switch (step) {
+      case 0:
+        setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} />)
+        break
+      case 1:
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setStepContent(<EducationCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh}/>)
+        break
+      case 2:
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        setStepContent(<WorkHistoryCard workDatas={workDatas} type={'tutorial'} refresh={handleRefresh}/>)
+        break
+      case 3:
+        setStepContent(<ResumeScanPage type={'tutorial'} />)
+        break
+      case 4:
+        setStepContent(<InterviewPage />)
+        break
+      default:
+        setStepContent(null)
+        break
+    }
+  }
 
   useEffect(() => {
-    const getStepContent = async (step: number) => {
-      const userData = await getData()
-      switch (step) {
-        case 0:
-          setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} />)
-          break
-        case 1:
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          setStepContent(
-            <Grid container spacing={6}>
-              <Grid item xs={12} >
-              <EducationCard eduDatas={userData.educations} type={'tutorial'} refresh={()=>{}}/>
-              </Grid>
-            </Grid>)
-          break
-        case 2:
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          setStepContent(<WorkHistoryCard workDatas={userData.workHistory} type={'tutorial'} refresh={()=>{}}/>)
-          break
-        case 3:
-          setStepContent(<ResumeScanPage type={'tutorial'} />)
-          break
-        case 4:
-          setStepContent(<InterviewPage />)
-          break
-        default:
-          setStepContent(null)
-          break
-      }
-    }
-    getStepContent(activeStep)
+    getData().then(()=>{
+      console.log(userData,eduDatas,workDatas)
+      getStepContent(activeStep)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStep])
 

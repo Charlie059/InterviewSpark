@@ -50,7 +50,7 @@ const EducationCard = ({
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [eduD, setEduD] = useState<Education>()
-  const [isEmpty, setIsEmpty] = useState<boolean>(eduDatas==undefined);
+  const [isEmpty, setIsEmpty] = useState<boolean>(eduDatas.length==0);
   const emptyEdu:Education = {
     eduDegree: "",
     eduEndDate: new Date(Date.now()),
@@ -79,7 +79,7 @@ const EducationCard = ({
   }
   const updateEduProfile = async (eduData: Education) => {
     // Clone the eduDatas array to avoid modifying the state directly
-    const updatedEduDatas = [...eduDatas]
+    const updatedEduDatas = eduDatas.slice();
 
     // Find the index of the existing education entry in eduDatas
     const existingEduIndex = updatedEduDatas.findIndex(eduEntry => eduEntry.eduID === eduData.eduID)
@@ -196,9 +196,6 @@ const EducationCard = ({
       console.log('bbb', eduD)
       if(eduD){
         updateEduProfile(eduD)
-          .then(response => {
-            console.log(response)
-          })
           .catch(e => {
             console.log(e)
           })
@@ -207,16 +204,16 @@ const EducationCard = ({
 
   const degrees = [
     {
-      value: 'Bachelor',
-      label: 'Bachelor',
+      value: 'Bachelor\'s',
+      label: 'Bachelor\'s',
     },
     {
-      value: 'Master',
-      label: 'Master',
+      value: 'Master\'s',
+      label: 'Master\'s',
     },
     {
-      value: 'PhD',
-      label: 'PhD',
+      value: 'Doctor',
+      label: 'Doctor',
     },
   ];
 
@@ -224,10 +221,10 @@ const EducationCard = ({
       <Card >
         <CardContent>
           <Box sx={{mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Typography variant='h5'>Education</Typography>
+            <Typography variant='h6'>Education</Typography>
             {type != 'public' && (
               <Box>
-                <Fab aria-label='add' size='small' style={{marginRight: '10px'}} onClick={handleAddOpen}>
+                <Fab aria-label='add' size='small' style={{marginRight: !isEmpty?'10px':'0px'}} onClick={handleAddOpen}>
                   <Icon icon='mdi:plus'/>
                 </Fab>
                 {!isEmpty && (
