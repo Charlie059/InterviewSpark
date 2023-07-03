@@ -10,7 +10,6 @@ interface TableHeaderProps {
   value: string
   selectedRows: GridRowId[]
   handleFilter: (val: string) => void
-  handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
   onDelete: () => void
   buttonText: string
   buttonLink: string
@@ -19,7 +18,7 @@ interface TableHeaderProps {
 
 const TableHeader = (props: TableHeaderProps) => {
   // ** Props
-  const { value, handleFilter, handleKeyDown, buttonText, buttonLink, disableSearch } = props
+  const { value, handleFilter, buttonText, buttonLink, disableSearch } = props
 
   return (
     <Box
@@ -41,7 +40,6 @@ const TableHeader = (props: TableHeaderProps) => {
             placeholder='Search Keyword'
             sx={{ mr: 4, mb: 2, maxWidth: '180px' }}
             onChange={e => handleFilter(e.target.value)}
-            onKeyDown={e => handleKeyDown(e)}
           />
         )}
       </Box>
