@@ -28,7 +28,8 @@ import {API, graphqlOperation} from "aws-amplify";
 import {updateUserProfile} from "../../graphql/mutations";
 import toast from "react-hot-toast";
 import Avatar from "@mui/material/Avatar";
-
+import Popover from "@mui/material/Popover";
+import * as React from 'react';
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
@@ -136,6 +137,18 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     await API.graphql(graphqlOperation(updateUserProfile, data))
   };
 
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
 
   return data !== null ? (
     <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
@@ -209,7 +222,36 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
               </Box>
             </Box>
           </Box>
-          {type == 'Profile' && <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>} label='Public'  />}
+          {type == 'Profile' &&
+            <div>
+              <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>}
+                                label='Public'
+                                aria-owns={open ? 'mouse-over-popover' : undefined}
+                                aria-haspopup="true"
+                                onMouseEnter={handlePopoverOpen}
+                                onMouseLeave={handlePopoverClose}/>
+              <Popover
+                id="mouse-over-popover"
+                sx={{
+                  pointerEvents: 'none',
+                }}
+                open={open}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                onClose={handlePopoverClose}
+                disableRestoreFocus
+              >
+                <Typography sx={{ p: 1 }}>Toggle the button to control profile visibility</Typography>
+              </Popover>
+            </div>
+          }
         </Box>
       </CardContent>
       <Dialog
