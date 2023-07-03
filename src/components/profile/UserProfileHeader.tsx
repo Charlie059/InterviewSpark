@@ -9,6 +9,9 @@ import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Switch from '@mui/material/Switch'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import TextField from '@mui/material/TextField'
 import { format } from 'date-fns'
 
 // ** Icon Imports
@@ -30,6 +33,8 @@ import toast from "react-hot-toast";
 import Avatar from "@mui/material/Avatar";
 import Popover from "@mui/material/Popover";
 import * as React from 'react';
+
+import { useAuth } from 'src/hooks/useAuth'
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
@@ -61,6 +66,9 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   const [editable, setEditable] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refresh, setRefresh] = useState(Date.now())
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [share, setShare] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
     if(type == "Dashboard" || type == "Profile"){
@@ -82,6 +90,8 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     setProPicUrl(proPicUrl)
     setCoverPicUrl(coverPicUrl)
   }, []);
+
+  const auth = useAuth()
 
   const handleProPicOpen = () => {
     setOpenProfilePicture(true)
@@ -137,8 +147,6 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     await API.graphql(graphqlOperation(updateUserProfile, data))
   };
 
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -149,6 +157,20 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
 
   const open = Boolean(anchorEl);
 
+  const handleShareOpen = () => setShare(true)
+  const handleShareClose = () => {
+    setShare(false)
+    setLinkCopied(false)
+  }
+
+  const handleCopyClose = async () => {
+    try {
+      await navigator.clipboard.writeText('https://www.hirebeat.me/' + auth.user?.userName);
+      setLinkCopied(true);
+    } catch (error) {
+      console.error('Error copying link:', error);
+    }
+  };
 
   return data !== null ? (
     <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
@@ -224,6 +246,16 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           </Box>
           {type == 'Profile' &&
             <div>
+              {data.isPublic &&
+                  <Button
+                    variant='outlined'
+                    onClick={handleShareOpen}
+                    endIcon={<Icon icon='mdi:share' />}
+                    sx={{mr:5}}
+                  >
+                    Share
+                  </Button>
+              }
               <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>}
                                 label='Public'
                                 aria-owns={open ? 'mouse-over-popover' : undefined}
@@ -248,7 +280,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                 onClose={handlePopoverClose}
                 disableRestoreFocus
               >
-                <Typography sx={{ p: 1 }}>Toggle the button to control profile visibility</Typography>
+                <Typography sx={{ p: 1 }}>{data.isPublic ? 'Turn off your profile information' : 'Turn on your profile information'} </Typography>
               </Popover>
             </div>
           }
@@ -276,6 +308,29 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         {files[0] &&<Button  size='large' variant='contained' onClick={handleProPicSubmit}>
           Submit
         </Button>}
+      </Dialog>
+      <Dialog
+        open={share}
+        onClose={handleShareClose}
+        fullWidth={true}
+      >
+        <DialogTitle id='simple-dialog-title' >Share your profile</DialogTitle>
+        <TextField
+          label='Link'
+          defaultValue={'https://www.hirebeat.me/' + auth.user?.userName}
+          id='form-props-read-only-input'
+          InputProps={{ readOnly: true }}
+          sx={{ m: 5 }}
+        />
+        <DialogActions
+          className='dialog-actions-dense'
+          sx={{ justifyContent: 'space-between' }}
+        >
+          <Button onClick={handleCopyClose} startIcon={<Icon icon='mdi:link' />}>
+            {linkCopied ? 'Link copied' : 'Copy Link'}
+          </Button>
+          <Button onClick={handleShareClose}>Done</Button>
+        </DialogActions>
       </Dialog>
     </Card>
 
