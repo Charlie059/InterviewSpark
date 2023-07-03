@@ -56,6 +56,7 @@ interface MockInterviewComponentProps {
 }
 
 function MockInterviewComponent(mockInterviewComponentProps: MockInterviewComponentProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { interviews, info } = mockInterviewComponentProps
 
   const router = useRouter()
