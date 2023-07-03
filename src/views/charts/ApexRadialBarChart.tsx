@@ -33,7 +33,7 @@ const ApexRadialBarChart: React.FC<ApexRadialBarChartProps> = ({grade, score, si
     plotOptions: {
       radialBar: {
         hollow: {
-          size: '30%'
+          size: '32%'
         },
         track: {
           margin: size/10
@@ -69,7 +69,9 @@ const ApexRadialBarChart: React.FC<ApexRadialBarChartProps> = ({grade, score, si
     },
     grid: {
       padding: {
-        top: -65,
+        left: -20,
+        right: 30,
+        top: -70,
         bottom: -30
       }
     },
