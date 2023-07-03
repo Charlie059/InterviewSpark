@@ -199,7 +199,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     const cvName = timestamp + suffix
     try {
       await Storage.put(cvName, resume).catch(e => console.log(e))
-      const url = await (cvName, { expires: 604800 })
+      const url = await Storage.get(cvName, { expires: 604800 })
       data.resume_url = url
       data.resume_name = cvName
       data.display_name = name
