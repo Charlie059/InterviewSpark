@@ -41,8 +41,7 @@ const useS3Video = () => {
       })
 
       //Get the file path
-      const url = await (uniqueFilename,
-      {
+      const url = await Storage.get(uniqueFilename, {
         level: 'private',
         expires: 1
       })
