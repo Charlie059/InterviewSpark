@@ -41,7 +41,7 @@ const InterviewPage = () => {
 
   return (
     <div>
-      <UserProfileHeader data={userProfileData} type={'profile'} />
+      <UserProfileHeader data={userProfileData} />
       <Grid container spacing={3.5}>
         <Grid item xs={6} sm={3.8} md={2.3} lg={2.4}>
           <Box sx={{ position: 'relative', paddingBottom: '100%' }}>

@@ -48,7 +48,7 @@ const WorkHistoryCard = ({
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [workD, setWorkD] = useState<WorkHistory>()
-  const [isEmpty, setIsEmpty] = useState(workDatas==undefined);
+  const [isEmpty, setIsEmpty] = useState(workDatas.length==0);
 
   const emptyWorkHistory: WorkHistory = {
     workHistoryID: "",
@@ -78,7 +78,7 @@ const WorkHistoryCard = ({
 
   const updateWorkHistoryProfile = async (workData : WorkHistory) => {
     // Clone the workDatas array to avoid modifying the state directly
-    const updatedWorkHistoryDatas = [...workDatas]
+    const updatedWorkHistoryDatas = workDatas?.slice()
 
     // Find the index of the existing work history entry in workDatas
     const existingWorkHistoryIndex = updatedWorkHistoryDatas.findIndex(workHistoryEntry => workHistoryEntry.workHistoryID === workData.workHistoryID)
@@ -92,7 +92,7 @@ const WorkHistoryCard = ({
         workPosition: workData.workHistoryJobTitle,
         workStartDate: workData.workHistoryStartDate.toISOString().split('T')[0],
         workEndDate: workData.workHistoryEndDate.toISOString().split('T')[0],
-        workDescription: workData.workHistoryJobDescription,
+        workDescription: workData.workHistoryJobDescription||'',
         workHistoryID: workData.workHistoryID
       }
 
@@ -105,7 +105,7 @@ const WorkHistoryCard = ({
         workPosition: workData.workHistoryJobTitle,
         workStartDate: workData.workHistoryStartDate.toISOString().split('T')[0],
         workEndDate: workData.workHistoryEndDate.toISOString().split('T')[0],
-        workDescription: workData.workHistoryJobDescription
+        workDescription: workData.workHistoryJobDescription||''
       }
 
       try {
@@ -199,17 +199,15 @@ const WorkHistoryCard = ({
     }
   }
 
-  console.log(isEmpty)
-  console.log(workDatas)
 
   return (
     <Card>
       <CardContent>
         <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant='h5'>Experience</Typography>
+          <Typography variant='h6'>Experience</Typography>
           {type != 'public' && (
             <Box>
-              <Fab aria-label='add' size='small' style={{ marginRight: '10px' }} onClick={handleAddOpen}>
+              <Fab aria-label='add' size='small' style={{ marginRight: !isEmpty?'10px':'0px'}} onClick={handleAddOpen}>
                 <Icon icon='mdi:plus' />
               </Fab>
               {!isEmpty && (
@@ -247,7 +245,7 @@ const WorkHistoryCard = ({
 
         <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
           <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-            Edit User Information
+            {!isEmpty ? ('Edit Work History'):('Add Work History')}
           </DialogTitle>
           <DialogContent>
             <DialogContentText
