@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { API, graphqlOperation, Storage } from 'aws-amplify'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
-import { getUserInterviewList, getUserInterviewMetaData } from 'src/graphql/queries'
+import {
+  getUserInterviewMetaData,
+  getUserInterviewsPaginated,
+  searchUserInterviewsPaginated
+} from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 import { format } from 'date-fns'
-import Fuse from 'fuse.js'
 import {
   Box,
   Card,
@@ -23,28 +26,38 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import Log from 'src/middleware/loggerMiddleware'
 import { removeUserInterviewsByID } from 'src/graphql/mutations'
 import router from 'next/router'
-import { Interview } from 'src/types/types'
+
+interface Interview {
+  interviewID: string
+  interviewDateTime: string
+  interviewQuestionID: string
+  interviewVideoKey: string
+}
 
 const InterviewList = () => {
   const auth = useAuth()
   const [interviews, setInterviews] = useState<Interview[]>([])
   const [pageSize] = useState<number>(5)
   const [page, setPage] = useState<number>(0)
-  const [totalRecords, setTotalRecords] = useState<number>(0)
+  const [searchMode, setSearchMode] = useState<boolean>(false)
+  const [tokens, setTokens] = useState<string[]>([])
+  const [searchTokens, setSearchTokens] = useState<string[]>([])
   const [value, setValue] = useState<string>('')
   const [selectedRows, setSelectedRows] = useState<GridRowId[]>([])
+  const [totalRecords, setTotalRecords] = useState<number>(0)
+  const [maxPageReached, setMaxPageReached] = useState<number>(0)
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState<boolean>(false)
   const [selectedInterview, setSelectedInterview] = useState<{
     interviewID: string
     interviewQuestionID: string
-    interviewQuestionType: string
   } | null>(null)
 
   const [loading, setLoading] = useState<boolean>(false)
+
   const containerRef = useRef<HTMLDivElement>(null)
+
   const [containerWidth, setContainerWidth] = useState<number>(0)
 
-  // Set table size
   useEffect(() => {
     const handleResize = (entries: ResizeObserverEntry[]) => {
       const width = entries[0].contentRect.width
@@ -156,12 +169,7 @@ const InterviewList = () => {
             onClick={() => {
               Log.info('View button clicked for interview ID:', params.row.interviewID)
 
-              const urlMessage = {
-                interviewID: params.row.interviewID,
-                interviewQuestionID: params.row.interviewQuestionID,
-                interviewQuestionType: params.row.interviewQuestionType
-              }
-              const interviewsString = JSON.stringify(urlMessage)
+              const interviewsString = JSON.stringify(params.row)
 
               router.push({
                 pathname: '/interview/detail',
@@ -177,8 +185,7 @@ const InterviewList = () => {
               Log.info('Delete button clicked for interview ID:', params.row.interviewID)
               setSelectedInterview({
                 interviewID: params.row.interviewID,
-                interviewQuestionID: params.row.interviewQuestionID,
-                interviewQuestionType: params.row.interviewQuestionType
+                interviewQuestionID: params.row.interviewQuestionID
               })
               setConfirmationDialogOpen(true)
             }}
@@ -190,55 +197,8 @@ const InterviewList = () => {
     }
   ]
 
-  const handleSort = (val: string) => {
+  const handleFilter = (val: string) => {
     setValue(val)
-
-    const options = {
-      keys: ['interviewQuestionTitle', 'interviewQuestionType'],
-      includeScore: true // include the relevance score in the search results
-    }
-
-    const fuse = new Fuse(interviews, options)
-    const result = fuse.search(val)
-
-    // Sort the original array based on the index provided by Fuse.js
-    const sortedInterviews = interviews.slice().sort((a, b) => {
-      const aIndex = result.find(item => item.item === a)?.refIndex || interviews.length
-      const bIndex = result.find(item => item.item === b)?.refIndex || interviews.length
-
-      return aIndex - bIndex // Sort by index in search results
-    })
-
-    setInterviews(sortedInterviews)
-  }
-
-  const fetchInterviews = async () => {
-    setLoading(true)
-    try {
-      const emailAddress = auth.user?.userEmailAddress
-      const result = await API.graphql(graphqlOperation(getUserInterviewList, { emailAddress }))
-
-      if ('data' in result) {
-        // Set the id field to the interviewList based on the interviewDateTime start from 1
-        const interviewList = result.data.getUserInterviewList.interviewList.sort(
-          (a: { interviewDateTime: string | number | Date }, b: { interviewDateTime: string | number | Date }) => {
-            return new Date(b.interviewDateTime).getTime() - new Date(a.interviewDateTime).getTime()
-          }
-        )
-
-        // Set the id field to the interviewList based on the interviewDateTime start from 1
-        interviewList.forEach((interview: any, index: number) => {
-          interview.id = index + 1
-        })
-        console.log('Interviews:', interviewList)
-        setInterviews(interviewList)
-        setTotalRecords(interviewList.length)
-      }
-    } catch (error) {
-      console.error('Error fetching interviews:', error)
-    } finally {
-      setLoading(false)
-    }
   }
 
   useEffect(() => {
@@ -246,8 +206,139 @@ const InterviewList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    if (searchMode && interviews.length === 0 && totalRecords > 0) {
+      searchInterviews()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interviews])
+
+  useEffect(() => {
+    if (searchMode) {
+      if (page > maxPageReached) {
+        // Going forward
+        searchInterviews(searchTokens[page - 1])
+        setMaxPageReached(page)
+      }
+    } else {
+      if (page > maxPageReached) {
+        // Going forward
+        fetchInterviews(tokens[page - 1])
+        setMaxPageReached(page)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
+
+  const fetchInterviews = async (nextToken: string | null = null) => {
+    setLoading(true)
+    try {
+      const emailAddress = auth.user?.userEmailAddress
+
+      const result = await API.graphql(
+        graphqlOperation(getUserInterviewsPaginated, {
+          emailAddress,
+          limit: pageSize,
+          nextToken
+        })
+      )
+
+      console.log('Result:', result)
+
+      if ('data' in result) {
+        const interviewList = result.data.getUserInterviewsPaginated.interviewList
+
+        // Add the ID field to the each interview in the list
+        const interviewsWithID = interviewList.map((interview: Interview) => {
+          return {
+            ...interview,
+            id: `INT#${interview.interviewID}#QST#${interview.interviewQuestionID}`
+          }
+        })
+
+        // Add the next token to the list of tokens
+        if (result.data.getUserInterviewsPaginated.nextToken) {
+          if (tokens.length === 0) setTokens([...tokens, result.data.getUserInterviewsPaginated.nextToken])
+          else if (page > maxPageReached) setTokens([...tokens, result.data.getUserInterviewsPaginated.nextToken])
+        }
+
+        setTotalRecords(result.data.getUserInterviewsPaginated.totalRecords)
+        setInterviews(prevState => [...prevState, ...interviewsWithID])
+      }
+      setLoading(false)
+    } catch (error) {
+      console.error('Error fetching interviews:', error)
+    }
+  }
+
   const handlePageChange = (params: number) => {
     setPage(params)
+  }
+
+  const searchInterviews = async (nextToken: string | null = null) => {
+    setLoading(true)
+    try {
+      const result = await API.graphql(
+        graphqlOperation(searchUserInterviewsPaginated, {
+          emailAddress: auth.user?.userEmailAddress,
+          keyword: value,
+          limit: pageSize,
+          nextToken
+        })
+      )
+
+      if ('data' in result) {
+        const interviewList = result.data.searchUserInterviewsPaginated.interviewList
+        const interviewsWithID = interviewList.map((interview: Interview) => {
+          return {
+            ...interview,
+            id: `INT#${interview.interviewID}#QST#${interview.interviewQuestionID}`
+          }
+        })
+
+        // Add the next token to the list of tokens
+        if (result.data.searchUserInterviewsPaginated.nextToken) {
+          if (searchTokens.length === 0) {
+            setSearchTokens([...searchTokens, result.data.searchUserInterviewsPaginated.nextToken])
+          } else if (page > maxPageReached)
+            setSearchTokens([...searchTokens, result.data.searchUserInterviewsPaginated.nextToken])
+        }
+        setTotalRecords(result.data.searchUserInterviewsPaginated.totalRecords)
+        setInterviews(interviewsWithID)
+      }
+      setLoading(false)
+
+      console.log('Interviews:', interviews)
+    } catch (error) {
+      console.error('Error fetching interviews:', error)
+    }
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Enter') {
+      return
+    }
+
+    if (value === '' && !searchMode) {
+      return
+    }
+
+    setInterviews([])
+    setMaxPageReached(0)
+    setPage(0)
+
+    if (value === '') {
+      setSearchMode(false)
+      setTokens([])
+      setSearchTokens([])
+      fetchInterviews()
+    } else {
+      setSearchMode(true)
+      setTokens([])
+      setSearchTokens([])
+
+      // searchInterviews()
+    }
   }
 
   const handleConfirmedDelete = async () => {
@@ -257,27 +348,20 @@ const InterviewList = () => {
 
     // Use getUserInterviewMetaData by GraphQL and get interviewVideoKey
     try {
-      console.log(selectedInterview)
       const result = await API.graphql(
         graphqlOperation(getUserInterviewMetaData, {
           emailAddress,
           interviewID: selectedInterview.interviewID,
-          interviewQuestionID: selectedInterview.interviewQuestionID,
-          interviewQuestionType: selectedInterview.interviewQuestionType
+          interviewQuestionID: selectedInterview.interviewQuestionID
         })
       )
 
       if ('data' in result) {
-        // webm file name
         const interviewVideoKey = result.data.getUserInterviewMetaData.interviewVideoKey
 
-        // Get .mp4 file name from interviewVideoKey
-        const interviewVideoKeyMp4 = interviewVideoKey.replace('.webm', '.mp4')
-
-        // Remove the video from S3 .webm and .mp4
+        // Remove the video from S3
         try {
           await Storage.remove(interviewVideoKey, { level: 'private' })
-          await Storage.remove(interviewVideoKeyMp4, { level: 'private' })
         } catch (error) {
           console.error('Error removing video from S3:', error)
         }
@@ -294,15 +378,22 @@ const InterviewList = () => {
         graphqlOperation(removeUserInterviewsByID, {
           emailAddress,
           interviewID: selectedInterview.interviewID,
-          interviewQuestionID: selectedInterview.interviewQuestionID,
-          interviewQuestionType: selectedInterview.interviewQuestionType
+          interviewQuestionID: selectedInterview.interviewQuestionID
         })
       )
 
       setConfirmationDialogOpen(false)
       setSelectedRows([])
       setSelectedInterview(null)
-      fetchInterviews()
+
+      //TODO Should not reload the page, should update the table
+      // Reload the page
+      // setSearchMode(true)
+      // setInterviews([])
+
+      window.location.reload()
+
+      // sleep
     } catch (error) {
       console.error('Error deleting interviews:', error)
     }
@@ -319,11 +410,11 @@ const InterviewList = () => {
         <TableHeader
           value={value}
           selectedRows={selectedRows}
-          handleFilter={handleSort}
+          handleFilter={handleFilter}
+          handleKeyDown={handleKeyDown}
           onDelete={handleDelete}
           buttonText={'New Interview'}
-          buttonLink={'/interview/mock-interview'}
-          disableSearch={false}
+          buttonLink={'/interview/create-questions'}
         />
         <Box ref={containerRef}>
           <DataGrid

@@ -33,14 +33,7 @@ const Title = styled.h1`
   text-align: center;
 `
 
-interface LoadingScreenProps {
-  smText: string
-  lgText: string
-}
-
-const LoadingScreen: React.FC<LoadingScreenProps> = (loadingScreenProps: LoadingScreenProps) => {
-  const { smText, lgText } = loadingScreenProps
-
+const LoadingScreen: React.FC = () => {
   return (
     <Container>
       <Layer>
@@ -48,11 +41,13 @@ const LoadingScreen: React.FC<LoadingScreenProps> = (loadingScreenProps: Loading
       </Layer>
 
       <Layer>
-        <Text>{smText}</Text>
+        <Text>
+          You're stepping closer to your goals, one question at a time. Please hang tight while we process your video.
+        </Text>
       </Layer>
 
       <Layer>
-        <Title>{lgText}</Title>
+        <Title>Uploading Video</Title>
       </Layer>
     </Container>
   )

@@ -9,16 +9,3 @@ export interface Topic {
   tags: string[]
   imageUrl: string
 }
-
-export interface Interview {
-  interviewDateTime: string
-  interviewFeedback: string
-  interviewID: string
-  interviewAnalysis: string
-  interviewQuestion: string
-  interviewQuestionID: string
-  interviewQuestionTitle: string
-  interviewQuestionType: string
-  interviewVideoKey: string
-  interviewEstimatedSeconds: number
-}

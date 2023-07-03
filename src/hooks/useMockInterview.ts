@@ -10,15 +10,14 @@
 ************************************************************************************************/
 
 // Import necessary react hooks and custom hooks
-import { useEffect, useReducer, useRef, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import useTranscribe from './useTranscribe'
 import useVideoRecording from './useVideoRecording'
 import Logger from '../middleware/loggerMiddleware'
 import useS3Video from './useS3Video'
 import { useAuth } from './useAuth'
 import { API, graphqlOperation } from 'aws-amplify'
-import { startInterviewVideoAnalysis, updateUserInterview } from 'src/graphql/mutations'
-import { Interview } from 'src/types/types'
+import { updateInterviewVideoKey } from 'src/graphql/mutations'
 
 // import { usePollyByQueue } from './usePollyByQueue'
 import useChatGPTStream from './useChatGPTStream'
@@ -33,6 +32,16 @@ enum InterviewStatus {
   FinishedInterview = 'FINISHED_INTERVIEW',
   Loading = 'LOADING',
   NotStarted = 'NOT_STARTED'
+}
+
+// Define an interface for the Interview object
+interface Interview {
+  interviewID: string
+  interviewQuestionTitle: string
+  estimatedSecond: number
+  interviewQuestion: string
+  interviewQuestionID: string
+  interviewFeedback: string
 }
 
 // Define the error state for the reducer
@@ -162,8 +171,6 @@ const useMockInterview = (interviews: Interview[]) => {
 
   const auth = useAuth() // Use the custom auth hook for authentication
 
-  const interviewVideoLength = useRef(0) // Use ref to store the video length
-
   /* Define helper functions for the interview process */
 
   // Helper function to start transcribing and recording
@@ -175,24 +182,22 @@ const useMockInterview = (interviews: Interview[]) => {
   // Helper function to start transcribing and recording
   function stopTranscribingAndRecording() {
     handleStopTranscribe() // Stop transcribing
-    interviewVideoLength.current = handleStopCapture() as number // Stop recording
+    handleStopCapture() // Stop recording
   }
 
   // Helper function to upload the video to S3
-  const updateVideoToDynamoDB = async (uniqueFileName: string, filePath: string) => {
+  const updateVideoToDynamoDB = async (uniqueFileName: string) => {
     try {
       const currInterview = interviews[interviewState.currentQuestionIndex]
 
+      // TODO: Change the updateInterviewVideoKey mutation to updateInterview
       await API.graphql(
-        graphqlOperation(updateUserInterview, {
+        graphqlOperation(updateInterviewVideoKey, {
           emailAddress: auth.user?.userEmailAddress,
           interviewID: currInterview.interviewID,
-          interviewQuestionID: currInterview.interviewQuestionID,
-          interviewQuestionType: currInterview.interviewQuestionType,
+          questionID: currInterview.interviewQuestionID,
           interviewVideoKey: uniqueFileName,
-          interviewFeedback: currInterview.interviewFeedback,
-          interviewVideoLength: interviewVideoLength.current,
-          interviewVideoPath: filePath
+          interviewFeedback: currInterview.interviewFeedback
         })
       )
 
@@ -261,21 +266,10 @@ const useMockInterview = (interviews: Interview[]) => {
     return new Promise<void>((resolve, reject) => {
       dispatch({ type: TOGGLE_LOADING })
       save(getVideoBlob())
-        .then(({ uniqueFilename, filePath }: any) => {
-          updateVideoToDynamoDB(uniqueFilename!, filePath!)
+        .then(uniqueFileName => {
+          updateVideoToDynamoDB(uniqueFileName!)
             .then(() => {
               dispatch({ type: SAVED_QUESTION })
-
-              // Start an analysis job
-              API.graphql(
-                graphqlOperation(startInterviewVideoAnalysis, {
-                  emailAddress: auth.user?.userEmailAddress,
-                  interviewID: interviews[interviewState.currentQuestionIndex].interviewID,
-                  interviewQuestionID: interviews[interviewState.currentQuestionIndex].interviewQuestionID,
-                  interviewQuestionType: interviews[interviewState.currentQuestionIndex].interviewQuestionType
-                })
-              )
-
               resolve()
             })
             .catch(error => {

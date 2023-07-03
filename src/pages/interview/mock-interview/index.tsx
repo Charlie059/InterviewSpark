@@ -9,34 +9,348 @@
   Copyright: © 2023 HireBeat Inc. All rights reserved.
 ************************************************************************************************/
 
-import React, { ReactNode } from 'react'
+import Logger from 'src/middleware/loggerMiddleware'
+import React, { ReactNode, useCallback, useEffect, useRef } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import CreateQuestionsComponent from 'src/components/interview/mockInterview/createQuestions'
-import MockInterviewComponent from 'src/components/interview/mockInterview/mockInterview'
-import { Interview } from 'src/types/types'
+import useMockInterview from 'src/hooks/useMockInterview'
+import { useRouter } from 'next/router'
+import { RoundedMediaLeft } from 'src/components/interview/mockInterview/roundedMediaLeft'
+import PaginationBarWithNumber from 'src/components/interview/mockInterview/paginationBarWithNumber'
+import { Box, Grid } from '@mui/material'
+import MenuIconButton from 'src/components/interview/mockInterview/menuIconButton'
+import BlurDrawer from 'src/components/interview/mockInterview/blurDrawer'
+import TopArea from 'src/components/interview/mockInterview/topArea'
+import RoundedMediaRight from 'src/components/interview/mockInterview/roundedMediaRight'
+import InterviewButton from 'src/components/interview/mockInterview/interviewButton'
+import LoadingScreen from 'src/components/loading/Loading'
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material'
 
 // Define states for the mock interview process
+enum InterviewStatus {
+  Interviewing = 'INTERVIEWING',
+  FinishedQuestion = 'FINISHED_QUESTION',
+  Reviewing = 'REVIEWING',
+  SavedQuestion = 'SAVED_QUESTION',
+  FinishedInterview = 'FINISHED_INTERVIEW',
+  Loading = 'LOADING',
+  NotStarted = 'NOT_STARTED'
+}
+interface Interview {
+  interviewID: string
+  interviewQuestion: string
+  interviewQuestionID: string
+  interviewQuestionTitle: string
+  interviewQuestionType: string
+  interviewVideoKey: string
+  estimatedSecond: number
+  interviewDateTime: string
+  interviewFeedback: string
+}
 
-interface Info {
-  questionNum: number
-  videoinput: string
-  audioinput: string
-  audiooutput: string
-  interviewTopic: string
+interface TimerHandle {
+  start: () => void
+  stop: () => void
+  reset: () => void
 }
 
 function MockInterviewPage() {
-  const [interviews, setInterviews] = React.useState<Interview[]>([])
-  const [info, setInfo] = React.useState<Info>()
+  const interviews: Interview[] = [
+    {
+      interviewID: '1686172082494',
+      interviewQuestion:
+        'Describe a situation where you had to handle a difficult customer. How did you manage the situation? ',
+      interviewQuestionID: '1',
+      interviewQuestionTitle: 'Difficult Customer',
+      interviewQuestionType: 'Behavioral',
+      interviewVideoKey: '',
+      estimatedSecond: 200,
+      interviewDateTime: '2021-07-01T00:00:00',
+      interviewFeedback: 'Good'
+    },
+    {
+      interviewID: '1686172082495',
+      interviewQuestion:
+        ' a XXXX. How did you manage the situation? DeDescribe a situation where you had to handle a difficult customer. How did you manage the situation? sDescribe a situation where you had to handle a difficult customer. How did you manage the situation? cribe a situation wDescribe a situation where you had to handle a difficult customer. How did you manage the situation? here you had to handle a difficult customer. How did you manage the situation? ',
+      interviewQuestionID: '2',
+      interviewQuestionTitle: ' Customer',
+      interviewQuestionType: 'Behavioral',
+      interviewVideoKey: '',
+      estimatedSecond: 120,
+      interviewDateTime: '2021-07-01T00:00:00',
+      interviewFeedback: 'Good'
+    }
+  ]
+  const router = useRouter()
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [dialogOpen, setDialogOpen] = React.useState(false)
+
+  const timerRef = useRef<TimerHandle | null>(null)
+  const lastInvocationTime = useRef(0)
+  const {
+    getInterviewState,
+    getCaption,
+    startQuestion,
+    finishQuestion,
+    startReview,
+    moveToNextQuestion,
+    setQuestionIndex,
+    retryQuestion,
+    saveVideo,
+    setVideoOn,
+    setVideoOff,
+    getAudioRef,
+    getWebcamRef,
+    getVideoBlob,
+    isVideoEnabled,
+    isReading
+  } = useMockInterview(interviews)
+
+  // Helper function to guard against multiple invocations of finishQuestion
+  function guardedFinishQuestion() {
+    const now = Date.now()
+    const timeSinceLastInvocation = now - lastInvocationTime.current
+
+    if (timeSinceLastInvocation > 10000) {
+      lastInvocationTime.current = now
+      finishQuestion()
+    }
+  }
+
+  // Timer helper functions
+  const startTimer = function (): void {
+    timerRef.current && timerRef.current.start()
+  }
+
+  const stopTimer = function (): void {
+    timerRef.current && timerRef.current.stop()
+  }
+  const resetTimer = function (): void {
+    timerRef.current && timerRef.current.reset()
+  }
+
+  // Handle start interview
+  const handleStartCaptureClick = useCallback(() => {
+    Logger.debug('Start Interview')
+    startQuestion()
+  }, [startQuestion])
+
+  // Handle finish question and move to next question
+  const handleMoveToNextQuestion = useCallback(() => {
+    moveToNextQuestion()
+  }, [moveToNextQuestion])
+
+  // Handle Save video
+  const handleSaveVideo = useCallback(() => {
+    saveVideo()
+      .then(() => {
+        Logger.info('Video successfully saved.')
+      })
+      .catch(error => {
+        Logger.info('Failed to save video:', error)
+      })
+  }, [saveVideo])
+
+  // Handle the toggle drawer
+  const handleToggleDrawer = function (): void {
+    setDrawerOpen(!drawerOpen)
+  }
+
+  // Handle the close interview
+  const handleCloseInterview = function (): void {
+    Logger.debug('Close Interview')
+    setDialogOpen(true) // Open the dialog
+  }
+
+  // Handle the handleDialogClose
+  const handleDialogClose = () => {
+    setDialogOpen(false)
+  }
+
+  // Handle the handleDialogConfirm
+  const handleDialogConfirm = () => {
+    setDialogOpen(false)
+    router.push('/interview') // Redirect to the homepage
+  }
+
+  // Handle the retry question
+  const handleRetryQuestion = function (): void {
+    retryQuestion()
+    resetTimer()
+    startTimer()
+  }
+
+  // Handle the click of the interview button
+  const handleClickInterviewButton = async function (status: InterviewStatus): Promise<void> {
+    Logger.debug('Click Interview Button')
+    switch (status) {
+      case InterviewStatus.NotStarted:
+        handleStartCaptureClick()
+        startTimer()
+
+        break
+      case InterviewStatus.Interviewing:
+        if (!isReading) {
+          stopTimer()
+
+          // Wait 2 seconds to let transcription catch up
+          await new Promise(resolve => setTimeout(resolve, 2800))
+          guardedFinishQuestion()
+        }
+        resetTimer()
+
+        break
+      case InterviewStatus.FinishedQuestion:
+        if (!isReading) {
+          handleSaveVideo()
+        }
+        break
+      case InterviewStatus.Reviewing:
+        if (!isReading) {
+          handleSaveVideo()
+        }
+        break
+      default:
+        break
+    }
+  }
+
+  // Handle change the page
+  const handlePageChange = function (newPage: number): void {
+    Logger.info('page change', newPage)
+
+    // If current status is not started, then we can change the page
+    if (getInterviewState.status === InterviewStatus.NotStarted) {
+      setQuestionIndex(newPage - 1)
+    }
+  }
+
+  // Handle the timeout
+  const handleTimeout = function (): void {
+    finishQuestion()
+    resetTimer()
+  }
+
+  // Define the UseEffect
+
+  // Reset the timer when the question index changes
+  useEffect(() => {
+    resetTimer()
+  }, [getInterviewState.currentQuestionIndex])
+
+  // If finished, redirect to the result page
+  useEffect(() => {
+    if (getInterviewState.status === InterviewStatus.FinishedInterview) {
+      router.push('/interview/finish')
+    }
+  }, [getInterviewState.status, router])
+
+  // If hooks encountered an error, show the error message
+  useEffect(() => {
+    if (getInterviewState.error) {
+      Logger.error('Error:', getInterviewState.error)
+
+      // TODO: Based on the error type, show the error message and handle the error
+      alert(getInterviewState.error.type)
+    }
+  }, [getInterviewState.error])
+
+  // If the status is SavedQuestion, move to the next question
+  useEffect(() => {
+    if (getInterviewState.status === InterviewStatus.SavedQuestion) {
+      handleMoveToNextQuestion()
+    }
+  }, [getInterviewState.status, handleMoveToNextQuestion])
 
   return (
-    <>
-      {info && interviews.length > 0 ? (
-        <MockInterviewComponent interviews={interviews} info={info} />
-      ) : (
-        <CreateQuestionsComponent setInterviews={setInterviews} setInfo={setInfo} />
-      )}
-    </>
+    <div style={{ backgroundColor: '#F2F7FE', minHeight: '100vh' }}>
+      <audio ref={getAudioRef} />
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>{'Close the Interview'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to close the interview? If you confirm, you will be redirected to the homepage.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color='primary'>
+            No
+          </Button>
+          <Button onClick={handleDialogConfirm} color='primary' autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Box>
+        {getInterviewState.status === InterviewStatus.Loading && <LoadingScreen />}
+        <BlurDrawer isOpen={drawerOpen} toggleDrawer={handleToggleDrawer} interviews={interviews} />
+        <Box>
+          <TopArea
+            ref={timerRef}
+            onExit={handleCloseInterview}
+            initialTime={interviews[getInterviewState.currentQuestionIndex].estimatedSecond}
+            onComplete={handleTimeout}
+            status={getInterviewState.status}
+          />
+        </Box>
+
+        <Box mt={'5px'} mb={'40px'}>
+          <Grid
+            container
+            spacing={10}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Grid item xs={0} sm={5} md={5.5} lg={4.5}>
+              <RoundedMediaLeft
+                getWebcamRef={getWebcamRef}
+                getVideoBlob={getVideoBlob}
+                isVideoEnabled={isVideoEnabled}
+                setVideoOn={setVideoOn}
+                setVideoOff={setVideoOff}
+                status={getInterviewState.status}
+                startReview={startReview}
+                isReading={isReading}
+              />
+            </Grid>
+            <Grid item xs={12} sm={5} md={5.5} lg={4.5}>
+              <RoundedMediaRight
+                status={getInterviewState.status}
+                questionText={interviews[getInterviewState.currentQuestionIndex].interviewQuestion}
+                questionTitle={interviews[getInterviewState.currentQuestionIndex].interviewQuestionTitle}
+                skipQuestion={() => {
+                  moveToNextQuestion()
+                }}
+                caption={getCaption}
+                isReading={isReading}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+
+        <Box mb={'20px'}>
+          <InterviewButton
+            status={getInterviewState.status}
+            isReading={isReading}
+            onButtonClick={handleClickInterviewButton}
+            onRetryClick={handleRetryQuestion}
+          />
+        </Box>
+
+        <Box mt={'20px'} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <MenuIconButton onButtonClick={handleToggleDrawer} />
+          <PaginationBarWithNumber
+            totalPages={interviews.length}
+            currentPage={getInterviewState.currentQuestionIndex + 1}
+            onPageChange={handlePageChange}
+            enableSelect={true}
+          />
+        </Box>
+      </Box>
+    </div>
   )
 }
 

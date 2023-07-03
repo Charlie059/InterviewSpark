@@ -8,11 +8,6 @@ export type OperationResult = {
   error?: string | null,
 };
 
-export type InterviewList = {
-  __typename: "InterviewList",
-  interviewList?:  Array<Interview | null > | null,
-};
-
 export type Interview = {
   __typename: "Interview",
   interviewID?: string | null,
@@ -23,10 +18,7 @@ export type Interview = {
   interviewQuestionTitle?: string | null,
   interviewQuestionType?: string | null,
   interviewFeedback?: string | null,
-  interviewAnalysis?: string | null,
-  interviewEstimatedSeconds?: number | null,
-  interviewVideoLength?: string | null,
-  interviewVideoPath?: string | null,
+  interviewPerformance?: string | null,
 };
 
 export type ResumeScan = {
@@ -100,6 +92,11 @@ export type PaginatedInterviewList = {
   totalRecords?: number | null,
 };
 
+export type InterviewList = {
+  __typename: "InterviewList",
+  interviewList?:  Array<Interview | null > | null,
+};
+
 export type UserInterviewUsageMetaData = {
   __typename: "UserInterviewUsageMetaData",
   userInterviewNumCount?: number | null,
@@ -141,17 +138,6 @@ export type ResumeScanList = {
   resumeScanList?:  Array<ResumeScan | null > | null,
 };
 
-export type StartInterviewVideoAnalysisMutationVariables = {
-  emailAddress: string,
-  interviewID: string,
-  interviewQuestionID: string,
-  interviewQuestionType: string,
-};
-
-export type StartInterviewVideoAnalysisMutation = {
-  startInterviewVideoAnalysis: string,
-};
-
 export type CreateNewGuestUserMutationVariables = {
   emailAddress: string,
   userName: string,
@@ -164,34 +150,6 @@ export type CreateNewGuestUserMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
-  },
-};
-
-export type CreateUserInterviewQuestionListMutationVariables = {
-  emailAddress: string,
-  questionTag: string,
-  numOfBQ: number,
-  numOfTech: number,
-};
-
-export type CreateUserInterviewQuestionListMutation = {
-  createUserInterviewQuestionList:  {
-    __typename: "InterviewList",
-    interviewList?:  Array< {
-      __typename: "Interview",
-      interviewID?: string | null,
-      interviewDateTime?: string | null,
-      interviewQuestionID?: string | null,
-      interviewVideoKey?: string | null,
-      interviewQuestion?: string | null,
-      interviewQuestionTitle?: string | null,
-      interviewQuestionType?: string | null,
-      interviewFeedback?: string | null,
-      interviewAnalysis?: string | null,
-      interviewEstimatedSeconds?: number | null,
-      interviewVideoLength?: string | null,
-      interviewVideoPath?: string | null,
-    } | null > | null,
   },
 };
 
@@ -211,40 +169,7 @@ export type CreateUserInterviewWithQuestionMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
-    interviewAnalysis?: string | null,
-    interviewEstimatedSeconds?: number | null,
-    interviewVideoLength?: string | null,
-    interviewVideoPath?: string | null,
-  },
-};
-
-export type UpdateUserInterviewMutationVariables = {
-  emailAddress: string,
-  interviewID: string,
-  interviewQuestionID: string,
-  interviewQuestionType: string,
-  interviewFeedback?: string | null,
-  interviewAnalysis?: string | null,
-  interviewVideoKey?: string | null,
-  interviewVideoPath?: string | null,
-  interviewVideoLength?: string | null,
-};
-
-export type UpdateUserInterviewMutation = {
-  updateUserInterview:  {
-    __typename: "Interview",
-    interviewID?: string | null,
-    interviewDateTime?: string | null,
-    interviewQuestionID?: string | null,
-    interviewVideoKey?: string | null,
-    interviewQuestion?: string | null,
-    interviewQuestionTitle?: string | null,
-    interviewQuestionType?: string | null,
-    interviewFeedback?: string | null,
-    interviewAnalysis?: string | null,
-    interviewEstimatedSeconds?: number | null,
-    interviewVideoLength?: string | null,
-    interviewVideoPath?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -267,10 +192,7 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
-    interviewAnalysis?: string | null,
-    interviewEstimatedSeconds?: number | null,
-    interviewVideoLength?: string | null,
-    interviewVideoPath?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -303,7 +225,6 @@ export type RemoveUserInterviewsByIDMutationVariables = {
   emailAddress: string,
   interviewID: string,
   interviewQuestionID: string,
-  interviewQuestionType: string,
 };
 
 export type RemoveUserInterviewsByIDMutation = {
@@ -579,31 +500,6 @@ export type GetUserEducationsQuery = {
   },
 };
 
-export type GetUserInterviewListQueryVariables = {
-  emailAddress: string,
-};
-
-export type GetUserInterviewListQuery = {
-  getUserInterviewList:  {
-    __typename: "InterviewList",
-    interviewList?:  Array< {
-      __typename: "Interview",
-      interviewID?: string | null,
-      interviewDateTime?: string | null,
-      interviewQuestionID?: string | null,
-      interviewVideoKey?: string | null,
-      interviewQuestion?: string | null,
-      interviewQuestionTitle?: string | null,
-      interviewQuestionType?: string | null,
-      interviewFeedback?: string | null,
-      interviewAnalysis?: string | null,
-      interviewEstimatedSeconds?: number | null,
-      interviewVideoLength?: string | null,
-      interviewVideoPath?: string | null,
-    } | null > | null,
-  },
-};
-
 export type GetUserInterviewsPaginatedQueryVariables = {
   emailAddress: string,
   limit?: number | null,
@@ -623,10 +519,7 @@ export type GetUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
-      interviewAnalysis?: string | null,
-      interviewEstimatedSeconds?: number | null,
-      interviewVideoLength?: string | null,
-      interviewVideoPath?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -650,10 +543,7 @@ export type GetUserInterviewsByMonthQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
-      interviewAnalysis?: string | null,
-      interviewEstimatedSeconds?: number | null,
-      interviewVideoLength?: string | null,
-      interviewVideoPath?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };
@@ -662,7 +552,6 @@ export type GetUserInterviewMetaDataQueryVariables = {
   emailAddress: string,
   interviewID: string,
   interviewQuestionID: string,
-  interviewQuestionType: string,
 };
 
 export type GetUserInterviewMetaDataQuery = {
@@ -676,10 +565,7 @@ export type GetUserInterviewMetaDataQuery = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
-    interviewAnalysis?: string | null,
-    interviewEstimatedSeconds?: number | null,
-    interviewVideoLength?: string | null,
-    interviewVideoPath?: string | null,
+    interviewPerformance?: string | null,
   },
 };
 
@@ -701,10 +587,7 @@ export type SearchUserInterviewsQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
-      interviewAnalysis?: string | null,
-      interviewEstimatedSeconds?: number | null,
-      interviewVideoLength?: string | null,
-      interviewVideoPath?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };
@@ -727,10 +610,7 @@ export type SearchUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
-      interviewAnalysis?: string | null,
-      interviewEstimatedSeconds?: number | null,
-      interviewVideoLength?: string | null,
-      interviewVideoPath?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -863,10 +743,7 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
-      interviewAnalysis?: string | null,
-      interviewEstimatedSeconds?: number | null,
-      interviewVideoLength?: string | null,
-      interviewVideoPath?: string | null,
+      interviewPerformance?: string | null,
     } | null > | null,
   },
 };

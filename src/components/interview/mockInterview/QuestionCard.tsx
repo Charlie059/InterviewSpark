@@ -21,7 +21,18 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Box from '@mui/material/Box'
-import { Interview } from 'src/types/types'
+
+interface Interview {
+  interviewID: string
+  interviewQuestion: string
+  interviewQuestionID: string
+  interviewQuestionTitle: string
+  interviewQuestionType: string
+  interviewVideoKey: string
+  estimatedSecond: number
+  interviewDateTime: string
+  interviewFeedback: string
+}
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean
@@ -53,7 +64,7 @@ export default function QuestionCard({ interviews }: QuestionCardProps) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       {interviews.map((interview, index) => (
-        <Card sx={{ maxWidth: 345 }} key={interview.interviewQuestionType + interview.interviewQuestionID}>
+        <Card sx={{ maxWidth: 345 }} key={interview.interviewID}>
           <CardHeader
             avatar={
               <Avatar
@@ -66,9 +77,9 @@ export default function QuestionCard({ interviews }: QuestionCardProps) {
             action={
               <CardActions disableSpacing>
                 <ExpandMore
-                  expand={expandedId === interview.interviewQuestionType + interview.interviewQuestionID}
-                  onClick={() => handleExpandClick(interview.interviewQuestionType + interview.interviewQuestionID)}
-                  aria-expanded={expandedId === interview.interviewQuestionType + interview.interviewQuestionID}
+                  expand={expandedId === interview.interviewID}
+                  onClick={() => handleExpandClick(interview.interviewID)}
+                  aria-expanded={expandedId === interview.interviewID}
                   aria-label='show more'
                 >
                   <ExpandMoreIcon />
@@ -87,11 +98,7 @@ export default function QuestionCard({ interviews }: QuestionCardProps) {
             }
           />
 
-          <Collapse
-            in={expandedId === interview.interviewQuestionType + interview.interviewQuestionID}
-            timeout='auto'
-            unmountOnExit
-          >
+          <Collapse in={expandedId === interview.interviewID} timeout='auto' unmountOnExit>
             <CardContent>
               <Typography paragraph>{interview.interviewQuestion}</Typography>
             </CardContent>

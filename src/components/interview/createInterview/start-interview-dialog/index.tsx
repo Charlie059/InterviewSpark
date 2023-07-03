@@ -7,10 +7,6 @@ import DialogActions from '@mui/material/DialogActions'
 import { Box, IconButton, Button, Grid, Avatar, Select, MenuItem } from '@mui/material'
 import { Typography as MuiTypography, TypographyProps } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import ArticleIcon from '@mui/icons-material/Article'
-import CameraAltIcon from '@mui/icons-material/CameraAlt'
-import MicIcon from '@mui/icons-material/Mic'
-import SpeakerIcon from '@mui/icons-material/Speaker'
 
 import React, { ReactNode, useState } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
@@ -18,30 +14,16 @@ import CloseIcon from '@mui/icons-material/Close'
 
 import DeviceSelector from 'src/components/interview/createInterview/device_selector/device_selector'
 
-interface Info {
-  questionNum: number
-  videoinput: string
-  audioinput: string
-  audiooutput: string
-  interviewTopic: string
-}
 const Typography = styled(MuiTypography)<TypographyProps>(() => ({
-  fontFamily: 'Montserrat',
-  color: 'black',
-  fontWeight: 200
+  fontFamily: 'Inter'
 }))
 
-const SelectModule = (props: {
-  title: string
-  subtitle: string
-  icon: React.ReactElement
-  selectElement: JSX.Element
-}) => {
+const SelectModule = (props: { title: string; subtitle: string; icon: string; selectElement: JSX.Element }) => {
   return (
     <Grid container spacing={4} width={'95%'}>
       <Grid item xs={12} md={6}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar sx={{ width: '3.5rem', height: '3.5rem' }}>{props.icon}</Avatar>
+          <Avatar src={props.icon} sx={{ width: '3.5rem', height: '3.5rem' }} />
           <Box sx={{ ml: 5 }}>
             <Typography sx={{ fontSize: 18, fontWeight: 600 }}>{props.title}</Typography>
             <Typography sx={{ fontSize: 15 }}>{props.subtitle}</Typography>
@@ -54,12 +36,8 @@ const SelectModule = (props: {
     </Grid>
   )
 }
-const StartInterviewDialog = (props: {
-  interviewTopic: string
-  open: boolean
-  setOpen: (v: boolean) => void
-  startInterview: (info: Info) => void
-}) => {
+
+const StartInterviewDialog = (props: { interviewTopic: string; open: boolean; setOpen: (v: boolean) => void }) => {
   const questionNumChoice = [3, 4, 5, 6]
   const [questionNum, setQuestionNum] = useState(3)
   const [currentStep, setCurrentStep] = useState(0)
@@ -67,6 +45,7 @@ const StartInterviewDialog = (props: {
   const [audioinput, setAudioinput] = useState('')
   const [audiooutput, setAudiooutput] = useState('')
 
+  // TODO: change the following icon image
   const stepContent = [
     {
       content: `Please select the number of interview questions for the mock interview and indicate whether you would like to generate questions based on resume.`,
@@ -74,7 +53,7 @@ const StartInterviewDialog = (props: {
         {
           title: 'Choose Number of Questions',
           subtitle: 'Based on your own needs',
-          icon: <ArticleIcon />,
+          icon: '/images/avatars/1.png',
           selector: (
             <Select
               sx={{ width: '100%' }}
@@ -99,7 +78,7 @@ const StartInterviewDialog = (props: {
         {
           title: 'Choose Camera',
           subtitle: 'Make Sure Camera is Working',
-          icon: <CameraAltIcon />,
+          icon: '/images/avatars/1.png',
           selector: (
             <DeviceSelector
               deviceType='videoinput'
@@ -113,7 +92,7 @@ const StartInterviewDialog = (props: {
         {
           title: 'Choose Microphone',
           subtitle: 'Make Sure Microphone is Working',
-          icon: <MicIcon />,
+          icon: '/images/avatars/1.png',
           selector: (
             <DeviceSelector
               deviceType='audioinput'
@@ -127,7 +106,7 @@ const StartInterviewDialog = (props: {
         {
           title: 'Choose Speaker',
           subtitle: 'Make Sure Speaker is Working',
-          icon: <SpeakerIcon />,
+          icon: '/images/avatars/1.png',
           selector: (
             <DeviceSelector
               deviceType='audiooutput'
@@ -151,7 +130,10 @@ const StartInterviewDialog = (props: {
         audiooutput: audiooutput,
         interviewTopic: props.interviewTopic
       }
-      props.startInterview(Info)
+      console.log(Info)
+
+      // TODO: start interview
+
       handleClose()
     } else {
       setCurrentStep(currentStep + 1)

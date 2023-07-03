@@ -11,7 +11,6 @@
 
 import { useRef, useState } from 'react'
 import Webcam from 'react-webcam'
-import Logger from 'src/middleware/loggerMiddleware'
 
 interface ErrorState {
   type: 'Recording-Error'
@@ -33,7 +32,6 @@ export default function useVideoRecording() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const [recordedChunks, setRecordedChunks] = useState<BlobPart[]>([])
   const videoBlobRef = useRef<Blob | null>(null)
-  const startTimeRef = useRef<Date | null>(null)
 
   const setVideoOn = async () => {
     if (webcamRef.current) {
@@ -64,7 +62,6 @@ export default function useVideoRecording() {
       setRecordedChunks([]) // Clear previous recording
       mediaRecorderRef.current.start(MEDIA_RECORDER_INTERVAL)
       mediaRecorder.addEventListener('dataavailable', handleDataAvailable)
-      startTimeRef.current = new Date()
     } catch (err: any) {
       setVideoRecordingError({ type: 'Recording-Error', message: err.message })
     }
@@ -90,18 +87,8 @@ export default function useVideoRecording() {
       // Convert the recordedChunks into a single Blob
       const blob = new Blob(recordedChunks, { type: VIDEO_MIME_TYPE })
       videoBlobRef.current = blob // Store the Blob in the ref
-
-      // Calculate the length of the video
-      const endTime = new Date()
-
-      console.log('startTime: ' + startTimeRef.current!.getTime())
-      const length = (endTime.getTime() - startTimeRef.current!.getTime()) / 1000
-      console.log('Video length: ' + length + 's')
-
-      return length
     } catch (err: any) {
       setVideoRecordingError({ type: 'Recording-Error', message: err.message })
-      Logger.error(err)
     }
   }
 

@@ -2,21 +2,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const startInterviewVideoAnalysis = /* GraphQL */ `
-  mutation StartInterviewVideoAnalysis(
-    $emailAddress: AWSEmail!
-    $interviewID: String!
-    $interviewQuestionID: String!
-    $interviewQuestionType: String!
-  ) {
-    startInterviewVideoAnalysis(
-      emailAddress: $emailAddress
-      interviewID: $interviewID
-      interviewQuestionID: $interviewQuestionID
-      interviewQuestionType: $interviewQuestionType
-    )
-  }
-`;
 export const createNewGuestUser = /* GraphQL */ `
   mutation CreateNewGuestUser(
     $emailAddress: AWSEmail!
@@ -32,36 +17,6 @@ export const createNewGuestUser = /* GraphQL */ `
     ) {
       isSuccessful
       error
-    }
-  }
-`;
-export const createUserInterviewQuestionList = /* GraphQL */ `
-  mutation CreateUserInterviewQuestionList(
-    $emailAddress: AWSEmail!
-    $questionTag: String!
-    $numOfBQ: Int!
-    $numOfTech: Int!
-  ) {
-    createUserInterviewQuestionList(
-      emailAddress: $emailAddress
-      questionTag: $questionTag
-      numOfBQ: $numOfBQ
-      numOfTech: $numOfTech
-    ) {
-      interviewList {
-        interviewID
-        interviewDateTime
-        interviewQuestionID
-        interviewVideoKey
-        interviewQuestion
-        interviewQuestionTitle
-        interviewQuestionType
-        interviewFeedback
-        interviewAnalysis
-        interviewEstimatedSeconds
-        interviewVideoLength
-        interviewVideoPath
-      }
     }
   }
 `;
@@ -82,48 +37,7 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
-      interviewAnalysis
-      interviewEstimatedSeconds
-      interviewVideoLength
-      interviewVideoPath
-    }
-  }
-`;
-export const updateUserInterview = /* GraphQL */ `
-  mutation UpdateUserInterview(
-    $emailAddress: AWSEmail!
-    $interviewID: String!
-    $interviewQuestionID: String!
-    $interviewQuestionType: String!
-    $interviewFeedback: String
-    $interviewAnalysis: String
-    $interviewVideoKey: String
-    $interviewVideoPath: String
-    $interviewVideoLength: String
-  ) {
-    updateUserInterview(
-      emailAddress: $emailAddress
-      interviewID: $interviewID
-      interviewQuestionID: $interviewQuestionID
-      interviewQuestionType: $interviewQuestionType
-      interviewFeedback: $interviewFeedback
-      interviewAnalysis: $interviewAnalysis
-      interviewVideoKey: $interviewVideoKey
-      interviewVideoPath: $interviewVideoPath
-      interviewVideoLength: $interviewVideoLength
-    ) {
-      interviewID
-      interviewDateTime
-      interviewQuestionID
-      interviewVideoKey
-      interviewQuestion
-      interviewQuestionTitle
-      interviewQuestionType
-      interviewFeedback
-      interviewAnalysis
-      interviewEstimatedSeconds
-      interviewVideoLength
-      interviewVideoPath
+      interviewPerformance
     }
   }
 `;
@@ -150,10 +64,7 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
-      interviewAnalysis
-      interviewEstimatedSeconds
-      interviewVideoLength
-      interviewVideoPath
+      interviewPerformance
     }
   }
 `;
@@ -200,13 +111,11 @@ export const removeUserInterviewsByID = /* GraphQL */ `
     $emailAddress: AWSEmail!
     $interviewID: String!
     $interviewQuestionID: String!
-    $interviewQuestionType: String!
   ) {
     removeUserInterviewsByID(
       emailAddress: $emailAddress
       interviewID: $interviewID
       interviewQuestionID: $interviewQuestionID
-      interviewQuestionType: $interviewQuestionType
     ) {
       isSuccessful
       error

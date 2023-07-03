@@ -2,6 +2,7 @@ import { Box, Grid } from '@mui/material'
 import React from 'react'
 import InterviewList from 'src/components/interview/interviewProfile/interview-list'
 import InterviewUsageSummaryThisMonth from 'src/components/interview/interviewProfile/Interview-monthly-summary-card'
+import InterviewProfileHeader from 'src/components/interview/interviewProfile/interview-profile-header'
 import InterviewPromotion from 'src/components/interview/interviewProfile/interview-promotion'
 import InterviewTotalSummaryCard from 'src/components/interview/interviewProfile/interview-total-summary-card/index'
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
@@ -41,6 +42,7 @@ const InterviewPage = () => {
 
   return (
     <div>
+      <InterviewProfileHeader />
       <UserProfileHeader data={userProfileData} type={'profile'} />
       <Grid container spacing={3.5}>
         <Grid item xs={6} sm={3.8} md={2.3} lg={2.4}>

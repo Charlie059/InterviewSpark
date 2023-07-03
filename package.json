@@ -63,7 +63,6 @@
     "eventsource-parser": "^1.0.0",
     "firebase": "9.13.0",
     "framer-motion": "^10.12.16",
-    "fuse.js": "^6.6.2",
     "get-video-duration": "^4.1.0",
     "i18next": "22.0.4",
     "i18next-browser-languagedetector": "7.0.0",

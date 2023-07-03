@@ -51,7 +51,7 @@ interface Props {
 }
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.toLocaleUpperCase().split('')
-const Filter = [...alphabet, 'All']
+const Filter = [...alphabet, '#', 'All']
 
 const AlphabeticSelectList = (props: Props) => {
   const [tab, setTab] = useState('A')
@@ -59,6 +59,8 @@ const AlphabeticSelectList = (props: Props) => {
   const filterTitle = () => {
     if (tab === 'All') {
       return props.list
+    } else if (tab === '#') {
+      return props.list.filter(item => !alphabet.includes(item.name[0].toLocaleUpperCase()))
     } else {
       return props.list.filter(item => item.name[0].toLocaleUpperCase() === tab)
     }
@@ -102,36 +104,22 @@ const AlphabeticSelectList = (props: Props) => {
             </Grid>
           </PerfectScrollbar>
         </CardContent>
-
-        <div
+        <CardMedia component='img' sx={{ width: '25%' }} image={props.imageSrc[Filter.indexOf(tab)]} />
+        <Typography
+          variant='h2'
+          sx={{ fontFamily: 'lato', fontWeight: 600 }}
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative',
-            width: '25%',
-            height: 400
+            position: 'absolute',
+            top: '75%',
+            left: '85%',
+            transform: 'translate(-50%, -50%)',
+            color: '#000',
+            backgroundColor: 'rgba(255, 255, 255, 0.4)',
+            padding: '2px'
           }}
         >
-          <CardMedia
-            component='img'
-            sx={{ width: '100%', height: '100%' }}
-            image={props.imageSrc[Filter.indexOf(tab)]}
-            style={{
-              filter: 'blur(4px) brightness(70%)'
-            }}
-          />
-          <Typography
-            variant='h2'
-            sx={{ fontWeight: 600 }}
-            style={{
-              position: 'absolute',
-              color: '#fff'
-            }}
-          >
-            {tab}
-          </Typography>
-        </div>
+          {tab}
+        </Typography>
       </Card>
     </Box>
   )

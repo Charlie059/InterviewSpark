@@ -79,26 +79,6 @@ export const getUserEducations = /* GraphQL */ `
     }
   }
 `;
-export const getUserInterviewList = /* GraphQL */ `
-  query GetUserInterviewList($emailAddress: AWSEmail!) {
-    getUserInterviewList(emailAddress: $emailAddress) {
-      interviewList {
-        interviewID
-        interviewDateTime
-        interviewQuestionID
-        interviewVideoKey
-        interviewQuestion
-        interviewQuestionTitle
-        interviewQuestionType
-        interviewFeedback
-        interviewAnalysis
-        interviewEstimatedSeconds
-        interviewVideoLength
-        interviewVideoPath
-      }
-    }
-  }
-`;
 export const getUserInterviewsPaginated = /* GraphQL */ `
   query GetUserInterviewsPaginated(
     $emailAddress: AWSEmail!
@@ -119,10 +99,7 @@ export const getUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
-        interviewAnalysis
-        interviewEstimatedSeconds
-        interviewVideoLength
-        interviewVideoPath
+        interviewPerformance
       }
       nextToken
       totalRecords
@@ -141,10 +118,7 @@ export const getUserInterviewsByMonth = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
-        interviewAnalysis
-        interviewEstimatedSeconds
-        interviewVideoLength
-        interviewVideoPath
+        interviewPerformance
       }
     }
   }
@@ -154,13 +128,11 @@ export const getUserInterviewMetaData = /* GraphQL */ `
     $emailAddress: AWSEmail!
     $interviewID: String!
     $interviewQuestionID: String!
-    $interviewQuestionType: String!
   ) {
     getUserInterviewMetaData(
       emailAddress: $emailAddress
       interviewID: $interviewID
       interviewQuestionID: $interviewQuestionID
-      interviewQuestionType: $interviewQuestionType
     ) {
       interviewID
       interviewDateTime
@@ -170,10 +142,7 @@ export const getUserInterviewMetaData = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
-      interviewAnalysis
-      interviewEstimatedSeconds
-      interviewVideoLength
-      interviewVideoPath
+      interviewPerformance
     }
   }
 `;
@@ -189,10 +158,7 @@ export const searchUserInterviews = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
-        interviewAnalysis
-        interviewEstimatedSeconds
-        interviewVideoLength
-        interviewVideoPath
+        interviewPerformance
       }
     }
   }
@@ -215,10 +181,7 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
-        interviewAnalysis
-        interviewEstimatedSeconds
-        interviewVideoLength
-        interviewVideoPath
+        interviewPerformance
       }
       nextToken
       totalRecords
@@ -333,10 +296,7 @@ export const getUserInterviewsByQuestionID = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
-        interviewAnalysis
-        interviewEstimatedSeconds
-        interviewVideoLength
-        interviewVideoPath
+        interviewPerformance
       }
     }
   }
