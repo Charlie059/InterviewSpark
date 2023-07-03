@@ -28,6 +28,7 @@ import { Storage } from '@aws-amplify/storage'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
 import FileDisplay from "../file-display/FileDisplay";
+import Typography from "@mui/material/Typography";
 
 // import VideoList from "../../../interview/VideoList";
 
@@ -130,11 +131,14 @@ const ProfileViewRight = profileData => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
+            {!showResume&& <><CardContent>
+              <Typography sx={{ display: 'flex', justifyContent: 'center' }} variant='h6'>Display Your Resume Here</Typography>
+            </CardContent>
             <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-              {!showResume&&<Button variant='outlined' sx={{ mr: 2 }} onClick={handleResumeClickOpen}>
+              <Button variant='outlined' sx={{ mr: 2 }} onClick={handleResumeClickOpen}>
                 Personal Resume Upload
-              </Button>}
-            </CardActions>
+              </Button>
+            </CardActions></>}
             {showResume && (
               <CardContent sx={{ width: 1, justifyContent: 'center' }} key = {refresh}>
                 <FileDisplay url={url} height = {500}/>
