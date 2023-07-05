@@ -14,29 +14,35 @@ interface Props {
 
 const MockInterviewCard = (props: Props) => {
   return (
-    <Card sx={{}}>
+    <Card sx={{ width: '220px' }}>
       <CardActionArea
         onClick={() => {
           props.onClick(props.jobTitle)
         }}
       >
-        <CardMedia component='img' height='120' image={props.imageSrc} alt={props.jobTitle}></CardMedia>
+        <CardMedia
+          component='img'
+          height='120'
+          image={props.imageSrc}
+          alt={props.jobTitle}
+          style={{
+            filter: 'blur(4px) brightness(70%)'
+          }}
+        ></CardMedia>
 
         <Typography
           variant='h6'
-          sx={{ fontFamily: 'lato', fontWeight: 600 }}
+          sx={{ fontWeight: 600 }}
           align='center'
           style={{
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            color: '#fff',
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            padding: '3px'
+            color: '#fff'
           }}
         >
-          {props.jobTitle.toLocaleUpperCase()}
+          {props.jobTitle}
         </Typography>
       </CardActionArea>
     </Card>

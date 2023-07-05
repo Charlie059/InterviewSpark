@@ -14,23 +14,14 @@ import { Box, Drawer, Slide } from '@mui/material'
 import styled from 'styled-components'
 import QuestionCard from './QuestionCard'
 import ChevronLeftSharpIcon from '@mui/icons-material/ChevronLeftSharp'
+import { Interview } from 'src/types/types'
 
 interface BlurryDrawerProps {
   isOpen: boolean
   toggleDrawer: () => void
   interviews: Interview[]
 }
-interface Interview {
-  interviewID: string
-  interviewQuestion: string
-  interviewQuestionID: string
-  interviewQuestionTitle: string
-  interviewQuestionType: string
-  interviewVideoKey: string
-  estimatedSecond: number
-  interviewDateTime: string
-  interviewFeedback: string
-}
+
 const GradientDrawer = styled(({ ...props }) => <Drawer {...props} />)`
   .MuiDrawer-paper {
     width: 35%;

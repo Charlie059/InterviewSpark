@@ -1,5 +1,5 @@
 // ** React Imports
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react'
 
 // ** Next Import
 // import { useRouter } from 'next/router'
@@ -47,16 +47,15 @@ import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import ProfileViewRight from './ProfileViewRight'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserProfile } from 'src/graphql/mutations'
-import {getUserEducations, getUserWorkHistories} from "../../graphql/queries";
+import { getUserEducations, getUserWorkHistories } from '../../graphql/queries'
 import { useAuth } from '../../hooks/useAuth'
-import Icon from "../../@core/components/icon";
-import Fab from "@mui/material/Fab";
+import Icon from '../../@core/components/icon'
+import Fab from '@mui/material/Fab'
 
 // import TestTable from "./profile-cards/TestTable";
 
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) => {
+const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string }) => {
   // ** State
   //#TODO Construct a tutorial version profile page
   //data.email = auth.user?.userEmailAddress
@@ -65,21 +64,19 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
   console.log('current profile page is for', user)
   console.log('current data is:', data)
 
-
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
   const [profileData, setProfileData] = useState(data)
   const [educations, setEducations] = useState<Education[]>()
-  const [workHistories, setWorkHistories]= useState<WorkHistory[]>()
-  const [refresh, setRefresh] = useState(false);
+  const [workHistories, setWorkHistories] = useState<WorkHistory[]>()
+  const [refresh, setRefresh] = useState(false)
 
   const handleRefresh = () => {
-    setRefresh(!refresh);
-  };
+    setRefresh(!refresh)
+  }
 
   console.log('initial data')
   console.log(data)
-
 
   const handleEditClickOpen = () => {
     setOpenEdit(true)
@@ -133,11 +130,10 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
 
   const { control, handleSubmit } = useForm({ defaultValues })
 
-
   const auth = useAuth()
   const emailAddress = auth.user?.userEmailAddress
 
-  const getEducations = async () =>{
+  const getEducations = async () => {
     //getEducations API
     const eduResponse = await API.graphql(
       graphqlOperation(getUserEducations, {
@@ -146,14 +142,14 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
     )
 
     //setEducations
-    if('data' in eduResponse){
+    if ('data' in eduResponse) {
       setEducations(eduResponse.data.getUserEducations.educations)
-    }else{
-      throw('error get educations')
+    } else {
+      throw 'error get educations'
     }
   }
 
-  const getWorkHistories = async () =>{
+  const getWorkHistories = async () => {
     //getWorkHistories API
     const workHistoryResponse = await API.graphql(
       graphqlOperation(getUserWorkHistories, {
@@ -163,7 +159,7 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
     console.log('Result:', workHistoryResponse)
 
     //setEducations
-    if('data' in workHistoryResponse){
+    if ('data' in workHistoryResponse) {
       setWorkHistories(workHistoryResponse.data.getUserWorkHistories.workHistory)
     }
   }
@@ -172,6 +168,7 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
     getEducations()
     console.log(educations)
     getWorkHistories()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -189,14 +186,14 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
         {/* <Profile data={data} />*/}
         <Card>
           <CardContent>
-            <Box sx={{mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Typography variant='h6'>Details</Typography>
-            <Fab  size='small' aria-label='edit' onClick={handleEditClickOpen}>
-              <Icon icon={'mdi:pencil' }/>
-            </Fab>
+            <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant='h6'>Details</Typography>
+              <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
+                <Icon icon={'mdi:pencil'} />
+              </Fab>
             </Box>
             <Divider sx={{ mt: 4 }} />
-            <Grid container spacing={1} >
+            <Grid container spacing={1}>
               <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
@@ -435,19 +432,26 @@ const UserProfile = ({ user, data, type }:{user:any, data:any, type?:string}) =>
           </Dialog>
         </Card>
         <Card sx={{ mt: 6 }}>
-          {educations && type !== 'tutorial' &&
-            <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />}
+          {educations && type !== 'tutorial' && (
+            <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />
+          )}
         </Card>
         <Card sx={{ mt: 6 }}>
-          {workHistories && type !== 'tutorial' &&
-            <WorkHistoryCard type='private' workDatas={workHistories} setWorkDatas={setWorkHistories} refresh={handleRefresh}/>}
+          {workHistories && type !== 'tutorial' && (
+            <WorkHistoryCard
+              type='private'
+              workDatas={workHistories}
+              setWorkDatas={setWorkHistories}
+              refresh={handleRefresh}
+            />
+          )}
         </Card>
         {/* <Card sx={{ mt: 6 }}>
           <TestTable />
         </Card> */}
       </Grid>
       <Grid item xs={8}>
-        {type !== 'tutorial' &&<ProfileViewRight profileData={data} />}
+        {type !== 'tutorial' && <ProfileViewRight profileData={data} />}
       </Grid>
     </Grid>
   )

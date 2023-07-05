@@ -28,7 +28,6 @@ import Collapse from '@mui/material/Collapse'
 import ChevronUp from 'mdi-material-ui/ChevronUp'
 import ChevronDown from 'mdi-material-ui/ChevronDown'
 
-
 import { API, graphqlOperation } from 'aws-amplify'
 import { useRouter } from 'next/router'
 import { useAuth } from '../../hooks/useAuth'
@@ -36,7 +35,7 @@ import Auth from '@aws-amplify/auth'
 
 import { createUserResumeScan } from 'src/graphql/mutations'
 import { Lambda } from 'aws-sdk'
-import ResumeResults from "./ResumeResults";
+import ResumeResults from './ResumeResults'
 
 // Styled component for the heading inside the dropzone area
 
@@ -71,12 +70,11 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { user } = useAuth()
 
-
   // ** States
   const [files, setFiles] = useState<File[]>([])
   const [collapsed, setCollapsed] = useState<boolean>(nocollapse)
-  const [resumeResult, setResumeResult] = useState<string>('');
-  const [showResult, setShowResult] = useState<boolean>(false);
+  const [resumeResult, setResumeResult] = useState<string>('')
+  const [showResult, setShowResult] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [show, setShow] = useState<boolean>(!nocollapse)
 
@@ -103,7 +101,6 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     const result = await API.graphql(graphqlOperation(createUserResumeScan, payload))
 
     return result
-
   }
 
   async function scanResume(resumePack: ResumePack) {
@@ -138,7 +135,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
             if (router.route == '/resume') {
               await router.replace('/resume/list')
             } else {
-              if(type == "tutorial"){
+              if (type == 'tutorial') {
                 setResumeResult(resumePack.resume_results)
                 setCollapsed(false)
                 setShowResult(true)
@@ -171,8 +168,6 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     })
   }
 
-
-
   // ** Hooks
   const {
     control,
@@ -203,9 +198,8 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     const suffix = docType == 'pdf' ? '.pdf' : '.docx'
     const cvName = timestamp + suffix
     try {
-
       await Storage.put(cvName, resume).catch(e => console.log(e))
-      const url = await Storage.get(cvName, {expires: 604800 })
+      const url = await Storage.get(cvName, { expires: 604800 })
       data.resume_url = url
       data.resume_name = cvName
       data.display_name = name
@@ -309,7 +303,11 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
           </form>
         </CardContent>
       </Collapse>
-      {showResult&& <CardContent><ResumeResults resumeResults={resumeResult}/></CardContent>}
+      {showResult && (
+        <CardContent>
+          <ResumeResults resumeResults={resumeResult} />
+        </CardContent>
+      )}
     </Card>
   )
 }

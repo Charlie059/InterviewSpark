@@ -22,7 +22,10 @@ type Interview {
   interviewQuestionTitle: String
   interviewQuestionType: String
   interviewFeedback: String
-  interviewPerformance: AWSJSON
+  interviewAnalysis: String
+  interviewEstimatedSeconds: Int
+  interviewVideoLength: String
+  interviewVideoPath: String
 }
 
 type InterviewList {
@@ -180,8 +183,32 @@ input ModelSubscriptionStringInput {
 }
 
 type Mutation {
+  startInterviewVideoAnalysis(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+    interviewQuestionType: String!
+  ): String!
+
   createNewGuestUser(emailAddress: AWSEmail!, userName: String!, fName: String!, lName: String!): OperationResult!
+  createUserInterviewQuestionList(
+    emailAddress: AWSEmail!
+    questionTag: String!
+    numOfBQ: Int!
+    numOfTech: Int!
+  ): InterviewList!
   createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+  updateUserInterview(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+    interviewQuestionType: String!
+    interviewFeedback: String
+    interviewAnalysis: String
+    interviewVideoKey: String
+    interviewVideoPath: String
+    interviewVideoLength: String
+  ): Interview!
   updateInterviewVideoKey(
     emailAddress: AWSEmail!
     interviewID: String!
@@ -209,6 +236,7 @@ type Mutation {
     emailAddress: AWSEmail!
     interviewID: String!
     interviewQuestionID: String!
+    interviewQuestionType: String!
   ): OperationResult!
   removeUserResumeScanByID(emailAddress: AWSEmail!, resumeScanID: String!): OperationResult!
   createUserResumeScan(
@@ -300,9 +328,15 @@ type Query {
   getUserProfileByUsername(userName: String!): Profile!
   getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!
   getUserEducations(emailAddress: AWSEmail!): Educations!
+  getUserInterviewList(emailAddress: AWSEmail!): InterviewList!
   getUserInterviewsPaginated(emailAddress: AWSEmail!, limit: Int, nextToken: String): PaginatedInterviewList!
   getUserInterviewsByMonth(emailAddress: AWSEmail!): InterviewList!
-  getUserInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview!
+  getUserInterviewMetaData(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+    interviewQuestionType: String!
+  ): Interview!
   searchUserInterviews(emailAddress: AWSEmail!, keyword: String!): InterviewList!
   searchUserInterviewsPaginated(emailAddress: AWSEmail!, keyword: String!): PaginatedInterviewList!
   getUserInterviewUsageMetaData(emailAddress: AWSEmail!): UserInterviewUsageMetaData!

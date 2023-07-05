@@ -40,7 +40,26 @@ const useS3Video = () => {
         level: 'private'
       })
 
-      return uniqueFilename
+      //Get the file path
+      const url = await Storage.get(uniqueFilename, {
+        level: 'private',
+        expires: 1
+      })
+
+      Logger.info('Video saved successfully: ', url)
+
+      // Return the file path
+      const decodeURL = decodeURIComponent(url)
+      const urlParts = decodeURL.split('/private/')
+      const fullFilePath = urlParts[1]
+
+      const endIndex = fullFilePath.indexOf('?')
+
+      const filePath = 'private/' + fullFilePath.substring(0, endIndex)
+
+      console.log('filePath: ', filePath)
+
+      return { uniqueFilename, filePath }
     } catch (error: any) {
       Logger.error('Error saving video: ', error)
       setError({ type: 'AWS-S3-Error', message: error })
