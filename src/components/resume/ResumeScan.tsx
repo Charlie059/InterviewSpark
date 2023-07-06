@@ -107,13 +107,12 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     const myPayload = JSON.stringify(resumePack)
 
     const myParams = {
-      FunctionName: 'resumeScanAPI-dev',
+      FunctionName: 'resumeScanAPI-dev:2',
       Payload: JSON.stringify({ body: myPayload }),
       InvocationType: 'RequestResponse'
     }
     Auth.currentCredentials().then(credentials => {
       console.log(credentials)
-
       const lambda = new Lambda({
         region: 'us-east-1',
         credentials: Auth.essentialCredentials(credentials)
