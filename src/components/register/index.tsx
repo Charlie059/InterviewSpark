@@ -19,7 +19,6 @@ import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
-import Log from 'src/middleware/loggerMiddleware'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -41,6 +40,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import toast from "react-hot-toast";
 
 const defaultValues = {
   email: '',
@@ -151,47 +151,30 @@ const Register = ({ onRegister }: Props) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = (data: FormData) => {
-    const { username, email, password, fName, lName } = data
-
-    let hasError = false
-    register({ email, username, password, fName, lName }, err => {
-      hasError = true
-      if (err.email) {
+  const onSubmit = async (data: FormData) => {
+    const {username, email, password, fName, lName} = data
+    const err = await new Promise<any>((resolve) => {
+      register({email, username, password, fName, lName}, err => {
+        if (err) {
+          console.log(err)
+          resolve(err);
+        } else {
+          resolve(undefined);
+        }
+      });
+    });
+    console.log(err); // Access the err value here
+      console.log(err.name)
+      toast.error(err.message)
+      if (err) { //general err handling
         setError('email', {
           type: 'manual',
-          message: err.email
+          message: err.message
         })
-      } else if (err.username) {
-        setError('username', {
-          type: 'manual',
-          message: err.username
-        })
-      } else if (err.fName) {
-        setError('fName', {
-          type: 'manual',
-          message: err.fName
-        })
-      } else if (err.lName) {
-        setError('lName', {
-          type: 'manual',
-          message: err.lName
-        })
+      }else{
+        onRegister(email)
+        toast.success('registered')
       }
-
-      // Check if err is not empty
-      else if (Object.keys(err).length !== 0) {
-        setError('email', {
-          type: 'manual',
-          message: 'Something went wrong'
-        })
-      }
-    })
-
-    if (!hasError) {
-      onRegister(email)
-      Log.info('onSubmit', 'success')
-    }
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
