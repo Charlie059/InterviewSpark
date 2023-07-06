@@ -41,6 +41,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import toast from "react-hot-toast";
+import {useRouter} from "next/router";
 
 
 interface FormData {
@@ -104,20 +105,19 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 }))
 
 interface Props {
-  userEmail:string
   onRegister: (username: string) => void
 }
 
-const Register = ({ userEmail, onRegister }: Props) => {
+const Register = ({ onRegister }: Props) => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  console.log('passed in email:',userEmail)
 
   // ** Hooks
   const theme = useTheme()
   const { register } = useAuth()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
+  const router = useRouter()
 
   // ** Vars
   const { skin } = settings
@@ -136,7 +136,7 @@ const Register = ({ userEmail, onRegister }: Props) => {
   })
 
   const defaultValues = {
-    email: userEmail||'',
+    email: '',
     username: '',
     password: '',
     terms: false,
@@ -258,7 +258,7 @@ const Register = ({ userEmail, onRegister }: Props) => {
                       value={value}
                       label='Email'
                       onBlur={onBlur}
-                      defaultValue={userEmail}
+                      defaultValue={router.query?.email}
                       onChange={onChange}
                       error={Boolean(errors.email)}
                       placeholder='user@email.com'
