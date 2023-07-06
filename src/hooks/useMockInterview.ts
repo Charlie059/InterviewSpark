@@ -144,6 +144,11 @@ const useMockInterview = (interviews: Interview[]) => {
   // Using the custom hooks
   const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest({}, () => {
     setReading(false)
+
+    // If the interview is in the interviewing state, start transcribing and recording
+    if (interviewState.status === InterviewStatus.Interviewing) {
+      startTranscribingAndRecording()
+    }
   })
   const { transcribedText, handleStartTranscribe, handleStopTranscribe, transcribeError } = useTranscribe() // Use the custom hook for transcribing audio
   const {
@@ -205,11 +210,11 @@ const useMockInterview = (interviews: Interview[]) => {
   // Define a function to start the interview
   const startInterview = async () => {
     setReading(true)
-    if (interviewState.currentQuestionIndex === 0) addToQueue(WELCOME_WORDS)
     start()
+    if (interviewState.currentQuestionIndex === 0) addToQueue(WELCOME_WORDS)
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
     end()
-    startTranscribingAndRecording()
+
     dispatch({ type: START_QUESTION })
   }
 

@@ -122,12 +122,14 @@ export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: (
 
   useEffect(() => {
     if (!isLoading && queue.length > 0) {
-      const text = queue.shift()
+      // Remove the first element from the queue
+      const [text, ...rest] = queue
+      setQueue(rest)
+
       if (text === END_SYMBOL) {
         onComplete()
       }
       if (text !== START_SYMBOL && text !== END_SYMBOL) {
-        setQueue([...queue])
         synthesizeSpeech(text as string)
       }
     }

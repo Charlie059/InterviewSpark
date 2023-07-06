@@ -1,28 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Typography, Button, Card, Space } from 'antd'
+import { Typography, Button, Card, Space, Spin } from 'antd'
 import { CheckCircleTwoTone } from '@ant-design/icons'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import Confetti from 'react-confetti'
 
 const { Title, Paragraph } = Typography
 
-function FinishedInterviewPage() {
+function FeedbackAnalysisPage() {
   const router = useRouter()
-  const [showConfetti, setShowConfetti] = useState(false)
 
   const handleGoToHomePage = () => {
     router.push('/interview')
   }
-
-  useEffect(() => {
-    setShowConfetti(true)
-    const timer = setTimeout(() => {
-      setShowConfetti(false)
-    }, 5000)
-
-    return () => clearTimeout(timer)
-  }, [])
 
   return (
     <div
@@ -38,7 +27,6 @@ function FinishedInterviewPage() {
           'url(https://hirebeatjobseeker8d3233807f804e91a21f26d39e1a0e214038-staging.s3.amazonaws.com/public/finishInterview.png)'
       }}
     >
-      {showConfetti && <Confetti />}
       <Card
         style={{
           width: '50%',
@@ -49,31 +37,32 @@ function FinishedInterviewPage() {
         <Space direction='vertical' size='large' style={{ width: '100%', textAlign: 'center' }}>
           <CheckCircleTwoTone style={{ fontSize: '72px' }} twoToneColor='#52c41a' rev={undefined} />
           <Title level={2} style={{ fontFamily: 'Montserrat' }}>
-            Congratulations!
+            Thank you!
           </Title>
           <Title level={4} style={{ fontFamily: 'Montserrat' }}>
             You've completed your mock interview!
           </Title>
           <Paragraph style={{ fontFamily: 'Montserrat' }}>
-            You've taken an important step towards your career goals. By practicing mock interviews, you're improving
-            your communication skills and learning how to present yourself effectively. Don't forget to review the
-            feedback you received and work on any areas that need improvement. Keep practicing, and soon you'll be more
-            confident and better prepared for real interviews.
+            'We are currently analyzing your feedback. Please be patient as this might take some time.'
           </Paragraph>
           <Button type='primary' size='large' style={{ fontFamily: 'Montserrat' }} onClick={handleGoToHomePage}>
             Back to Interview Page
           </Button>
         </Space>
       </Card>
+
+      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+        <Spin size='large' />
+      </div>
     </div>
   )
 }
 
-FinishedInterviewPage.acl = {
+FeedbackAnalysisPage.acl = {
   action: 'read',
   subject: 'acl-page'
 }
 
-FinishedInterviewPage.getLayout = (page: React.ReactNode) => <BlankLayout>{page}</BlankLayout>
+FeedbackAnalysisPage.getLayout = (page: React.ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-export default FinishedInterviewPage
+export default FeedbackAnalysisPage
