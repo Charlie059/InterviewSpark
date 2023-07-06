@@ -44,7 +44,7 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
   console.log()
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
- if(auth.user){
+ if(auth.user?.userName===user){
     router.push('/user-profile/'+user)
   } else if (data?.isPublic) {
     return (
