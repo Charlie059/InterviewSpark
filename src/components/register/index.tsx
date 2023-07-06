@@ -127,8 +127,13 @@ const Register = ({ onRegister }: Props) => {
   // ** Vars
   const { skin } = settings
   const schema = yup.object().shape({
-    password: yup.string().min(8).required(),
-    username: yup.string().min(3).required(),
+    password: yup.string()
+      .matches(/^(?=.*[A-Z])(?=.*[0-9]).{8,}$/, 'Password must contain at least one uppercase letter, one number, and be at least 8 characters long')
+      .required('Password is required'),
+    username: yup.string()
+      .matches(/^[^\s_]+$/, 'Username cannot contain spaces or underscores')
+      .min(3, 'Username must be at least 3 characters long')
+      .required('Username is required'),
     email: yup.string().email().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
     fName: yup.string().required(),
