@@ -19,7 +19,6 @@ import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import CardContent from '@mui/material/CardContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import FormControl from '@mui/material/FormControl'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -75,8 +74,7 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
     setRefresh(!refresh)
   }
 
-  console.log('initial data')
-  console.log(data)
+  console.log('initial data',data)
 
   const handleEditClickOpen = () => {
     setOpenEdit(true)
@@ -86,7 +84,6 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
 
   // @ts-ignore
   const updateProfile = async data => {
-    console.log('aaa', data)
     try {
       const input = {
         emailAddress: data.userEmailAddress,
@@ -95,15 +92,16 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
         city: data.city,
         contact: data.contact,
         country: data.country,
-        coverImgURL: data.coverImgURL,
+        coverImgKey: data.coverImgKey,
         fName: data.fName,
         lName: data.lName,
-        photoImgURL: data.photoImgURL,
+        photoImgKey: data.photoImgKey,
         postalCode: data.postalCode,
         resumeKey: data.resumeKey,
         state: data.state,
         isPublic: data.isPublic
       }
+      console.log("data to update",input)
 
       const result = await API.graphql(graphqlOperation(updateUserProfile, input))
 
@@ -115,9 +113,18 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
 
   const handleEditSubmit = async (formData: any) => {
     setOpenEdit(false)
-    console.log('bbb', formData)
-    setProfileData(formData)
-    updateProfile(formData)
+    console.log('bbb', {
+      ...data, // Copy the existing profile data
+      ...formData, // Apply the changes from the formData object
+    })
+    setProfileData({
+      ...data, // Copy the existing profile data
+      ...formData, // Apply the changes from the formData object
+    })
+    updateProfile({
+      ...data, // Copy the existing profile data
+      ...formData, // Apply the changes from the formData object
+    })
       .then(response => {
         console.log(response)
       })
@@ -127,8 +134,9 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
   }
 
   const defaultValues = data
+  console.log('default values are:', defaultValues)
 
-  const { control, handleSubmit } = useForm({ defaultValues })
+  const { control, handleSubmit } = useForm({ defaultValues:defaultValues })
 
   const auth = useAuth()
   const emailAddress = auth.user?.userEmailAddress
@@ -251,158 +259,87 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
               <form onSubmit={handleSubmit(handleEditSubmit)}>
                 <Grid container spacing={6}>
                   <Grid item xs={12} sm={6}>
-                    <FormControl>
                       <Controller
                         name='fName'
                         control={control}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field }) => (
                           <TextField
+                            {...field}
                             fullWidth
                             label='First Name'
-                            value={value}
-                            defaultValue={profileData.fName}
-                            onChange={onChange}
                           />
                         )}
                       />
-                    </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <FormControl>
                       <Controller
                         name='lName'
                         control={control}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field }) => (
                           <TextField
+                            {...field}
                             fullWidth
                             label='Last Name'
-                            value={value}
-                            defaultValue={profileData.lName}
-                            onChange={onChange}
                           />
                         )}
                       />
-                    </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <FormControl>
                       <Controller
                         name='userName'
                         control={control}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field}) => (
                           <TextField
+                            {...field}
                             disabled
                             fullWidth
                             label='Username'
-                            value={value}
-                            defaultValue={profileData.userName}
-                            onChange={onChange}
                             InputProps={{ startAdornment: <InputAdornment position='start'>@</InputAdornment> }}
                           />
                         )}
                       />
-                    </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField disabled fullWidth type='email' label='email' defaultValue={data.userEmailAddress} />
                   </Grid>
-                  {/*<Grid item xs={12} sm={6}>*/}
-                  {/*  <FormControl fullWidth>*/}
-                  {/*    <InputLabel id='user-view-status-label'>Status</InputLabel>*/}
-                  {/*    <Controller*/}
-                  {/*      name='status'*/}
-                  {/*      control={control}*/}
-                  {/*      render={({ field: { value, onChange } }) => (*/}
-                  {/*        <Select*/}
-                  {/*          label='status'*/}
-                  {/*          defaultValue={data.status}*/}
-                  {/*          value={value}*/}
-                  {/*          onChange={onChange}*/}
-                  {/*          id='user-view-status'*/}
-                  {/*          labelId='user-view-status-label'*/}
-                  {/*        >*/}
-                  {/*          <MenuItem value='pending'>Pending</MenuItem>*/}
-                  {/*          <MenuItem value='active'>Active</MenuItem>*/}
-                  {/*          <MenuItem value='inactive'>Inactive</MenuItem>*/}
-                  {/*        </Select>*/}
-                  {/*      )}*/}
-                  {/*    />*/}
-                  {/*  </FormControl>*/}
-                  {/*</Grid>*/}
                   <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
                       <Controller
                         name='contact'
                         control={control}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field}) => (
                           <TextField
+                            {...field}
                             fullWidth
                             label='Contact'
-                            defaultValue={profileData.contact}
-                            value={value}
-                            onChange={onChange}
                           />
                         )}
                       />
-                    </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
                       <Controller
                         name='city'
                         control={control}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field }) => (
                           <TextField
+                            {...field}
                             fullWidth
                             label='City'
-                            defaultValue={profileData.city}
-                            value={value}
-                            onChange={onChange}
                           />
                         )}
                       />
-                    </FormControl>
                   </Grid>
-                  {/*<Grid item xs={12} sm={6}>*/}
-                  {/*              <FormControl fullWidth>*/}
-                  {/*                <InputLabel id='user-view-language-label'>Language</InputLabel>*/}
-                  {/*                <Controller*/}
-                  {/*                  name='language'*/}
-                  {/*                  control={control}*/}
-                  {/*                  render={({ field: { value, onChange } }) => (*/}
-                  {/*                    <Select*/}
-                  {/*                      label='language'*/}
-                  {/*                      defaultValue={profileData.language}*/}
-                  {/*                      value={value}*/}
-                  {/*                      onChange={onChange}*/}
-                  {/*                      id='user-view-language'*/}
-                  {/*                      labelId='user-view-language-label'*/}
-                  {/*                    >*/}
-                  {/*                      <MenuItem value='English'>English</MenuItem>*/}
-                  {/*                      <MenuItem value='Spanish'>Spanish</MenuItem>*/}
-                  {/*                      <MenuItem value='Portuguese'>Portuguese</MenuItem>*/}
-                  {/*                      <MenuItem value='Russian'>Russian</MenuItem>*/}
-                  {/*                      <MenuItem value='French'>French</MenuItem>*/}
-                  {/*                      <MenuItem value='German'>German</MenuItem>*/}
-                  {/*                    </Select>*/}
-                  {/*                  )}*/}
-                  {/*                />*/}
-                  {/*              </FormControl>*/}
-                  {/*            </Grid>*/}
                   <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth>
                       <InputLabel id='user-view-country-label'>Country</InputLabel>
                       <Controller
                         name='country'
                         control={control}
-                        render={({ field: { value, onChange } }) => (
+                        render={({ field }) => (
                           <Select
+                            {...field}
+                            fullWidth
                             label='country'
-                            defaultValue={profileData.country}
-                            onChange={onChange}
                             id='user-view-country'
                             labelId='user-view-country-label'
-                            value={value}
                           >
                             <MenuItem value='USA'>USA</MenuItem>
                             <MenuItem value='UK'>UK</MenuItem>
@@ -414,7 +351,6 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
                           </Select>
                         )}
                       />
-                    </FormControl>
                   </Grid>
                   <Grid item xs={12} sx={{ justifyContent: 'center' }}>
                     <DialogActions sx={{ justifyContent: 'center' }}>
