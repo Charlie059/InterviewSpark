@@ -22,6 +22,8 @@ export default function RegisterPage() {
     }
   }
 
+  console.log(router.query?.email)
+
   const [username, setUsername] = useState(processProp(router.query?.email)||'')
 
   const [registered, setRegistered] = useState(Boolean(router.query?.registered)||false)
@@ -31,7 +33,7 @@ export default function RegisterPage() {
     setRegistered(true)
   }
 
-  return <div>{registered ? <VerifyCode username={username} /> : <Register onRegister={handleRegister} />}</div>
+  return <div>{registered ? <VerifyCode username={username} /> : <Register userEmail={processProp(router.query?.email)} onRegister={handleRegister} />}</div>
 }
 
 RegisterPage.guestGuard = true

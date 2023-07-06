@@ -122,6 +122,8 @@ const LoginPage = () => {
         console.log('not confirmed')
         await Auth.resendSignUp(email)
         router.push(`/register?email=${email}&registered=true`);
+      }else if(err.name == 'UserNotFoundException'){
+        router.push(`/register?email=${email}`);
       }
     })
   }

@@ -42,14 +42,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
 import toast from "react-hot-toast";
 
-const defaultValues = {
-  email: '',
-  username: '',
-  password: '',
-  terms: false,
-  fName: '',
-  lName: ''
-}
+
 interface FormData {
   email: string
   terms: boolean
@@ -111,12 +104,14 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 }))
 
 interface Props {
+  userEmail:string
   onRegister: (username: string) => void
 }
 
-const Register = ({ onRegister }: Props) => {
+const Register = ({ userEmail, onRegister }: Props) => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  console.log('passed in email:',userEmail)
 
   // ** Hooks
   const theme = useTheme()
@@ -140,6 +135,15 @@ const Register = ({ onRegister }: Props) => {
     lName: yup.string().required()
   })
 
+  const defaultValues = {
+    email: userEmail||'',
+    username: '',
+    password: '',
+    terms: false,
+    fName: '',
+    lName: ''
+  }
+
   const {
     control,
     setError,
@@ -155,26 +159,26 @@ const Register = ({ onRegister }: Props) => {
     const {username, email, password, fName, lName} = data
     const err = await new Promise<any>((resolve) => {
       register({email, username, password, fName, lName}, err => {
-        if (err) {
+        if (err.name !== "success") {
           console.log(err)
           resolve(err);
         } else {
+          console.log('success')
           resolve(undefined);
         }
       });
     });
     console.log(err); // Access the err value here
-      console.log(err.name)
-      toast.error(err.message)
-      if (err) { //general err handling
-        setError('email', {
-          type: 'manual',
-          message: err.message
-        })
-      }else{
-        onRegister(email)
-        toast.success('registered')
-      }
+    console.log(err?.name)
+    if (err) { //general err handling
+      setError('email', {
+        type: 'manual',
+        message: err.message
+      })
+    }else{
+      onRegister(email)
+      toast.success('registered')
+    }
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
@@ -254,6 +258,7 @@ const Register = ({ onRegister }: Props) => {
                       value={value}
                       label='Email'
                       onBlur={onBlur}
+                      defaultValue={userEmail}
                       onChange={onChange}
                       error={Boolean(errors.email)}
                       placeholder='user@email.com'

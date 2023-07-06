@@ -186,6 +186,7 @@ const AuthProvider = ({ children }: Props) => {
           return null
         }
         Log.info('Verify email sent', user)
+        errorCallback ? errorCallback({name:"success"}) : null
       })
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
