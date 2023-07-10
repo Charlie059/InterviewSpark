@@ -127,10 +127,14 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
   const shouldShowImg =
     !isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
 
+  const videoConstraints = {
+    deviceId: '12321312'
+  }
+
   return (
     <RoundedDiv>
       <StyledWebcamContainer isVisible={shouldShowWebcam}>
-        <Webcam audio={true} muted={true} ref={getWebcamRef} />
+        <Webcam audio={true} muted={true} ref={getWebcamRef} videoConstraints={videoConstraints} />
       </StyledWebcamContainer>{' '}
       {shouldShowImg && (
         <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />

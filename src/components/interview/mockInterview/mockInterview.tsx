@@ -59,6 +59,8 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { interviews, info } = mockInterviewComponentProps
 
+  Logger.debug('MockInterviewComponent: ', interviews, info)
+
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [dialogOpen, setDialogOpen] = React.useState(false)

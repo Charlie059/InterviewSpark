@@ -1,4 +1,4 @@
-import { MenuItem, Select } from '@mui/material'
+import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 
 type DeviceSelectorProps = {
@@ -27,8 +27,13 @@ const DeviceSelector: React.FC<DeviceSelectorProps> = ({ deviceType, onChange, d
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deviceType])
 
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    setSelectedDeviceId(event.target.value as string)
+    onChange(event.target.value as string)
+  }
+
   return (
-    <Select value={selectedDeviceId} sx={{ width: '100%' }}>
+    <Select value={selectedDeviceId} sx={{ width: '100%' }} onChange={handleChange}>
       {devices.map(device => (
         <MenuItem key={device.deviceId} value={device.deviceId}>
           {device.label}
