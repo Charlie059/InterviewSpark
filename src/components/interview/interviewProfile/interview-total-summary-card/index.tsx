@@ -62,7 +62,7 @@ const useInterviewData = () => {
 
       if ('data' in userInterviewUsageMetaData) {
         const interviewUsageMetaData = userInterviewUsageMetaData.data.getUserInterviewUsageMetaData
-        const interviewTotalCount = interviewUsageMetaData.userInterviewNumCount
+        const interviewTotalCount = interviewUsageMetaData.userInterviewNumTotalCount
         const interviewQuestionMap = JSON.parse(interviewUsageMetaData.userInterviewQuestionMap)
         const interviewQuestionMapLength = Object.keys(interviewQuestionMap).length
 

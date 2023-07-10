@@ -391,8 +391,8 @@ type User {
 }
 
 type UserInterviewUsageMetaData {
-  userInterviewNumCount: Int
-  userInterviewQuestionSet: [Int]
+  userInterviewNumTotalCount: Int
+  userInterviewNumUniqueCount: Int
   userInterviewQuestionMap: AWSJSON
 }
 
