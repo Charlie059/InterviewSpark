@@ -27,23 +27,29 @@ const WorkHistoryEntry = ({ workData, handleEditClick, edit, handleEntryRemove }
 
   return (
     <StyledBox sx={{ mt: 4, mb: 1, mr: 4}}>
-      <Grid container spacing={2}>
-        <Box
-          component={Grid}
-          item
-          lg={3}
-          display={{ xs: 'none', sm: 'none', md: 'none', lg: 'flex' }}
-          sx={{ mb: 10, alignItems: 'flex-start', justifyContent: 'flex-start' }}
-        >
-          <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center'}}>
-            {workData.workHistoryIcon ? (
-              <img alt='Company Logo' src={workData.workHistoryIcon} style={{ width: 56, height: 56 }} />
-            ) : (
-              <LetterIcon letter={workData.workHistoryEmployer.charAt(0)}></LetterIcon>
-            )}
-          </CardContent>
-        </Box>
-        <Grid item lg={7}>
+      <Grid container spacing={2} gap={'20px'}>
+        <Grid item  xs={12} sm={12} md={12} lg={3}>
+          <Box
+            component={Grid}
+            item
+            lg={3}
+            display={{ xs: 'none', sm: 'none', md: 'none', lg: 'flex' }}
+            sx={{
+              mb: 10,
+              alignItems: 'flex-start',
+              justifyContent: 'flex-start'
+            }}
+          >
+            <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center'}}>
+              {workData.workHistoryIcon ? (
+                <img alt='Company Logo' src={workData.workHistoryIcon} style={{ width: 56, height: 56 }} />
+              ) : (
+                <LetterIcon letter={workData.workHistoryEmployer.charAt(0)}></LetterIcon>
+              )}
+            </CardContent>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={7}>
           <Typography variant='h6' sx={{ mt: 3, mb: 1 }}>
             {workData.workHistoryEmployer}
           </Typography>
