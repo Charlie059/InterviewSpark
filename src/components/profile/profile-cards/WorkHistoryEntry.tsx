@@ -32,7 +32,7 @@ const WorkHistoryEntry = ({ workData, handleEditClick, edit, handleEntryRemove }
           component={Grid}
           item
           lg={3}
-          display={{ md: 'none', lg: 'flex' }}
+          display={{ xs: 'none', sm: 'none', md: 'none', lg: 'flex' }}
           sx={{ mb: 10, alignItems: 'flex-start', justifyContent: 'flex-start' }}
         >
           <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center'}}>

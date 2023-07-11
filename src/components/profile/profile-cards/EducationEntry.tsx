@@ -32,7 +32,7 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: E
           component={Grid}
           item
           lg={3}
-          display={{ md: 'none', lg: 'flex' }}
+          display={{ xs: 'none', sm: 'none', md: 'none', lg: 'flex' }}
           sx={{ alignItems: 'flex-start', justifyContent: 'flex-start' }}
         >
           <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
