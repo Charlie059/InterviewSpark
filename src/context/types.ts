@@ -70,3 +70,8 @@ export type WorkHistory = {
   workHistoryJobDescription?: string
   workHistoryIcon?: string
 }
+
+export type Subscription = {
+  premium: boolean,
+  creditsUsed: number
+}
