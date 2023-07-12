@@ -2,35 +2,30 @@
 import { ChangeEvent, MouseEvent, useState } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
 import Alert from '@mui/material/Alert'
-import Table from '@mui/material/Table'
 import Button from '@mui/material/Button'
-import Dialog from '@mui/material/Dialog'
-import Divider from '@mui/material/Divider'
-import TableRow from '@mui/material/TableRow'
-import TableHead from '@mui/material/TableHead'
-import TableCell from '@mui/material/TableCell'
-import TableBody from '@mui/material/TableBody'
-import TextField from '@mui/material/TextField'
 import CardHeader from '@mui/material/CardHeader'
 import AlertTitle from '@mui/material/AlertTitle'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
-import DialogTitle from '@mui/material/DialogTitle'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import DialogContent from '@mui/material/DialogContent'
 import InputAdornment from '@mui/material/InputAdornment'
-import TableContainer from '@mui/material/TableContainer'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import FormHelperText from "@mui/material/FormHelperText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import CheckIcon from '@mui/icons-material/Check';
+
+// ** Third Party Imports
+import * as yup from 'yup';
 
 interface State {
   currentPassword:string
@@ -51,6 +46,36 @@ const UserSecurity = () => {
     confirmNewPassword: '',
     showConfirmNewPassword: false
   })
+  const [errors, setErrors] = useState({});
+
+  // ** Validation Schema
+  const schema = yup.object().shape({
+    currentPassword: yup.string().required("Current password is required"),
+    newPassword:
+      yup.string()
+        .notOneOf([yup.ref('currentPassword')], 'New password must be different from the current password')
+        .min(8, 'New password must be at least 8 characters')
+        .required("New password is required"),
+    confirmNewPassword: yup.string().oneOf([yup.ref('newPassword'), null], 'Passwords do not match').required("Confirm new password is required")
+  });
+
+// Define a function to handle form submission
+  const handleSubmit = (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+
+    schema.validate(values, { abortEarly: false })
+      .then(() => {
+        // Form is valid
+      })
+      .catch((validationErrors) => {
+        // Form is invalid, set the errors state
+        const newErrors = {};
+        validationErrors.inner.forEach((error: { path: string | number; message: any }) => {
+          newErrors[error.path] = error.message;
+        });
+        setErrors(newErrors);
+      });
+  };
 
   // Handle Current Password
   const handleCurrentPasswordChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -94,10 +119,10 @@ const UserSecurity = () => {
           <CardContent sx={{ml:5, mr:5}}>
             <Grid container spacing ={10}>
               <Grid item xs={7}>
-                <form onSubmit={e => e.preventDefault()}>
+                <form onSubmit={handleSubmit}>
                 <Grid container spacing={6}>
                   <Grid item xs={12}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth error={!!errors.currentPassword}>
                       <InputLabel htmlFor='user-view-security-current-password'>Current Password</InputLabel>
                       <OutlinedInput
                         label='Current Password'
@@ -118,11 +143,12 @@ const UserSecurity = () => {
                           </InputAdornment>
                         }
                       />
+                      {errors.currentPassword && <FormHelperText>{errors.currentPassword}</FormHelperText>}
                     </FormControl>
                   </Grid>
 
                   <Grid item xs={12}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth error={!!errors.newPassword}>
                       <InputLabel htmlFor='user-view-security-new-password'>New Password</InputLabel>
                       <OutlinedInput
                         label='New Password'
@@ -143,11 +169,12 @@ const UserSecurity = () => {
                           </InputAdornment>
                         }
                       />
+                      {errors.newPassword && <FormHelperText>{errors.newPassword}</FormHelperText>}
                     </FormControl>
                   </Grid>
 
                   <Grid item xs={12}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth error={!!errors.confirmNewPassword}>
                       <InputLabel htmlFor='user-view-security-confirm-new-password'>Confirm New Password</InputLabel>
                       <OutlinedInput
                         label='Confirm New Password'
@@ -168,6 +195,7 @@ const UserSecurity = () => {
                           </InputAdornment>
                         }
                       />
+                      {errors.confirmNewPassword && <FormHelperText>{errors.confirmNewPassword}</FormHelperText>}
                     </FormControl>
                   </Grid>
 
@@ -180,11 +208,24 @@ const UserSecurity = () => {
               </form>
               </Grid>
               <Grid item xs={5}>
-                <Alert icon={false} severity='warning' sx={{ mb: 6 }}>
-              <AlertTitle sx={{ fontWeight: 600, mb: theme => `${theme.spacing(1)} !important` }}>
-                Ensure that these requirements are met
-              </AlertTitle>
-              Minimum 8 characters long, uppercase & symbol
+              <Alert icon={false} severity='warning' sx={{ mb: 6 }}>
+                <AlertTitle sx={{ fontWeight: 600, mb: theme => `${theme.spacing(1)} !important` }}>
+                  Ensure that these requirements are met
+                </AlertTitle>
+                <List>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckIcon color='warning' fontSize='small'></CheckIcon>
+                    </ListItemIcon>
+                    <ListItemText primary="Minimum 8 characters long" disableTypography/>
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckIcon color='warning' fontSize='small'></CheckIcon>
+                    </ListItemIcon>
+                    <ListItemText primary="New password must be different from current password" disableTypography/>
+                  </ListItem>
+                </List>
             </Alert>
               </Grid>
             </Grid>
