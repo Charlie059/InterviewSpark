@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState, Fragment, MouseEvent } from 'react'
+import React, { ReactNode, useState, Fragment, MouseEvent } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -20,6 +20,11 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 import Log from 'src/middleware/loggerMiddleware'
+import Dialog, { DialogProps } from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -41,6 +46,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import TermsDialog from 'src/components/register/termsDialog'
 
 const defaultValues = {
   email: '',
@@ -117,6 +123,8 @@ interface Props {
 const Register = ({ onRegister }: Props) => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [open, setOpen] = React.useState(false);
+  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
   // ** Hooks
   const theme = useTheme()
@@ -131,8 +139,8 @@ const Register = ({ onRegister }: Props) => {
     username: yup.string().min(3).required(),
     email: yup.string().email().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
-    fName: yup.string().required(),
-    lName: yup.string().required()
+    fName: yup.string().required('first name is a required field'),
+    lName: yup.string().required('last name is a required field')
   })
 
   const {
@@ -190,6 +198,26 @@ const Register = ({ onRegister }: Props) => {
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
+
+  // Terms & Policies
+  const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {
+    setOpen(true);
+    setScroll(scrollType);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const descriptionElementRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
 
   return (
     <Box className='content-right'>
@@ -380,15 +408,40 @@ const Register = ({ onRegister }: Props) => {
                             >
                               I agree to{' '}
                             </Typography>
-                            <Typography
-                              href='/'
-                              variant='body2'
-                              component={Link}
-                              sx={{ color: 'primary.main', textDecoration: 'none' }}
-                              onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
+                            {/*<Typography*/}
+                            {/*  href='/'*/}
+                            {/*  variant='body2'*/}
+                            {/*  component={Link}*/}
+                            {/*  sx={{ color: 'primary.main', textDecoration: 'none' }}*/}
+                            {/*  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}*/}
+                            {/*>*/}
+                            {/*  privacy policy & terms*/}
+                            {/*</Typography>*/}
+                            <Button onClick={handleClickOpen('paper')}>privacy policy & terms</Button>
+                            <Dialog
+                              open={open}
+                              onClose={handleClose}
+                              scroll={scroll}
+                              aria-labelledby="scroll-dialog-title"
+                              aria-describedby="scroll-dialog-description"
                             >
-                              privacy policy & terms
-                            </Typography>
+                              <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
+                              <DialogContent dividers={scroll === 'paper'}>
+
+                                <DialogContentText
+                                  id="scroll-dialog-description"
+                                  ref={descriptionElementRef}
+                                  tabIndex={-1}
+                                  dangerouslySetInnerHTML={{ __html: termsHTML }}
+                                >
+                                </DialogContentText>
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={handleClose}>Decline</Button>
+                                <Button onClick={handleClose}>Agree</Button>
+                              </DialogActions>
+                            </Dialog>
+                            <TermsDialog/>
                           </Fragment>
                         }
                       />
