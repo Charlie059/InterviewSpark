@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { ReactNode, useState, Fragment, MouseEvent } from 'react'
+import React, { ReactNode, useState, Fragment } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -21,9 +21,7 @@ import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 import Log from 'src/middleware/loggerMiddleware'
 import Dialog, { DialogProps } from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 // ** Icon Imports
@@ -200,7 +198,8 @@ const Register = ({ onRegister }: Props) => {
   const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
 
   // Terms & Policies
-  const handleClickOpen = (scrollType: DialogProps['scroll']) => () => {
+  const handleClickOpen = (scrollType: DialogProps['scroll']) => (event: React.MouseEvent) => {
+    event.preventDefault();
     setOpen(true);
     setScroll(scrollType);
   };
@@ -408,40 +407,36 @@ const Register = ({ onRegister }: Props) => {
                             >
                               I agree to{' '}
                             </Typography>
-                            {/*<Typography*/}
-                            {/*  href='/'*/}
-                            {/*  variant='body2'*/}
-                            {/*  component={Link}*/}
-                            {/*  sx={{ color: 'primary.main', textDecoration: 'none' }}*/}
-                            {/*  onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}*/}
-                            {/*>*/}
-                            {/*  privacy policy & terms*/}
-                            {/*</Typography>*/}
-                            <Button onClick={handleClickOpen('paper')}>privacy policy & terms</Button>
+                            <Typography
+                              href='/'
+                              variant='body2'
+                              component={Link}
+                              sx={{ color: 'primary.main', textDecoration: 'none' }}
+                              onClick={handleClickOpen('paper')}
+                            >
+                              privacy policy & terms
+                            </Typography>
                             <Dialog
+                              sx={{
+                                '& .MuiPaper-root': {
+                                  width: '100%',
+                                  height:"100%",
+                                  maxWidth: 1000,
+                                  maxHeight: 800,
+                                  p: [2, 10]
+                                }
+                              }}
                               open={open}
                               onClose={handleClose}
                               scroll={scroll}
                               aria-labelledby="scroll-dialog-title"
                               aria-describedby="scroll-dialog-description"
                             >
-                              <DialogTitle id="scroll-dialog-title">Subscribe</DialogTitle>
+                              <DialogTitle id="scroll-dialog-title">Terms & Conditions</DialogTitle>
                               <DialogContent dividers={scroll === 'paper'}>
-
-                                <DialogContentText
-                                  id="scroll-dialog-description"
-                                  ref={descriptionElementRef}
-                                  tabIndex={-1}
-                                  dangerouslySetInnerHTML={{ __html: termsHTML }}
-                                >
-                                </DialogContentText>
+                                <TermsDialog/>
                               </DialogContent>
-                              <DialogActions>
-                                <Button onClick={handleClose}>Decline</Button>
-                                <Button onClick={handleClose}>Agree</Button>
-                              </DialogActions>
                             </Dialog>
-                            <TermsDialog/>
                           </Fragment>
                         }
                       />
