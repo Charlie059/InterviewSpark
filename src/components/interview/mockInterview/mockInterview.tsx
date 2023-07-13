@@ -56,11 +56,7 @@ interface MockInterviewComponentProps {
 }
 
 function MockInterviewComponent(mockInterviewComponentProps: MockInterviewComponentProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { interviews, info } = mockInterviewComponentProps
-
-  Logger.debug('MockInterviewComponent: ', interviews, info)
-
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [dialogOpen, setDialogOpen] = React.useState(false)
@@ -83,8 +79,10 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
     getWebcamRef,
     getVideoBlob,
     isVideoEnabled,
-    isReading
-  } = useMockInterview(interviews)
+    isReading,
+    videoInput,
+    audioInput
+  } = useMockInterview({ interviews, info })
 
   // Helper function to guard against multiple invocations of finishQuestion
   function guardedFinishQuestion() {
@@ -294,6 +292,8 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
           >
             <Grid item xs={0} sm={5} md={5.5} lg={4.5}>
               <RoundedMediaLeft
+                videoInput={videoInput}
+                audioInput={audioInput}
                 getWebcamRef={getWebcamRef}
                 getVideoBlob={getVideoBlob}
                 isVideoEnabled={isVideoEnabled}

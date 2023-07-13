@@ -16,7 +16,26 @@ const DeviceSelector: React.FC<DeviceSelectorProps> = ({ deviceType, onChange, d
       const mediaDevices = await navigator.mediaDevices.enumerateDevices()
 
       const filteredDevices = mediaDevices.filter(device => device.kind === deviceType)
+
       setDevices(filteredDevices)
+
+      // If the device is videoInput, we want to add a default option for the user to select no camera
+      if (deviceType === 'videoinput') {
+        filteredDevices.push({
+          deviceId: '',
+          groupId: '',
+          kind: 'videoinput',
+          label: 'No Camera',
+          toJSON: () => {
+            return {
+              deviceId: '',
+              groupId: '',
+              kind: 'videoinput',
+              label: 'No Camera'
+            }
+          }
+        })
+      }
 
       if (filteredDevices.length > 0 && !selectedDeviceId) {
         setSelectedDeviceId(filteredDevices[0].deviceId)
