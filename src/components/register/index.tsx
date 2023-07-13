@@ -123,7 +123,7 @@ const Register = ({ onRegister }: Props) => {
   const { skin } = settings
   const schema = yup.object().shape({
     password: yup.string()
-      .matches(/^(?=.*[A-Z])(?=.*[0-9]).{8,}$/, 'Password must contain at least one uppercase letter, one number, and be at least 8 characters long')
+      .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/, 'Password must contain at least 1* uppercase letter, 1* lowercase letter, 1* number, and be at least 8 characters long')
       .required('Password is required'),
     username: yup.string()
       .matches(/^[^\s_]+$/, 'Username cannot contain spaces or underscores')
