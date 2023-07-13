@@ -191,7 +191,7 @@ const EducationCard = ({
     }
 
     const handleEditSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault() // prevent defaukt form behavior
+      event.preventDefault() // prevent default form behavior
       setOpenEdit(false)
       console.log('bbb', eduD)
       if(eduD){

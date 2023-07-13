@@ -23,8 +23,7 @@ import {getUserEducations, getUserProfileByUsername, getUserWorkHistories} from 
 import UserProfile from 'src/components/profile/UserProfile'
 import ResumeScanPage from '../resume'
 import InterviewPage from '../interview'
-import EducationCard from 'src/components/profile/profile-cards/EducationCard'
-import WorkHistoryCard from 'src/components/profile/profile-cards/WorkHistoryCard'
+import TutorialEduCard from 'src/components/tutorial/TutorialEduCard'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
@@ -40,10 +39,6 @@ const steps = [
   {
     title: 'Education',
     subtitle: 'Fill out education'
-  },
-  {
-    title: 'Experience',
-    subtitle: 'Fill out work history'
   },
   {
     title: 'Resume',
@@ -131,16 +126,12 @@ const Tutorial = () => {
         break
       case 1:
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setStepContent(<EducationCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh}/>)
+        setStepContent(<TutorialEduCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh}/>)
         break
       case 2:
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setStepContent(<WorkHistoryCard workDatas={workDatas} type={'tutorial'} refresh={handleRefresh}/>)
-        break
-      case 3:
         setStepContent(<ResumeScanPage type={'tutorial'} />)
         break
-      case 4:
+      case 3:
         setStepContent(<InterviewPage />)
         break
       default:

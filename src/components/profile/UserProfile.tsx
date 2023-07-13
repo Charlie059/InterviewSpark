@@ -104,6 +104,7 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
         state: data.state,
         isPublic: data.isPublic
       }
+      // TODO - Add three fields
 
       const result = await API.graphql(graphqlOperation(updateUserProfile, input))
 
