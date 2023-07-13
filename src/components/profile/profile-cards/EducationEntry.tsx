@@ -27,23 +27,25 @@ const EducationEntry = ({ eduData, handleEditClick, edit, handleEntryRemove }: E
 
   return (
     <StyledBox sx={{ mt: 4, mb: 1, mr: 2}}>
-      <Grid container spacing={2}>
-        <Box
-          component={Grid}
-          item
-          lg={3}
-          display={{ md: 'none', lg: 'flex' }}
-          sx={{ alignItems: 'flex-start', justifyContent: 'flex-start' }}
-        >
-          <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
-            {eduData.eduIcon ? (
-              <img alt='University Logo' src={eduData.eduIcon} style={{ width: 56, height: 56 }} />
-            ) : (
-              <LetterIcon letter={eduData.eduSchool.charAt(0)}></LetterIcon>
-            )}
-          </CardContent>
-        </Box>
-        <Grid item lg={7}>
+      <Grid container spacing={2} gap={'20px'}>
+        <Grid item xs={12} sm={12} md={12} lg={3}>
+          <Box
+            component={Grid}
+            item
+            lg={3}
+            display={{ xs: 'none', sm: 'none', md: 'none', lg: 'flex' }}
+            sx={{ alignItems: 'flex-start', justifyContent: 'flex-start' }}
+          >
+            <CardContent sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+              {eduData.eduIcon ? (
+                <img alt='University Logo' src={eduData.eduIcon} style={{ width: 56, height: 56 }} />
+              ) : (
+                <LetterIcon letter={eduData.eduSchool.charAt(0)}></LetterIcon>
+              )}
+            </CardContent>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={7}>
           <Typography variant='h6' sx={{ mt: 3, mb: 1 }}>
             {eduData.eduSchool}
           </Typography>
