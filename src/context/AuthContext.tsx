@@ -164,34 +164,34 @@ const AuthProvider = ({ children }: Props) => {
 
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
     try {
-      const { user } = await Auth.signUp({
+      await Auth.signUp({
         password: params.password,
         username: params.email
+      }).then(async(user)=>{
+        console.log(user)
+        try {
+          const response = await API.graphql(
+            graphqlOperation(createNewGuestUser, {
+              emailAddress: params.email,
+              userName: params.username,
+              fName: params.fName,
+              lName: params.lName
+            })
+          )
+
+          console.log('response', response)
+        } catch (error) {
+          console.error('Error adding new guest user:', error)
+
+          return null
+        }
+        Log.info('Verify email sent', user)
+        errorCallback ? errorCallback({name:"success"}) : null
       })
-
-      // TODO error condition check
-      try {
-        const response = await API.graphql(
-          graphqlOperation(createNewGuestUser, {
-            emailAddress: params.email,
-            userName: params.username,
-            fName: params.fName,
-            lName: params.lName
-          })
-        )
-
-        console.log('response', response)
-      } catch (error) {
-        console.error('Error adding new guest user:', error)
-
-        return null
-      }
-
-      Log.info('Verify email sent', user)
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
       errorCallback ? errorCallback(err) : null
-      Log.error(err)
+      console.log(err.message)
     }
   }
 

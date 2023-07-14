@@ -19,7 +19,6 @@ import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
-import Log from 'src/middleware/loggerMiddleware'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -41,15 +40,10 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import toast from "react-hot-toast";
+import {useRouter} from "next/router";
 
-const defaultValues = {
-  email: '',
-  username: '',
-  password: '',
-  terms: false,
-  fName: '',
-  lName: ''
-}
+
 interface FormData {
   email: string
   terms: boolean
@@ -123,17 +117,32 @@ const Register = ({ onRegister }: Props) => {
   const { register } = useAuth()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
+  const router = useRouter()
 
   // ** Vars
   const { skin } = settings
   const schema = yup.object().shape({
-    password: yup.string().min(8).required(),
-    username: yup.string().min(3).required(),
+    password: yup.string()
+      .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/, 'Password must contain at least 1* uppercase letter, 1* lowercase letter, 1* number, and be at least 8 characters long')
+      .required('Password is required'),
+    username: yup.string()
+      .matches(/^[^\s_]+$/, 'Username cannot contain spaces or underscores')
+      .min(3, 'Username must be at least 3 characters long')
+      .required('Username is required'),
     email: yup.string().email().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
     fName: yup.string().required(),
     lName: yup.string().required()
   })
+
+  const defaultValues = {
+    email: '',
+    username: '',
+    password: '',
+    terms: false,
+    fName: '',
+    lName: ''
+  }
 
   const {
     control,
@@ -146,46 +155,29 @@ const Register = ({ onRegister }: Props) => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = (data: FormData) => {
-    const { username, email, password, fName, lName } = data
-
-    let hasError = false
-    register({ email, username, password, fName, lName }, err => {
-      hasError = true
-      if (err.email) {
-        setError('email', {
-          type: 'manual',
-          message: err.email
-        })
-      } else if (err.username) {
-        setError('username', {
-          type: 'manual',
-          message: err.username
-        })
-      } else if (err.fName) {
-        setError('fName', {
-          type: 'manual',
-          message: err.fName
-        })
-      } else if (err.lName) {
-        setError('lName', {
-          type: 'manual',
-          message: err.lName
-        })
-      }
-
-      // Check if err is not empty
-      else if (Object.keys(err).length !== 0) {
-        setError('email', {
-          type: 'manual',
-          message: 'Something went wrong'
-        })
-      }
-    })
-
-    if (!hasError) {
+  const onSubmit = async (data: FormData) => {
+    const {username, email, password, fName, lName} = data
+    const err = await new Promise<any>((resolve) => {
+      register({email, username, password, fName, lName}, err => {
+        if (err.name !== "success") {
+          console.log(err)
+          resolve(err);
+        } else {
+          console.log('success')
+          resolve(undefined);
+        }
+      });
+    });
+    console.log(err); // Access the err value here
+    console.log(err?.name)
+    if (err) { //general err handling
+      setError('email', {
+        type: 'manual',
+        message: err.message
+      })
+    }else{
       onRegister(email)
-      Log.info('onSubmit', 'success')
+      toast.success('registered')
     }
   }
 
@@ -266,6 +258,7 @@ const Register = ({ onRegister }: Props) => {
                       value={value}
                       label='Email'
                       onBlur={onBlur}
+                      defaultValue={router.query?.email}
                       onChange={onChange}
                       error={Boolean(errors.email)}
                       placeholder='user@email.com'
