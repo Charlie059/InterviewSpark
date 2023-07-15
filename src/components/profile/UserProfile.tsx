@@ -23,6 +23,10 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import InputAdornment from '@mui/material/InputAdornment'
 import DialogContentText from '@mui/material/DialogContentText'
+import Checkbox from '@mui/material/Checkbox'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 // ** Utils Import
 import { Controller, useForm } from 'react-hook-form'
@@ -55,13 +59,12 @@ import Fab from '@mui/material/Fab'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string }) => {
-  // ** State
   //#TODO Construct a tutorial version profile page
   //data.email = auth.user?.userEmailAddress
 
   // const [isLoading, setIsLoading] = useState<boolean>(true)
-  console.log('current profile page is for', user)
-  console.log('current data is:', data)
+  // console.log('current profile page is for', user)
+  // console.log('current data is:', data)
 
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
@@ -69,12 +72,73 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
   const [educations, setEducations] = useState<Education[]>()
   const [workHistories, setWorkHistories] = useState<WorkHistory[]>()
   const [refresh, setRefresh] = useState(false)
+  const [topic, setTopic] = useState([
+    {
+      label:"topic1",
+      checked:false
+    },
+    {
+      label:"topic2",
+      checked:true
+    },
+    {
+      label:"topic3",
+      checked:false
+    },
+    {
+      label:"topic4",
+      checked:false
+    },
+    {
+      label:"topic5",
+      checked:false
+    },
+    {
+      label:"topic6",
+      checked:false
+    },
+    {
+      label:"topic7",
+      checked:false
+    },
+    {
+      label:"topic8",
+      checked:false
+    },
+    {
+      label:"topic9",
+      checked:false
+    },
+    {
+      label:"topic10",
+      checked:false
+    },
+    {
+      label:"topic11",
+      checked:false
+    },
+    {
+      label:"topic12",
+      checked:false
+    },
+  ])
+  const error = topic.filter((item) => item.checked).length >= 3;
+  const chosenTopics = topic.filter((item) => item.checked)
+  console.log(chosenTopics)
+  console.log("true topic label", topic.filter((item) => item.checked)[0]?.label)
+  const handleChange = (event) => {
+    const { name, checked } = event.target;
+    const newTopic = topic.map((prevTopic) =>
+      prevTopic.label === name ? { ...prevTopic, checked: checked } : prevTopic
+    )
+    setTopic(newTopic);
+    setRefresh(!refresh)
+  };
 
   const handleRefresh = () => {
     setRefresh(!refresh)
   }
 
-  console.log('initial data',data)
 
   const handleEditClickOpen = () => {
     setOpenEdit(true)
@@ -134,7 +198,6 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
   }
 
   const defaultValues = data
-  console.log('default values are:', defaultValues)
 
   const { control, handleSubmit } = useForm({ defaultValues:defaultValues })
 
@@ -235,6 +298,39 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
                 <Box sx={{ display: 'flex' }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Country:</Typography>
                   <Typography variant='body2'>{profileData.country}</Typography>
+                </Box>
+              </Grid>
+            </Grid>
+            <Box sx={{ mt: 6, mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant='h6'>Career Goal</Typography>
+            </Box>
+            <Divider sx={{ mt: 4 }} />
+            <Grid container spacing={1}>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
+                <Box sx={{ display: 'flex', mb: 2.7 }}>
+                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Dream Job: </Typography>
+                  <Typography variant='body2'>placeholder</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Industry: </Typography>
+                  <Typography variant='body2'>placeholder</Typography>
+                </Box>
+              </Grid>
+              <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Topics interested: </Typography>
+                    {chosenTopics.map((chosen, index) => (
+                      <>
+                        {index!=0 ?
+                          <Typography variant='body2'>, {chosen.label}</Typography> :
+                          <Typography variant='body2'>{chosen.label}</Typography>
+                        }
+                      </>
+                      )
+                    )
+                    }
                 </Box>
               </Grid>
             </Grid>
@@ -351,6 +447,51 @@ const UserProfile = ({ user, data, type }: { user: any; data: any; type?: string
                           </Select>
                         )}
                       />
+                  </Grid>
+                  <Grid item xs={12} sm={6}></Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Controller
+                      name='dreamJob'
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label='My Dream Job'
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Controller
+                      name='industry'
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label='Industry'
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <Box>
+                      <InputLabel>Topics Interested</InputLabel>
+                      <FormControl required error={error}>
+                        <Grid container sx={{mt:1}}>
+                          {topic.map((topic, index) => (
+                            <Grid item xs={6} sm={4} md={3} key={index}>
+                            <FormControlLabel
+                              label={topic.label}
+                              control={<Checkbox  disabled={!topic.checked && error} checked={topic.checked} onChange={handleChange} name={topic.label} />}
+                            />
+                            </Grid>)
+                          )}
+                        </Grid>
+                      <FormHelperText>Pick up to three options from the following topics</FormHelperText>
+                    </FormControl>
+                    </Box>
                   </Grid>
                   <Grid item xs={12} sx={{ justifyContent: 'center' }}>
                     <DialogActions sx={{ justifyContent: 'center' }}>
