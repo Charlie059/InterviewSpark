@@ -71,7 +71,29 @@ export type WorkHistory = {
   workHistoryIcon?: string
 }
 
+export enum PlanType {
+  Free = 'Free',
+  Premium = 'Premium'
+}
+
+export enum PlanPeriod {
+  M = 'Monthly',
+  Y = 'Yearly'
+}
+
+export type Product = {
+  productDetail: string
+  productID: string
+  productName: string
+  productNumUsage: number
+  productTotalNumUsage: number
+}
+
 export type Subscription = {
-  premium: boolean,
-  creditsUsed: number
+  startDate: Date
+  endDate: Date | null
+  planPeriodAmount: number
+  planPeriod: PlanPeriod
+  planType: PlanType
+  products: Product[]
 }

@@ -22,7 +22,7 @@ const UserSuspendDialog = (props: Props) => {
   const { open, setOpen } = props
 
   // ** States
-  const [userInput, setUserInput] = useState<string>('yes')
+  const [userInput, setUserInput] = useState<string>('confirm')
   const [secondDialogOpen, setSecondDialogOpen] = useState<boolean>(false)
 
   const handleClose = () => setOpen(false)
@@ -47,22 +47,22 @@ const UserSuspendDialog = (props: Props) => {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button variant='contained' onClick={() => handleConfirmation('yes')}>
-            Yes
+          <Button variant='contained' onClick={() => handleConfirmation('confirm')}>
+            Confirm
           </Button>
           <Button variant='outlined' color='secondary' onClick={() => handleConfirmation('cancel')}>
             Cancel
           </Button>
         </DialogActions>
       </Dialog>
-      {userInput === 'yes' &&
+      {userInput === 'confirm' && (
         <Dialog
           fullWidth
           open={secondDialogOpen}
           onClose={handleSecondDialogClose}
           sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 512 } }}
         >
-            <DialogContent>
+          <DialogContent>
             <Box
               sx={{
                 display: 'flex',
@@ -74,16 +74,11 @@ const UserSuspendDialog = (props: Props) => {
                 }
               }}
             >
-              <Icon
-                fontSize='5.5rem'
-                icon={'mdi:check-circle-outline'}
-              />
+              <Icon fontSize='5.5rem' icon={'mdi:check-circle-outline'} />
               <Typography variant='h4' sx={{ mb: 8 }}>
                 Unsubscribed!
               </Typography>
-              <Typography>
-                Your subscription cancelled successfully.
-              </Typography>
+              <Typography>Your subscription cancelled successfully.</Typography>
             </Box>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center' }}>
@@ -92,7 +87,7 @@ const UserSuspendDialog = (props: Props) => {
             </Button>
           </DialogActions>
         </Dialog>
-      }
+      )}
     </>
   )
 }

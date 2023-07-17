@@ -15,10 +15,9 @@ import Icon from '../../@core/components/icon'
 // ** Demo Components Imports
 import UserOverview from './UserOverview'
 import UserSecurity from './UserSecurity'
-import UserBilling from './UserBilling'
+import UserSubscription from './UserSubscription'
 
 import { Subscription } from 'src/context/types'
-
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
@@ -30,10 +29,23 @@ const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   }
 }))
 
-const ProfileViewTab = ({ user, data, type, tab, subscriptionData }: { user: any; data: any; type?: string; Props; subscriptionData: Subscription}) => {
+// Define the tab type
+type Tab = 'overview' | 'account-setting' | 'billing-plan'
+
+const ProfileViewTab = ({
+  user,
+  data,
+  tab,
+  subscriptionData
+}: {
+  user: any
+  data: any
+  tab: Tab
+  subscriptionData: Subscription
+}) => {
   // ** State
   const [activeTab, setActiveTab] = useState<string>(tab)
-  const [defaultTab, setDefaultTab] = useState(true)
+  const [defaultTab] = useState(true)
 
   const handleChange = (event: SyntheticEvent, value: string) => {
     setActiveTab(value)
@@ -64,17 +76,17 @@ const ProfileViewTab = ({ user, data, type, tab, subscriptionData }: { user: any
         <Tab value='billing-plan' label='Billing & Plan' icon={<Icon icon='mdi:bookmark-outline' />} />
       </TabList>
       <Box sx={{ mt: 6 }}>
-          <>
-            <TabPanel sx={{ p: 0 }} value='overview'>
-              <UserOverview user={user} data={data} type={"profile"}/>
-            </TabPanel>
-            <TabPanel sx={{ p: 0 }} value='account-setting'>
-              <UserSecurity/>
-            </TabPanel>
-            <TabPanel sx={{ p: 0 }} value='billing-plan'>
-              <UserBilling subscriptionData={subscriptionData}></UserBilling>
-            </TabPanel>
-          </>
+        <>
+          <TabPanel sx={{ p: 0 }} value='overview'>
+            <UserOverview user={user} data={data} type={'profile'} />
+          </TabPanel>
+          <TabPanel sx={{ p: 0 }} value='account-setting'>
+            <UserSecurity />
+          </TabPanel>
+          <TabPanel sx={{ p: 0 }} value='billing-plan'>
+            <UserSubscription subscriptionData={subscriptionData}></UserSubscription>
+          </TabPanel>
+        </>
       </Box>
     </TabContext>
   )

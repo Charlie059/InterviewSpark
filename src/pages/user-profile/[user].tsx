@@ -16,12 +16,9 @@ const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getSe
   const auth = useAuth()
   const router = useRouter()
 
-  //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
-  console.log(data)
-
   // If user is current user or profile is public, display profile
   if (user === auth.user?.userName) {
-    return <UserProfile user={user} data={data} type={'profile'} />
+    return <UserProfile user={user} data={data} type={'profile'} tab={'overview'} />
   } else if (data?.isPublic) {
     if (auth.user) {
       return <PublicProfile user={user} data={data} />
