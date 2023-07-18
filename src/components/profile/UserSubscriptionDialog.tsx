@@ -1,5 +1,5 @@
 // ** React Imports
-import {Dispatch, SetStateAction, useState} from 'react'
+import {Dispatch, SetStateAction, useState, useEffect} from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -27,6 +27,7 @@ const UserSuspendDialog = (props: Props) => {
   // ** States
   const [userInput, setUserInput] = useState<string>('confirm')
   const [secondDialogOpen, setSecondDialogOpen] = useState<boolean>(false)
+  const [error] = useState<boolean>(false)
 
   const handleClose = () => setOpen(false)
 
@@ -51,6 +52,12 @@ const UserSuspendDialog = (props: Props) => {
     setSecondDialogOpen(true)
   }
 
+  useEffect(() => {
+    if (error) {
+      alert('Cancelling subscription did not succeed.');
+    }
+  }, [error]);
+
   return (
     <>
       <Dialog fullWidth open={open} onClose={handleClose} sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 512 } }}>
@@ -71,37 +78,37 @@ const UserSuspendDialog = (props: Props) => {
           </Button>
         </DialogActions>
       </Dialog>
-      {userInput === 'confirm' && (
-        <Dialog
-          fullWidth
-          open={secondDialogOpen}
-          onClose={()=>handleSecondDialogClose(false)}
-          sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 400 } }}
-        >
-          <DialogContent>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                flexDirection: 'column',
-                '& svg': {
-                  mb: 14,
-                  color: 'success.main'
-                }
-              }}
-            >
-              <Icon fontSize='5.5rem' icon={'mdi:check-circle-outline'} />
-              <Typography variant='h4' sx={{ mb: 8 }}>
-                Unsubscribed
-              </Typography>
-              <Typography variant='body1'>We're sorry to see you go, but we'd love to have you back whenever you're ready.</Typography>
-            </Box>
-          </DialogContent>
-          <DialogActions sx={{ justifyContent: 'center' }}>
-            <Button variant='contained' color='success' onClick={()=>handleSecondDialogClose(true)}>
-              OK
-            </Button>
-          </DialogActions>
+        {userInput === 'confirm' && (
+          <Dialog
+            fullWidth
+            open={secondDialogOpen}
+            onClose={()=>handleSecondDialogClose(false)}
+            sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 400 } }}
+          >
+            <DialogContent>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  '& svg': {
+                    mb: 14,
+                    color: 'success.main'
+                  }
+                }}
+              >
+                <Icon fontSize='5.5rem' icon={'mdi:check-circle-outline'} />
+                <Typography variant='h4' sx={{ mb: 8 }}>
+                  Unsubscribed
+                </Typography>
+                <Typography variant='body1'>We're sorry to see you go, but we'd love to have you back whenever you're ready.</Typography>
+              </Box>
+            </DialogContent>
+            <DialogActions sx={{ justifyContent: 'center' }}>
+              <Button variant='contained' color='success' onClick={()=>handleSecondDialogClose(true)}>
+                OK
+              </Button>
+            </DialogActions>
         </Dialog>
       )}
     </>

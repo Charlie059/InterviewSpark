@@ -30,7 +30,7 @@ const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
 }))
 
 // Define the tab type
-type Tab = 'overview' | 'account-setting' | 'billing-plan'
+type Tab = 'overview' | 'account-setting' | 'subscription'
 
 const ProfileViewTab = ({
   user,
@@ -70,12 +70,11 @@ const ProfileViewTab = ({
         variant='scrollable'
         scrollButtons='auto'
         onChange={handleChange}
-        aria-label='forced scroll tabs example'
         sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
       >
         <Tab value='overview' label='Overview' icon={<Icon icon='mdi:account-outline' />} />
         <Tab value='account-setting' label='Account Setting' icon={<Icon icon='mdi:lock-outline' />} />
-        <Tab value='billing-plan' label='Billing & Plan' icon={<Icon icon='mdi:bookmark-outline' />} />
+        <Tab value='subscription' label='Subscription' icon={<Icon icon='mdi:bookmark-outline' />} />
       </TabList>
       <Box sx={{ mt: 6 }}>
         <>
@@ -85,7 +84,7 @@ const ProfileViewTab = ({
           <TabPanel sx={{ p: 0 }} value='account-setting'>
             <UserSecurity />
           </TabPanel>
-          <TabPanel sx={{ p: 0 }} value='billing-plan'>
+          <TabPanel sx={{ p: 0 }} value='subscription'>
             <UserSubscription subscriptionData={subscriptionData} setSubscriptionData={setSubscriptionData} />
           </TabPanel>
         </>

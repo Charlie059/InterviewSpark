@@ -115,7 +115,7 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
                           </Grid>
                           <Grid item xs={12} sm={10}>
                             <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
-                              {subscriptionData.planPeriod} subscription - $<strong>{subscriptionData.planPeriodAmount}</strong> per {subscriptionData.planPeriod == "Monthly" ? "month" : "year"}
+                              {subscriptionData.planPeriod} subscription: $<strong>{subscriptionData.planPeriodAmount}</strong> per {subscriptionData.planPeriod == "Monthly" ? "month" : "year"}
                             </Typography>
                           </Grid>
                         </Grid>
