@@ -14,7 +14,7 @@ const productInfo: Product[] = [
   {
     productDetail: "Hone your skills and boost your confidence by practicing interview questions to ace your job interview",
     productID: "MIQ_AL_003",
-    productName: "Mock Interview",
+    productName: "Interview Feedback",
     productNumUsage: 2,
     productTotalNumUsage: ProductTotalNumUsage.Free,
   },

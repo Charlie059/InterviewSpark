@@ -30,9 +30,11 @@ const UserSuspendDialog = (props: Props) => {
 
   const handleClose = () => setOpen(false)
 
-  const handleSecondDialogClose = () => {
+  const handleSecondDialogClose = (cancel: boolean) => {
     setSecondDialogOpen(false)
-    premiumToFree(subscriptionData)
+    if (cancel) {
+      premiumToFree(subscriptionData)
+    }
   }
 
   const premiumToFree = (subscriptionData: Subscription) => {
@@ -73,7 +75,7 @@ const UserSuspendDialog = (props: Props) => {
         <Dialog
           fullWidth
           open={secondDialogOpen}
-          onClose={handleSecondDialogClose}
+          onClose={()=>handleSecondDialogClose(false)}
           sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 400 } }}
         >
           <DialogContent>
@@ -96,7 +98,7 @@ const UserSuspendDialog = (props: Props) => {
             </Box>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center' }}>
-            <Button variant='contained' color='success' onClick={handleSecondDialogClose}>
+            <Button variant='contained' color='success' onClick={()=>handleSecondDialogClose(true)}>
               OK
             </Button>
           </DialogActions>
