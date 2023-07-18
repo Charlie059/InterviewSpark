@@ -81,17 +81,28 @@ export enum PlanPeriod {
   Y = 'Yearly'
 }
 
+export enum PlanPeriodAmount {
+  Free = 0,
+  Premium = 9.99
+}
+
+export enum ProductTotalNumUsage{
+  Free = 10,
+  Premium = Infinity
+}
+
 export type Product = {
   productDetail: string
   productID: string
   productName: string
   productNumUsage: number
-  productTotalNumUsage: number
+  productTotalNumUsage: ProductTotalNumUsage
 }
 
 export type Subscription = {
-  startDate: Date
-  endDate: Date | null
+  cancelAtPeriodEnd: boolean
+  currentPeriodStart: Date
+  currentPeriodEnd: Date | null
   planPeriodAmount: number
   planPeriod: PlanPeriod
   planType: PlanType

@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import {Dispatch, SetStateAction, useState} from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -11,15 +11,18 @@ import DialogActions from '@mui/material/DialogActions'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
+import {PlanPeriodAmount, PlanType, Subscription} from "../../context/types";
 
 type Props = {
   open: boolean
   setOpen: (val: boolean) => void
+  subscriptionData: Subscription
+  setSubscriptionData: Dispatch<SetStateAction<Subscription>>
 }
 
 const UserSuspendDialog = (props: Props) => {
   // ** Props
-  const { open, setOpen } = props
+  const { open, setOpen, subscriptionData, setSubscriptionData} = props
 
   // ** States
   const [userInput, setUserInput] = useState<string>('confirm')
@@ -27,7 +30,18 @@ const UserSuspendDialog = (props: Props) => {
 
   const handleClose = () => setOpen(false)
 
-  const handleSecondDialogClose = () => setSecondDialogOpen(false)
+  const handleSecondDialogClose = () => {
+    setSecondDialogOpen(false)
+    premiumToFree(subscriptionData)
+  }
+
+  const premiumToFree = (subscriptionData: Subscription) => {
+    setSubscriptionData({
+      ...subscriptionData,
+      planType: PlanType.Free,
+      planPeriodAmount: PlanPeriodAmount.Free,
+    });
+  }
 
   const handleConfirmation = (value: string) => {
     handleClose()

@@ -1,5 +1,5 @@
 // ** React Imports
-import { SyntheticEvent, useState, useEffect } from 'react'
+import {SyntheticEvent, useState, useEffect, SetStateAction, Dispatch} from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -36,12 +36,14 @@ const ProfileViewTab = ({
   user,
   data,
   tab,
-  subscriptionData
+  subscriptionData,
+  setSubscriptionData
 }: {
   user: any
   data: any
   tab: Tab
-  subscriptionData: Subscription
+  subscriptionData: Subscription,
+  setSubscriptionData: Dispatch<SetStateAction<Subscription>>
 }) => {
   // ** State
   const [activeTab, setActiveTab] = useState<string>(tab)
@@ -84,7 +86,7 @@ const ProfileViewTab = ({
             <UserSecurity />
           </TabPanel>
           <TabPanel sx={{ p: 0 }} value='billing-plan'>
-            <UserSubscription subscriptionData={subscriptionData}></UserSubscription>
+            <UserSubscription subscriptionData={subscriptionData} setSubscriptionData={setSubscriptionData} />
           </TabPanel>
         </>
       </Box>

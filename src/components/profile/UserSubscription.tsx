@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import {Dispatch, SetStateAction, useState} from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import Divider from '@mui/material/Divider'
-import { styled } from '@mui/material/styles'
+import {styled} from '@mui/material/styles'
 import CardHeader from '@mui/material/CardHeader'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
@@ -23,15 +23,14 @@ import ListItemText from '@mui/material/ListItemText'
 import CheckIcon from '@mui/icons-material/Check'
 
 // ** Custom Components
-import CustomChip from 'src/@core/components/mui/chip'
 import UserSubscriptionDialog from 'src/components/profile/UserSubscriptionDialog'
 
 // ** Types
-import { Subscription } from 'src/context/types'
-import { PlanType } from 'src/context/types'
+import {PlanType, Subscription, ProductTotalNumUsage, PlanPeriodAmount} from 'src/context/types'
 
 // ** Styles Import
 import 'react-credit-cards/es/styles-compiled.css'
+
 
 // ** Styled <sup> component
 const Sup = styled('sup')(({ theme }) => ({
@@ -48,50 +47,76 @@ const Sub = styled('sub')({
   alignSelf: 'flex-end'
 })
 
-// ** Premium Features
-const premiumFeatures = [
-  { id: 1, name: 'premium benefit 1' },
-  { id: 2, name: 'premium benefit 2' },
-  { id: 3, name: 'premium benefit 3' }
-]
+// ** Premium Linear Progression
+const linearGradient = 'linear-gradient(45deg, blue, purple)'
 
-const UserSubscription = ({ subscriptionData }: { subscriptionData: Subscription }) => {
+const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscriptionData: Subscription, setSubscriptionData: Dispatch<SetStateAction<Subscription>> }) => {
   // ** States
   const [openUpgradePlans, setOpenUpgradePlans] = useState<boolean>(false)
   const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState<boolean>(false)
 
   // Handle Upgrade Plan dialog
-  const handleUpgradePlansClickOpen = () => setOpenUpgradePlans(true)
-  const handleUpgradePlansClose = () => setOpenUpgradePlans(false)
+  const handleUpgradePlansClickOpen = () => {
+    setOpenUpgradePlans(true)
+  }
+  const handleUpgradePlansClose = () => {
+    freeToPremium(subscriptionData)
+    setOpenUpgradePlans(false)
+  }
+
+  const freeToPremium = (subscriptionData: Subscription) => {
+    setSubscriptionData({
+      ...subscriptionData,
+      planType: PlanType.Premium,
+      planPeriodAmount: PlanPeriodAmount.Premium,
+    });
+  }
+
+  // Format Date Object
+  const formatDateToString = (date: Date) => {
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear();
+    const formattedDate = `${month} ${day}, ${year}`;
+
+    return formattedDate;
+  }
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <Card>
-          <CardHeader title='Current plan' sx={{ m: 2 }} />
-          <CardContent sx={{ m: 5 }}>
+        <Card sx={{mb:4}}>
+          <CardHeader title='Current Plan' sx={{ m: 2 }} />
+          <CardContent sx={{ m: 2 }}>
             <Grid container spacing={6}>
               <Grid item xs={12} md={8} sx={{ mt: [4, 4, 0] }}>
                 <Card>
                   <CardContent>
-                    <Typography variant='h6' sx={{ mb: 6 }}>
-                      {subscriptionData.planType === PlanType.Premium ? 'Premium' : 'Free'}
-                    </Typography>
-                    <Box sx={{ display: 'flex', mb: 2, justifyContent: 'space-between' }}>
-                      <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
-                        {subscriptionData.planType === PlanType.Premium ? '$39/month' : '$0/month'}
-                      </Typography>
-                      <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
-                        Plan Credits: {100} / {subscriptionData.planType === PlanType.Premium ? 1000 : 265}
-                      </Typography>
-                    </Box>
-                    <LinearProgress value={20} variant='determinate' sx={{ height: 10, borderRadius: '5px' }} />
-                    <Typography variant='body2' sx={{ mt: 2, mb: 4 }}>
-                      Your plan requires update
-                    </Typography>
-
+                    <Grid item xs={12}>
+                      <Grid container spacing={3} sx={{mb:4}}>
+                        <Grid item xs={12}>
+                          <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>Your current plan type is <strong>{subscriptionData.planType}</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
+                            {subscriptionData.planPeriod} subscription - $<strong>{subscriptionData.planPeriodAmount}</strong> per {subscriptionData.planPeriod == "Monthly" ? "month" : "year"}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
+                            Your plan starts from <strong>{formatDateToString(subscriptionData.currentPeriodStart)}</strong>
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          {subscriptionData.currentPeriodEnd &&
+                            <Typography sx={{fontWeight: 500, mb: 1, fontSize: '0.875rem'}}>
+                            Active until <strong>{formatDateToString(subscriptionData.currentPeriodEnd)}</strong>
+                          </Typography>}
+                        </Grid>
+                      </Grid>
+                    </Grid>
                     <Divider sx={{ m: '1 !important' }} />
-
                     <Typography sx={{ fontWeight: 500, fontSize: '0.875rem', mt: 4 }}>
                       {subscriptionData.planType === PlanType.Premium
                         ? 'Thanks for being a Premium member'
@@ -99,39 +124,6 @@ const UserSubscription = ({ subscriptionData }: { subscriptionData: Subscription
                     </Typography>
                   </CardContent>
                 </Card>
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <Box sx={{ mb: 4 }}>
-                  {subscriptionData.planType === PlanType.Premium ? (
-                    <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
-                      Your Current Plan is <strong>Premium</strong>
-                    </Typography>
-                  ) : (
-                    <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
-                      Your Current Plan is <strong>Freemium</strong>
-                    </Typography>
-                  )}
-                  <Typography variant='body2'>A simple start for everyone</Typography>
-                </Box>
-                <Box sx={{ mb: 4 }}>
-                  <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
-                    Active until Dec 09, 2021
-                  </Typography>
-                  <Typography variant='body2'>We will send you a notification upon Subscription expiration</Typography>
-                </Box>
-                <div>
-                  <Box sx={{ display: 'flex', mb: 1, alignItems: 'center' }}>
-                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>$39 Per Month</Typography>
-                    <CustomChip
-                      skin='light'
-                      size='small'
-                      label='Popular'
-                      color='primary'
-                      sx={{ height: 20, fontSize: '0.75rem', fontWeight: 600, borderRadius: '5px' }}
-                    />
-                  </Box>
-                  <Typography variant='body2'>Standard plan for small to medium businesses</Typography>
-                </div>
               </Grid>
               <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start' }}>
                 {!(subscriptionData.planType === PlanType.Premium) && (
@@ -148,7 +140,7 @@ const UserSubscription = ({ subscriptionData }: { subscriptionData: Subscription
             </Grid>
           </CardContent>
 
-          <UserSubscriptionDialog open={subscriptionDialogOpen} setOpen={setSubscriptionDialogOpen} />
+          <UserSubscriptionDialog open={subscriptionDialogOpen} setOpen={setSubscriptionDialogOpen} subscriptionData={subscriptionData} setSubscriptionData={setSubscriptionData}/>
 
           <Dialog
             open={openUpgradePlans}
@@ -192,7 +184,7 @@ const UserSubscription = ({ subscriptionData }: { subscriptionData: Subscription
                             fontSize: '2rem !important'
                           }}
                         >
-                          39
+                          {PlanPeriodAmount.Premium}
                         </Typography>
                         <Sub>/ month</Sub>
                       </Box>
@@ -213,20 +205,20 @@ const UserSubscription = ({ subscriptionData }: { subscriptionData: Subscription
             >
               <Grid container>
                 <Grid item xs={12}>
-                  {premiumFeatures.map(item => (
-                    <List key={item.id} disablePadding={true}>
+                  {subscriptionData.products.map((product) => (
+                    <List key={product.productID} disablePadding={true}>
                       <ListItem>
                         <ListItemIcon>
                           <CheckIcon />
                         </ListItemIcon>
-                        <ListItemText>{item.name}</ListItemText>
+                        <ListItemText>{product.productName}</ListItemText>
                       </ListItem>
                     </List>
                   ))}
                 </Grid>
                 <Grid item xs={12}>
                   <Grid container sx={{ justifyContent: 'center' }}>
-                    <Button variant='contained' sx={{ m: 4, width: '90%' }}>
+                    <Button variant='contained' onClick={handleUpgradePlansClose} sx={{ m: 4, width: '90%' }}>
                       Upgrade Plan
                     </Button>
                   </Grid>
@@ -235,6 +227,46 @@ const UserSubscription = ({ subscriptionData }: { subscriptionData: Subscription
             </DialogContent>
           </Dialog>
         </Card>
+        <Grid container spacing={4}>
+          {subscriptionData.products.map((product) => {
+            const value = product.productNumUsage / product.productTotalNumUsage * 100
+
+            return (
+              <Grid item xs={12} key={product.productID}>
+                <Card>
+                  <CardContent>
+                    <Typography variant='h6' sx={{ mb: 2 }}>
+                      {product.productName}
+                    </Typography>
+                    <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+                      {product.productDetail}
+                    </Typography>
+                    <Box sx={{ display: 'flex', mb: 2, justifyContent: 'flex-end' }}>
+                      {product.productTotalNumUsage === ProductTotalNumUsage.Free &&
+                        <Typography sx={{fontWeight: 500, fontSize: '0.875rem'}}>
+                          Product Usage: {product.productNumUsage} / {product.productTotalNumUsage}
+                        </Typography>}
+                    </Box>
+                    {product.productTotalNumUsage === ProductTotalNumUsage.Free ?
+                      <LinearProgress value={value} variant='determinate' sx={{ height: 10, borderRadius: '5px' }}/> :
+                      <Box>
+                        <LinearProgress
+                          variant='indeterminate'
+                          sx={{mt:5, height: 10, borderRadius: '5px', backgroundImage: linearGradient}}
+                        />
+                        <Typography sx={{mt:5, fontWeight: 500, fontSize: '0.875rem', display: 'flex', justifyContent: 'flex-end'}}>
+                          Unlimited access at your disposal
+                        </Typography>
+                      </Box>
+                    }
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              );
+            })
+          }
+        </Grid>
       </Grid>
     </Grid>
   )

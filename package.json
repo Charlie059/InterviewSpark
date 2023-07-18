@@ -169,7 +169,7 @@
     "autoprefixer": "^10.4.14",
     "babel-jest": "^29.5.0",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
-    "cypress": "^12.9.0",
+    "cypress": "^12.17.1",
     "cypress-mailosaur": "^2.13.0",
     "dotenv": "^16.0.3",
     "eslint": "8.26.0",
