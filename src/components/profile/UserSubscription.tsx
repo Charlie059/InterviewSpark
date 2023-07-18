@@ -21,6 +21,10 @@ import ListItem from '@mui/material/ListItem'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import CheckIcon from '@mui/icons-material/Check'
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonth';
+import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
 
 // ** Custom Components
 import UserSubscriptionDialog from 'src/components/profile/UserSubscriptionDialog'
@@ -89,31 +93,66 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
           <CardHeader title='Current Plan' sx={{ m: 2 }} />
           <CardContent sx={{ m: 2 }}>
             <Grid container spacing={6}>
-              <Grid item xs={12} md={8} sx={{ mt: [4, 4, 0] }}>
+              <Grid item xs={12} sx={{ mt: [4, 4, 0]}}>
                 <Card>
                   <CardContent>
-                    <Grid item xs={12}>
-                      <Grid container spacing={3} sx={{mb:4}}>
-                        <Grid item xs={12}>
-                          <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>Your current plan type is <strong>{subscriptionData.planType}</strong>
-                          </Typography>
+                    <Grid container direction="row" justifyContent="space-between">
+                      <Grid item xs={9}>
+                        <Grid container spacing={4} sx={{mb:2.7}}>
+                          <Grid item>
+                            <ArticleOutlinedIcon />
+                          </Grid>
+                          <Grid item xs={12} sm={10}>
+                            <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>Current plan type: <strong>{subscriptionData.planType}</strong>
+                            </Typography>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                          <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
-                            {subscriptionData.planPeriod} subscription - $<strong>{subscriptionData.planPeriodAmount}</strong> per {subscriptionData.planPeriod == "Monthly" ? "month" : "year"}
-                          </Typography>
+                        <Grid container spacing={4} sx={{mb:2.7}}>
+                          <Grid item>
+                            <SavingsOutlinedIcon />
+                          </Grid>
+                          <Grid item xs={12} sm={10}>
+                            <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
+                              {subscriptionData.planPeriod} subscription - $<strong>{subscriptionData.planPeriodAmount}</strong> per {subscriptionData.planPeriod == "Monthly" ? "month" : "year"}
+                            </Typography>
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                          <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
-                            Your plan starts from <strong>{formatDateToString(subscriptionData.currentPeriodStart)}</strong>
-                          </Typography>
+                        <Grid container spacing={4} sx={{mb:2.7}}>
+                          <Grid item>
+                            <CalendarMonthOutlinedIcon />
+                          </Grid>
+                          <Grid item xs={12} sm={10}>
+                            {subscriptionData.currentPeriodEnd && (
+                              <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
+                                Billing starts from:  <strong>{formatDateToString(subscriptionData.currentPeriodStart)}</strong>
+                              </Typography>
+                            )}
+                          </Grid>
                         </Grid>
-                        <Grid item xs={12}>
-                          {subscriptionData.currentPeriodEnd &&
-                            <Typography sx={{fontWeight: 500, mb: 1, fontSize: '0.875rem'}}>
-                            Active until <strong>{formatDateToString(subscriptionData.currentPeriodEnd)}</strong>
-                          </Typography>}
+                        <Grid container spacing={4} sx={{mb:1.2}}>
+                          <Grid item>
+                            <CreditCardOutlinedIcon/>
+                          </Grid>
+                          <Grid item xs={12} sm={10}>
+                            {subscriptionData.currentPeriodEnd && (
+                              <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
+                                Next Billing Date: <strong>{formatDateToString(subscriptionData.currentPeriodEnd)}</strong>
+                              </Typography>
+                            )}
+                          </Grid>
                         </Grid>
+                      </Grid>
+                      <Grid item sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                        {!(subscriptionData.planType === PlanType.Premium) && (
+                          <Button variant='contained' onClick={handleUpgradePlansClickOpen} sx={{ mr: 3, mb: [3, 0] }}>
+                            Upgrade Plan
+                          </Button>
+                        )}
+                        {subscriptionData.planType === PlanType.Premium && (
+                          <Button variant='outlined' color='error' onClick={() => setSubscriptionDialogOpen(true)}>
+                            Cancel
+                          </Button>
+                        )}
                       </Grid>
                     </Grid>
                     <Divider sx={{ m: '1 !important' }} />
@@ -125,18 +164,13 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={12} sx={{ mt: 4, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-                {!(subscriptionData.planType === PlanType.Premium) && (
-                  <Button variant='contained' onClick={handleUpgradePlansClickOpen} sx={{ mr: 3, mb: [3, 0] }}>
-                    Upgrade Plan
-                  </Button>
-                )}
-                {subscriptionData.planType === PlanType.Premium && (
-                  <Button variant='outlined' color='error' onClick={() => setSubscriptionDialogOpen(true)}>
-                    Cancel Subscription
-                  </Button>
-                )}
-              </Grid>
+              {/*<Grid item xs={6} sx={{ mt: [4, 4, 0] }}>*/}
+              {/*  <Card>*/}
+              {/*    <CardContent>*/}
+              {/*      /!*<PricingTable data={data}/>*!/*/}
+              {/*    </CardContent>*/}
+              {/*  </Card>*/}
+              {/*</Grid>*/}
             </Grid>
           </CardContent>
 
@@ -211,7 +245,7 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
                         <ListItemIcon>
                           <CheckIcon />
                         </ListItemIcon>
-                        <ListItemText>{product.productName}</ListItemText>
+                        <ListItemText>{product.productDetail}</ListItemText>
                       </ListItem>
                     </List>
                   ))}
@@ -262,7 +296,6 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
                   </CardContent>
                 </Card>
               </Grid>
-
               );
             })
           }

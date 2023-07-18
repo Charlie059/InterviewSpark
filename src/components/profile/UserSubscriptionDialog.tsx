@@ -74,7 +74,7 @@ const UserSuspendDialog = (props: Props) => {
           fullWidth
           open={secondDialogOpen}
           onClose={handleSecondDialogClose}
-          sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 512 } }}
+          sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 400 } }}
         >
           <DialogContent>
             <Box
@@ -90,9 +90,9 @@ const UserSuspendDialog = (props: Props) => {
             >
               <Icon fontSize='5.5rem' icon={'mdi:check-circle-outline'} />
               <Typography variant='h4' sx={{ mb: 8 }}>
-                Unsubscribed!
+                Unsubscribed
               </Typography>
-              <Typography>Your subscription cancelled successfully.</Typography>
+              <Typography variant='body1'>We're sorry to see you go, but we'd love to have you back whenever you're ready.</Typography>
             </Box>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center' }}>
