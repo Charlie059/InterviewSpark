@@ -7,7 +7,7 @@ import {PlanPeriod, PlanPeriodAmount, PlanType, Product, ProductTotalNumUsage, S
 import {useState} from 'react'
 
 // Define the tab type
-type Tab = 'overview' | 'account-setting' | 'billing-plan'
+type Tab = 'overview' | 'account-setting' | 'subscription'
 
 // Fake data
 const productInfo: Product[] = [

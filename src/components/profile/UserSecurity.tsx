@@ -117,12 +117,12 @@ const UserSecurity = () => {
         <Card>
           <CardHeader title='Change Password' sx={{m:2}}/>
           <CardContent sx={{ml:5, mr:5}}>
-            <Grid container spacing ={10}>
-              <Grid item xs={7}>
+            <Grid container spacing={10}>
+              <Grid item xs={12} sm={12} md={7} lg={7}>
                 <form onSubmit={handleSubmit}>
                 <Grid container spacing={6}>
                   <Grid item xs={12}>
-                    <FormControl fullWidth error={!!errors.currentPassword}>
+                    <FormControl fullWidth error={!!errors}>
                       <InputLabel htmlFor='user-view-security-current-password'>Current Password</InputLabel>
                       <OutlinedInput
                         label='Current Password'
@@ -200,33 +200,33 @@ const UserSecurity = () => {
                   </Grid>
 
                   <Grid item xs={12}>
-                    <Button type='submit' variant='contained' sx={{mb:5}}>
+                    <Button type='submit' variant='contained' sx={{mb:[0, 0, 5, 5]}}>
                       Update
                     </Button>
                   </Grid>
                 </Grid>
               </form>
               </Grid>
-              <Grid item xs={5}>
-              <Alert icon={false} severity='warning' sx={{ mb: 6 }}>
-                <AlertTitle sx={{ fontWeight: 600, mb: theme => `${theme.spacing(1)} !important` }}>
-                  Ensure that these requirements are met
-                </AlertTitle>
-                <List>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CheckIcon color='warning' fontSize='small'></CheckIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="Minimum 8 characters long" disableTypography/>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CheckIcon color='warning' fontSize='small'></CheckIcon>
-                    </ListItemIcon>
-                    <ListItemText primary="New password must be different from current password" disableTypography/>
-                  </ListItem>
-                </List>
-            </Alert>
+              <Grid item xs={12} sm={12} md={5} lg={5}>
+                <Alert icon={false} severity='warning' sx={{ mb: 6 }}>
+                  <AlertTitle sx={{ fontWeight: 600, mb: theme => `${theme.spacing(1)} !important` }}>
+                    Ensure that these requirements are met
+                  </AlertTitle>
+                  <List>
+                    <ListItem>
+                      <ListItemIcon>
+                        <CheckIcon color='warning' fontSize='small'></CheckIcon>
+                      </ListItemIcon>
+                      <ListItemText primary="Minimum 8 characters long" disableTypography/>
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon>
+                        <CheckIcon color='warning' fontSize='small'></CheckIcon>
+                      </ListItemIcon>
+                      <ListItemText primary="New password must be different from current password" disableTypography/>
+                    </ListItem>
+                  </List>
+              </Alert>
               </Grid>
             </Grid>
           </CardContent>

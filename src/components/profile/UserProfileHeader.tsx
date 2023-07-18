@@ -12,6 +12,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogActions from '@mui/material/DialogActions'
 import TextField from '@mui/material/TextField'
+import Grid from '@mui/material/Grid'
 import { format } from 'date-fns'
 
 // ** Icon Imports
@@ -203,50 +204,53 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           <ProfilePicture src={proPicUrl} alt='profile-picture' />
         </div>
 
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            ml: { xs: 0, md: 6 },
-            alignItems: 'flex-end',
-            flexWrap: ['wrap', 'nowrap'],
-            justifyContent: ['center', 'space-between']
-          }}
-        >
-          <Box sx={{ mb: [6, 0], display: 'flex', flexDirection: 'column', alignItems: ['center', 'flex-start'] }}>
-            <Typography variant='h5' sx={{ mb: 4, fontSize: '1.375rem' }}>
-              {data.fName} {data.lName}
-            </Typography>
-            <Box
+        <Grid container
               sx={{
+                width: '100%',
                 display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: ['center', 'flex-start']
+                ml: { xs: 0, md: 6 },
+                alignItems: 'flex-end',
+                flexWrap: { xs: 'wrap', md: 'nowrap' },
+                justifyContent: { xs: 'center', md: 'space-between' }
               }}
-            >
-              {data.position && (
-                <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                  <Icon icon={designationIcon} />
-                  <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.position}</Typography>
+        >
+          <Grid item xs={12} sm={12} md={7} lg={7}>
+            <Box sx={{ mb: [6, 0], display: 'flex', flexDirection: 'column', alignItems: ['center', 'flex-start'] }}>
+              <Typography variant='h5' sx={{ mb: 4, fontSize: '1.375rem' }}>
+                {data.fName} {data.lName}
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: ['center', 'flex-start']
+                }}
+              >
+                {data.position && (
+                  <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+                    <Icon icon={designationIcon} />
+                    <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.position}</Typography>
+                  </Box>
+                )}
+                {data.country && (
+                  <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+                    <Icon icon='mdi:map-marker-outline' />
+                    <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>
+                      {data.city}, {data.country}
+                    </Typography>
+                  </Box>
+                )}
+                <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+                  <Icon icon='mdi:calendar-blank-outline' />
+                  <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>Joined {joiningDate}</Typography>
                 </Box>
-              )}
-              {data.country && (
-                <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                  <Icon icon='mdi:map-marker-outline' />
-                  <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                    {data.city}, {data.country}
-                  </Typography>
-                </Box>
-              )}
-              <Box sx={{ display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
-                <Icon icon='mdi:calendar-blank-outline' />
-                <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>Joined {joiningDate}</Typography>
               </Box>
             </Box>
-          </Box>
-          {type == 'Profile' &&
-            <div>
-              {data.isPublic &&
+          </Grid>
+          <Grid item xs={12} sm={12} md={5} lg={5} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+            {type == 'Profile' &&
+              <div>
+                {data.isPublic &&
                   <Button
                     variant='outlined'
                     onClick={handleShareOpen}
@@ -255,36 +259,37 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   >
                     Share
                   </Button>
-              }
-              <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>}
-                                label='Public'
-                                aria-owns={open ? 'mouse-over-popover' : undefined}
-                                aria-haspopup="true"
-                                onMouseEnter={handlePopoverOpen}
-                                onMouseLeave={handlePopoverClose}/>
-              <Popover
-                id="mouse-over-popover"
-                sx={{
-                  pointerEvents: 'none',
-                }}
-                open={open}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                transformOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                onClose={handlePopoverClose}
-                disableRestoreFocus
-              >
-                <Typography sx={{ p: 1 }}>{data.isPublic ? 'Turn off your profile information' : 'Turn on your profile information'} </Typography>
-              </Popover>
-            </div>
-          }
-        </Box>
+                }
+                <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>}
+                                  label='Public'
+                                  aria-owns={open ? 'mouse-over-popover' : undefined}
+                                  aria-haspopup="true"
+                                  onMouseEnter={handlePopoverOpen}
+                                  onMouseLeave={handlePopoverClose}/>
+                <Popover
+                  id="mouse-over-popover"
+                  sx={{
+                    pointerEvents: 'none',
+                  }}
+                  open={open}
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                  }}
+                  transformOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  onClose={handlePopoverClose}
+                  disableRestoreFocus
+                >
+                  <Typography sx={{ p: 1 }}>{data.isPublic ? 'Turn off your profile information' : 'Turn on your profile information'} </Typography>
+                </Popover>
+              </div>
+            }
+          </Grid>
+        </Grid>
       </CardContent>
       <Dialog
         open={openProfilePicture}

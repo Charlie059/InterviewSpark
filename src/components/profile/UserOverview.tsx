@@ -27,6 +27,8 @@ import MenuItem from "@mui/material/MenuItem";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import {updateUserProfile} from "../../graphql/mutations";
+import {InferGetServerSidePropsType} from "next/types";
+import {getServerSideProps} from "../../pages/user-profile/[user]";
 
 
 const UserOverview = ({ user, data, type }: { user: any; data: any; type?: string }) => {
@@ -63,7 +65,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   const { control, handleSubmit } = useForm({ defaultValues })
 
-  const updateProfile = async data => {
+  const updateProfile = async (data: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     console.log('aaa', data)
     try {
       const input = {
@@ -133,8 +135,8 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
   }, [])
 
   return (
-        <Grid container spacing={10}>
-          <Grid item xs={type !== 'tutorial' ? 5 : 12}>
+        <Grid container spacing={6}>
+          <Grid item xs={12} sm={12} md={5} lg={5}>
             <Card>
               <CardContent>
                 <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -383,14 +385,14 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
               </Dialog>
             </Card>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={12} sm={12} md={7} lg={7}>
             <Grid container spacing={6}>
               <Grid item xs={12}>
                   {educations && type !== 'tutorial' && (
                     <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />
                   )}
               </Grid>
-            <Grid item xs={12}>
+              <Grid item xs={12}>
                 {workHistories && type !== 'tutorial' && (
                   <WorkHistoryCard
                     type='private'

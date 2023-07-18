@@ -95,16 +95,16 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
           <CardHeader title='Current Plan' sx={{ m: 2 }} />
           <CardContent sx={{ m: 2 }}>
             <Grid container spacing={6}>
-              <Grid item xs={12} sx={{ mt: [4, 4, 0]}}>
+              <Grid item xs={12}>
                 <Card>
                   <CardContent>
                     <Grid container direction="row" justifyContent="space-between">
-                      <Grid item xs={9}>
+                      <Grid item xs={12} sm={12} md={9} lg={9}>
                         <Grid container spacing={4} sx={{mb:2.7}}>
                           <Grid item>
                             <ArticleOutlinedIcon />
                           </Grid>
-                          <Grid item xs={12} sm={10}>
+                          <Grid item xs={10}>
                             <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>Current plan type: <strong>{subscriptionData.planType}</strong>
                             </Typography>
                           </Grid>
@@ -113,7 +113,7 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
                           <Grid item>
                             <SavingsOutlinedIcon />
                           </Grid>
-                          <Grid item xs={12} sm={10}>
+                          <Grid item xs={10}>
                             <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
                               {subscriptionData.planPeriod} subscription: $<strong>{subscriptionData.planPeriodAmount}</strong> per {subscriptionData.planPeriod == "Monthly" ? "month" : "year"}
                             </Typography>
@@ -126,7 +126,7 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
                               <Grid item>
                                 <CalendarMonthOutlinedIcon />
                               </Grid>
-                              <Grid item xs={12} sm={10}>
+                              <Grid item xs={10}>
                                 {subscriptionData.currentPeriodEnd && (
                                   <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
                                     Billing starts from:  <strong>{formatDateToString(subscriptionData.currentPeriodStart)}</strong>
@@ -138,7 +138,7 @@ const UserSubscription = ({ subscriptionData, setSubscriptionData }: { subscript
                               <Grid item>
                                 <CreditCardOutlinedIcon/>
                               </Grid>
-                              <Grid item xs={12} sm={10}>
+                              <Grid item xs={10}>
                                 {subscriptionData.currentPeriodEnd && (
                                   <Typography sx={{ fontWeight: 500, mb: 1, fontSize: '0.875rem' }}>
                                     Next Billing Date: <strong>{formatDateToString(subscriptionData.currentPeriodEnd)}</strong>
