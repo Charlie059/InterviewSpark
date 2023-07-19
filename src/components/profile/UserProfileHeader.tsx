@@ -17,23 +17,23 @@ import { format } from 'date-fns'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
-import IconButton from "@mui/material/IconButton";
-import Close from "mdi-material-ui/Close";
-import Pencil from 'mdi-material-ui/Pencil';
-import {useEffect, useState} from "react";
-import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton'
+import Close from 'mdi-material-ui/Close'
+import Pencil from 'mdi-material-ui/Pencil'
+import { useEffect, useState } from 'react'
+import Button from '@mui/material/Button'
 
 //** Component Imports
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DocumentUpload from "../uploaders/DocumentUpload";
-import { Storage } from "@aws-amplify/storage"
-import {API, graphqlOperation} from "aws-amplify";
-import {updateUserProfile} from "../../graphql/mutations";
-import toast from "react-hot-toast";
-import Avatar from "@mui/material/Avatar";
-import Popover from "@mui/material/Popover";
-import * as React from 'react';
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DocumentUpload from '../uploaders/DocumentUpload'
+import { Storage } from '@aws-amplify/storage'
+import { API, graphqlOperation } from 'aws-amplify'
+import { updateUserProfile } from '../../graphql/mutations'
+import toast from 'react-hot-toast'
+import Avatar from '@mui/material/Avatar'
+import Popover from '@mui/material/Popover'
+import * as React from 'react'
 
 import { useAuth } from 'src/hooks/useAuth'
 
@@ -48,8 +48,7 @@ const ProfilePicture = styled(Avatar)(({ theme }) => ({
   }
 }))
 
-
-type diagTypes = 'profile' | 'cover';
+type diagTypes = 'profile' | 'cover'
 
 const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   // ** State
@@ -67,30 +66,31 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   const [editable, setEditable] = useState<boolean>(false)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refresh, setRefresh] = useState(Date.now())
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null)
   const [share, setShare] = useState(false)
-  const [linkCopied, setLinkCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false)
 
   useEffect(() => {
-    if(type == "Dashboard" || type == "Profile"){
+    if (type == 'Dashboard' || type == 'Profile') {
       setEditable(true)
       setShowCover(true)
-    }else if(type == "Public"){
+    } else if (type == 'Public') {
       setEditable(false)
       setShowCover(true)
-      console.log("show cover: ", showCover)
-    }else{
+      console.log('show cover: ', showCover)
+    } else {
       setEditable(false)
       setShowCover(false)
     }
     console.log(process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL)
-    const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey;
+    const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey
     console.log(proPicUrl)
-    const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey;
+    const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey
     data.emailAddress = data.userEmailAddress
     setProPicUrl(proPicUrl)
     setCoverPicUrl(coverPicUrl)
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const auth = useAuth()
 
@@ -104,59 +104,57 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   }
 
   const handleProPicClose = () => setOpenProfilePicture(false)
-  const handleProPicSubmit = async () =>{
-    if(!files[0]){
-      toast.error("no image selected")
-    }else{
-      const file = files[0];
-      const dateStamp = Date.now();
-      const fileType = file.name.split(".").pop();
-      const key = `${dateStamp}.${fileType}`;
-      await Storage.put(key, file, {level:"public"}) //public bucket
+  const handleProPicSubmit = async () => {
+    if (!files[0]) {
+      toast.error('no image selected')
+    } else {
+      const file = files[0]
+      const dateStamp = Date.now()
+      const fileType = file.name.split('.').pop()
+      const key = `${dateStamp}.${fileType}`
+      await Storage.put(key, file, { level: 'public' }) //public bucket
         .then(async result => {
-          console.log("Upload successful:", result);
-          if(dialogType == "profile"){
+          console.log('Upload successful:', result)
+          if (dialogType == 'profile') {
             data.photoImgKey = key
-          }else{
+          } else {
             data.coverImgKey = key
           }
           data.emailAddress = data.userEmailAddress
-          console.log("data to update:",data)
+          console.log('data to update:', data)
           await API.graphql(graphqlOperation(updateUserProfile, data))
-          await Storage.get(key,{level:"public"}).then(newUrl => {
-            if(dialogType == "profile"){
+          await Storage.get(key, { level: 'public' }).then(newUrl => {
+            if (dialogType == 'profile') {
               setProPicUrl(newUrl)
-            }else{
+            } else {
               setCoverPicUrl(newUrl)
             }
             setOpenProfilePicture(false)
           })
         })
         .catch(error => {
-          console.error("Error uploading file:", error);
-        });
+          console.error('Error uploading file:', error)
+        })
     }
-
   }
 
   const toggle = async () => {
-
     //use state to refresh component
     setRefresh(Date.now())
-    data.isPublic=!data.isPublic
-    console.log("public to update:" , data)
+    data.isPublic = !data.isPublic
+    console.log('public to update:', data)
     await API.graphql(graphqlOperation(updateUserProfile, data))
-  };
+  }
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
-  const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl)
 
   const handleShareOpen = () => setShare(true)
   const handleShareClose = () => {
@@ -166,26 +164,30 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
 
   const handleCopyClose = async () => {
     try {
-      await navigator.clipboard.writeText('https://www.hirebeat.me/' + auth.user?.userName);
-      setLinkCopied(true);
+      await navigator.clipboard.writeText('https://www.hirebeat.me/' + auth.user?.userName)
+      setLinkCopied(true)
     } catch (error) {
-      console.error('Error copying link:', error);
+      console.error('Error copying link:', error)
     }
-  };
+  }
 
   return data !== null ? (
     <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
-      {editable && <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
-        <Pencil/>
-      </IconButton>}
-      {showCover && <CardMedia
-        component='img'
-        alt='profile-cover-img'
-        image={coverPicUrl}
-        sx={{
-          height: { xs: 150, md: 250 }
-        }}
-      />}
+      {editable && (
+        <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
+          <Pencil />
+        </IconButton>
+      )}
+      {showCover && (
+        <CardMedia
+          component='img'
+          alt='profile-cover-img'
+          image={coverPicUrl}
+          sx={{
+            height: { xs: 150, md: 250 }
+          }}
+        />
+      )}
       <CardContent
         sx={{
           pt: 0,
@@ -198,21 +200,24 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         }}
       >
         <div>
-          {editable && <IconButton sx={{position: 'absolute', zIndex: 1}} onClick={handleProPicOpen}>
-            <Pencil/>
-          </IconButton>}
+          {editable && (
+            <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleProPicOpen}>
+              <Pencil />
+            </IconButton>
+          )}
           <ProfilePicture src={proPicUrl} alt='profile-picture' />
         </div>
 
-        <Grid container
-              sx={{
-                width: '100%',
-                display: 'flex',
-                ml: { xs: 0, md: 6 },
-                alignItems: 'flex-end',
-                flexWrap: { xs: 'wrap', md: 'nowrap' },
-                justifyContent: { xs: 'center', md: 'space-between' }
-              }}
+        <Grid
+          container
+          sx={{
+            width: '100%',
+            display: 'flex',
+            ml: { xs: 0, md: 6 },
+            alignItems: 'flex-end',
+            flexWrap: { xs: 'wrap', md: 'nowrap' },
+            justifyContent: { xs: 'center', md: 'space-between' }
+          }}
         >
           <Grid item xs={12} sm={12} md={7} lg={7}>
             <Box sx={{ mb: [6, 0], display: 'flex', flexDirection: 'column', alignItems: ['center', 'flex-start'] }}>
@@ -227,13 +232,17 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                 }}
               >
                 {data.position && (
-                  <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+                  <Box
+                    sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}
+                  >
                     <Icon icon={designationIcon} />
                     <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.position}</Typography>
                   </Box>
                 )}
                 {data.country && (
-                  <Box sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}>
+                  <Box
+                    sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}
+                  >
                     <Icon icon='mdi:map-marker-outline' />
                     <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>
                       {data.city}, {data.country}
@@ -248,46 +257,50 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={12} md={5} lg={5} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
-            {type == 'Profile' &&
+            {type == 'Profile' && (
               <div>
-                {data.isPublic &&
+                {data.isPublic && (
                   <Button
                     variant='outlined'
                     onClick={handleShareOpen}
                     endIcon={<Icon icon='mdi:share' />}
-                    sx={{mr:5}}
+                    sx={{ mr: 5 }}
                   >
                     Share
                   </Button>
-                }
-                <FormControlLabel control={<Switch checked={data.isPublic} onChange={toggle}/>}
-                                  label='Public'
-                                  aria-owns={open ? 'mouse-over-popover' : undefined}
-                                  aria-haspopup="true"
-                                  onMouseEnter={handlePopoverOpen}
-                                  onMouseLeave={handlePopoverClose}/>
+                )}
+                <FormControlLabel
+                  control={<Switch checked={data.isPublic} onChange={toggle} />}
+                  label='Public'
+                  aria-owns={open ? 'mouse-over-popover' : undefined}
+                  aria-haspopup='true'
+                  onMouseEnter={handlePopoverOpen}
+                  onMouseLeave={handlePopoverClose}
+                />
                 <Popover
-                  id="mouse-over-popover"
+                  id='mouse-over-popover'
                   sx={{
-                    pointerEvents: 'none',
+                    pointerEvents: 'none'
                   }}
                   open={open}
                   anchorEl={anchorEl}
                   anchorOrigin={{
                     vertical: 'top',
-                    horizontal: 'left',
+                    horizontal: 'left'
                   }}
                   transformOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'left',
+                    horizontal: 'left'
                   }}
                   onClose={handlePopoverClose}
                   disableRestoreFocus
                 >
-                  <Typography sx={{ p: 1 }}>{data.isPublic ? 'Turn off your profile information' : 'Turn on your profile information'} </Typography>
+                  <Typography sx={{ p: 1 }}>
+                    {data.isPublic ? 'Turn off your profile information' : 'Turn on your profile information'}{' '}
+                  </Typography>
                 </Popover>
               </div>
-            }
+            )}
           </Grid>
         </Grid>
       </CardContent>
@@ -305,21 +318,19 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         aria-describedby='user-view-edit-description'
       >
         <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleProPicClose}>
-          <Close/>
+          <Close />
         </IconButton>
         <DialogContent>
-          <DocumentUpload type="image" files={files} setFiles={setFiles} />
+          <DocumentUpload type='image' files={files} setFiles={setFiles} />
         </DialogContent>
-        {files[0] &&<Button  size='large' variant='contained' onClick={handleProPicSubmit}>
-          Submit
-        </Button>}
+        {files[0] && (
+          <Button size='large' variant='contained' onClick={handleProPicSubmit}>
+            Submit
+          </Button>
+        )}
       </Dialog>
-      <Dialog
-        open={share}
-        onClose={handleShareClose}
-        fullWidth={true}
-      >
-        <DialogTitle id='simple-dialog-title' >Share your profile</DialogTitle>
+      <Dialog open={share} onClose={handleShareClose} fullWidth={true}>
+        <DialogTitle id='simple-dialog-title'>Share your profile</DialogTitle>
         <TextField
           label='Link'
           defaultValue={'https://www.hirebeat.me/' + auth.user?.userName}
@@ -327,10 +338,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           InputProps={{ readOnly: true }}
           sx={{ m: 5 }}
         />
-        <DialogActions
-          className='dialog-actions-dense'
-          sx={{ justifyContent: 'space-between' }}
-        >
+        <DialogActions className='dialog-actions-dense' sx={{ justifyContent: 'space-between' }}>
           <Button onClick={handleCopyClose} startIcon={<Icon icon='mdi:link' />}>
             {linkCopied ? 'Link copied' : 'Copy Link'}
           </Button>
@@ -338,7 +346,6 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         </DialogActions>
       </Dialog>
     </Card>
-
   ) : null
 }
 

@@ -1,5 +1,5 @@
 // ** React Imports
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -17,7 +17,7 @@ import MuiStep from '@mui/material/Step'
 import Icon from 'src/@core/components/icon'
 
 import { API, graphqlOperation } from 'aws-amplify'
-import {getUserEducations, getUserProfileByUsername, getUserWorkHistories} from 'src/graphql/queries'
+import { getUserEducations, getUserProfileByUsername, getUserWorkHistories } from 'src/graphql/queries'
 
 // ** Step Components Imports
 import UserProfile from 'src/components/profile/UserProfile'
@@ -29,8 +29,8 @@ import WorkHistoryCard from 'src/components/profile/profile-cards/WorkHistoryCar
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
-import {Education, WorkHistory} from "../../context/types";
-import {Profile} from "../../API";
+import { Education, WorkHistory } from '../../context/types'
+import { Profile } from '../../API'
 
 const steps = [
   {
@@ -92,34 +92,33 @@ const Tutorial = () => {
     }
   }
   const [stepContent, setStepContent] = useState<React.ReactNode>()
-  let userData: Profile;
-  let eduDatas: Education[]=[];
-  let workDatas: WorkHistory[]=[];
+  let userData: Profile
+  let eduDatas: Education[] = []
+  let workDatas: WorkHistory[] = []
 
   async function getData() {
-
     // Get userProfile data from GraphQL
     const userDatastore = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: user }))
     if ('data' in userDatastore) {
-      userData=userDatastore.data.getUserProfileByUsername
-      const eduData = await API.graphql(graphqlOperation(getUserEducations, { emailAddress: auth.user?.userEmailAddress }))
+      userData = userDatastore.data.getUserProfileByUsername
+      const eduData = await API.graphql(
+        graphqlOperation(getUserEducations, { emailAddress: auth.user?.userEmailAddress })
+      )
       const workData = await API.graphql(
-        graphqlOperation(getUserWorkHistories, { emailAddress: auth.user?.userEmailAddress  })
+        graphqlOperation(getUserWorkHistories, { emailAddress: auth.user?.userEmailAddress })
       )
       if ('data' in eduData) {
         eduDatas = eduData.data.getUserEducations.educations
-        console.log("eduData get", eduData)
+        console.log('eduData get', eduData)
       }
       if ('data' in workData) {
         workDatas = workData.data.getUserWorkHistories.workHistory
       }
-
     }
   }
 
-
-  const handleRefresh = () =>{
-    getData().then(()=>{
+  const handleRefresh = () => {
+    getData().then(() => {
       getStepContent(activeStep)
     })
   }
@@ -127,15 +126,15 @@ const Tutorial = () => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} />)
+        setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} tab={'overview'} />)
         break
       case 1:
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setStepContent(<EducationCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh}/>)
+        setStepContent(<EducationCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh} />)
         break
       case 2:
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setStepContent(<WorkHistoryCard workDatas={workDatas} type={'tutorial'} refresh={handleRefresh}/>)
+        setStepContent(<WorkHistoryCard workDatas={workDatas} type={'tutorial'} refresh={handleRefresh} />)
         break
       case 3:
         setStepContent(<ResumeScanPage type={'tutorial'} />)
@@ -150,8 +149,8 @@ const Tutorial = () => {
   }
 
   useEffect(() => {
-    getData().then(()=>{
-      console.log(userData,eduDatas,workDatas)
+    getData().then(() => {
+      console.log(userData, eduDatas, workDatas)
       getStepContent(activeStep)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -213,8 +212,12 @@ const Tutorial = () => {
       <div style={{ width: '80%' }}>
         <CardContent>
           <Grid container spacing={3}>
-            <Grid item xs={12}>{stepContent}</Grid>
-            <Grid item xs={12}>{renderFooter()}</Grid>
+            <Grid item xs={12}>
+              {stepContent}
+            </Grid>
+            <Grid item xs={12}>
+              {renderFooter()}
+            </Grid>
           </Grid>
         </CardContent>
       </div>
