@@ -70,3 +70,41 @@ export type WorkHistory = {
   workHistoryJobDescription?: string
   workHistoryIcon?: string
 }
+
+export enum PlanType {
+  Free = 'Free',
+  Premium = 'Premium'
+}
+
+export enum PlanPeriod {
+  M = 'Monthly',
+  Y = 'Yearly'
+}
+
+export enum PlanPeriodAmount {
+  Free = 0,
+  Premium = 9.99
+}
+
+export enum ProductTotalNumUsage{
+  Free = 10,
+  Premium = Infinity
+}
+
+export type Product = {
+  productDetail: string
+  productID: string
+  productName: string
+  productNumUsage: number
+  productTotalNumUsage: ProductTotalNumUsage
+}
+
+export type Subscription = {
+  cancelAtPeriodEnd: boolean
+  currentPeriodStart: Date
+  currentPeriodEnd: Date | null
+  planPeriodAmount: number
+  planPeriod: PlanPeriod
+  planType: PlanType
+  products: Product[]
+}
