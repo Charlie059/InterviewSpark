@@ -1,3 +1,8 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
 type Education {
   eduID: String
   eduDegree: String
@@ -284,6 +289,15 @@ type Mutation {
     workDescription: String!
   ): WorkHistory!
   removeUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): OperationResult!
+  createUserSubscriptionRequest(userEmail: AWSEmail!, planID: String!): StripeOperationResult!
+  resumeUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): StripeOperationResult!
+  cancelUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): StripeOperationResult!
+}
+
+type StripeOperationResult {
+  isSuccess: Boolean!
+  error: String
+  info: AWSJSON
 }
 
 type OperationResult {
@@ -349,6 +363,39 @@ type Query {
   getUserResumeScans(emailAddress: AWSEmail!): ResumeScanList!
   getUserEducationByID(emailAddress: AWSEmail!, eduID: String!): Education!
   getUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): WorkHistory!
+  getUserCurrentActiveSubscriptionAndProducts(emailAddress: AWSEmail!): UserSubscriptionProductsList!
+}
+
+type UserSubscription {
+  cancelAtPeriodEnd: Boolean
+  currentPeriodEnd: AWSDateTime
+  currentPeriodStart: AWSDateTime
+  GSI1SK: String
+  planPeriod: String
+  planPeriodAmount: String
+  planStatus: String
+  planType: String
+  stripeCustomerID: String
+  subscriptionID: String!
+}
+
+type UserSubscriptionProduct {
+  GSI1SK: String
+  productDetail: String
+  productID: String
+  productName: String!
+  productNumUsage: Int!
+  productTotalNumUsage: Int!
+  subscriptionID: String!
+}
+
+type UserSubscriptionProducts {
+  userSubscription: UserSubscription!
+  userSubscriptionProduct: [UserSubscriptionProduct]!
+}
+
+type UserSubscriptionProductsList {
+  userSubscriptionProductsArray: [UserSubscriptionProducts]!
 }
 
 type Question {

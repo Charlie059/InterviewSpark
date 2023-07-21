@@ -62,6 +62,13 @@ export type WorkHistory = {
   workHistoryIcon?: string | null,
 };
 
+export type StripeOperationResult = {
+  __typename: "StripeOperationResult",
+  isSuccess: boolean,
+  error?: string | null,
+  info?: string | null,
+};
+
 export type Profile = {
   __typename: "Profile",
   fName?: string | null,
@@ -139,6 +146,42 @@ export type QuestionList = {
 export type ResumeScanList = {
   __typename: "ResumeScanList",
   resumeScanList?:  Array<ResumeScan | null > | null,
+};
+
+export type UserSubscriptionProductsList = {
+  __typename: "UserSubscriptionProductsList",
+  userSubscriptionProductsArray:  Array<UserSubscriptionProducts | null >,
+};
+
+export type UserSubscriptionProducts = {
+  __typename: "UserSubscriptionProducts",
+  userSubscription: UserSubscription,
+  userSubscriptionProduct:  Array<UserSubscriptionProduct | null >,
+};
+
+export type UserSubscription = {
+  __typename: "UserSubscription",
+  cancelAtPeriodEnd?: boolean | null,
+  currentPeriodEnd?: string | null,
+  currentPeriodStart?: string | null,
+  GSI1SK?: string | null,
+  planPeriod?: string | null,
+  planPeriodAmount?: string | null,
+  planStatus?: string | null,
+  planType?: string | null,
+  stripeCustomerID?: string | null,
+  subscriptionID: string,
+};
+
+export type UserSubscriptionProduct = {
+  __typename: "UserSubscriptionProduct",
+  GSI1SK?: string | null,
+  productDetail?: string | null,
+  productID?: string | null,
+  productName: string,
+  productNumUsage: number,
+  productTotalNumUsage: number,
+  subscriptionID: string,
 };
 
 export type StartInterviewVideoAnalysisMutationVariables = {
@@ -481,6 +524,48 @@ export type RemoveUserWorkHistoryByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+  },
+};
+
+export type CreateUserSubscriptionRequestMutationVariables = {
+  userEmail: string,
+  planID: string,
+};
+
+export type CreateUserSubscriptionRequestMutation = {
+  createUserSubscriptionRequest:  {
+    __typename: "StripeOperationResult",
+    isSuccess: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type ResumeUserSubscriptionRequestMutationVariables = {
+  userEmail: string,
+  subscriptionId: string,
+};
+
+export type ResumeUserSubscriptionRequestMutation = {
+  resumeUserSubscriptionRequest:  {
+    __typename: "StripeOperationResult",
+    isSuccess: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type CancelUserSubscriptionRequestMutationVariables = {
+  userEmail: string,
+  subscriptionId: string,
+};
+
+export type CancelUserSubscriptionRequestMutation = {
+  cancelUserSubscriptionRequest:  {
+    __typename: "StripeOperationResult",
+    isSuccess: boolean,
+    error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -924,5 +1009,41 @@ export type GetUserWorkHistoryByIDQuery = {
     workHistoryEndDate?: string | null,
     workHistoryJobDescription?: string | null,
     workHistoryIcon?: string | null,
+  },
+};
+
+export type GetUserCurrentActiveSubscriptionAndProductsQueryVariables = {
+  emailAddress: string,
+};
+
+export type GetUserCurrentActiveSubscriptionAndProductsQuery = {
+  getUserCurrentActiveSubscriptionAndProducts:  {
+    __typename: "UserSubscriptionProductsList",
+    userSubscriptionProductsArray:  Array< {
+      __typename: "UserSubscriptionProducts",
+      userSubscription:  {
+        __typename: "UserSubscription",
+        cancelAtPeriodEnd?: boolean | null,
+        currentPeriodEnd?: string | null,
+        currentPeriodStart?: string | null,
+        GSI1SK?: string | null,
+        planPeriod?: string | null,
+        planPeriodAmount?: string | null,
+        planStatus?: string | null,
+        planType?: string | null,
+        stripeCustomerID?: string | null,
+        subscriptionID: string,
+      },
+      userSubscriptionProduct:  Array< {
+        __typename: "UserSubscriptionProduct",
+        GSI1SK?: string | null,
+        productDetail?: string | null,
+        productID?: string | null,
+        productName: string,
+        productNumUsage: number,
+        productTotalNumUsage: number,
+        subscriptionID: string,
+      } | null >,
+    } | null >,
   },
 };

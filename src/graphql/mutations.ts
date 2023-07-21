@@ -409,3 +409,45 @@ export const removeUserWorkHistoryByID = /* GraphQL */ `
     }
   }
 `;
+export const createUserSubscriptionRequest = /* GraphQL */ `
+  mutation CreateUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $planID: String!
+  ) {
+    createUserSubscriptionRequest(userEmail: $userEmail, planID: $planID) {
+      isSuccess
+      error
+      info
+    }
+  }
+`;
+export const resumeUserSubscriptionRequest = /* GraphQL */ `
+  mutation ResumeUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+  ) {
+    resumeUserSubscriptionRequest(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+    ) {
+      isSuccess
+      error
+      info
+    }
+  }
+`;
+export const cancelUserSubscriptionRequest = /* GraphQL */ `
+  mutation CancelUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+  ) {
+    cancelUserSubscriptionRequest(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+    ) {
+      isSuccess
+      error
+      info
+    }
+  }
+`;

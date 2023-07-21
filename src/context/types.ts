@@ -73,7 +73,7 @@ export type WorkHistory = {
 
 export enum PlanType {
   Free = 'Free',
-  Premium = 'Premium'
+  Prime = 'Prime'
 }
 
 export enum PlanPeriod {
@@ -86,25 +86,69 @@ export enum PlanPeriodAmount {
   Premium = 9.99
 }
 
-export enum ProductTotalNumUsage{
+export enum ProductTotalNumUsage {
   Free = 10,
   Premium = Infinity
 }
 
-export type Product = {
+export type UserSubscription = {
+  cancelAtPeriodEnd: boolean
+  currentPeriodEnd: string
+  currentPeriodStart: string
+  GSI1SK: string
+  planStatus: string
+  planPeriod: string
+  planPeriodAmount: number
+  planType: string
+  stripeCustomerID: string
+  subscriptionID: string
+}
+
+export type UserSubscriptionProduct = {
+  GSI1SK: string
   productDetail: string
   productID: string
   productName: string
   productNumUsage: number
-  productTotalNumUsage: ProductTotalNumUsage
+  productTotalNumUsage: number
+  subscriptionID: string
 }
 
-export type Subscription = {
-  cancelAtPeriodEnd: boolean
-  currentPeriodStart: Date
-  currentPeriodEnd: Date | null
-  planPeriodAmount: number
-  planPeriod: PlanPeriod
-  planType: PlanType
-  products: Product[]
+export type UserSubscriptionProducts = {
+  userSubscription: UserSubscription
+  userSubscriptionProduct: [UserSubscriptionProduct]
+}
+
+export type UserSubscriptionProductsList = {
+  userSubscriptionProductsArray: [UserSubscriptionProducts]
+}
+
+export enum Tab {
+  overview = 'overview',
+  account_setting = 'account_setting',
+  subscription = 'subscription'
+}
+
+export enum UserProfileViewTypes {
+  tutorial = 'tutorial',
+  profile = 'profile'
+}
+
+export enum TabType {
+  overview = 'overview',
+  account_setting = 'account-setting',
+  subscription = 'subscription'
+}
+
+export interface DialogSelectParam {
+  upgrade: boolean
+  resume: boolean
+  cancel: boolean
+  confirmCancel: boolean
+}
+
+export enum SubscriptionActionType {
+  upgrade = 'upgrade',
+  resume = 'resume',
+  cancel = 'cancel'
 }

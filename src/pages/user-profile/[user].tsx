@@ -7,21 +7,23 @@ import { getUserProfileByUsername } from 'src/graphql/queries'
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
 
-// ** Demo Components Imports
+// ** Components Imports
 import UserProfile from 'src/components/profile/UserProfile'
 import PublicProfile from '../../components/profile/PublicProfile'
+import { Tab, UserDataType, UserProfileViewTypes } from 'src/context/types'
 
-const UserProfileTab = ({ user, data }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const UserProfileTab = ({ user, profileData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
+  console.log('upper tes111t', profileData)
 
   // If user is current user or profile is public, display profile
   if (user === auth.user?.userName) {
-    return <UserProfile user={user} data={data} type={'profile'} tab={'overview'} />
-  } else if (data?.isPublic) {
+    return <UserProfile user={user} data={profileData} type={UserProfileViewTypes.profile} tab={Tab.overview} />
+  } else if (profileData?.isPublic) {
     if (auth.user) {
-      return <PublicProfile user={user} data={data} />
+      return <PublicProfile user={user} data={profileData} />
     } else {
       router.replace(`/` + user)
     }
@@ -36,20 +38,22 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
   console.log(userName)
 
   // Get userProfile data from GraphQL
-  let data = null
+  let profileData: UserDataType = null
 
   try {
     const userData = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
     if ('data' in userData) {
-      data = userData.data.getUserProfileByUsername
+      profileData = userData.data.getUserProfileByUsername
+      console.log('server test', profileData)
     }
   } catch (error) {
     console.error('Error fetching user data', error)
   }
+  console.log('server test', profileData)
 
   return {
     props: {
-      data,
+      profileData,
       user: userName
     }
   }

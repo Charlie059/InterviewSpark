@@ -388,3 +388,32 @@ export const getUserWorkHistoryByID = /* GraphQL */ `
     }
   }
 `;
+export const getUserCurrentActiveSubscriptionAndProducts = /* GraphQL */ `
+  query GetUserCurrentActiveSubscriptionAndProducts($emailAddress: AWSEmail!) {
+    getUserCurrentActiveSubscriptionAndProducts(emailAddress: $emailAddress) {
+      userSubscriptionProductsArray {
+        userSubscription {
+          cancelAtPeriodEnd
+          currentPeriodEnd
+          currentPeriodStart
+          GSI1SK
+          planPeriod
+          planPeriodAmount
+          planStatus
+          planType
+          stripeCustomerID
+          subscriptionID
+        }
+        userSubscriptionProduct {
+          GSI1SK
+          productDetail
+          productID
+          productName
+          productNumUsage
+          productTotalNumUsage
+          subscriptionID
+        }
+      }
+    }
+  }
+`;

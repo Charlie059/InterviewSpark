@@ -29,7 +29,7 @@ import WorkHistoryCard from 'src/components/profile/profile-cards/WorkHistoryCar
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
-import { Education, WorkHistory } from '../../context/types'
+import { Education, Tab, UserProfileViewTypes, WorkHistory } from '../../context/types'
 import { Profile } from '../../API'
 
 const steps = [
@@ -126,7 +126,9 @@ const Tutorial = () => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} tab={'overview'} />)
+        setStepContent(
+          <UserProfile user={user} data={userData} type={UserProfileViewTypes.tutorial} tab={Tab.overview} />
+        )
         break
       case 1:
         // eslint-disable-next-line @typescript-eslint/no-empty-function

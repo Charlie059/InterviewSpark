@@ -1,5 +1,5 @@
 // ** React Imports
-import {SyntheticEvent, useState, useEffect, SetStateAction, Dispatch} from 'react'
+import { SyntheticEvent, useState, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -14,13 +14,13 @@ import Icon from '../../@core/components/icon'
 
 // ** Demo Components Imports
 import UserOverview from './UserOverview'
-import UserSecurity from './UserSecurity'
-import UserSubscription from './UserSubscription'
+import UserSecurity from './Security/UserSecurity'
+import UserSubscription from './Subscription/UserSubscription'
 
-import { Subscription } from 'src/context/types'
+import { Tab, TabType, UserProfileViewTypes } from 'src/context/types'
 
 // ** Styled Tab component
-const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
+const StyledTab = styled(MuiTab)<TabProps>(({ theme }) => ({
   minHeight: 48,
   flexDirection: 'row',
   '& svg': {
@@ -29,38 +29,32 @@ const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   }
 }))
 
-// Define the tab type
-type Tab = 'overview' | 'account-setting' | 'subscription'
-
-const ProfileViewTab = ({
-  user,
-  data,
-  tab,
-  subscriptionData,
-  setSubscriptionData
-}: {
+interface ProfileViewTab {
   user: any
   data: any
+  type?: UserProfileViewTypes
   tab: Tab
-  subscriptionData: Subscription,
-  setSubscriptionData: Dispatch<SetStateAction<Subscription>>
-}) => {
+}
+
+const ProfileViewTab = (ProfileViewTab: ProfileViewTab) => {
+  // ** Destructure the props
+  const { user, data, tab } = ProfileViewTab
+
   // ** State
-  const [activeTab, setActiveTab] = useState<string>(tab)
+  const [activeTab, setActiveTab] = useState<Tab>(tab)
   const [defaultTab] = useState(true)
 
-  const handleChange = (event: SyntheticEvent, value: string) => {
+  const handleChange = (_event: SyntheticEvent, value: Tab) => {
     setActiveTab(value)
   }
 
   useEffect(() => {
     if (defaultTab) {
-      setActiveTab('overview')
+      setActiveTab(Tab.overview)
     }
     if (tab && tab !== activeTab) {
       setActiveTab(tab)
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab])
 
@@ -72,20 +66,20 @@ const ProfileViewTab = ({
         onChange={handleChange}
         sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
       >
-        <Tab value='overview' label='Overview' icon={<Icon icon='mdi:account-outline' />} />
-        <Tab value='account-setting' label='Account Setting' icon={<Icon icon='mdi:lock-outline' />} />
-        <Tab value='subscription' label='Subscription' icon={<Icon icon='mdi:bookmark-outline' />} />
+        <StyledTab value={TabType.overview} label='Overview' icon={<Icon icon='mdi:account-outline' />} />
+        <StyledTab value={TabType.account_setting} label='Account Setting' icon={<Icon icon='mdi:lock-outline' />} />
+        <StyledTab value={TabType.subscription} label='Subscription' icon={<Icon icon='mdi:bookmark-outline' />} />
       </TabList>
       <Box sx={{ mt: 6 }}>
         <>
-          <TabPanel sx={{ p: 0 }} value='overview'>
-            <UserOverview user={user} data={data} type={'profile'} />
+          <TabPanel sx={{ p: 0 }} value={TabType.overview}>
+            <UserOverview user={user} data={data} type={UserProfileViewTypes.profile} />
           </TabPanel>
-          <TabPanel sx={{ p: 0 }} value='account-setting'>
+          <TabPanel sx={{ p: 0 }} value={TabType.account_setting}>
             <UserSecurity />
           </TabPanel>
-          <TabPanel sx={{ p: 0 }} value='subscription'>
-            <UserSubscription subscriptionData={subscriptionData} setSubscriptionData={setSubscriptionData} />
+          <TabPanel sx={{ p: 0 }} value={TabType.subscription}>
+            <UserSubscription />
           </TabPanel>
         </>
       </Box>
