@@ -76,12 +76,16 @@ export default function PasswordResetValidation() {
   const { skin } = settings
 
   // ** Vars
-  const schema = yup.object().shape({
-    //have a minimum of 6 characters and a maximum of 128 characters
-    //Your users must create a password that Contains at least 1 of the following types of characters.
-    // numbers, special character, uppercase, lowercase.
+  const passwordValidation = yup
+    .string()
+    .required('Password is required')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      'Must contain 8 characters, at least one uppercase letter, one lowercase letter and one number'
+    )
 
-    password: yup.string().min(6).required()
+  const schema = yup.object().shape({
+    password: passwordValidation
   })
 
   const defaultValues = {

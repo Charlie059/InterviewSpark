@@ -1,4 +1,4 @@
-import { Button, CardHeader, Grid, CircularProgress } from '@mui/material'
+import { Button, CardHeader, Grid, CircularProgress, Chip } from '@mui/material'
 import { useState } from 'react'
 import { DialogSelectParam, PlanType, UserSubscription } from 'src/context/types'
 import { useSubscription } from 'src/hooks/useSubscription'
@@ -84,7 +84,17 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
   return (
     <Grid container alignItems='center' justifyContent='space-between'>
       <Grid item>
-        <CardHeader title='Current Plan' sx={{ m: 2 }} />
+        <CardHeader
+          title={
+            <>
+              Current Plan
+              {userSubscription.planStatus === 'past_due' && (
+                <Chip label='Past Due' sx={{ ml: 2, backgroundColor: '#f44336', color: '#fff' }} />
+              )}
+            </>
+          }
+          sx={{ m: 2 }}
+        />
       </Grid>
       <Grid item>{getPlanButton(userSubscription)}</Grid>
     </Grid>

@@ -26,6 +26,8 @@ import CheckIcon from '@mui/icons-material/Check'
 
 // ** Third Party Imports
 import * as yup from 'yup'
+import { Auth } from 'aws-amplify'
+import toast from 'react-hot-toast'
 
 interface State {
   currentPassword: string
@@ -49,13 +51,19 @@ const UserSecurity = () => {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   // ** Validation Schema
+  const passwordValidation = yup
+    .string()
+    .required('New password is required')
+    .min(8, 'New password must be at least 8 characters')
+    .notOneOf([yup.ref('currentPassword')], 'New password must be different from the current password')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      'Must contain 8 characters, at least one uppercase letter, one lowercase letter and one number'
+    )
+
   const schema = yup.object().shape({
     currentPassword: yup.string().required('Current password is required'),
-    newPassword: yup
-      .string()
-      .notOneOf([yup.ref('currentPassword')], 'New password must be different from the current password')
-      .min(8, 'New password must be at least 8 characters')
-      .required('New password is required'),
+    newPassword: passwordValidation,
     confirmNewPassword: yup
       .string()
       .oneOf([yup.ref('newPassword'), null], 'Passwords do not match')
@@ -63,13 +71,44 @@ const UserSecurity = () => {
   })
 
   // Define a function to handle form submission
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault()
 
     schema
       .validate(values, { abortEarly: false })
-      .then(() => {
+      .then(async () => {
         // Form is valid
+        const currentUser = await Auth.currentAuthenticatedUser()
+        console.log(currentUser)
+
+        try {
+          const res = await Auth.changePassword(currentUser, values.currentPassword, values.newPassword)
+          console.log(res)
+
+          if (res === 'SUCCESS') {
+            // Clear errors
+            setErrors({})
+
+            // Clear form values
+            setValues({
+              currentPassword: '',
+              showCurrentPassword: false,
+              newPassword: '',
+              showNewPassword: false,
+              confirmNewPassword: '',
+              showConfirmNewPassword: false
+            })
+
+            toast.success('Password changed successfully')
+          } else {
+            toast.error('Failed to change password')
+          }
+        } catch (error) {
+          console.log(error)
+
+          toast.error(`Failed to change password: ${error}`)
+        }
       })
       .catch(validationErrors => {
         // Form is invalid, set the errors state
@@ -78,6 +117,8 @@ const UserSecurity = () => {
           newErrors[error.path] = error.message
         })
         setErrors(newErrors)
+
+        toast.error('Validation error')
       })
   }
 
@@ -126,7 +167,7 @@ const UserSecurity = () => {
                 <form onSubmit={handleSubmit}>
                   <Grid container spacing={6}>
                     <Grid item xs={12}>
-                      <FormControl fullWidth error={!!errors}>
+                      <FormControl fullWidth error={!!errors.currentPassword}>
                         <InputLabel htmlFor='user-view-security-current-password'>Current Password</InputLabel>
                         <OutlinedInput
                           label='Current Password'
@@ -224,6 +265,15 @@ const UserSecurity = () => {
                         <CheckIcon color='warning' fontSize='small'></CheckIcon>
                       </ListItemIcon>
                       <ListItemText primary='Minimum 8 characters long' disableTypography />
+                    </ListItem>{' '}
+                    <ListItem>
+                      <ListItemIcon>
+                        <CheckIcon color='warning' fontSize='small'></CheckIcon>
+                      </ListItemIcon>
+                      <ListItemText
+                        primary='At least one uppercase letter, one lowercase letter and one number'
+                        disableTypography
+                      />
                     </ListItem>
                     <ListItem>
                       <ListItemIcon>
