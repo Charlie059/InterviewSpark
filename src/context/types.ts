@@ -152,3 +152,38 @@ export enum SubscriptionActionType {
   resume = 'resume',
   cancel = 'cancel'
 }
+
+export enum Industry {
+  Accounting = 'Accounting',
+  Airlines_Aviation = 'Airlines/Aviation',
+  Alternative_Dispute_Resolution = 'Alternative Dispute Resolution',
+  Alternative_Medicine = 'Alternative Medicine',
+  Animation = 'Animation',
+  Apparel_Fashion = 'Apparel & Fashion',
+  Architecture_Planning = 'Architecture & Planning'
+}
+
+export enum TopicsInterested {
+  Adaptability = 'Adaptability',
+  Commitment = 'Commitment',
+  Communication = 'Communication',
+  ConflictManagement = 'Conflict Management',
+  CriticalThinking = 'Critical Thinking',
+  Dependability = 'Dependability',
+  DetailOrientation = 'Detail Orientation',
+  Empathy = 'Empathy',
+  IntegrityEthics = 'Integrity & Ethics',
+  Leadership = 'Leadership',
+  OpennessToLearning = 'Openness to Learning',
+  ProblemSolving = 'Problem Solving',
+  SelfMotivation = 'Self Motivation',
+  StressManagement = 'Stress Management',
+  Teamwork = 'Teamwork',
+  TimeManagement = 'Time Management'
+}
+
+export type CareerGoal = {
+  dreamJob: string
+  industry: Industry
+  topicsInterested: TopicsInterested[]
+}
