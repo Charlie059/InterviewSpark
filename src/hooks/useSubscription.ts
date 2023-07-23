@@ -38,10 +38,10 @@ export function useSubscription(userSubscription: UserSubscription | null) {
 
       // Check if 'data' exists in result
       if ('data' in result!) {
-        if (result.data.createUserSubscriptionRequest.isSuccess) {
+        if (result.data.createUserSubscriptionRequest.isSuccessful) {
           const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
 
-          return { infoJSON, isSuccess: true }
+          return { infoJSON, isSuccessful: true }
         } else {
           throw new Error('Subscription request failed: ' + result.data.createUserSubscriptionRequest.error)
         }
@@ -51,7 +51,7 @@ export function useSubscription(userSubscription: UserSubscription | null) {
     } catch (error) {
       Logger.error(error)
 
-      return { isSuccess: false }
+      return { isSuccessful: false }
     }
   }, [auth])
 
@@ -67,10 +67,10 @@ export function useSubscription(userSubscription: UserSubscription | null) {
         })
       )
 
-      if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccess) {
+      if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccessful) {
         console.log('Subscription cancellation is successful', result.data.cancelUserSubscriptionRequest.info)
 
-        return result.data.cancelUserSubscriptionRequest.isSuccess
+        return result.data.cancelUserSubscriptionRequest.isSuccessful
       }
     } catch (error) {
       console.error('Error cancelling subscription', error)
@@ -91,10 +91,10 @@ export function useSubscription(userSubscription: UserSubscription | null) {
         })
       )
 
-      if ('data' in result && result.data.resumeUserSubscriptionRequest.isSuccess) {
+      if ('data' in result && result.data.resumeUserSubscriptionRequest.isSuccessful) {
         console.log('Subscription resuming is successful', result.data)
 
-        return result.data.resumeUserSubscriptionRequest.isSuccess
+        return result.data.resumeUserSubscriptionRequest.isSuccessful
       }
     } catch (error) {
       console.error('Error resuming subscription', error)

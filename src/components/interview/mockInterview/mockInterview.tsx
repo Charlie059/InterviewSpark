@@ -82,7 +82,11 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
     getVideoBlob,
     isVideoEnabled,
     isReading
-  } = useMockInterview(interviews)
+  } = useMockInterview({
+    interviews: interviews,
+    disableInterviewAnalysis: true,
+    disableInterviewInteractiveFeedback: true
+  })
 
   // Helper function to guard against multiple invocations of finishQuestion
   function guardedFinishQuestion() {

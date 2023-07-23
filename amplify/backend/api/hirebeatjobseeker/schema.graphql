@@ -289,20 +289,16 @@ type Mutation {
     workDescription: String!
   ): WorkHistory!
   removeUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): OperationResult!
-  createUserSubscriptionRequest(userEmail: AWSEmail!, planID: String!): StripeOperationResult!
-  resumeUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): StripeOperationResult!
-  cancelUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): StripeOperationResult!
-}
-
-type StripeOperationResult {
-  isSuccess: Boolean!
-  error: String
-  info: AWSJSON
+  createUserSubscriptionRequest(userEmail: AWSEmail!, planID: String!): OperationResult!
+  resumeUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
+  cancelUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
+  verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(userEmail: AWSEmail!): OperationResult!
 }
 
 type OperationResult {
   isSuccessful: Boolean!
   error: String
+  info: AWSJSON
 }
 
 type PaginatedInterviewList {

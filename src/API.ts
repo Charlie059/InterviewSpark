@@ -6,6 +6,7 @@ export type OperationResult = {
   __typename: "OperationResult",
   isSuccessful: boolean,
   error?: string | null,
+  info?: string | null,
 };
 
 export type InterviewList = {
@@ -60,13 +61,6 @@ export type WorkHistory = {
   workHistoryEndDate?: string | null,
   workHistoryJobDescription?: string | null,
   workHistoryIcon?: string | null,
-};
-
-export type StripeOperationResult = {
-  __typename: "StripeOperationResult",
-  isSuccess: boolean,
-  error?: string | null,
-  info?: string | null,
 };
 
 export type Profile = {
@@ -207,6 +201,7 @@ export type CreateNewGuestUserMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -339,6 +334,7 @@ export type UpdateUserProfileMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -354,6 +350,7 @@ export type RemoveUserInterviewsByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -367,6 +364,7 @@ export type RemoveUserResumeScanByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -466,6 +464,7 @@ export type RemoveUserEducationByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -524,6 +523,7 @@ export type RemoveUserWorkHistoryByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -534,8 +534,8 @@ export type CreateUserSubscriptionRequestMutationVariables = {
 
 export type CreateUserSubscriptionRequestMutation = {
   createUserSubscriptionRequest:  {
-    __typename: "StripeOperationResult",
-    isSuccess: boolean,
+    __typename: "OperationResult",
+    isSuccessful: boolean,
     error?: string | null,
     info?: string | null,
   },
@@ -548,8 +548,8 @@ export type ResumeUserSubscriptionRequestMutationVariables = {
 
 export type ResumeUserSubscriptionRequestMutation = {
   resumeUserSubscriptionRequest:  {
-    __typename: "StripeOperationResult",
-    isSuccess: boolean,
+    __typename: "OperationResult",
+    isSuccessful: boolean,
     error?: string | null,
     info?: string | null,
   },
@@ -562,8 +562,21 @@ export type CancelUserSubscriptionRequestMutationVariables = {
 
 export type CancelUserSubscriptionRequestMutation = {
   cancelUserSubscriptionRequest:  {
-    __typename: "StripeOperationResult",
-    isSuccess: boolean,
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsageMutationVariables = {
+  userEmail: string,
+};
+
+export type VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsageMutation = {
+  verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
     error?: string | null,
     info?: string | null,
   },

@@ -32,6 +32,7 @@ export const createNewGuestUser = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -192,6 +193,7 @@ export const updateUserProfile = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -210,6 +212,7 @@ export const removeUserInterviewsByID = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -224,6 +227,7 @@ export const removeUserResumeScanByID = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -336,6 +340,7 @@ export const removeUserEducationByID = /* GraphQL */ `
     removeUserEducationByID(emailAddress: $emailAddress, eduID: $eduID) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -406,6 +411,7 @@ export const removeUserWorkHistoryByID = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -415,7 +421,7 @@ export const createUserSubscriptionRequest = /* GraphQL */ `
     $planID: String!
   ) {
     createUserSubscriptionRequest(userEmail: $userEmail, planID: $planID) {
-      isSuccess
+      isSuccessful
       error
       info
     }
@@ -430,7 +436,7 @@ export const resumeUserSubscriptionRequest = /* GraphQL */ `
       userEmail: $userEmail
       subscriptionId: $subscriptionId
     ) {
-      isSuccess
+      isSuccessful
       error
       info
     }
@@ -445,7 +451,20 @@ export const cancelUserSubscriptionRequest = /* GraphQL */ `
       userEmail: $userEmail
       subscriptionId: $subscriptionId
     ) {
-      isSuccess
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage = /* GraphQL */ `
+  mutation VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(
+    $userEmail: AWSEmail!
+  ) {
+    verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(
+      userEmail: $userEmail
+    ) {
+      isSuccessful
       error
       info
     }

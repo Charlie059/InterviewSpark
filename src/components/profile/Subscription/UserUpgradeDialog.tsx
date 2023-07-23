@@ -58,7 +58,7 @@ export const UserUpgradeDialog = (userUpgradeDialog: UserUpgradeDialogInterface)
     setIsLoading(true)
     const result = await handleUserClickPlanUpgrade()
     setIsLoading(false)
-    if (result.isSuccess) {
+    if (result.isSuccessful) {
       toast.success('Plan upgraded successfully')
 
       // Redirect to the stripe payment page

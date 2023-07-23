@@ -125,8 +125,17 @@ const interviewReducer = (state: InterviewState, action: InterviewAction) => {
   }
 }
 
+interface InterviewHookProps {
+  interviews: Interview[]
+  disableInterviewAnalysis?: boolean
+  disableInterviewInteractiveFeedback?: boolean
+}
+
 // Define the custom hook for mock interview
-const useMockInterview = (interviews: Interview[]) => {
+const useMockInterview = (interviewHookProps: InterviewHookProps) => {
+  // Destructure the props
+  const { interviews, disableInterviewAnalysis, disableInterviewInteractiveFeedback } = interviewHookProps
+
   // Add error check for the interviews array
   if (!interviews || !Array.isArray(interviews) || interviews.length === 0) {
     throw new Error('The interviews array is either not an array or is empty.')
@@ -168,12 +177,26 @@ const useMockInterview = (interviews: Interview[]) => {
 
   // Helper function to start transcribing and recording
   function startTranscribingAndRecording() {
+    // If disableInterviewInteractiveFeedback is true, then we don't need to start transcribing
+    if (disableInterviewInteractiveFeedback) {
+      handleStartCapture() // Start recording
+
+      return
+    }
+
     handleStartTranscribe() // Start transcribing
     handleStartCapture() // Start recording
   }
 
   // Helper function to start transcribing and recording
   function stopTranscribingAndRecording() {
+    // If disableInterviewInteractiveFeedback is true, then we don't need to stop transcribing
+    if (disableInterviewInteractiveFeedback) {
+      interviewVideoLength.current = handleStopCapture() as number // Stop recording
+
+      return
+    }
+
     handleStopTranscribe() // Stop transcribing
     interviewVideoLength.current = handleStopCapture() as number // Stop recording
   }
@@ -233,6 +256,14 @@ const useMockInterview = (interviews: Interview[]) => {
   // Define a function to finish the current interview question
   const finishQuestion = async () => {
     stopTranscribingAndRecording()
+
+    // If disableInterviewInteractiveFeedback is true, then we don't need to generate response
+    if (disableInterviewInteractiveFeedback) {
+      dispatch({ type: FINISH_QUESTION })
+
+      return
+    }
+
     setReading(true)
 
     const interviewQuestion = interviews[interviewState.currentQuestionIndex].interviewQuestion
@@ -265,6 +296,13 @@ const useMockInterview = (interviews: Interview[]) => {
           updateVideoToDynamoDB(uniqueFilename!, filePath!)
             .then(() => {
               dispatch({ type: SAVED_QUESTION })
+
+              // If the interview analysis is disabled, resolve the promise here
+              if (disableInterviewAnalysis) {
+                resolve()
+
+                return
+              }
 
               // Start an analysis job
               API.graphql(
