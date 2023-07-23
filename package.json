@@ -14,6 +14,7 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.1.4",
     "@aws-sdk/client-transcribe-streaming": "^3.359.0",
     "@casl/ability": "6.3.2",
     "@casl/react": "3.1.0",
@@ -44,6 +45,7 @@
     "@types/react-loader-spinner": "^4.0.0",
     "@types/socket.io-client": "^3.0.0",
     "@types/winston": "^2.4.4",
+    "antd": "^5.6.4",
     "apexcharts": "^3.41.0",
     "apexcharts-clevision": "^3.28.5",
     "aws-amplify": "^5.3.1",

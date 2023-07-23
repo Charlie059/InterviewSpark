@@ -103,8 +103,8 @@ export type PaginatedInterviewList = {
 
 export type UserInterviewUsageMetaData = {
   __typename: "UserInterviewUsageMetaData",
-  userInterviewNumCount?: number | null,
-  userInterviewQuestionSet?: Array< number | null > | null,
+  userInterviewNumTotalCount?: number | null,
+  userInterviewNumUniqueCount?: number | null,
   userInterviewQuestionMap?: string | null,
 };
 
@@ -842,8 +842,8 @@ export type GetUserInterviewUsageMetaDataQueryVariables = {
 export type GetUserInterviewUsageMetaDataQuery = {
   getUserInterviewUsageMetaData:  {
     __typename: "UserInterviewUsageMetaData",
-    userInterviewNumCount?: number | null,
-    userInterviewQuestionSet?: Array< number | null > | null,
+    userInterviewNumTotalCount?: number | null,
+    userInterviewNumUniqueCount?: number | null,
     userInterviewQuestionMap?: string | null,
   },
 };

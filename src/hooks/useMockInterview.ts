@@ -125,16 +125,25 @@ const interviewReducer = (state: InterviewState, action: InterviewAction) => {
   }
 }
 
+interface Info {
+  questionNum: number
+  videoinput: string
+  audioinput: string
+  audiooutput: string
+  interviewTopic: string
+}
+
 interface InterviewHookProps {
   interviews: Interview[]
   disableInterviewAnalysis?: boolean
   disableInterviewInteractiveFeedback?: boolean
+  info: Info
 }
 
 // Define the custom hook for mock interview
 const useMockInterview = (interviewHookProps: InterviewHookProps) => {
   // Destructure the props
-  const { interviews, disableInterviewAnalysis, disableInterviewInteractiveFeedback } = interviewHookProps
+  const { interviews, disableInterviewAnalysis, disableInterviewInteractiveFeedback, info } = interviewHookProps
 
   // Add error check for the interviews array
   if (!interviews || !Array.isArray(interviews) || interviews.length === 0) {
@@ -151,10 +160,21 @@ const useMockInterview = (interviewHookProps: InterviewHookProps) => {
   const [isReading, setReading] = useState(false)
 
   // Using the custom hooks
-  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest({}, () => {
-    setReading(false)
-  })
-  const { transcribedText, handleStartTranscribe, handleStopTranscribe, transcribeError } = useTranscribe() // Use the custom hook for transcribing audio
+  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest(
+    {},
+    () => {
+      setReading(false)
+
+      // If the interview is in the interviewing state, start transcribing and recording
+      if (interviewState.status === InterviewStatus.Interviewing) {
+        startTranscribingAndRecording()
+      }
+    },
+    info.audiooutput
+  )
+  const { transcribedText, handleStartTranscribe, handleStopTranscribe, transcribeError } = useTranscribe(
+    info.audioinput
+  ) // Use the custom hook for transcribing audio
   const {
     webcamRef,
     setVideoOn,
@@ -165,7 +185,7 @@ const useMockInterview = (interviewHookProps: InterviewHookProps) => {
     handleStopCapture,
     getVideoBlob,
     videoRecordingError
-  } = useVideoRecording() // Use the custom hook for video recording
+  } = useVideoRecording(info.audioinput) // Use the custom hook for video recording
   const { save, s3Error } = useS3Video() // Use the custom s3 saver hook for uploading video to S3
   const { generateResponse, chatGPTStreamError } = useChatGPTStream(addToQueue, start, end) // Use the useChatGPTStream Hook here
 
@@ -228,11 +248,11 @@ const useMockInterview = (interviewHookProps: InterviewHookProps) => {
   // Define a function to start the interview
   const startInterview = async () => {
     setReading(true)
-    if (interviewState.currentQuestionIndex === 0) addToQueue(WELCOME_WORDS)
     start()
+    if (interviewState.currentQuestionIndex === 0) addToQueue(WELCOME_WORDS)
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
     end()
-    startTranscribingAndRecording()
+
     dispatch({ type: START_QUESTION })
   }
 
@@ -268,6 +288,8 @@ const useMockInterview = (interviewHookProps: InterviewHookProps) => {
 
     const interviewQuestion = interviews[interviewState.currentQuestionIndex].interviewQuestion
     const interviewAnswer = transcribedText.current
+
+    Logger.info('Interview Answer: ', interviewAnswer)
     generateResponse(interviewQuestion, interviewAnswer)
     dispatch({ type: FINISH_QUESTION })
   }
@@ -377,7 +399,12 @@ const useMockInterview = (interviewHookProps: InterviewHookProps) => {
     getCaption: caption,
     isCapturing: isCapturing,
     isVideoEnabled,
-    isReading: isReading
+    isReading: isReading,
+
+    // Variables
+    videoInput: info.videoinput,
+    audioInput: info.audioinput,
+    audioOutput: info.audiooutput
   }
 }
 

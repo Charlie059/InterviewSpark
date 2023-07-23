@@ -20,9 +20,10 @@ interface ErrorState {
 
 // Constants
 const VIDEO_MIME_TYPE = 'video/webm' // MIME type for the recorded video
+const AUDIO_MIME_TYPE = 'audio/webm' // MIME type for the recorded audio
 const MEDIA_RECORDER_INTERVAL = 1000 // Interval for MediaRecorder's start method
 
-export default function useVideoRecording() {
+export default function useVideoRecording(audioInput: string) {
   // States
   const [capturing, setCapturing] = useState(false)
   const [videoEnabled, setVideoEnabled] = useState(true)
@@ -31,7 +32,7 @@ export default function useVideoRecording() {
   // Refs
   const webcamRef = useRef<Webcam | null>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const [recordedChunks, setRecordedChunks] = useState<BlobPart[]>([])
+  const recordedChunksRef = useRef<BlobPart[]>([])
   const videoBlobRef = useRef<Blob | null>(null)
   const startTimeRef = useRef<Date | null>(null)
 
@@ -49,35 +50,64 @@ export default function useVideoRecording() {
     setVideoEnabled(false)
   }
 
-  // Start capturing video
+  // Start capturing video or audio
   const handleStartCapture = () => {
     try {
-      if (!webcamRef.current || !webcamRef.current.stream) {
-        throw new Error('Webcam not available')
-      }
-
       setCapturing(true)
-      const mediaRecorder = new MediaRecorder(webcamRef.current.stream, {
-        mimeType: VIDEO_MIME_TYPE
-      })
-      mediaRecorderRef.current = mediaRecorder
-      setRecordedChunks([]) // Clear previous recording
-      mediaRecorderRef.current.start(MEDIA_RECORDER_INTERVAL)
-      mediaRecorder.addEventListener('dataavailable', handleDataAvailable)
-      startTimeRef.current = new Date()
+
+      // Check if webcam is available
+      if (!webcamRef.current || !webcamRef.current.stream) {
+        console.log('Webcam not available, falling back to audio')
+
+        // Fall back to audio if webcam is not available
+        const mediaStreamConstraints = {
+          audio: {
+            deviceId: audioInput ? { exact: audioInput } : undefined
+          }
+        }
+        navigator.mediaDevices
+          .getUserMedia(mediaStreamConstraints)
+          .then(stream => {
+            const mediaRecorder = new MediaRecorder(stream, {
+              mimeType: AUDIO_MIME_TYPE
+            })
+            mediaRecorderRef.current = mediaRecorder
+            recordedChunksRef.current = [] // Clear previous recording
+            mediaRecorderRef.current.start(MEDIA_RECORDER_INTERVAL)
+            mediaRecorder.addEventListener('dataavailable', handleDataAvailable)
+            startTimeRef.current = new Date()
+          })
+          .catch(err => {
+            setVideoRecordingError({ type: 'Recording-Error', message: err.message })
+            Logger.error(err)
+          })
+      } else {
+        console.log('webcamRef.current: ' + webcamRef.current)
+
+        const mediaRecorder = new MediaRecorder(webcamRef.current.stream, {
+          mimeType: VIDEO_MIME_TYPE
+        })
+        mediaRecorderRef.current = mediaRecorder
+        recordedChunksRef.current = [] // Clear previous recording
+        mediaRecorderRef.current.start(MEDIA_RECORDER_INTERVAL)
+        mediaRecorder.addEventListener('dataavailable', handleDataAvailable)
+        startTimeRef.current = new Date()
+      }
     } catch (err: any) {
       setVideoRecordingError({ type: 'Recording-Error', message: err.message })
+      Logger.error(err)
     }
   }
 
   // Handle new data available from the MediaRecorder
   const handleDataAvailable = (e: BlobEvent) => {
     if (e.data.size > 0) {
-      setRecordedChunks(prev => prev.concat(e.data))
+      recordedChunksRef.current = [...recordedChunksRef.current, e.data]
+      console.log('e.data: ' + e.data)
     }
   }
 
-  // Stop capturing video
+  // Stop capturing video or audio
   const handleStopCapture = () => {
     try {
       if (!mediaRecorderRef.current) {
@@ -87,16 +117,21 @@ export default function useVideoRecording() {
       mediaRecorderRef.current.stop()
       setCapturing(false)
 
+      console.log('recordedChunks: ' + recordedChunksRef)
+
+      // Check the mimeType of the MediaRecorder to determine whether to save as video or audio
+      const blobType = mediaRecorderRef.current.mimeType.includes('audio') ? AUDIO_MIME_TYPE : VIDEO_MIME_TYPE
+
       // Convert the recordedChunks into a single Blob
-      const blob = new Blob(recordedChunks, { type: VIDEO_MIME_TYPE })
+      const blob = new Blob(recordedChunksRef.current, { type: blobType })
       videoBlobRef.current = blob // Store the Blob in the ref
 
-      // Calculate the length of the video
+      // Calculate the length of the video or audio
       const endTime = new Date()
 
       console.log('startTime: ' + startTimeRef.current!.getTime())
       const length = (endTime.getTime() - startTimeRef.current!.getTime()) / 1000
-      console.log('Video length: ' + length + 's')
+      console.log('Recording length: ' + length + 's')
 
       return length
     } catch (err: any) {

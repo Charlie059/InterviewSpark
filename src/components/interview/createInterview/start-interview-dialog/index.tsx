@@ -105,6 +105,7 @@ const StartInterviewDialog = (props: {
               deviceType='videoinput'
               onChange={id => {
                 setVideoinput(id)
+                console.log(id)
               }}
               defaultDevice={videoinput}
             />
@@ -119,6 +120,7 @@ const StartInterviewDialog = (props: {
               deviceType='audioinput'
               onChange={id => {
                 setAudioinput(id)
+                console.log(id)
               }}
               defaultDevice={audioinput}
             />

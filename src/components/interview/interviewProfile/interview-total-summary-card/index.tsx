@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { useAuth } from 'src/hooks/useAuth'
 import { getQuestionUsageMetaData, getUserInterviewUsageMetaData, getUserInterviewsByMonth } from 'src/graphql/queries'
+import Logger from 'src/middleware/loggerMiddleware'
 
 // Hook for fetching and processing interview data
 const useInterviewData = () => {
@@ -60,9 +61,11 @@ const useInterviewData = () => {
         })
       )
 
+      Logger.debug('userInterviewUsageMetaData', userInterviewUsageMetaData)
+
       if ('data' in userInterviewUsageMetaData) {
         const interviewUsageMetaData = userInterviewUsageMetaData.data.getUserInterviewUsageMetaData
-        const interviewTotalCount = interviewUsageMetaData.userInterviewNumCount
+        const interviewTotalCount = interviewUsageMetaData.userInterviewNumTotalCount
         const interviewQuestionMap = JSON.parse(interviewUsageMetaData.userInterviewQuestionMap)
         const interviewQuestionMapLength = Object.keys(interviewQuestionMap).length
 

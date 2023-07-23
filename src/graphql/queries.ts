@@ -228,8 +228,8 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
 export const getUserInterviewUsageMetaData = /* GraphQL */ `
   query GetUserInterviewUsageMetaData($emailAddress: AWSEmail!) {
     getUserInterviewUsageMetaData(emailAddress: $emailAddress) {
-      userInterviewNumCount
-      userInterviewQuestionSet
+      userInterviewNumTotalCount
+      userInterviewNumUniqueCount
       userInterviewQuestionMap
     }
   }
