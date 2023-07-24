@@ -57,7 +57,7 @@ const UserSecurity = () => {
     .min(8, 'New password must be at least 8 characters')
     .notOneOf([yup.ref('currentPassword')], 'New password must be different from the current password')
     .matches(
-      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
       'Must contain 8 characters, at least one uppercase letter, one lowercase letter and one number'
     )
 

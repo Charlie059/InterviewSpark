@@ -132,7 +132,7 @@ const Register = ({ onRegister }: Props) => {
       .string()
       .matches(
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/,
-        'Password must contain at least 1* uppercase letter, 1* lowercase letter, 1* number, and be at least 8 characters long'
+        'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long'
       )
       .required('Password is required'),
     username: yup
