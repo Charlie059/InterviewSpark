@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState, Fragment, MouseEvent } from 'react'
+import React, { ReactNode, useState, Fragment } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -19,6 +19,9 @@ import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography, { TypographyProps } from '@mui/material/Typography'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
+import Dialog, { DialogProps } from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -40,9 +43,10 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-import toast from "react-hot-toast";
-import {useRouter} from "next/router";
 
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/router'
+import TermsDialog from 'src/components/register/termsDialog'
 
 interface FormData {
   email: string
@@ -111,6 +115,8 @@ interface Props {
 const Register = ({ onRegister }: Props) => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [open, setOpen] = React.useState(false)
+  const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper')
 
   // ** Hooks
   const theme = useTheme()
@@ -122,17 +128,22 @@ const Register = ({ onRegister }: Props) => {
   // ** Vars
   const { skin } = settings
   const schema = yup.object().shape({
-    password: yup.string()
-      .matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/, 'Password must contain at least 1* uppercase letter, 1* lowercase letter, 1* number, and be at least 8 characters long')
+    password: yup
+      .string()
+      .matches(
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$/,
+        'Password must contain at least 1* uppercase letter, 1* lowercase letter, 1* number, and be at least 8 characters long'
+      )
       .required('Password is required'),
-    username: yup.string()
+    username: yup
+      .string()
       .matches(/^[^\s_]+$/, 'Username cannot contain spaces or underscores')
       .min(3, 'Username must be at least 3 characters long')
       .required('Username is required'),
     email: yup.string().email().required(),
     terms: yup.bool().oneOf([true], 'You must accept the privacy policy & terms'),
-    fName: yup.string().required(),
-    lName: yup.string().required()
+    fName: yup.string().required('first name is a required field'),
+    lName: yup.string().required('last name is a required field')
   })
 
   const defaultValues = {
@@ -156,32 +167,54 @@ const Register = ({ onRegister }: Props) => {
   })
 
   const onSubmit = async (data: FormData) => {
-    const {username, email, password, fName, lName} = data
-    const err = await new Promise<any>((resolve) => {
-      register({email, username, password, fName, lName}, err => {
-        if (err.name !== "success") {
+    const { username, email, password, fName, lName } = data
+    const err = await new Promise<any>(resolve => {
+      register({ email, username, password, fName, lName }, err => {
+        if (err.name !== 'success') {
           console.log(err)
-          resolve(err);
+          resolve(err)
         } else {
           console.log('success')
-          resolve(undefined);
+          resolve(undefined)
         }
-      });
-    });
-    console.log(err); // Access the err value here
+      })
+    })
+    console.log(err) // Access the err value here
     console.log(err?.name)
-    if (err) { //general err handling
+    if (err) {
+      //general err handling
       setError('email', {
         type: 'manual',
         message: err.message
       })
-    }else{
+    } else {
       onRegister(email)
       toast.success('registered')
     }
   }
 
   const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
+
+  // Terms & Policies
+  const handleClickOpen = (scrollType: DialogProps['scroll']) => (event: React.MouseEvent) => {
+    event.preventDefault()
+    setOpen(true)
+    setScroll(scrollType)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  const descriptionElementRef = React.useRef<HTMLElement>(null)
+  React.useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef
+      if (descriptionElement !== null) {
+        descriptionElement.focus()
+      }
+    }
+  }, [open])
 
   return (
     <Box className='content-right'>
@@ -378,10 +411,31 @@ const Register = ({ onRegister }: Props) => {
                               variant='body2'
                               component={Link}
                               sx={{ color: 'primary.main', textDecoration: 'none' }}
-                              onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}
+                              onClick={handleClickOpen('paper')}
                             >
                               privacy policy & terms
                             </Typography>
+                            <Dialog
+                              sx={{
+                                '& .MuiPaper-root': {
+                                  width: '100%',
+                                  height: '100%',
+                                  maxWidth: 1000,
+                                  maxHeight: 800,
+                                  p: [2, 10]
+                                }
+                              }}
+                              open={open}
+                              onClose={handleClose}
+                              scroll={scroll}
+                              aria-labelledby='scroll-dialog-title'
+                              aria-describedby='scroll-dialog-description'
+                            >
+                              <DialogTitle id='scroll-dialog-title'>Terms & Conditions</DialogTitle>
+                              <DialogContent dividers={scroll === 'paper'}>
+                                <TermsDialog />
+                              </DialogContent>
+                            </Dialog>
                           </Fragment>
                         }
                       />
