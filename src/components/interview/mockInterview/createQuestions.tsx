@@ -15,9 +15,13 @@ import { styled } from '@mui/material/styles'
 import { useAuth } from 'src/hooks/useAuth'
 import LoadingScreen from 'src/components/loading/Loading'
 import { API, graphqlOperation } from 'aws-amplify'
-import { createUserInterviewQuestionList } from 'src/graphql/mutations'
+import {
+  createUserInterviewQuestionList,
+  verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage
+} from 'src/graphql/mutations'
 import Logger from 'src/middleware/loggerMiddleware'
 import { Interview } from 'src/types/types'
+import toast from 'react-hot-toast'
 
 interface Info {
   questionNum: number
@@ -44,10 +48,13 @@ interface CardItem {
 interface CreateQuestionsComponentProps {
   setInterviews: React.Dispatch<React.SetStateAction<Interview[]>>
   setInfo: React.Dispatch<React.SetStateAction<Info | undefined>>
+  setDisableInterviewAnalysis: React.Dispatch<React.SetStateAction<boolean>>
+  setDisableInterviewInteractiveFeedback: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestionsComponentProps) => {
-  const { setInterviews, setInfo } = createQuestionsComponentProps
+  const { setInterviews, setInfo, setDisableInterviewAnalysis, setDisableInterviewInteractiveFeedback } =
+    createQuestionsComponentProps
   const auth = useAuth()
   const [loading, setLoading] = useState(false)
   const [user] = useState(auth.user)
@@ -69,6 +76,36 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     setStartDialogOpen(true)
   }
 
+  const handleVerifyAndUpdateProductUsage = async () => {
+    const result = await API.graphql(
+      graphqlOperation(verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage, {
+        userEmail: auth.user?.userEmailAddress
+      })
+    )
+
+    if ('data' in result) {
+      // Get the result from the backend
+      const res = result.data.verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage
+      const isSuccessful = res.isSuccessful
+      const info = res.info
+
+      if (isSuccessful) {
+        setDisableInterviewAnalysis(false)
+        setDisableInterviewInteractiveFeedback(false)
+        console.log('Verify and update product usage successfully')
+      } else if (info) {
+        // Translate to JSON object
+        const info = JSON.parse(res.info)
+
+        // Set up hot toast
+        console.log(info)
+
+        // if(info.)
+        toast.success(info.message, { duration: 3000 })
+      }
+    }
+  }
+
   const handleStartInterview = async (info: Info) => {
     console.log(info)
     setLoading(true)
@@ -79,7 +116,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
 
     // Change space to '-'
     info.interviewTopic = info.interviewTopic.replace(/\s+/g, '-').toLowerCase()
-    console.log(info.interviewTopic)
 
     try {
       // Use graphql to crate a new interview
@@ -95,6 +131,10 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
       if ('data' in result) {
         setInterviews(result.data.createUserInterviewQuestionList.interviewList)
         setInfo(info)
+
+        // Verify and update the product usage
+        await handleVerifyAndUpdateProductUsage()
+
         setLoading(false)
       }
     } catch (error) {
@@ -122,7 +162,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
             <Typography sx={{ fontSize: 36, mt: 2 }}>Mock Interview Topic</Typography>
-            {/* // TODO: Replace actual user avatar */}
             <Avatar
               sx={{ width: 40, height: 40 }}
               alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}
@@ -165,7 +204,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
               ))}
           </Grid>
           <Typography sx={{ fontSize: 20, mt: 6, mb: 2 }}>Sort by Job Title</Typography>
-          {/* // TODO: Replace actual image */}
           <AlphabeticSelectList
             list={allJobTitles.filter(item => item.name.toLowerCase().includes(searchKeyWord.toLowerCase()))}
             onClickItem={handleChooseJobTitle}

@@ -16,7 +16,6 @@ const UserProfileTab = ({ user, profileData }: InferGetServerSidePropsType<typeo
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
-  console.log('upper tes111t', profileData)
 
   // If user is current user or profile is public, display profile
   if (user === auth.user?.userName) {
@@ -44,12 +43,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
     const userData = await API.graphql(graphqlOperation(getUserProfileByUsername, { userName: userName }))
     if ('data' in userData) {
       profileData = userData.data.getUserProfileByUsername
-      console.log('server test', profileData)
     }
   } catch (error) {
     console.error('Error fetching user data', error)
   }
-  console.log('server test', profileData)
 
   return {
     props: {

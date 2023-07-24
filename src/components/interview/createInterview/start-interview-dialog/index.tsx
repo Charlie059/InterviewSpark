@@ -1,22 +1,29 @@
+// TODO: Refactor this component
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
 // ** MUI Imports
-import { Box, IconButton, Button, Grid, Avatar, Select, MenuItem } from '@mui/material'
+import { Box, IconButton, Button, Grid, Avatar, Select, MenuItem, LinearProgress } from '@mui/material'
 import { Typography as MuiTypography, TypographyProps } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import ArticleIcon from '@mui/icons-material/Article'
 import CameraAltIcon from '@mui/icons-material/CameraAlt'
 import MicIcon from '@mui/icons-material/Mic'
 import SpeakerIcon from '@mui/icons-material/Speaker'
+import StorageIcon from '@mui/icons-material/Storage'
+import { Link as MuiLink } from '@mui/material'
 
-import React, { ReactNode, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import CloseIcon from '@mui/icons-material/Close'
 
 import DeviceSelector from 'src/components/interview/createInterview/device_selector/device_selector'
+import Link from 'next/link'
+import Logger from 'src/middleware/loggerMiddleware'
+import { useAuth } from 'src/hooks/useAuth'
+import { useFetchSubscription } from 'src/hooks/useFetchSubscription'
 
 interface Info {
   questionNum: number
@@ -67,7 +74,13 @@ const StartInterviewDialog = (props: {
   const [audioinput, setAudioinput] = useState('')
   const [audiooutput, setAudiooutput] = useState('')
 
-  const stepContent = [
+  const [planType, setPlanType] = useState('Free')
+  const [currentUsage, setCurrentUsage] = useState(1)
+  const [totalUsage, setTotalUsage] = useState(10)
+  const auth = useAuth()
+  const { userSubscriptionProductsList } = useFetchSubscription(auth.user?.userEmailAddress || null)
+
+  const [stepContent, setStepContent] = useState([
     {
       content: `Please select the number of interview questions for the mock interview and indicate whether you would like to generate questions based on resume.`,
       selectors: [
@@ -89,6 +102,61 @@ const StartInterviewDialog = (props: {
                 </MenuItem>
               ))}
             </Select>
+          )
+        },
+        {
+          title: 'Usage',
+          subtitle: 'Your current usage',
+          icon: <StorageIcon />,
+          selector: (
+            <Grid container direction='column' justifyContent='center'>
+              <Grid item style={{ position: 'relative', height: '28px' }}>
+                {planType === 'Free' && (
+                  <LinearProgress
+                    style={{ height: '100%' }}
+                    variant='determinate'
+                    value={(currentUsage / totalUsage) * 100}
+                  />
+                )}
+                {planType === 'Prime' && <LinearProgress style={{ height: '100%' }} variant='determinate' value={0} />}
+                <Typography
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '13px',
+                    color: '#D4D4D4',
+                    fontWeight: 600
+                  }}
+                  align='center'
+                >
+                  {planType === 'Free' ? `${currentUsage} / ${totalUsage}` : 'Infinity'}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  sx={{
+                    fontSize: 11,
+                    marginTop: '8px',
+                    color: '#343434',
+                    fontWeight: 300
+                  }}
+                  align='center'
+                >
+                  {planType === 'Free'
+                    ? currentUsage / totalUsage !== 1
+                      ? 'Limited AI practices available for you.'
+                      : 'Free unlimited non-AI practices. '
+                    : 'Enjoy unlimited interviews and analysis.'}
+                  {planType === 'Free' && currentUsage / totalUsage === 1 && (
+                    <Link href='/upgrade' passHref>
+                      <MuiLink sx={{ color: '#3f51b5', textDecoration: 'underline' }}>Click here to upgrade.</MuiLink>
+                    </Link>
+                  )}
+                </Typography>
+              </Grid>
+            </Grid>
           )
         }
       ]
@@ -120,7 +188,6 @@ const StartInterviewDialog = (props: {
               deviceType='audioinput'
               onChange={id => {
                 setAudioinput(id)
-                console.log(id)
               }}
               defaultDevice={audioinput}
             />
@@ -142,7 +209,83 @@ const StartInterviewDialog = (props: {
         }
       ]
     }
-  ]
+  ])
+
+  useEffect(() => {
+    const fetchUsage = () => {
+      try {
+        const productNumUsage =
+          userSubscriptionProductsList.userSubscriptionProductsArray[0].userSubscriptionProduct[0].productNumUsage
+        const productTotalNumUsage =
+          userSubscriptionProductsList.userSubscriptionProductsArray[0].userSubscriptionProduct[0].productTotalNumUsage
+        const planType = userSubscriptionProductsList.userSubscriptionProductsArray[0].userSubscription.planType
+
+        setPlanType(planType)
+        setCurrentUsage(productNumUsage)
+        setTotalUsage(productTotalNumUsage)
+
+        setStepContent(prevStepContent => {
+          const newStepContent = [...prevStepContent]
+          newStepContent[0].selectors[1].selector = (
+            <Grid container direction='column' justifyContent='center'>
+              <Grid item style={{ position: 'relative', height: '28px' }}>
+                {planType === 'Free' && (
+                  <LinearProgress
+                    style={{ height: '100%' }}
+                    variant='determinate'
+                    value={(productNumUsage / productTotalNumUsage) * 100}
+                  />
+                )}
+                {planType === 'Prime' && <LinearProgress style={{ height: '100%' }} variant='determinate' value={0} />}
+                <Typography
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '13px',
+                    color: '#D4D4D4',
+                    fontWeight: 600
+                  }}
+                  align='center'
+                >
+                  {planType === 'Free' ? `${productNumUsage} / ${productTotalNumUsage}` : 'Infinity'}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  sx={{
+                    fontSize: 11,
+                    marginTop: '8px',
+                    color: '#343434',
+                    fontWeight: 300
+                  }}
+                  align='center'
+                >
+                  {planType === 'Free'
+                    ? productNumUsage / productTotalNumUsage !== 1
+                      ? 'Limited AI practices available for you.'
+                      : 'Free unlimited non-AI practices. '
+                    : 'Enjoy unlimited interviews and analysis.'}
+                  {planType === 'Free' && productNumUsage / productTotalNumUsage === 1 && (
+                    <Link href='/upgrade' passHref={false}>
+                      <MuiLink sx={{ color: '#3f51b5', textDecoration: 'underline' }}>Click here to upgrade.</MuiLink>
+                    </Link>
+                  )}
+                </Typography>
+              </Grid>
+            </Grid>
+          )
+
+          return newStepContent
+        })
+      } catch (err) {
+        Logger.error(err)
+      }
+    }
+
+    fetchUsage()
+  }, [userSubscriptionProductsList])
 
   const handleNext = () => {
     if (currentStep === stepContent.length - 1) {
@@ -197,7 +340,22 @@ const StartInterviewDialog = (props: {
             <Typography sx={{ fontSize: 36, mt: -2, fontWeight: 600, color: 'black' }} align='center'>
               {`Start Interview: ${props.interviewTopic}`}
             </Typography>
+            <Typography sx={{ fontSize: 18, mt: 2, color: 'black', fontWeight: 600 }} align='center'>
+              <Button
+                variant='contained'
+                disabled={true}
+                style={{
+                  marginLeft: '8px',
+                  color: 'white',
+                  backgroundColor: planType === 'Free' ? '#6c757d' : '#3f51b5',
+                  textTransform: 'none'
+                }}
+              >
+                {planType}
+              </Button>
+            </Typography>
           </DialogTitle>
+
           <DialogContent sx={{ mr: 5, ml: 15 }}>
             <Typography sx={{ fontSize: 24, mt: 2 }}>{stepContent[currentStep].content}</Typography>
             <Box sx={{ mt: 10, mb: 2 }}>

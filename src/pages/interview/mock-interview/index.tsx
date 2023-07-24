@@ -28,13 +28,25 @@ interface Info {
 function MockInterviewPage() {
   const [interviews, setInterviews] = React.useState<Interview[]>([])
   const [info, setInfo] = React.useState<Info>()
+  const [disableInterviewAnalysis, setDisableInterviewAnalysis] = React.useState<boolean>(true)
+  const [disableInterviewInteractiveFeedback, setDisableInterviewInteractiveFeedback] = React.useState<boolean>(true)
 
   return (
     <>
       {info && interviews.length > 0 ? (
-        <MockInterviewComponent interviews={interviews} info={info} />
+        <MockInterviewComponent
+          interviews={interviews}
+          info={info}
+          disableInterviewAnalysis={disableInterviewAnalysis}
+          disableInterviewInteractiveFeedback={disableInterviewInteractiveFeedback}
+        />
       ) : (
-        <CreateQuestionsComponent setInterviews={setInterviews} setInfo={setInfo} />
+        <CreateQuestionsComponent
+          setInterviews={setInterviews}
+          setInfo={setInfo}
+          setDisableInterviewAnalysis={setDisableInterviewAnalysis}
+          setDisableInterviewInteractiveFeedback={setDisableInterviewInteractiveFeedback}
+        />
       )}
     </>
   )

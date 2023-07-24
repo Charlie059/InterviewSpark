@@ -53,10 +53,13 @@ interface TimerHandle {
 interface MockInterviewComponentProps {
   interviews: Interview[]
   info: Info
+  disableInterviewAnalysis: boolean
+  disableInterviewInteractiveFeedback: boolean
 }
 
 function MockInterviewComponent(mockInterviewComponentProps: MockInterviewComponentProps) {
-  const { interviews, info } = mockInterviewComponentProps
+  const { interviews, info, disableInterviewAnalysis, disableInterviewInteractiveFeedback } =
+    mockInterviewComponentProps
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [dialogOpen, setDialogOpen] = React.useState(false)
@@ -84,8 +87,8 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
     audioInput
   } = useMockInterview({
     interviews: interviews,
-    disableInterviewAnalysis: true,
-    disableInterviewInteractiveFeedback: true,
+    disableInterviewAnalysis: disableInterviewAnalysis,
+    disableInterviewInteractiveFeedback: disableInterviewInteractiveFeedback,
     info: info
   })
 
