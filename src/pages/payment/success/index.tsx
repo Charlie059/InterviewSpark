@@ -2,6 +2,7 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
+import FooterIllustrations from 'src/views/pages/misc/FooterIllustrations'
 import Fade from '@mui/material/Fade'
 import { useAuth } from 'src/hooks/useAuth'
 import { useRouter } from 'next/router'
@@ -42,11 +43,19 @@ const PaymentSuccess = () => {
       </Grid>
       <Grid item xs={12}>
         <Box
-          component="img"
-          sx={{ width: '85%', position: 'fixed', right:-50, bottom: 0}}
-          alt="payment shopping bag"
-          src='/images/pages/shopping-girl.png/'
-        />
+          sx={{
+            backgroundImage: "url('/images/pages/shopping-girl.png/')",
+            backgroundRepeat: "no-repeat",
+            height: '400px',
+            width: '1000px',
+            display: 'block',
+
+            '@media screen and (max-width: 768px)': {
+              display: 'none', // Hide the box when the screen size is small
+            }
+          }}
+        >
+        </Box>
       </Grid>
     </Grid>
   );
