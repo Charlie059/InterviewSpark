@@ -223,10 +223,11 @@ const Register = ({ onRegister }: Props) => {
           <RegisterIllustrationWrapper>
             <RegisterIllustration
               alt='register-illustration'
-              src={`/images/pages/${imageSource}-${theme.palette.mode}.png`}
+              src={`/images/banners/signup.png`}
+              sx={{ width: '100%' }}
             />
           </RegisterIllustrationWrapper>
-          <FooterIllustrationsV2 image={`/images/pages/auth-v2-register-mask-${theme.palette.mode}.png`} />
+          {/* <FooterIllustrationsV2 image={`/images/pages/auth-v2-register-mask-${theme.palette.mode}.png`} /> */}
         </Box>
       ) : null}
       <RightWrapper sx={skin === 'bordered' && !hidden ? { borderLeft: `1px solid ${theme.palette.divider}` } : {}}>
