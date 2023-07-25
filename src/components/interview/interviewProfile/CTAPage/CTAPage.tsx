@@ -18,7 +18,11 @@ const CTAPage = () => {
       <Grid container spacing={12}>
         {/* Image section */}
         <Grid item xs={12}>
-          <img src='' alt='AI-powered Interview' style={{ maxWidth: '100%', height: 'auto' }} />
+          <img
+            src='/images/banners/interviewCTA.svg'
+            alt='AI-powered Interview'
+            style={{ maxWidth: '50%', height: 'auto' }}
+          />
         </Grid>
 
         {/* Text section */}
