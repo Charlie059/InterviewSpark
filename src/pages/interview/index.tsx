@@ -102,7 +102,6 @@ const InterviewPage = () => {
       ) : (
         <CTAPage />
       )}
-      <CTAPage />
     </div>
   )
 }
