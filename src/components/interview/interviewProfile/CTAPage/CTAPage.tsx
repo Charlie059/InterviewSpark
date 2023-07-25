@@ -23,7 +23,7 @@ const CTAPage = () => {
         {/* Text section */}
         <Grid item xs={12}>
           <Typography variant='h5' component='div'>
-            Ace Your Interviews with AI-Powered Simulations
+            Unlock your interview potential and land your dream job with confidence!
           </Typography>
         </Grid>
 
@@ -39,7 +39,7 @@ const CTAPage = () => {
         <Grid item xs={12}>
           <Link href='/interview/mock-interview' passHref>
             <Button variant='contained' color='primary' size='large'>
-              Start First Interview
+              Practice Now
             </Button>
           </Link>
         </Grid>
