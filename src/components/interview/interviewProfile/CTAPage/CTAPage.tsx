@@ -6,7 +6,6 @@ const CTAPage = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -15,14 +14,10 @@ const CTAPage = () => {
         padding: 2
       }}
     >
-      <Grid container spacing={12}>
+      <Grid container spacing={10}>
         {/* Image section */}
         <Grid item xs={12}>
-          <img
-            src='/images/banners/interviewCTA.svg'
-            alt='AI-powered Interview'
-            style={{ maxWidth: '50%', height: 'auto' }}
-          />
+          <img src='/images/banners/interviewCTA.svg' alt='AI-powered Interview' style={{ maxWidth: '30%' }} />
         </Grid>
 
         {/* Text section */}
