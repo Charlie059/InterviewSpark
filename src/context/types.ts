@@ -187,3 +187,9 @@ export type CareerGoal = {
   industry: Industry
   topicsInterested: TopicsInterested[]
 }
+
+export type UserInterviewUsageMetaData = {
+  userInterviewNumTotalCount: number
+  userInterviewNumUniqueCount: number
+  userInterviewQuestionMap: JSON
+}

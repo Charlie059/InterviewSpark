@@ -470,3 +470,20 @@ export const verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage = /* Graph
     }
   }
 `;
+export const handleMixpanelEvent = /* GraphQL */ `
+  mutation HandleMixpanelEvent(
+    $userEmail: AWSEmail!
+    $data: AWSJSON!
+    $eventType: String!
+  ) {
+    handleMixpanelEvent(
+      userEmail: $userEmail
+      data: $data
+      eventType: $eventType
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
