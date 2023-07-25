@@ -124,7 +124,11 @@ export const UserUpgradeDialog = (userUpgradeDialog: UserUpgradeDialogInterface)
     return [
       {
         productID: 1,
-        productDetail: 'Unlimited number of projects'
+        productDetail: 'Unlimited number of interactive interviews'
+      },
+      {
+        productID: 2,
+        productDetail: 'Unlimited number of interviews analysis'
       }
 
       // you can add more products here

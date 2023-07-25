@@ -1,6 +1,6 @@
 /***********************************************************************************************
-  Name: UseMockInterview.tsx
-  Description: This file contains the custom hook for mock interview.
+  Name: UseInterview.tsx
+  Description: This file contains the custom hook for interview.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
@@ -24,7 +24,7 @@ import { Interview } from 'src/types/types'
 import useChatGPTStream from './useChatGPTStream'
 import { usePollyByQueueTest } from './usePollyTest'
 
-// Define states for the mock interview process
+// Define states for the interview process
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
   FinishedQuestion = 'FINISHED_QUESTION',
@@ -81,7 +81,7 @@ type InterviewAction =
   | { type: typeof SET_QUESTION_INDEX; newIndex: number }
 
 // Define constants for other strings
-const WELCOME_WORDS = 'Welcome to the mock interview.'
+const WELCOME_WORDS = 'Welcome to the interview.'
 
 // Define the reducer for handling actions
 const interviewReducer = (state: InterviewState, action: InterviewAction) => {
@@ -140,8 +140,8 @@ interface InterviewHookProps {
   info: Info
 }
 
-// Define the custom hook for mock interview
-const useMockInterview = (interviewHookProps: InterviewHookProps) => {
+// Define the custom hook for interview
+const useInterview = (interviewHookProps: InterviewHookProps) => {
   // Destructure the props
   const { interviews, disableInterviewAnalysis, disableInterviewInteractiveFeedback, info } = interviewHookProps
 
@@ -408,4 +408,4 @@ const useMockInterview = (interviewHookProps: InterviewHookProps) => {
   }
 }
 
-export default useMockInterview
+export default useInterview

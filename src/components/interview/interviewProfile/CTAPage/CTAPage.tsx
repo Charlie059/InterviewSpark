@@ -37,7 +37,7 @@ const CTAPage = () => {
 
         {/* Button */}
         <Grid item xs={12}>
-          <Link href='/interview/mock-interview' passHref>
+          <Link href='/interview/practice-interview' passHref>
             <Button variant='contained' color='primary' size='large'>
               Practice Now
             </Button>

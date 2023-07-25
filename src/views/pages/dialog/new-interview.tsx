@@ -122,7 +122,7 @@ const NewInterview = () => {
             <Typography variant='h5' sx={{ mb: 3, lineHeight: '2rem' }}>
               New Interview
             </Typography>
-            <Typography variant='body2'>Preparing for mock interviews.</Typography>
+            <Typography variant='body2'>Preparing for practice interviews.</Typography>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: { xs: 'wrap', md: 'nowrap' } }}>
             <TabContext value={activeTab}>

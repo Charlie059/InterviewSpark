@@ -1,6 +1,6 @@
 /***********************************************************************************************
   Name: TopArea.tsx
-  Description: This file contains the UI for mock interview top area.
+  Description: This file contains the UI for interview top area.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
@@ -21,7 +21,7 @@ interface TimerHandle {
   reset: () => void
 }
 
-// Define states for the mock interview process
+// Define states for the interview process
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
   FinishedQuestion = 'FINISHED_QUESTION',

@@ -1,6 +1,6 @@
 /***********************************************************************************************
-  Name: MockInterview
-  Description: This file contains the UI for mock interview.
+  Name: PracticeInterview
+  Description: This file contains the UI for practice interview.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
@@ -11,11 +11,11 @@
 
 import React, { ReactNode } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
-import CreateQuestionsComponent from 'src/components/interview/mockInterview/createQuestions'
-import MockInterviewComponent from 'src/components/interview/mockInterview/mockInterview'
+import CreateQuestionsComponent from 'src/components/interview/InterviewComponents/createQuestions'
+import InterviewComponent from 'src/components/interview/InterviewComponents/PracticeInterview'
 import { Interview } from 'src/types/types'
 
-// Define states for the mock interview process
+// Define states for the interview process
 
 interface Info {
   questionNum: number
@@ -25,7 +25,7 @@ interface Info {
   interviewTopic: string
 }
 
-function MockInterviewPage() {
+function PracticeInterviewPage() {
   const [interviews, setInterviews] = React.useState<Interview[]>([])
   const [info, setInfo] = React.useState<Info>()
   const [disableInterviewAnalysis, setDisableInterviewAnalysis] = React.useState<boolean>(true)
@@ -34,7 +34,7 @@ function MockInterviewPage() {
   return (
     <>
       {info && interviews.length > 0 ? (
-        <MockInterviewComponent
+        <InterviewComponent
           interviews={interviews}
           info={info}
           disableInterviewAnalysis={disableInterviewAnalysis}
@@ -52,10 +52,10 @@ function MockInterviewPage() {
   )
 }
 
-MockInterviewPage.acl = {
+PracticeInterviewPage.acl = {
   action: 'read',
   subject: 'acl-page'
 }
 
-MockInterviewPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
-export default MockInterviewPage
+PracticeInterviewPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+export default PracticeInterviewPage

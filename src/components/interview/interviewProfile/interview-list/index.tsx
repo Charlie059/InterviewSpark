@@ -331,7 +331,7 @@ const InterviewList = () => {
           handleFilter={handleSort}
           onDelete={handleDelete}
           buttonText={'New Interview'}
-          buttonLink={'/interview/mock-interview'}
+          buttonLink={'/interview/practice-interview'}
           disableSearch={false}
         />
         <Box ref={containerRef}>

@@ -41,9 +41,6 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { useAuth } from 'src/hooks/useAuth'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
-// ** Demo Imports
-import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
-
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import TermsDialog from 'src/components/register/termsDialog'
@@ -192,8 +189,6 @@ const Register = ({ onRegister }: Props) => {
       toast.success('registered')
     }
   }
-
-  const imageSource = skin === 'bordered' ? 'auth-v2-register-illustration-bordered' : 'auth-v2-register-illustration'
 
   // Terms & Policies
   const handleClickOpen = (scrollType: DialogProps['scroll']) => (event: React.MouseEvent) => {

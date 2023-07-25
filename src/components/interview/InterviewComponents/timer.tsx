@@ -20,7 +20,7 @@ interface TimerProps {
   status: InterviewStatus
 }
 
-// Define states for the mock interview process
+// Define states for the interview process
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
   FinishedQuestion = 'FINISHED_QUESTION',

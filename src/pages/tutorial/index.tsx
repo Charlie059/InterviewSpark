@@ -51,7 +51,7 @@ const steps = [
   },
   {
     title: 'Interview',
-    subtitle: 'Start a mock interview'
+    subtitle: 'Start a practice interview'
   }
 ]
 

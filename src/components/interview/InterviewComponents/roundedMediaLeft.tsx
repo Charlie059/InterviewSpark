@@ -1,6 +1,6 @@
 /***********************************************************************************************
   Name: RoundedMediaLeft.tsx
-  Description: This file contains the custom hook for mock interview.
+  Description: This file contains the custom hook for interview.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co

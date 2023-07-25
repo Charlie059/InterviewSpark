@@ -82,7 +82,7 @@ const StartInterviewDialog = (props: {
 
   const [stepContent, setStepContent] = useState([
     {
-      content: `Please select the number of interview questions for the mock interview and indicate whether you would like to generate questions based on resume.`,
+      content: `Please select the number of interview questions for the practice interview and indicate whether you would like to generate questions based on resume.`,
       selectors: [
         {
           title: 'Choose Number of Questions',

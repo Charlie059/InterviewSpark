@@ -12,7 +12,7 @@ interface Props {
   onClick: (s: string) => void
 }
 
-const MockInterviewCard = (props: Props) => {
+const InterviewCard = (props: Props) => {
   return (
     <Card sx={{ width: '220px' }}>
       <CardActionArea
@@ -48,6 +48,6 @@ const MockInterviewCard = (props: Props) => {
     </Card>
   )
 }
-MockInterviewCard.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+InterviewCard.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
-export default MockInterviewCard
+export default InterviewCard

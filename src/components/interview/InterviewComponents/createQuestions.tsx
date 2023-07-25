@@ -4,7 +4,7 @@ import { Box, Grid, IconButton, TextField } from '@mui/material'
 import MuiTypography, { TypographyProps } from '@mui/material/Typography'
 
 import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
-import MockInterviewCard from 'src/components/interview/createInterview/mock-interview-card'
+import InterviewCard from 'src/components/interview/createInterview/interview-card'
 import AlphabeticSelectList from 'src/components/interview/createInterview/alphabetic-select-list'
 import StartInterviewDialog from 'src/components/interview/createInterview/start-interview-dialog'
 
@@ -31,9 +31,6 @@ interface Info {
   interviewTopic: string
 }
 
-// TODO: Get the list of job titles from the backend
-const top100Films = [{ label: 'Software Engineer' }]
-
 const Typography = styled(MuiTypography)<TypographyProps>(() => ({
   fontFamily: 'Montserrat',
   color: 'black',
@@ -52,18 +49,31 @@ interface CreateQuestionsComponentProps {
   setDisableInterviewInteractiveFeedback: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+interface Tag {
+  label: string
+}
+
+// // TODO: Get the list of job titles from the backend
+// const interviewTags = [{ label: 'Software Engineer' }]
+
 const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestionsComponentProps) => {
   const { setInterviews, setInfo, setDisableInterviewAnalysis, setDisableInterviewInteractiveFeedback } =
     createQuestionsComponentProps
   const auth = useAuth()
   const [loading, setLoading] = useState(false)
   const [user] = useState(auth.user)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [interviewTags, setInterviewTags] = useState<Tag[]>([{ label: 'Time Management' }])
   const [recommendations] = useState<CardItem[]>([
     { jobTitle: 'Time Management', imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
   ])
 
+  // useEffect(() => {
+
+  // }, [])
+
   const [allJobTitles] = useState<{ name: string }[]>(
-    top100Films.map(item => {
+    interviewTags.map(item => {
       return { name: item.label }
     })
   )
@@ -156,12 +166,12 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
           <NavBar
             navBarElements={[
               { name: 'HomePage', path: '/interview' },
-              { name: 'Create Mock Interview', path: undefined }
+              { name: 'Create Practice Interview', path: undefined }
             ]}
             closeNavLink='/interview'
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-            <Typography sx={{ fontSize: 36, mt: 2 }}>Mock Interview Topic</Typography>
+            <Typography sx={{ fontSize: 36, mt: 2 }}>Practice Interview Topic</Typography>
             <Avatar
               sx={{ width: 40, height: 40 }}
               alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}
@@ -199,7 +209,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
               .filter(item => item.jobTitle.toLowerCase().includes(searchKeyWord.toLowerCase()))
               .map((item, index) => (
                 <Grid item xs={12} md={3} lg={3} xl={2} key={index}>
-                  <MockInterviewCard jobTitle={item.jobTitle} imageSrc={item.imageSrc} onClick={handleChooseJobTitle} />
+                  <InterviewCard jobTitle={item.jobTitle} imageSrc={item.imageSrc} onClick={handleChooseJobTitle} />
                 </Grid>
               ))}
           </Grid>

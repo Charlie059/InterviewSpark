@@ -52,13 +52,13 @@ function FinishedInterviewPage() {
             Congratulations!
           </Title>
           <Title level={4} style={{ fontFamily: 'Montserrat' }}>
-            You've completed your mock interview!
+            You've completed your practice interview!
           </Title>
           <Paragraph style={{ fontFamily: 'Montserrat' }}>
-            You've taken an important step towards your career goals. By practicing mock interviews, you're improving
-            your communication skills and learning how to present yourself effectively. Don't forget to review the
-            feedback you received and work on any areas that need improvement. Keep practicing, and soon you'll be more
-            confident and better prepared for real interviews.
+            You've taken an important step towards your career goals. By practicing interviews, you're improving your
+            communication skills and learning how to present yourself effectively. Don't forget to review the feedback
+            you received and work on any areas that need improvement. Keep practicing, and soon you'll be more confident
+            and better prepared for real interviews.
           </Paragraph>
           <Button type='primary' size='large' style={{ fontFamily: 'Montserrat' }} onClick={handleGoToHomePage}>
             Back to Interview Page
