@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from 'react'
-import { Box, Modal, Grid, Typography, Avatar } from '@mui/material'
+import { Box, Grid, Typography, Avatar, Dialog } from '@mui/material'
 import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
@@ -177,38 +177,44 @@ const InterviewDetails = () => {
       {showLoadingPage ? (
         <FeedbackAnalysisPage />
       ) : (
-        <div style={{ backgroundColor: '#F2F7FE' }}>
-          <Box padding={10}>
-            <NavBar
-              navBarElements={[
-                { name: 'HomePage', path: '/interview' },
-                { name: 'Interview Question Review', path: undefined }
-              ]}
-              closeNavLink='/interview'
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-              <Typography sx={{ fontFamily: 'Montserrat', fontSize: 36, mt: 2 }}>Question Review</Typography>
-              <Avatar
-                sx={{ width: 40, height: 40 }}
-                alt={(auth.user?.fName || '') + (auth.user?.lName || '') || 'john doe'}
-                src={
-                  (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (auth.user?.photoImgKey || '') ||
-                  'public/images/avatars/1.png'
-                }
-              />{' '}
-            </Box>
-          </Box>
-          <Grid container>
-            {cardData.map((card, index) => (
-              <Grid xs={12} sm={6} md={4} lg={3} key={index}>
-                <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
+        <Box style={{ backgroundColor: '#F2F7FE' }} padding={10} >
+          <Grid container spacing={6}>
+            <Grid item xs = {12}>
+              <NavBar
+                navBarElements={[
+                  { name: 'HomePage', path: '/interview' },
+                  { name: 'Interview Question Review', path: undefined }
+                ]}
+                closeNavLink='/interview'
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+                <Typography variant={'h4'}>Question Review</Typography>
+                <Avatar
+                  sx={{ width: 40, height: 40 }}
+                  alt={(auth.user?.fName || '') + (auth.user?.lName || '') || 'john doe'}
+                  src={
+                    (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (auth.user?.photoImgKey || '') ||
+                    'public/images/avatars/1.png'
+                  }
+                />{' '}
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={8}>
+                {cardData.map((card, index) => (
+                  <Grid item xs={card.cardName === 'Video' ? 12 : 12} sm={card.cardName === 'Video' ? 12 : 6} md={card.cardName === 'Video' ? 12 : 4} lg={card.cardName === 'Video' ? 12 : 3} key={index}>
+                  <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
+              <Dialog open={modalOpen} onClose={handleClose}>
+                <InterviewFeedbackCard {...currentCard} isDetailPage={true} handleClose={handleClose}/>
+              </Dialog>
+            </Grid>
           </Grid>
-          <Modal open={modalOpen} onClose={handleClose}>
-            <InterviewFeedbackCard {...currentCard} isDetailPage={true} />
-          </Modal>
-        </div>
+        </Box>
       )}
     </>
   )

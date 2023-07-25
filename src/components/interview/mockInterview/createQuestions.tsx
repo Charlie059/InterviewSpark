@@ -32,7 +32,7 @@ interface Info {
 }
 
 // TODO: Get the list of job titles from the backend
-const top100Films = [{ label: 'Software Engineer' }]
+const top100Films = [{ label: 'Time Management' }]
 
 const Typography = styled(MuiTypography)<TypographyProps>(() => ({
   fontFamily: 'Montserrat',
@@ -59,7 +59,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   const [loading, setLoading] = useState(false)
   const [user] = useState(auth.user)
   const [recommendations] = useState<CardItem[]>([
-    { jobTitle: 'Software Engineer', imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+    { jobTitle: 'Time Management', imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
   ])
 
   const [allJobTitles] = useState<{ name: string }[]>(
@@ -111,11 +111,11 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     setLoading(true)
 
     // Setup the 30 percent of BQ and 70 percent of Tech
-    const numOfBQ = Math.max(Math.round(info.questionNum * 0.3), 1)
-    const numOfTech = info.questionNum - numOfBQ
+    const numOfBQ = info.questionNum
+    const numOfTech = 0
 
     // Change space to '-'
-    info.interviewTopic = info.interviewTopic.replace(/\s+/g, '-').toLowerCase()
+    //info.interviewTopic = info.interviewTopic.replace(/\s+/g, '-').toLowerCase()
 
     try {
       // Use graphql to crate a new interview

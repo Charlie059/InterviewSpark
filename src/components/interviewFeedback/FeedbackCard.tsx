@@ -6,9 +6,11 @@ import Typography from '@mui/material/Typography'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { Box, Button } from '@mui/material'
 import ClampLines from 'react-clamp-lines'
-import { FiCheckCircle, FiAlertCircle } from 'react-icons/fi'
+import { FiCheckCircle, FiAlertCircle, FiCheck } from 'react-icons/fi'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
+import Close from "mdi-material-ui/Close";
+import IconButton from "@mui/material/IconButton";
 
 interface Props {
   cardName: string
@@ -18,6 +20,7 @@ interface Props {
   onDetailClick?: () => void
   videoUrl?: string
   isDetailPage?: boolean
+  handleClose?: ()=>void
 }
 
 const videoTranscriptionHint =
@@ -63,7 +66,7 @@ const calmHint =
   'Calmness is a trait that exudes composure, confidence and credibility. Staying calm during presentations or speeches creates a peaceful, engaging and positive atmosphere.'
 
 export default function InterviewFeedbackCard(props: Props) {
-  const { cardName, cardText, cardValue, extraInfo, videoUrl, isDetailPage } = props
+  const { cardName, cardText, cardValue, extraInfo, videoUrl, isDetailPage , handleClose} = props
 
   const shouldDisplayIcon = ['Volume', 'Lighting', 'Eye Contact', 'Smile', 'Calm'].includes(cardName)
 
@@ -84,11 +87,14 @@ export default function InterviewFeedbackCard(props: Props) {
             position: 'front',
             dropShadow: {
               enabled: true,
-              top: 3,
+              top: 0,
               left: 0,
-              blur: 4,
-              opacity: 0.24
-            }
+              blur: 7,
+              opacity: 0.1
+            },
+            selection: {
+              enabled:false
+            },
           },
           track: {
             background: '#fff',
@@ -96,11 +102,12 @@ export default function InterviewFeedbackCard(props: Props) {
             margin: 0,
             dropShadow: {
               enabled: true,
-              top: -3,
+              top: 0,
               left: 0,
-              blur: 4,
-              opacity: 0.35
-            }
+              blur: 7,
+              opacity: 0.2
+            },
+
           },
           dataLabels: {
             showOn: 'always',
@@ -127,21 +134,48 @@ export default function InterviewFeedbackCard(props: Props) {
       fill: {
         type: 'solid',
 
-        // if cardValue is less than 5, set color to green, else if cardValue is greater than 5 smaller than 10, set color to yellow, else set color to red
+        // if cardValue is less than 5, set color to green, else if cardValue is greater than 5 and smaller than 10, set color to yellow, else set color to red
+
         colors:
-          cardValue && cardValue < 5
-            ? ['#00E396']
-            : cardValue && cardValue > 5 && cardValue < 10
-            ? ['#FFB600']
-            : ['#FF4560']
+          cardValue!== null && cardValue!==undefined && cardValue < 5
+          ? ['#00E396'] // Green color when cardValue is less than 5
+          : cardValue && cardValue >= 5 && cardValue < 10
+            ? ['#FFB600'] // Yellow color when cardValue is greater than or equal to 5 and less than 10
+            : ['#FF4560'] // Red color for any other case
+
       },
       labels: ['']
     },
-    seriesRadial: [100]
+    states: {
+      hover: {
+        filter: {
+          type: 'none',
+        }
+      },
+      active: {
+        filter: {
+          type: 'none',
+        }
+      },
+    },
+    seriesRadial: [100],
   }
+  console.log(cardName,":",cardValue)
 
   // Define vocabularyOptions chart options
   const percentOptions: any = {
+    states: {
+      hover: {
+        filter: {
+          type: 'none',
+        }
+      },
+      active: {
+        filter: {
+          type: 'none',
+        }
+      },
+    },
     optionsRadial: {
       plotOptions: {
         radialBar: {
@@ -157,10 +191,10 @@ export default function InterviewFeedbackCard(props: Props) {
             position: 'front',
             dropShadow: {
               enabled: true,
-              top: 3,
+              top: 0,
               left: 0,
-              blur: 4,
-              opacity: 0.24
+              blur: 7,
+              opacity: 0.1
             }
           },
           track: {
@@ -169,10 +203,11 @@ export default function InterviewFeedbackCard(props: Props) {
             margin: 0, // margin is in pixels
             dropShadow: {
               enabled: true,
-              top: -3,
+              top: 0,
               left: 0,
-              blur: 4,
-              opacity: 0.35
+              bottom:5,
+              blur: 7,
+              opacity: 0.2
             }
           },
           dataLabels: {
@@ -219,6 +254,18 @@ export default function InterviewFeedbackCard(props: Props) {
 
   // Define pace of speech chart options
   const paceOptions: any = {
+    states: {
+      hover: {
+        filter: {
+          type: 'none',
+        }
+      },
+      active: {
+        filter: {
+          type: 'none',
+        }
+      },
+    },
     optionsRadial: {
       plotOptions: {
         radialBar: {
@@ -234,10 +281,10 @@ export default function InterviewFeedbackCard(props: Props) {
             position: 'front',
             dropShadow: {
               enabled: true,
-              top: 3,
+              top: 0,
               left: 0,
-              blur: 4,
-              opacity: 0.24
+              blur: 7,
+              opacity: 0.1
             }
           },
           track: {
@@ -246,10 +293,10 @@ export default function InterviewFeedbackCard(props: Props) {
             margin: 0,
             dropShadow: {
               enabled: true,
-              top: -3,
+              top: 0,
               left: 0,
-              blur: 4,
-              opacity: 0.35
+              blur: 7,
+              opacity: 0.2
             }
           },
           dataLabels: {
@@ -305,39 +352,164 @@ export default function InterviewFeedbackCard(props: Props) {
       case 'Volume':
         // if cardValue is less than -23, set color to yellow, else if -23 to -10, set color to green, else set color to yellow
         if (cardValue && cardValue < -23) {
-          return <FiAlertCircle style={{ color: '#FFB600', fontSize: '140px', strokeWidth: '1.2' }} />
+          return <div style={{
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}>
+            <FiAlertCircle style={{ color: '#FFB600', fontSize: '150px', strokeWidth: '1.5' ,margin: '-7px'}} />
+          </div>
         } else if (cardValue && cardValue >= -23 && cardValue < -10) {
-          return <FiCheckCircle style={{ color: '#00E396', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            width:"140px",
+            height:"140px",
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden',
+            border: '8px solid #00E396',
+          }}>
+            <FiCheck style={{ color: '#00E396', fontSize: '120px', strokeWidth: '1.7', marginTop: '8px' }} />
+          </div>)
         } else {
-          return <FiAlertCircle style={{ color: '#FFB600', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}>
+            <FiAlertCircle style={{ color: '#FFB600', fontSize: '150px', strokeWidth: '1.5' ,margin: '-7px'}} />
+          </div>)
         }
       case 'Lighting':
         // if cardValue >= 60, set color to green, else set color to yellow
         if (cardValue && cardValue >= 60) {
-          return <FiCheckCircle style={{ color: '#00E396', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            width:"140px",
+            height:"140px",
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden',
+            border: '8px solid #00E396',
+          }}>
+            <FiCheck style={{ color: '#00E396', fontSize: '120px', strokeWidth: '1.7', marginTop: '8px' }} />
+          </div>)
         } else {
-          return <FiAlertCircle style={{ color: '#FFB600', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}>
+            <FiAlertCircle style={{ color: '#FFB600', fontSize: '150px', strokeWidth: '1.5' ,margin: '-7px'}} />
+          </div>)
         }
       case 'Eye Contact':
         if (cardValue && cardValue >= 0.6) {
-          return <FiCheckCircle style={{ color: '#00E396', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            width:"140px",
+            height:"140px",
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden',
+            border: '8px solid #00E396',
+          }}>
+            <FiCheck style={{ color: '#00E396', fontSize: '120px', strokeWidth: '1.7', marginTop: '8px' }} />
+          </div>)
         } else {
-          return <FiAlertCircle style={{ color: '#FFB600', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}>
+            <FiAlertCircle style={{ color: '#FFB600', fontSize: '150px', strokeWidth: '1.5' ,margin: '-7px'}} />
+          </div>)
         }
       case 'Smile':
         if (cardValue && cardValue >= 0.6) {
-          return <FiCheckCircle style={{ color: '#00E396', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            width:"140px",
+            height:"140px",
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden',
+            border: '8px solid #00E396',
+          }}>
+            <FiCheck style={{ color: '#00E396', fontSize: '120px', strokeWidth: '1.7', marginTop: '8px' }} />
+          </div>)
         } else {
-          return <FiAlertCircle style={{ color: '#FFB600', fontSize: '140px', strokeWidth: '1.2' }} />
+          return(
+            <div style={{
+              borderRadius: '50%',
+              boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+              justifyContent: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden'
+            }}>
+              <FiAlertCircle style={{ color: '#FFB600', fontSize: '150px', strokeWidth: '1.5' ,margin: '-7px'}} />
+            </div>
+          )
         }
       case 'Calm':
         if (extraInfo && extraInfo === 'CALM') {
-          return <FiCheckCircle style={{ color: '#00E396', fontSize: '140px', strokeWidth: '1.2' }} />
+
+          return (<div style={{
+            width:"140px",
+            height:"140px",
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden',
+            border: '8px solid #00E396',
+          }}>
+            <FiCheck style={{ color: '#00E396', fontSize: '120px', strokeWidth: '1.7', marginTop: '8px' }} />
+          </div>)
         } else {
-          return <FiAlertCircle style={{ color: '#FFB600', fontSize: '140px', strokeWidth: '1.2' }} />
+          return (<div style={{
+            borderRadius: '50%',
+            boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+            justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}>
+            <FiAlertCircle style={{ color: '#FFB600', fontSize: '150px', strokeWidth: '1.5' ,margin: '-7px'}} />
+          </div>)
         }
       default:
-        return <FiCheckCircle style={{ color: '#00E396', fontSize: '140px', strokeWidth: '1.2' }} />
+        return (<div style={{
+          borderRadius: '50%',
+          boxShadow: '0px 0px 7px rgba(0, 0, 0, 0.2)',
+          justifyContent: 'center',
+          display: 'flex',
+          alignItems: 'center'
+        }}>
+          <FiCheckCircle style={{ color: '#00E396', fontSize: '150px', strokeWidth: '1.5' ,margin: '-7px' }} />
+        </div>)
     }
   }
 
@@ -378,24 +550,27 @@ export default function InterviewFeedbackCard(props: Props) {
   }
 
   const StyledDiv = styled.div`
-    max-height: 300px;
+    max-height: 500px;
     overflow-y: auto;
   `
 
   return (
-    <Card sx={{ margin: 10, boxShadow: '2px 3px 2px rgba(0, 0, 0, 0.2)' }}>
+
+    <Card>
       <CardContent>
         <Typography
           variant='h5'
           color='text.secondary'
-          sx={{ fontFamily: 'Montserrat', fontSize: 32, fontWeight: 400 }}
         >
           {cardName}
         </Typography>
+        {isDetailPage && <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleClose}>
+          <Close/>
+        </IconButton>}
       </CardContent>
 
       {videoUrl ? (
-        <ReactPlayer url={videoUrl} controls width='100%' height='179px' />
+        <ReactPlayer url={videoUrl} controls width='100%' height='400px' />
       ) : shouldDisplayIcon ? (
         <Box style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>{getIcon()}</Box>
       ) : (
@@ -409,18 +584,18 @@ export default function InterviewFeedbackCard(props: Props) {
         )
       )}
 
-      <CardContent sx={{ height: isDetailPage ? '100%' : '125px', maxHeight: '300px' }}>
+      <CardContent sx={{ height: isDetailPage ? '100%' : '125px', maxHeight: '500px' }}>
         {isDetailPage ? (
           <StyledDiv>
-            <Typography color='text.secondary' sx={{ fontSize: 16, fontFamily: 'Montserrat', fontWeight: 400 }}>
-              {getHintText()}
-              <br />
-              <br />
+            <Typography  variant={'body1'}>
               {cardText}
+              <br />
+              <br />
+              {getHintText()}
             </Typography>
           </StyledDiv>
         ) : (
-          <p style={{ fontFamily: 'Montserrat', fontSize: '12px' }}>
+            <Typography variant={'body1'}>
             <ClampLines
               buttons={false}
               text={cardText!}
@@ -429,14 +604,14 @@ export default function InterviewFeedbackCard(props: Props) {
               ellipsis='...'
               innerElement='p'
             />
-          </p>
+            </Typography>
         )}
       </CardContent>
 
-      <CardActions disableSpacing>
+      <CardActions sx={{justifyContent: 'center'}} >
         {!isDetailPage && (
-          <Button sx={{ fontFamily: 'Montserrat', fontSize: 14 }} onClick={props.onDetailClick}>
-            Detail
+          <Button variant={'outlined'} onClick={props.onDetailClick}>
+            More
           </Button>
         )}
       </CardActions>
