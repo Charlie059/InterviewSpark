@@ -1,7 +1,6 @@
 import React, { ReactNode, useEffect, useState } from 'react'
-import { Box, Grid, Typography, Avatar, Dialog } from '@mui/material'
+import {Box, Grid, Typography, Avatar, Dialog, IconButton} from '@mui/material'
 import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewMetaData } from 'src/graphql/queries'
@@ -9,6 +8,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from 'src/hooks/useAuth'
 import { Storage } from '@aws-amplify/storage'
 import FeedbackAnalysisPage from 'src/components/interviewFeedback/Feedback404Page'
+import CloseIcon from "@mui/icons-material/Close";
 
 type CardDataType = {
   cardName: string
@@ -177,29 +177,28 @@ const InterviewDetails = () => {
       {showLoadingPage ? (
         <FeedbackAnalysisPage />
       ) : (
-        <Box style={{ backgroundColor: '#F2F7FE' }} padding={10} >
           <Grid container spacing={6}>
-            <Grid item xs = {12}>
-              <NavBar
-                navBarElements={[
-                  { name: 'HomePage', path: '/interview' },
-                  { name: 'Interview Question Review', path: undefined }
-                ]}
-                closeNavLink='/interview'
-              />
-            </Grid>
+            {/*<Grid item xs = {12}>*/}
+            {/*  <NavBar*/}
+            {/*    navBarElements={[*/}
+            {/*      { name: 'HomePage', path: '/interview' },*/}
+            {/*      { name: 'Interview Question Review', path: undefined }*/}
+            {/*    ]}*/}
+            {/*    closeNavLink='/interview'*/}
+            {/*  />*/}
+            {/*</Grid>*/}
             <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Typography variant={'h4'}>Question Review</Typography>
-                <Avatar
-                  sx={{ width: 40, height: 40 }}
-                  alt={(auth.user?.fName || '') + (auth.user?.lName || '') || 'john doe'}
-                  src={
-                    (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (auth.user?.photoImgKey || '') ||
-                    'public/images/avatars/1.png'
-                  }
-                />{' '}
+                <IconButton
+                  onClick={() => {
+                    router.push('/interview')
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
               </Box>
+
             </Grid>
             <Grid item xs={12}>
               <Grid container spacing={8}>
@@ -214,7 +213,6 @@ const InterviewDetails = () => {
               </Dialog>
             </Grid>
           </Grid>
-        </Box>
       )}
     </>
   )
@@ -225,5 +223,5 @@ InterviewDetails.acl = {
   subject: 'acl-page'
 }
 
-InterviewDetails.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+// InterviewDetails.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default InterviewDetails
