@@ -26,21 +26,46 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
+import FormHelperText from '@mui/material/FormHelperText'
 import { updateUserProfile } from '../../graphql/mutations'
 import { InferGetServerSidePropsType } from 'next/types'
 import { getServerSideProps } from '../../pages/user-profile/[user]'
 
-// interface UserOverview {
-
-// }
-
 const UserOverview = ({ user, data, type }: { user: any; data: any; type?: string }) => {
+  // ** const topicsList
+  const topicsList = [
+    'Adaptability',
+    'Commitment',
+    'Communication',
+    'Conflict Management',
+    'Critical Thinking',
+    'Dependability',
+    'Detail Orientation',
+    'Empathy',
+    'Integrity & Ethics',
+    'Leadership',
+    'Openness to Learning',
+    'Problem Solving',
+    'Self-motivation',
+    'Stress Management',
+    'Teamwork',
+    'Time Management',
+  ];
+
+  const initialTopicsState = topicsList.map((topic) => ({
+    label: topic,
+    checked: false,
+  }));
+
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
   const [profileData, setProfileData] = useState(data)
   const [educations, setEducations] = useState<Education[]>()
   const [workHistories, setWorkHistories] = useState<WorkHistory[]>()
   const [refresh, setRefresh] = useState(false)
+  const [topic, setTopic] = useState(initialTopicsState);
 
   const auth = useAuth()
   const emailAddress = auth.user?.userEmailAddress
@@ -127,6 +152,18 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
     }
   }
 
+  const error = topic.filter((item) => item.checked).length >= 3;
+  const chosenTopics = topic.filter((item) => item.checked)
+
+  const handleChange = (event: { target: { name: any; checked: any } }) => {
+    const { name, checked } = event.target;
+    const newTopic = topic.map((prevTopic) =>
+      prevTopic.label === name ? { ...prevTopic, checked: checked } : prevTopic
+    )
+    setTopic(newTopic);
+    setRefresh(!refresh)
+  };
+
   const handleRefresh = () => {
     setRefresh(!refresh)
   }
@@ -166,7 +203,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   <Typography variant='body2'>{profileData.userEmailAddress}</Typography>
                 </Box>
               </Grid>
-
               <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Contact:</Typography>
@@ -184,6 +220,41 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Country:</Typography>
                   <Typography variant='body2'>{profileData.country}</Typography>
                 </Box>
+              </Grid>
+            </Grid>
+            <Grid sx={{mt: 6}}>
+              <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant='h6'>Career Goal</Typography>
+              </Box>
+              <Divider sx={{ mt: 4 }} />
+              <Grid container spacing={4}>
+                <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
+                  <Box sx={{ display: 'flex' }}>
+                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Dream Job: </Typography>
+                    <Typography variant='body2'></Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
+                  <Box sx={{ display: 'flex' }}>
+                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Industry: </Typography>
+                    <Typography variant='body2'></Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6} >
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <Typography sx={{fontWeight: 500, fontSize: '0.875rem' }}>Topics Interested: </Typography>
+                    {chosenTopics.map((chosen, index) => (
+                        <>
+                          {index==chosenTopics.length-1 ?
+                            <Typography variant='body2'>{chosen.label}</Typography> :
+                            <Typography variant='body2'>{chosen.label},</Typography>
+                          }
+                        </>
+                      )
+                    )
+                    }
+                  </Box>
+                </Grid>
               </Grid>
             </Grid>
           </CardContent>
@@ -322,6 +393,60 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         )}
                       />
                     </FormControl>
+                  </Grid>
+                </Grid>
+                <Grid container sx={{mt:1}} spacing={6}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl>
+                      <Controller
+                        name='dreamJob'
+                        control={control}
+                        render={({ field: { value, onChange }}) => (
+                          <TextField
+                            fullWidth
+                            label='My Dream Job'
+                            defaultValue=''
+                            value={value}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl>
+                      <Controller
+                        name='industry'
+                        control={control}
+                        render={({ field: { value, onChange }}) => (
+                          <TextField
+                            fullWidth
+                            label='Industry'
+                            defaultValue=''
+                            value={value}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={12}>
+                    <Box>
+                      <InputLabel>Topics Interested</InputLabel>
+                      <FormControl required error={error}>
+                        <Grid container sx={{mt:1, mb:2}}>
+                          {topic.map((topic, index) => (
+                            <Grid item xs={6} sm={6} md={4} key={index}>
+                              <FormControlLabel
+                                label={<Typography variant="body2">{topic.label}</Typography>}
+                                control={<Checkbox  disabled={!topic.checked && error} checked={topic.checked} onChange={handleChange} name={topic.label} />}
+                              />
+                            </Grid>)
+                          )}
+                        </Grid>
+                        <FormHelperText>Pick up to three options from the following topics</FormHelperText>
+                      </FormControl>
+                    </Box>
                   </Grid>
                   <Grid item xs={12} sx={{ justifyContent: 'center' }}>
                     <DialogActions sx={{ justifyContent: 'center' }}>
