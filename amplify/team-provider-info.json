@@ -12,23 +12,11 @@
       "AmplifyAppId": "d2m556vvj2ahr7"
     },
     "categories": {
-      "function": {
-        "resumeScanAPINewAmp": {
-          "deploymentBucketName": "amplify-amplifyc249ba1b12034-staging-214038-deployment",
-          "s3Key": "amplify-builds/resumeScanAPINewAmp-767a544e717350486d62-build.zip"
-        }
-      },
       "auth": {
         "HireBeatJobSeeker": {}
       },
       "storage": {
         "s382ae0ffc": {}
-      },
-      "api": {
-        "hirebeatjobseeker": {}
-      },
-      "predictions": {
-        "transcription5847e459": {}
       }
     }
   }

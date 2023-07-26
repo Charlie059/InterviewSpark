@@ -56,3 +56,4 @@ describe('Login Page', () => {
     cy.get('form').contains('password must be at least 8 characters')
   })
 })
+
