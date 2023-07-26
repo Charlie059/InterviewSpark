@@ -89,6 +89,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
       }
 
       const result = await API.graphql(graphqlOperation(updateUserProfile, input))
+      auth.trackEvent('User_Profile_Settings', {
+        action: 'Update_Profile',
+        ...input
+      })
+      auth.setMixpanelPeople({
+        ...input
+      })
 
       return result
     } catch (error) {

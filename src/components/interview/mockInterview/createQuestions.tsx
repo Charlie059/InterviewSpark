@@ -74,6 +74,11 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   const handleChooseJobTitle = (jobTitle: string) => {
     setSelectedJobTitle(jobTitle)
     setStartDialogOpen(true)
+    auth.trackEvent('User_Interview_Functionality_Used', {
+      action: 'Start_Mock_Interview_Dialog',
+      desc: 'User clicked on a job title and previewed to start the mock interview.',
+      jobTitle: jobTitle
+    })
   }
 
   const handleVerifyAndUpdateProductUsage = async () => {
@@ -129,6 +134,11 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
       )
 
       if ('data' in result) {
+        auth.trackEvent('User_Interview_Functionality_Used', {
+          action: 'Start_Mock_Interview',
+          desc: 'User started a mock interview.',
+          ...info
+        })
         setInterviews(result.data.createUserInterviewQuestionList.interviewList)
         setInfo(info)
 

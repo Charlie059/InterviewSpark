@@ -22,6 +22,7 @@ export const getUserProfile = /* GraphQL */ `
       userName
       userEmailAddress
       userRole
+      __typename
     }
   }
 `;
@@ -45,6 +46,7 @@ export const getUserProfileByUsername = /* GraphQL */ `
       userName
       userEmailAddress
       userRole
+      __typename
     }
   }
 `;
@@ -59,7 +61,9 @@ export const getUserWorkHistories = /* GraphQL */ `
         workHistoryEndDate
         workHistoryJobDescription
         workHistoryIcon
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -75,7 +79,9 @@ export const getUserEducations = /* GraphQL */ `
         eduEndDate
         eduIcon
         eduActivity
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -95,7 +101,9 @@ export const getUserInterviewList = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -123,9 +131,11 @@ export const getUserInterviewsPaginated = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        __typename
       }
       nextToken
       totalRecords
+      __typename
     }
   }
 `;
@@ -145,7 +155,9 @@ export const getUserInterviewsByMonth = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -174,6 +186,7 @@ export const getUserInterviewMetaData = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
+      __typename
     }
   }
 `;
@@ -193,7 +206,9 @@ export const searchUserInterviews = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -219,9 +234,11 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        __typename
       }
       nextToken
       totalRecords
+      __typename
     }
   }
 `;
@@ -231,6 +248,7 @@ export const getUserInterviewUsageMetaData = /* GraphQL */ `
       userInterviewNumTotalCount
       userInterviewNumUniqueCount
       userInterviewQuestionMap
+      __typename
     }
   }
 `;
@@ -238,6 +256,7 @@ export const getQuestionUsageMetaData = /* GraphQL */ `
   query GetQuestionUsageMetaData {
     getQuestionUsageMetaData {
       totalNumOfQuestion
+      __typename
     }
   }
 `;
@@ -252,6 +271,7 @@ export const getQuestionMetaData = /* GraphQL */ `
       QuestionID
       difficulty
       estimatedSecond
+      __typename
     }
   }
 `;
@@ -267,9 +287,11 @@ export const getQuestionsPaginated = /* GraphQL */ `
         QuestionID
         difficulty
         estimatedSecond
+        __typename
       }
       nextToken
       totalRecords
+      __typename
     }
   }
 `;
@@ -285,7 +307,9 @@ export const searchQuestions = /* GraphQL */ `
         QuestionID
         difficulty
         estimatedSecond
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -309,9 +333,11 @@ export const searchQuestionsPaginated = /* GraphQL */ `
         QuestionID
         difficulty
         estimatedSecond
+        __typename
       }
       nextToken
       totalRecords
+      __typename
     }
   }
 `;
@@ -337,7 +363,9 @@ export const getUserInterviewsByQuestionID = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -351,7 +379,9 @@ export const getUserResumeScans = /* GraphQL */ `
         resumeResults
         resumeUrl
         resumeScanID
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -366,6 +396,7 @@ export const getUserEducationByID = /* GraphQL */ `
       eduEndDate
       eduIcon
       eduActivity
+      __typename
     }
   }
 `;
@@ -385,6 +416,7 @@ export const getUserWorkHistoryByID = /* GraphQL */ `
       workHistoryEndDate
       workHistoryJobDescription
       workHistoryIcon
+      __typename
     }
   }
 `;
@@ -403,6 +435,7 @@ export const getUserCurrentActiveSubscriptionAndProducts = /* GraphQL */ `
           planType
           stripeCustomerID
           subscriptionID
+          __typename
         }
         userSubscriptionProduct {
           GSI1SK
@@ -412,8 +445,11 @@ export const getUserCurrentActiveSubscriptionAndProducts = /* GraphQL */ `
           productNumUsage
           productTotalNumUsage
           subscriptionID
+          __typename
         }
+        __typename
       }
+      __typename
     }
   }
 `;
