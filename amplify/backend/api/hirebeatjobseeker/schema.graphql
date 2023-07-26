@@ -31,6 +31,7 @@ type Interview {
   interviewEstimatedSeconds: Int
   interviewVideoLength: String
   interviewVideoPath: String
+  isDisableInterviewAnalysis: Boolean
 }
 
 type InterviewList {
@@ -201,6 +202,7 @@ type Mutation {
     questionTag: String!
     numOfBQ: Int!
     numOfTech: Int!
+    isDisableInterviewAnalysis: Boolean
   ): InterviewList!
   createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   updateUserInterview(
@@ -293,6 +295,7 @@ type Mutation {
   resumeUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
   cancelUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
   verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(userEmail: AWSEmail!): OperationResult!
+  handleMixpanelEvent(userEmail: AWSEmail!, data: AWSJSON!, eventType: String!): OperationResult!
 }
 
 type OperationResult {
@@ -411,6 +414,15 @@ type QuestionList {
 
 type QuestionUsageMetaData {
   totalNumOfQuestion: Int
+  questionTypes: [String]
+  questionTags: [QuestionTag]
+  recommendations: [String]
+}
+
+type QuestionTag {
+  tag: String
+  BQ: [Int]
+  TECH: [Int]
 }
 
 type ResumeScan {
