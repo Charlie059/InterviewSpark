@@ -22,6 +22,7 @@ import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormCo
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
+import Grid from '@mui/material/Grid'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -214,16 +215,23 @@ const Register = ({ onRegister }: Props) => {
   return (
     <Box className='content-right'>
       {!hidden ? (
-        <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
-          <RegisterIllustrationWrapper>
-            <RegisterIllustration
-              alt='register-illustration'
-              src={`/images/banners/signup.png`}
-              sx={{ width: '100%' }}
-            />
-          </RegisterIllustrationWrapper>
-          {/* <FooterIllustrationsV2 image={`/images/pages/auth-v2-register-mask-${theme.palette.mode}.png`} /> */}
-        </Box>
+        <Grid container sx={{alignItems: 'center'}}>
+          <Grid item xs={12} sx={{mt:30, ml: 20, textAlign: 'center'}}>
+            <TypographyStyled variant='h4' color='primary.main'> Accelerate Your Interview Success</TypographyStyled>
+          </Grid>
+          <Grid item xs={12}>
+            <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+              <RegisterIllustrationWrapper>
+                <RegisterIllustration
+                  alt='register-illustration'
+                  src={`/images/pages/sign-up-page-new-color.png`}
+                  sx={{ width: '100%' }}
+                />
+              </RegisterIllustrationWrapper>
+              {/* <FooterIllustrationsV2 image={`/images/pages/auth-v2-register-mask-${theme.palette.mode}.png`} /> */}
+            </Box>
+          </Grid>
+        </Grid>
       ) : null}
       <RightWrapper sx={skin === 'bordered' && !hidden ? { borderLeft: `1px solid ${theme.palette.divider}` } : {}}>
         <Box
