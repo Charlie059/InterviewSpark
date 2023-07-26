@@ -28,7 +28,6 @@ import CheckIcon from '@mui/icons-material/Check'
 import * as yup from 'yup'
 import { Auth } from 'aws-amplify'
 import toast from 'react-hot-toast'
-import { useAuth } from 'src/hooks/useAuth'
 
 interface State {
   currentPassword: string
@@ -50,7 +49,6 @@ const UserSecurity = () => {
     showConfirmNewPassword: false
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const { trackEvent } = useAuth()
 
   // ** Validation Schema
   const passwordValidation = yup
@@ -100,11 +98,6 @@ const UserSecurity = () => {
               showNewPassword: false,
               confirmNewPassword: '',
               showConfirmNewPassword: false
-            })
-
-            trackEvent('User_Profile_Settings', {
-              action: 'Password_Changed',
-              status: 'Success'
             })
 
             toast.success('Password changed successfully')

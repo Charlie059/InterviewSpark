@@ -47,8 +47,6 @@ export type AuthValuesType = {
   login: (params: LoginParams, errorCallback?: ErrCallbackType) => void
   register: (params: RegisterParams, errorCallback?: ErrCallbackType) => void
   currUser: () => Promise<UserDataType | null> // Check AWS currentSession
-  trackEvent: (eventName: string, eventParams?: { [key: string]: any }) => void
-  setMixpanelPeople: (params: { [key: string]: any }) => void
 }
 
 export type Education = {

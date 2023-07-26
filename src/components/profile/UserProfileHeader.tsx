@@ -144,7 +144,6 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     data.isPublic = !data.isPublic
     console.log('public to update:', data)
     await API.graphql(graphqlOperation(updateUserProfile, data))
-    auth.trackEvent('User_Profile_Settings', { action: 'Toggle_Profile_Public_Status', isPublic: data.isPublic })
   }
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
