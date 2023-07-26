@@ -15,7 +15,7 @@ import Log from 'src/middleware/loggerMiddleware'
 
 // ** Get user
 import { getUserProfileData } from '../utils/getUser'
-import { createNewGuestUser } from 'src/graphql/mutations'
+import { createNewGuestUser, handleMixpanelEvent } from 'src/graphql/mutations'
 
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
@@ -51,7 +51,9 @@ const defaultProvider: AuthValuesType = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve(),
-  currUser: handleCurrUser
+  currUser: handleCurrUser,
+  trackEvent: () => Promise.resolve(),
+  setMixpanelPeople: () => Promise.resolve()
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -167,7 +169,7 @@ const AuthProvider = ({ children }: Props) => {
       await Auth.signUp({
         password: params.password,
         username: params.email
-      }).then(async(user)=>{
+      }).then(async user => {
         console.log(user)
         try {
           const response = await API.graphql(
@@ -179,6 +181,14 @@ const AuthProvider = ({ children }: Props) => {
             })
           )
 
+          // !Place this to the actual place when user is created in the database
+          trackEvent('User_Register', {
+            email: params.email,
+            firstName: params.fName,
+            lastName: params.lName,
+            userName: params.username
+          })
+
           console.log('response', response)
         } catch (error) {
           console.error('Error adding new guest user:', error)
@@ -186,13 +196,44 @@ const AuthProvider = ({ children }: Props) => {
           return null
         }
         Log.info('Verify email sent', user)
-        errorCallback ? errorCallback({name:"success"}) : null
+        errorCallback ? errorCallback({ name: 'success' }) : null
       })
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
       errorCallback ? errorCallback(err) : null
       console.log(err.message)
     }
+  }
+
+  // eventName: Any string to identify the event
+  // eventParams: Any object to describe the event
+  const trackEvent = async (eventName: string, eventParams?: { [key: string]: any }) => {
+    await API.graphql(
+      graphqlOperation(handleMixpanelEvent, {
+        userEmail: user?.userEmailAddress,
+        data: JSON.stringify({
+          eventName,
+          eventParams: { ...eventParams, email: user?.userEmailAddress, firstName: user?.fName, lastName: user?.lName } // Any built-in event properties that every call needs
+        }),
+        eventType: 'trackEvent'
+      })
+    )
+  }
+
+  // profileParams: Any object to describe the user profile
+  const setMixpanelPeople = async (profileParams: { [key: string]: any }) => {
+    await API.graphql(
+      graphqlOperation(handleMixpanelEvent, {
+        userEmail: user?.userEmailAddress,
+        data: JSON.stringify({
+          ...profileParams,
+          $email: user?.userEmailAddress,
+          $first_name: user?.fName,
+          $last_name: user?.lName // Any built-in profile properties that every call needs
+        }),
+        eventType: 'setPeople'
+      })
+    )
   }
 
   const values = {
@@ -203,7 +244,9 @@ const AuthProvider = ({ children }: Props) => {
     login: handleLogin,
     logout: handleLogout,
     register: handleRegister,
-    currUser: handleCurrUser
+    currUser: handleCurrUser,
+    trackEvent,
+    setMixpanelPeople
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
