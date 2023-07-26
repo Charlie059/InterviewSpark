@@ -11,7 +11,7 @@
 
 import React, { FC, useState, useEffect, memo } from 'react'
 import styled from 'styled-components'
-import { Box, Card } from '@mui/material'
+import { Box, Card, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
 
 interface PaginationProps {
@@ -53,9 +53,7 @@ const CardStyled = styled(Card)`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
   padding: 10px;
-  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.4);
   border-radius: 50px;
   padding: 15px;
   user-select: none;
@@ -110,16 +108,17 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
   return (
     <Box sx={{ display: 'flex', height: '60px', justifyContent: 'center', transform: 'scale(0.65)' }}>
       <CardStyled>
-        <DotIndicator
-          style={{ alignSelf: 'center' }}
-          onClick={() => handleDotIndicatorClick('L')}
-          whileHover={{
-            scale: enableSelect ? 1.1 : 1
-          }}
-        >
-          ...
-        </DotIndicator>
+        {/*<DotIndicator*/}
+        {/*  style={{ alignSelf: 'center' }}*/}
+        {/*  onClick={() => handleDotIndicatorClick('L')}*/}
+        {/*  whileHover={{*/}
+        {/*    scale: enableSelect ? 1.1 : 1*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  ...*/}
+        {/*</DotIndicator>*/}
         {displayNumbers.map((number, i) => (
+          <Typography variant={"body1"}>
           <PageNumber
             key={i}
             active={number === currentPage ? 1 : 0}
@@ -148,18 +147,19 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
               scale: enableSelect ? (number === currentPage ? 1.9 : 1.5) : number === currentPage ? 1.9 : 1.5
             }}
           >
-            <div style={{ fontSize: '14px' }}>{number}</div>
+            <div>{number}</div>
           </PageNumber>
+          </Typography>
         ))}
-        <DotIndicator
-          style={{ alignSelf: 'center' }}
-          onClick={() => handleDotIndicatorClick('R')}
-          whileHover={{
-            scale: enableSelect ? 1.1 : 1
-          }}
-        >
-          ...
-        </DotIndicator>
+        {/*<DotIndicator*/}
+        {/*  style={{ alignSelf: 'center' }}*/}
+        {/*  onClick={() => handleDotIndicatorClick('R')}*/}
+        {/*  whileHover={{*/}
+        {/*    scale: enableSelect ? 1.1 : 1*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  ...*/}
+        {/*</DotIndicator>*/}
       </CardStyled>
     </Box>
   )

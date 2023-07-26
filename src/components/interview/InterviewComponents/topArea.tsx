@@ -45,8 +45,6 @@ const MenuCard = styled(Card)`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.4);
   border-radius: 50%;
   position: absolute;
   right: 20px;

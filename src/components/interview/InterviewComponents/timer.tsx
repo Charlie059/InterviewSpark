@@ -14,6 +14,8 @@ import styled, { keyframes } from 'styled-components'
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp'
 import ControlPointSharpIcon from '@mui/icons-material/ControlPointSharp'
 
+import Typography from "@mui/material/Typography";
+
 interface TimerProps {
   initialTime: number
   onComplete: () => void
@@ -45,8 +47,8 @@ const TimeCard = styled.div<{ isActive: boolean; overLimit: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${props => (props.isActive ? 'red' : '#D9D9D9')};
-  color: white;
+  background-color: ${props => (props.isActive ? 'red' : 'rgba(155, 155, 155, 0.3)')};
+  //color: white;
   border-radius: 30px;
   user-select: none;
   transition: transform 0.3s ease-in-out;
@@ -264,7 +266,7 @@ const Timer = forwardRef((props: TimerProps, ref: any) => {
         </IconWrapper>
       )}
 
-      <TimerNumber>{formatTime(timeLeft)}</TimerNumber>
+      <TimerNumber><Typography variant={"h6"}>{formatTime(timeLeft)}</Typography></TimerNumber>
 
       {isMouseOver && props.status === InterviewStatus.NotStarted && (
         <IconWrapper>

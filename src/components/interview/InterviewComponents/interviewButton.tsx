@@ -10,7 +10,7 @@
 ************************************************************************************************/
 
 import React, { FC, useEffect, useState } from 'react'
-import { IconButton, Card } from '@mui/material'
+import { IconButton, Card, Typography, Button} from '@mui/material'
 import styled from 'styled-components'
 import PlayButtonIcon from '@mui/icons-material/PlayArrowSharp'
 import StopButtonIcon from '@mui/icons-material/StopSharp'
@@ -45,9 +45,7 @@ const ButtonCard = styled(Card)<{ color: string; size: number; status: Interview
   justify-content: center;
   align-items: center;
   background-color: ${props => props.color};
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  width: ${props => props.size}px;
+  border-radius: 50px;
   height: ${props => props.size}px;
   position: relative;
   ${props => (props.status === InterviewStatus.Loading ? 'display: none' : '')}
@@ -81,12 +79,14 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
   }
 
   let buttonIcon = null
+  let buttonText = null
   let buttonDisabled = false
   let ButtonCardColor = ''
 
   switch (status) {
     case InterviewStatus.NotStarted:
       buttonIcon = <PlayButtonIcon sx={{ width: '100%', height: '100%', color: '#FFFFFF' }} />
+      buttonText = "Start Mock Interview"
       ButtonCardColor = '#787EFF'
       break
     case InterviewStatus.Interviewing:
@@ -101,6 +101,7 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
     case InterviewStatus.FinishedQuestion:
       buttonIcon = <NextButtonIcon sx={{ width: '100%', height: '100%', color: '#FFFFFF' }} />
       ButtonCardColor = isReading ? '#E2E2E2' : '#666CFF'
+      buttonText = "Skip"
       buttonDisabled = isReading
       break
 
@@ -116,14 +117,14 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
 
   return (
     <ButtonContainer>
-      <ButtonCard color={ButtonCardColor} size={buttonSize} status={status}>
+      <ButtonCard color={ButtonCardColor} size={buttonSize} status={status} onClick={() => handleButtonClick(status)}>
         <IconButton
-          sx={{ width: '100%', height: '100%' }}
-          onClick={() => handleButtonClick(status)}
+          sx={{ width: '55px', height: '55px' }}
           disabled={buttonDisabled}
         >
           {buttonIcon}
         </IconButton>
+        {buttonText &&<Button><Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>{buttonText}</Typography></Button>}
       </ButtonCard>
 
       {(status === InterviewStatus.FinishedQuestion || status === InterviewStatus.Reviewing) && !isReading && (

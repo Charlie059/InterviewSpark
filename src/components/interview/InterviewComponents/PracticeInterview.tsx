@@ -248,7 +248,7 @@ function InterviewComponent(interviewComponentProps: InterviewComponentProps) {
   }, [getInterviewState.status, handleMoveToNextQuestion])
 
   return (
-    <div style={{ backgroundColor: '#F2F7FE', minHeight: '100vh' }}>
+    <div style={{ minHeight: '100vh' }}>
       <audio ref={getAudioRef} />
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>{'Close the Interview'}</DialogTitle>
@@ -336,7 +336,7 @@ function InterviewComponent(interviewComponentProps: InterviewComponentProps) {
         </Box>
 
         <Box mt={'20px'} sx={{ display: 'flex', justifyContent: 'center' }}>
-          <MenuIconButton onButtonClick={handleToggleDrawer} />
+          {/*<MenuIconButton onButtonClick={handleToggleDrawer} />*/}
           <PaginationBarWithNumber
             totalPages={interviews.length}
             currentPage={getInterviewState.currentQuestionIndex + 1}
