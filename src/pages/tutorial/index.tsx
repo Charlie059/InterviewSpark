@@ -20,7 +20,7 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { getUserEducations, getUserProfileByUsername, getUserWorkHistories } from 'src/graphql/queries'
 
 // ** Step Components Imports
-import UserProfile from 'src/components/profile/UserProfile'
+import UserOverview from 'src/components/profile/UserOverview'
 import ResumeScanPage from '../resume'
 import InterviewPage from '../interview'
 import EducationCard from 'src/components/profile/profile-cards/EducationCard'
@@ -29,7 +29,7 @@ import WorkHistoryCard from 'src/components/profile/profile-cards/WorkHistoryCar
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
-import { Education, Tab, UserProfileViewTypes, WorkHistory } from '../../context/types'
+import { Education, UserProfileViewTypes, WorkHistory } from '../../context/types'
 import { Profile } from '../../API'
 
 const steps = [
@@ -127,7 +127,7 @@ const Tutorial = () => {
     switch (step) {
       case 0:
         setStepContent(
-          <UserProfile user={user} data={userData} type={UserProfileViewTypes.tutorial} tab={Tab.overview} />
+          <UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial} />
         )
         break
       case 1:
