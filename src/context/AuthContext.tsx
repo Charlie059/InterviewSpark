@@ -181,13 +181,13 @@ const AuthProvider = ({ children }: Props) => {
             })
           )
 
-          // !Place this to the actual place when user is created in the database
-          trackEvent('User_Register', {
-            email: params.email,
-            firstName: params.fName,
-            lastName: params.lName,
-            userName: params.username
-          })
+          // TODO !Place this to the actual place when user is created in the database
+          // trackEvent('User_Register', {
+          //   email: params.email,
+          //   firstName: params.fName,
+          //   lastName: params.lName,
+          //   userName: params.username
+          // })
 
           console.log('response', response)
         } catch (error) {
@@ -208,6 +208,8 @@ const AuthProvider = ({ children }: Props) => {
   // eventName: Any string to identify the event
   // eventParams: Any object to describe the event
   const trackEvent = async (eventName: string, eventParams?: { [key: string]: any }) => {
+    console.log('trackEvent', eventName, eventParams)
+    console.log('trackEvent user', user)
     await API.graphql(
       graphqlOperation(handleMixpanelEvent, {
         userEmail: user?.userEmailAddress,
