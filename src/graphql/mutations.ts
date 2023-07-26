@@ -33,7 +33,6 @@ export const createNewGuestUser = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -63,9 +62,7 @@ export const createUserInterviewQuestionList = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
-        __typename
       }
-      __typename
     }
   }
 `;
@@ -90,7 +87,6 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
-      __typename
     }
   }
 `;
@@ -129,7 +125,6 @@ export const updateUserInterview = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
-      __typename
     }
   }
 `;
@@ -160,7 +155,6 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
-      __typename
     }
   }
 `;
@@ -200,7 +194,6 @@ export const updateUserProfile = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -220,7 +213,6 @@ export const removeUserInterviewsByID = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -236,7 +228,6 @@ export const removeUserResumeScanByID = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -263,7 +254,6 @@ export const createUserResumeScan = /* GraphQL */ `
       resumeResults
       resumeUrl
       resumeScanID
-      __typename
     }
   }
 `;
@@ -284,7 +274,6 @@ export const updateUserResumeScanURL = /* GraphQL */ `
       resumeResults
       resumeUrl
       resumeScanID
-      __typename
     }
   }
 `;
@@ -313,7 +302,6 @@ export const createUserEducation = /* GraphQL */ `
       eduEndDate
       eduIcon
       eduActivity
-      __typename
     }
   }
 `;
@@ -344,7 +332,6 @@ export const updateUserEducation = /* GraphQL */ `
       eduEndDate
       eduIcon
       eduActivity
-      __typename
     }
   }
 `;
@@ -354,7 +341,6 @@ export const removeUserEducationByID = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -382,7 +368,6 @@ export const createUserWorkHistory = /* GraphQL */ `
       workHistoryEndDate
       workHistoryJobDescription
       workHistoryIcon
-      __typename
     }
   }
 `;
@@ -412,7 +397,6 @@ export const updateUserWorkHistory = /* GraphQL */ `
       workHistoryEndDate
       workHistoryJobDescription
       workHistoryIcon
-      __typename
     }
   }
 `;
@@ -428,7 +412,6 @@ export const removeUserWorkHistoryByID = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -441,7 +424,6 @@ export const createUserSubscriptionRequest = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -457,7 +439,6 @@ export const resumeUserSubscriptionRequest = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -473,7 +454,6 @@ export const cancelUserSubscriptionRequest = /* GraphQL */ `
       isSuccessful
       error
       info
-      __typename
     }
   }
 `;
@@ -487,25 +467,6 @@ export const verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage = /* Graph
       isSuccessful
       error
       info
-      __typename
-    }
-  }
-`;
-export const handleMixpanelEvent = /* GraphQL */ `
-  mutation HandleMixpanelEvent(
-    $userEmail: AWSEmail!
-    $data: AWSJSON!
-    $eventType: String!
-  ) {
-    handleMixpanelEvent(
-      userEmail: $userEmail
-      data: $data
-      eventType: $eventType
-    ) {
-      isSuccessful
-      error
-      info
-      __typename
     }
   }
 `;

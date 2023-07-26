@@ -582,21 +582,6 @@ export type VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsageMutation = {
   },
 };
 
-export type HandleMixpanelEventMutationVariables = {
-  userEmail: string,
-  data: string,
-  eventType: string,
-};
-
-export type HandleMixpanelEventMutation = {
-  handleMixpanelEvent:  {
-    __typename: "OperationResult",
-    isSuccessful: boolean,
-    error?: string | null,
-    info?: string | null,
-  },
-};
-
 export type GetUserProfileQueryVariables = {
   emailAddress: string,
 };

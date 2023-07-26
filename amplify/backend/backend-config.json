@@ -51,6 +51,24 @@
     }
   },
   "function": {},
+  "parameters": {
+    "AMPLIFY_function_resumeScanAPINewAmp_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "resumeScanAPINewAmp"
+        }
+      ]
+    },
+    "AMPLIFY_function_resumeScanAPINewAmp_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "resumeScanAPINewAmp"
+        }
+      ]
+    }
+  },
   "predictions": {
     "transcription5847e459": {
       "convertType": "transcription",
