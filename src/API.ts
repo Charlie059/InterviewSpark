@@ -111,6 +111,16 @@ export type UserInterviewUsageMetaData = {
 export type QuestionUsageMetaData = {
   __typename: "QuestionUsageMetaData",
   totalNumOfQuestion?: number | null,
+  questionTypes?: Array< string | null > | null,
+  questionTags?:  Array<QuestionTag | null > | null,
+  recommendations?: Array< string | null > | null,
+};
+
+export type QuestionTag = {
+  __typename: "QuestionTag",
+  tag?: string | null,
+  BQ?: Array< number | null > | null,
+  TECH?: Array< number | null > | null,
 };
 
 export type Question = {
@@ -867,6 +877,14 @@ export type GetQuestionUsageMetaDataQuery = {
   getQuestionUsageMetaData:  {
     __typename: "QuestionUsageMetaData",
     totalNumOfQuestion?: number | null,
+    questionTypes?: Array< string | null > | null,
+    questionTags?:  Array< {
+      __typename: "QuestionTag",
+      tag?: string | null,
+      BQ?: Array< number | null > | null,
+      TECH?: Array< number | null > | null,
+    } | null > | null,
+    recommendations?: Array< string | null > | null,
   },
 };
 

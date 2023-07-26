@@ -238,6 +238,13 @@ export const getQuestionUsageMetaData = /* GraphQL */ `
   query GetQuestionUsageMetaData {
     getQuestionUsageMetaData {
       totalNumOfQuestion
+      questionTypes
+      questionTags {
+        tag
+        BQ
+        TECH
+      }
+      recommendations
     }
   }
 `;

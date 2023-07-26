@@ -1,5 +1,5 @@
 // ** MUI Imports
-import { Typography } from '@mui/material'
+import { CSSObject, Typography } from '@mui/material'
 
 import { ReactNode } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
@@ -7,6 +7,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { Card, CardActionArea, CardMedia } from '@mui/material'
 
 interface Props {
+  sx?: CSSObject
   jobTitle: string
   imageSrc: string
   onClick: (s: string) => void
@@ -14,7 +15,7 @@ interface Props {
 
 const InterviewCard = (props: Props) => {
   return (
-    <Card sx={{ width: '220px' }}>
+    <Card sx={props.sx ? props.sx : { width: '220px' }}>
       <CardActionArea
         onClick={() => {
           props.onClick(props.jobTitle)
@@ -26,7 +27,7 @@ const InterviewCard = (props: Props) => {
           image={props.imageSrc}
           alt={props.jobTitle}
           style={{
-            filter: 'blur(4px) brightness(70%)'
+            filter: 'blur(15px) brightness(95%)'
           }}
         ></CardMedia>
 

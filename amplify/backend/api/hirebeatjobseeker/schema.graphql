@@ -412,6 +412,15 @@ type QuestionList {
 
 type QuestionUsageMetaData {
   totalNumOfQuestion: Int
+  questionTypes: [String]
+  questionTags: [QuestionTag]
+  recommendations: [String]
+}
+
+type QuestionTag {
+  tag: String
+  BQ: [Int]
+  TECH: [Int]
 }
 
 type ResumeScan {
