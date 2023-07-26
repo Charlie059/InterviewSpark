@@ -198,6 +198,8 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
 
         toast.success(info.message, { duration: 3000 })
       }
+
+      return res
     }
   }
 
@@ -209,22 +211,27 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     const numOfTech = 0
 
     try {
+      // Verify and update the product usage
+      const res = await handleVerifyAndUpdateProductUsage()
+      let isDisableInterviewAnalysis = true
+      if (res.isSuccessful) {
+        isDisableInterviewAnalysis = false
+      }
+
       // Use graphql to crate a new interview
       const result = await API.graphql(
         graphqlOperation(createUserInterviewQuestionList, {
           emailAddress: auth.user?.userEmailAddress,
           numOfBQ: numOfBQ,
           numOfTech: numOfTech,
-          questionTag: info.interviewTopic
+          questionTag: info.interviewTopic,
+          isDisableInterviewAnalysis: isDisableInterviewAnalysis
         })
       )
 
       if ('data' in result) {
         setInterviews(result.data.createUserInterviewQuestionList.interviewList)
         setInfo(info)
-
-        // Verify and update the product usage
-        await handleVerifyAndUpdateProductUsage()
 
         setLoading(false)
       }

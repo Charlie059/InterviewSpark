@@ -42,12 +42,14 @@ export const createUserInterviewQuestionList = /* GraphQL */ `
     $questionTag: String!
     $numOfBQ: Int!
     $numOfTech: Int!
+    $isDisableInterviewAnalysis: Boolean
   ) {
     createUserInterviewQuestionList(
       emailAddress: $emailAddress
       questionTag: $questionTag
       numOfBQ: $numOfBQ
       numOfTech: $numOfTech
+      isDisableInterviewAnalysis: $isDisableInterviewAnalysis
     ) {
       interviewList {
         interviewID
@@ -62,6 +64,7 @@ export const createUserInterviewQuestionList = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        isDisableInterviewAnalysis
       }
     }
   }
@@ -87,6 +90,7 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -125,6 +129,7 @@ export const updateUserInterview = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -155,6 +160,7 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;

@@ -28,6 +28,7 @@ export type Interview = {
   interviewEstimatedSeconds?: number | null,
   interviewVideoLength?: string | null,
   interviewVideoPath?: string | null,
+  isDisableInterviewAnalysis?: boolean | null,
 };
 
 export type ResumeScan = {
@@ -220,6 +221,7 @@ export type CreateUserInterviewQuestionListMutationVariables = {
   questionTag: string,
   numOfBQ: number,
   numOfTech: number,
+  isDisableInterviewAnalysis?: boolean | null,
 };
 
 export type CreateUserInterviewQuestionListMutation = {
@@ -239,6 +241,7 @@ export type CreateUserInterviewQuestionListMutation = {
       interviewEstimatedSeconds?: number | null,
       interviewVideoLength?: string | null,
       interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -263,6 +266,7 @@ export type CreateUserInterviewWithQuestionMutation = {
     interviewEstimatedSeconds?: number | null,
     interviewVideoLength?: string | null,
     interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
@@ -293,6 +297,7 @@ export type UpdateUserInterviewMutation = {
     interviewEstimatedSeconds?: number | null,
     interviewVideoLength?: string | null,
     interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
@@ -319,6 +324,7 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewEstimatedSeconds?: number | null,
     interviewVideoLength?: string | null,
     interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
@@ -723,6 +729,7 @@ export type GetUserInterviewListQuery = {
       interviewEstimatedSeconds?: number | null,
       interviewVideoLength?: string | null,
       interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -750,6 +757,7 @@ export type GetUserInterviewsPaginatedQuery = {
       interviewEstimatedSeconds?: number | null,
       interviewVideoLength?: string | null,
       interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -777,6 +785,7 @@ export type GetUserInterviewsByMonthQuery = {
       interviewEstimatedSeconds?: number | null,
       interviewVideoLength?: string | null,
       interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -803,6 +812,7 @@ export type GetUserInterviewMetaDataQuery = {
     interviewEstimatedSeconds?: number | null,
     interviewVideoLength?: string | null,
     interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
@@ -828,6 +838,7 @@ export type SearchUserInterviewsQuery = {
       interviewEstimatedSeconds?: number | null,
       interviewVideoLength?: string | null,
       interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -854,6 +865,7 @@ export type SearchUserInterviewsPaginatedQuery = {
       interviewEstimatedSeconds?: number | null,
       interviewVideoLength?: string | null,
       interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -998,6 +1010,7 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewEstimatedSeconds?: number | null,
       interviewVideoLength?: string | null,
       interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
