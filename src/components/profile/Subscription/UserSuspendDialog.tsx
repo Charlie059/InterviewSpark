@@ -5,6 +5,10 @@ import Dialog from '@mui/material/Dialog'
 import Typography from '@mui/material/Typography'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import Checkbox from '@mui/material/Checkbox'
+import Grid from '@mui/material/Grid'
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
@@ -20,10 +24,35 @@ interface UserSuspendDialogInterface {
   setDialogParams: (dialogParams: DialogSelectParam) => void
   userSubscription: UserSubscription
 }
+
+const surveyOptions = [
+  "I did not understand how to use this product",
+  "I did not find the product useful",
+  "I had a bad experience (bugs, delay, support, etc.)",
+  "I found an alternative tool",
+  "It is too expensive",
+  "Just taking a break, will be back soon",
+  "Other reasons"
+]
+
+const initialSurveyOptions = surveyOptions.map((option) => ({
+  label: option,
+  checked: false,
+}));
+
 const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterface) => {
   const { dialogParams, setDialogParams, userSubscription } = userSuspendDialogInterface
   const { handleUserConfirmCancelSubscription } = useSubscription(userSubscription)
   const [isLoading, setIsLoading] = useState(false)
+  const [survey, setSurvey] = useState(initialSurveyOptions)
+
+  const handleChange = (event: { target: { name: string; checked: any } }) => {
+    setSurvey((prevSurvey) =>
+      prevSurvey.map((option) =>
+        option.label === event.target.name ? { ...option, checked: event.target.checked} : option
+      )
+    )
+  };
 
   const handleClose = () => {
     setDialogParams({
@@ -89,7 +118,7 @@ const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterfac
           fullWidth
           open={dialogParams.confirmCancel}
           onClose={handleClose}
-          sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 400 } }}
+          sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 512 } }}
         >
           <DialogContent>
             <Box
@@ -98,18 +127,31 @@ const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterfac
                 alignItems: 'center',
                 flexDirection: 'column',
                 '& svg': {
-                  mb: 14,
+                  mb: 0,
                   color: 'success.main'
                 }
               }}
             >
               <Icon fontSize='5.5rem' icon={'mdi:check-circle-outline'} />
-              <Typography variant='h4' sx={{ mb: 8 }}>
+              <Typography variant='h4' sx={{ m:4 }}>
                 Unsubscribed
               </Typography>
               <Typography variant='body1'>
                 We're sorry to see you go, but we'd love to have you back whenever you're ready.
               </Typography>
+              <FormControl sx={{ mt: 4, mr: 4 }}>
+                <Typography variant='body1'>What made you cancel your subscription?</Typography>
+                <Grid container sx={{mt:1, mb:2}}>
+                  {survey.map((option, index) => (
+                    <Grid item xs={12} sm={12} md={12} key={index}>
+                      <FormControlLabel
+                        label={<Typography variant="body2">{option.label}</Typography>}
+                        control={<Checkbox checked={option.checked} onChange={handleChange} name={option.label} />}
+                      />
+                    </Grid>)
+                  )}
+                </Grid>
+              </FormControl>
             </Box>
           </DialogContent>
           <DialogActions sx={{ justifyContent: 'center' }}>
