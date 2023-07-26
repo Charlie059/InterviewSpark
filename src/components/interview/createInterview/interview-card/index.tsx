@@ -4,7 +4,7 @@ import { CSSObject, Typography } from '@mui/material'
 import { ReactNode } from 'react'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-import { Card, CardActionArea, CardMedia } from '@mui/material'
+import { Card, CardActionArea } from '@mui/material'
 
 interface Props {
   sx?: CSSObject
@@ -20,27 +20,23 @@ const InterviewCard = (props: Props) => {
         onClick={() => {
           props.onClick(props.jobTitle)
         }}
+        style={{
+          backgroundColor: '#FFFFFF',
+          height: '120px',
+          position: 'relative'
+        }}
       >
-        <CardMedia
-          component='img'
-          height='120'
-          image={props.imageSrc}
-          alt={props.jobTitle}
-          style={{
-            filter: 'blur(15px) brightness(95%)'
-          }}
-        ></CardMedia>
-
         <Typography
           variant='h6'
-          sx={{ fontWeight: 600 }}
+          sx={{ fontWeight: 900 }}
           align='center'
           style={{
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            color: '#fff'
+            color: '#6E6E6E',
+            fontSize: '17px'
           }}
         >
           {props.jobTitle}
