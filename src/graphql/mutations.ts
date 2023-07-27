@@ -510,3 +510,12 @@ export const updateUserSubscriptionCancelReason = /* GraphQL */ `
     }
   }
 `;
+export const updateNewUserStatus = /* GraphQL */ `
+  mutation UpdateNewUserStatus($userEmail: AWSEmail!, $isNewUser: Boolean!) {
+    updateNewUserStatus(userEmail: $userEmail, isNewUser: $isNewUser) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;

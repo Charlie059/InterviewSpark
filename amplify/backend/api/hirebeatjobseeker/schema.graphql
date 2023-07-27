@@ -301,6 +301,7 @@ type Mutation {
     subscriptionId: String!
     cancelReason: AWSJSON!
   ): OperationResult!
+  updateNewUserStatus(userEmail: AWSEmail!, isNewUser: Boolean!): OperationResult!
 }
 
 type OperationResult {
@@ -339,6 +340,9 @@ type Profile {
   userName: String
   userEmailAddress: String
   userRole: String
+  isNewUser: Boolean
+  userDreamJob: String
+  userIndustry: String
 }
 
 type Query {
