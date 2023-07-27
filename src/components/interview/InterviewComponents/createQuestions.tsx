@@ -1,16 +1,9 @@
-import React, { useState } from 'react'
-import { Box, Grid, IconButton, TextField } from '@mui/material'
-
+import React, { useEffect, useState } from 'react'
+import { Avatar, Box, Grid } from '@mui/material'
 import MuiTypography, { TypographyProps } from '@mui/material/Typography'
-
 import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
 import InterviewCard from 'src/components/interview/createInterview/interview-card'
-import AlphabeticSelectList from 'src/components/interview/createInterview/alphabetic-select-list'
 import StartInterviewDialog from 'src/components/interview/createInterview/start-interview-dialog'
-
-import Avatar from '@mui/material/Avatar'
-import Icon from 'src/@core/components/icon'
-
 import { styled } from '@mui/material/styles'
 import { useAuth } from 'src/hooks/useAuth'
 import LoadingScreen from 'src/components/loading/Loading'
@@ -22,6 +15,55 @@ import {
 import Logger from 'src/middleware/loggerMiddleware'
 import { Interview } from 'src/types/types'
 import toast from 'react-hot-toast'
+import { getQuestionUsageMetaData } from 'src/graphql/queries'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
+
+// import Carousel from 'react-multi-carousel'
+import 'react-multi-carousel/lib/styles.css'
+
+// import Select from 'react-select'
+// import { CSSObject } from '@emotion/react'
+
+// const responsive = {
+//   superLargeDesktop: {
+//     // these breakpoint values can cover screen widths with devices like large screens, 4k TVs
+//     breakpoint: { max: 4000, min: 2600 },
+//     items: 6
+//   },
+//   largeDesktop: {
+//     // these breakpoint values can cover screen widths with devices like laptops, desktops
+//     breakpoint: { max: 2600, min: 1800 },
+//     items: 5
+//   },
+//   desktop: {
+//     breakpoint: { max: 1800, min: 1200 },
+//     items: 5
+//   },
+//   laptop: {
+//     breakpoint: { max: 1200, min: 900 },
+//     items: 3
+//   },
+//   tablet: {
+//     breakpoint: { max: 900, min: 600 },
+//     items: 2
+//   },
+//   mobileL: {
+//     // large mobile devices like iPhone X, etc.
+//     breakpoint: { max: 600, min: 375 },
+//     items: 1
+//   },
+//   mobileM: {
+//     // medium mobile devices like iPhone 6/7, etc.
+//     breakpoint: { max: 375, min: 320 },
+//     items: 1
+//   },
+//   mobileS: {
+//     // small mobile devices like iPhone 5, etc.
+//     breakpoint: { max: 320, min: 0 },
+//     items: 1
+//   }
+// }
 
 interface Info {
   questionNum: number
@@ -49,13 +91,6 @@ interface CreateQuestionsComponentProps {
   setDisableInterviewInteractiveFeedback: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface Tag {
-  label: string
-}
-
-// // TODO: Get the list of job titles from the backend
-// const interviewTags = [{ label: 'Software Engineer' }]
-
 const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestionsComponentProps) => {
   const { setInterviews, setInfo, setDisableInterviewAnalysis, setDisableInterviewInteractiveFeedback } =
     createQuestionsComponentProps
@@ -63,27 +98,84 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   const [loading, setLoading] = useState(false)
   const [user] = useState(auth.user)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [interviewTags, setInterviewTags] = useState<Tag[]>([{ label: 'Time Management' }])
-  const [recommendations] = useState<CardItem[]>([
-    { jobTitle: 'Time Management', imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
-  ])
-
-  // useEffect(() => {
-
-  // }, [])
-
-  const [allJobTitles] = useState<{ name: string }[]>(
-    interviewTags.map(item => {
-      return { name: item.label }
-    })
-  )
-  const [searchKeyWord, setSearchKeyWord] = useState<string>('')
+  const [recommendations, setRecommendations] = useState<CardItem[]>([])
+  const [allTags, setAllTags] = useState<CardItem[]>([])
   const [startDialogOpen, setStartDialogOpen] = useState(false)
-  const [selectedJobTitle, setSelectedJobTitle] = useState<string>('')
+  const [selectedTag, setSelectedTag] = useState<string>('')
+  const theme = useTheme()
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+
+  useEffect(() => {
+    const fetchInterviewTags = async () => {
+      const result = await API.graphql(graphqlOperation(getQuestionUsageMetaData, {}))
+
+      if ('data' in result) {
+        const tags = result.data.getQuestionUsageMetaData.questionTags
+        const allTagsFromDB = tags.map((item: { tag: string }) => {
+          return { jobTitle: item.tag, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+        })
+
+        const recommendationsFromDB = result.data.getQuestionUsageMetaData.recommendations
+
+        // Mapping the recommendations from DB to the recommendations state
+        const recommendationsFromDBToState = recommendationsFromDB.map((item: string) => {
+          return { jobTitle: item, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+        })
+
+        // Set the recommendations state
+        setRecommendations(recommendationsFromDBToState)
+
+        // Sort the job titles by alphabetical order
+        allTagsFromDB.sort((a: any, b: any) => {
+          if (a.jobTitle < b.jobTitle) {
+            return -1
+          }
+          if (a.jobTitle > b.jobTitle) {
+            return 1
+          }
+
+          return 0
+        })
+
+        setAllTags(allTagsFromDB)
+      }
+    }
+
+    fetchInterviewTags()
+  }, [])
+
+  // const options = allTags.map(tag => ({
+  //   value: tag.jobTitle,
+  //   label: tag.jobTitle
+  // }))
+
+  // const customStyles = {
+  //   control: (provided: CSSObject) => ({
+  //     ...provided,
+  //     marginTop: '20px',
+  //     marginBottom: '10px',
+  //     borderRadius: '10px',
+  //     boxShadow: 'none'
+  //   }),
+  //   option: (provided: CSSObject, state: any) => ({
+  //     ...provided,
+  //     color: state.isSelected ? 'white' : 'black',
+  //     backgroundColor: state.isSelected ? 'blue' : 'white'
+  //   })
+  // }
+
+  // const handleChange = (selectedOption: any) => {
+  //   handleChooseJobTitle(selectedOption.value)
+  // }
 
   const handleChooseJobTitle = (jobTitle: string) => {
-    setSelectedJobTitle(jobTitle)
+    setSelectedTag(jobTitle)
     setStartDialogOpen(true)
+    auth.trackEvent('User_Interview_Functionality_Used', {
+      action: 'Start_Mock_Interview_Dialog',
+      desc: 'User clicked on a job title and previewed to start the mock interview.',
+      jobTitle: jobTitle
+    })
   }
 
   const handleVerifyAndUpdateProductUsage = async () => {
@@ -99,10 +191,15 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
       const isSuccessful = res.isSuccessful
       const info = res.info
 
+      auth.trackEvent('User_Interview_Functionality_Used', {
+        action: 'Start_Mock_Interview',
+        desc: 'User started a mock interview.',
+        ...info
+      })
+
       if (isSuccessful) {
         setDisableInterviewAnalysis(false)
         setDisableInterviewInteractiveFeedback(false)
-        console.log('Verify and update product usage successfully')
       } else if (info) {
         // Translate to JSON object
         const info = JSON.parse(res.info)
@@ -110,9 +207,10 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
         // Set up hot toast
         console.log(info)
 
-        // if(info.)
         toast.success(info.message, { duration: 3000 })
       }
+
+      return res
     }
   }
 
@@ -120,30 +218,31 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     console.log(info)
     setLoading(true)
 
-    // Setup the 30 percent of BQ and 70 percent of Tech
     const numOfBQ = info.questionNum
     const numOfTech = 0
 
-    // Change space to '-'
-    // info.interviewTopic = info.interviewTopic.replace(/\s+/g, '-').toLowerCase()
-
     try {
+      // Verify and update the product usage
+      const res = await handleVerifyAndUpdateProductUsage()
+      let isDisableInterviewAnalysis = true
+      if (res.isSuccessful) {
+        isDisableInterviewAnalysis = false
+      }
+
       // Use graphql to crate a new interview
       const result = await API.graphql(
         graphqlOperation(createUserInterviewQuestionList, {
           emailAddress: auth.user?.userEmailAddress,
           numOfBQ: numOfBQ,
           numOfTech: numOfTech,
-          questionTag: info.interviewTopic
+          questionTag: info.interviewTopic,
+          isDisableInterviewAnalysis: isDisableInterviewAnalysis
         })
       )
 
       if ('data' in result) {
         setInterviews(result.data.createUserInterviewQuestionList.interviewList)
         setInfo(info)
-
-        // Verify and update the product usage
-        await handleVerifyAndUpdateProductUsage()
 
         setLoading(false)
       }
@@ -162,7 +261,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
           lgText={'Generating interview questions'}
         />
       ) : (
-        <Box sx={{ padding: 5, backgroundColor: '#F2F7FE' }}>
+        <Box sx={{ padding: 5 }}>
           <NavBar
             navBarElements={[
               { name: 'HomePage', path: '/interview' },
@@ -181,52 +280,47 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
               }
             />
           </Box>
-          <TextField
-            size='small'
-            value={searchKeyWord}
-            onChange={e => setSearchKeyWord(e.target.value)}
-            placeholder='Search by Job Title'
-            autoComplete={'search-job-title'}
-            id={'search-job-title'}
-            InputProps={{
-              startAdornment: (
-                <Box sx={{ mr: 2, display: 'flex' }}>
-                  <Icon icon='mdi:magnify' fontSize={20} />
-                </Box>
-              ),
-              endAdornment: (
-                <IconButton size='small' title='Clear' aria-label='Clear' onClick={() => setSearchKeyWord('')}>
-                  <Icon icon='mdi:close' fontSize={20} />
-                </IconButton>
-              ),
-              sx: { bgcolor: 'background.paper' }
-            }}
-            sx={{ mt: 9, mb: 0, width: '100%' }}
-          />
-          <Typography sx={{ fontSize: 20, mt: 6 }}>Recommendations</Typography>
+          {/* <Box sx={{ width: '100%' }}>
+            <Select
+              options={options}
+              isSearchable
+              onChange={handleChange}
+              placeholder='Search by topic name'
+              styles={customStyles}
+            />
+          </Box> */}
+          {/* <Typography sx={{ fontSize: 20, mt: 6, mb: 6 }}>Recommendations</Typography>
+          <Carousel responsive={responsive}>
+            {recommendations.map((item, index) => (
+              <div key={index}>
+                <InterviewCard
+                  sx={{ width: '260px' }}
+                  jobTitle={item.jobTitle}
+                  imageSrc={item.imageSrc}
+                  onClick={handleChooseJobTitle}
+                />
+              </div>
+            ))}
+          </Carousel> */}
+
+          <Typography sx={{ fontSize: 20, mt: 6 }}>All Topics</Typography>
           <Grid container spacing={6} sx={{ mt: 0 }}>
-            {recommendations
-              .filter(item => item.jobTitle.toLowerCase().includes(searchKeyWord.toLowerCase()))
-              .map((item, index) => (
-                <Grid item xs={12} md={3} lg={3} xl={2} key={index}>
-                  <InterviewCard jobTitle={item.jobTitle} imageSrc={item.imageSrc} onClick={handleChooseJobTitle} />
-                </Grid>
-              ))}
+            {allTags.map((item, index) => (
+              <Grid item xs={6} md={3} lg={3} xl={2} key={index}>
+                <InterviewCard
+                  sx={{ width: isSmallScreen ? '160px' : '220px' }}
+                  jobTitle={item.jobTitle}
+                  imageSrc={item.imageSrc}
+                  onClick={handleChooseJobTitle}
+                />
+              </Grid>
+            ))}
           </Grid>
-          <Typography sx={{ fontSize: 20, mt: 6, mb: 2 }}>Sort by Job Title</Typography>
-          <AlphabeticSelectList
-            list={allJobTitles.filter(item => item.name.toLowerCase().includes(searchKeyWord.toLowerCase()))}
-            onClickItem={handleChooseJobTitle}
-            imageSrc={[
-              ...Array.from({ length: 26 }, (_, index) => `/images/cards/${String.fromCharCode(97 + index)}.jpg`),
-              '/images/cards/all.jpg'
-            ]}
-          />
 
           <StartInterviewDialog
             open={startDialogOpen}
             setOpen={setStartDialogOpen}
-            interviewTopic={selectedJobTitle}
+            interviewTopic={selectedTag}
             startInterview={handleStartInterview}
           />
         </Box>

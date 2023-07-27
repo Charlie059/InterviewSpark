@@ -68,7 +68,7 @@ interface ResumeScanProps {
 const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => {
   const router = useRouter()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { user } = useAuth()
+  const { user, trackEvent } = useAuth()
 
   // ** States
   const [files, setFiles] = useState<File[]>([])
@@ -178,6 +178,11 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     const resume = files[0]
     const name = resume.name
     const docType = name.slice(-3)
+
+    trackEvent('Resume_Functionality_Used', {
+      type: 'Resume_Submitted',
+      resume_name: name
+    })
 
     const reader = new FileReader()
     let base64: string

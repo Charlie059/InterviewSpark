@@ -4,6 +4,7 @@ import { DialogSelectParam, PlanType, UserSubscription } from 'src/context/types
 import { useSubscription } from 'src/hooks/useSubscription'
 import Logger from 'src/middleware/loggerMiddleware'
 import { toast } from 'react-hot-toast'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface PlanHeaderInterface {
   userSubscription: UserSubscription
@@ -15,6 +16,7 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
   // ** Destructure the props
   const { userSubscription, dialogParams, setDialogParams } = planHeaderInterface
   const [isLoading, setIsLoading] = useState(false)
+  const { trackEvent, setMixpanelPeople } = useAuth()
 
   // Hooks
   const { handleUserConfirmResumeSubscription } = useSubscription(userSubscription)
@@ -70,6 +72,14 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
             setDialogParams({
               ...dialogParams,
               upgrade: true
+            })
+            trackEvent('User_view_plan', {
+              category: 'Upgrade Plan',
+              action: 'Click Upgrade Plan Button',
+              label: 'Upgrade Plan Button Clicked'
+            })
+            setMixpanelPeople({
+              plan: 'free'
             })
           }}
           sx={{ mr: 6 }}
