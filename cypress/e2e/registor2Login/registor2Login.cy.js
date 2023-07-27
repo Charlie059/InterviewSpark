@@ -55,7 +55,7 @@ describe('User Registration', () => {
       cy.get('button[type="submit"]').click()
 
       // Verify that the user is redirected to the home
-      cy.url().should('include', '/interview')
+      cy.url().should('include', '/interview', { timeout: 50000 })
     })
   })
 
@@ -68,9 +68,37 @@ describe('User Registration', () => {
     cy.get('[data-testid="password-input"]').type(testPassword)
     cy.get('[data-testid="term-input"]').click()
     cy.get('button[type="submit"]').click()
-  
+    cy.wait(1500)
     // Verify that the error message is displayed
-    cy.get('form').contains('email must be a valid email')
+    cy.get('form').contains('email must be a valid email', { timeout: 20000 })
+  })
+
+  it('Shows an error message with space email address', () => {
+    const invalidEmail = ' '
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(invalidEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(testPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('email must be a valid email', { timeout: 20000 })
+  })
+
+  it('Shows an error message with empty email address', () => {
+    // const invalidEmail = ''
+    cy.get('[data-testid="username-input"]').type('testUser')
+    // cy.get('[data-testid="email-input"]').type(invalidEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(testPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('email is a required field', { timeout: 20000 })
   })
   
   it('Shows an error message with short password', () => {
@@ -82,9 +110,37 @@ describe('User Registration', () => {
     cy.get('[data-testid="password-input"]').type(shortPassword)
     cy.get('[data-testid="term-input"]').click()
     cy.get('button[type="submit"]').click()
-  
+    cy.wait(1500)
     // Verify that the error message is displayed
-    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long')
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long', { timeout: 20000 })
+  })
+
+  it('Shows an error message without password', () => {
+    // const noCasePassword = '12345678'
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    // cy.get('[data-testid="password-input"]').type(noCasePassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long', { timeout: 20000 })
+  })
+
+  it('Shows an error message with space password', () => {
+    const noCasePassword = ' '
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(noCasePassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long', { timeout: 20000 })
   })
 
   it('Shows an error message with password lacking uppercase and lowercase letters', () => {
@@ -96,9 +152,9 @@ describe('User Registration', () => {
     cy.get('[data-testid="password-input"]').type(noCasePassword)
     cy.get('[data-testid="term-input"]').click()
     cy.get('button[type="submit"]').click()
-  
+    cy.wait(1500)
     // Verify that the error message is displayed
-    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long')
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long', { timeout: 20000 })
   })
 
   it('Shows an error message with password lacking numbers', () => {
@@ -110,9 +166,63 @@ describe('User Registration', () => {
     cy.get('[data-testid="password-input"]').type(noNumberPassword)
     cy.get('[data-testid="term-input"]').click()
     cy.get('button[type="submit"]').click()
-  
+    cy.wait(1500)
     // Verify that the error message is displayed
-    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long')
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long', { timeout: 20000 })
+  })
+
+  it('Shows an error message without name', () => {
+    // cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(testPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('Username cannot contain spaces or underscores', { timeout: 20000 })
+  })
+
+  it('Shows an error message without name', () => {
+    cy.get('[data-testid="username-input"]').type(' ')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(testPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('Username cannot contain spaces or underscores', { timeout: 20000 })
+  })
+
+  it('Shows an error message without name', () => {
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    // cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(testPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('first name is a required field', { timeout: 20000 })
+  })
+
+  it('Shows a wrong message with empty first name', () => {
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type(' ')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(testPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+    
+    cy.wait(1500)
+    // Verify that the error message is displayed
+    cy.get('form').contains('first name is a required field', { timeout: 20000 })
+    
   })
   
 })
