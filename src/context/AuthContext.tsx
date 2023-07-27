@@ -15,7 +15,7 @@ import Log from 'src/middleware/loggerMiddleware'
 
 // ** Get user
 import { getUserProfileData } from '../utils/getUser'
-import { createNewGuestUser, handleMixpanelEvent } from 'src/graphql/mutations'
+import { handleMixpanelEvent } from 'src/graphql/mutations'
 
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
@@ -167,34 +167,17 @@ const AuthProvider = ({ children }: Props) => {
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
     try {
       await Auth.signUp({
+        username: params.email,
         password: params.password,
-        username: params.email
+        attributes: {
+          'custom:emailAddress': params.email,
+          'custom:fName': params.fName,
+          'custom:lName': params.lName,
+          'custom:userName': params.username
+        }
       }).then(async user => {
         console.log(user)
-        try {
-          const response = await API.graphql(
-            graphqlOperation(createNewGuestUser, {
-              emailAddress: params.email,
-              userName: params.username,
-              fName: params.fName,
-              lName: params.lName
-            })
-          )
 
-          // TODO !Place this to the actual place when user is created in the database
-          // trackEvent('User_Register', {
-          //   email: params.email,
-          //   firstName: params.fName,
-          //   lastName: params.lName,
-          //   userName: params.username
-          // })
-
-          console.log('response', response)
-        } catch (error) {
-          console.error('Error adding new guest user:', error)
-
-          return null
-        }
         Log.info('Verify email sent', user)
         errorCallback ? errorCallback({ name: 'success' }) : null
       })
