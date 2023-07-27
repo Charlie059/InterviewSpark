@@ -266,7 +266,7 @@ const Timer = forwardRef((props: TimerProps, ref: any) => {
         </IconWrapper>
       )}
 
-      <TimerNumber><Typography variant={"h6"}>{formatTime(timeLeft)}</Typography></TimerNumber>
+      <TimerNumber><Typography variant={"h6"} color={"#FFFFFF"}>{formatTime(timeLeft)}</Typography></TimerNumber>
 
       {isMouseOver && props.status === InterviewStatus.NotStarted && (
         <IconWrapper>

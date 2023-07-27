@@ -33,7 +33,7 @@ const Tag = styled.div<{ size?: number }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 6px 18px rgba(76, 78, 100, 0.56);
 `
 
 const PositionedWave = styled(Wave)`

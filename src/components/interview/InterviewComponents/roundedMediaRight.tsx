@@ -108,6 +108,7 @@ const QuestionTagSpan = styled.span`
   display: block;
 `
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const QuestionTitleSpan = styled.span`
   font-family: 'Poppins';
   font-weight: 400;
@@ -123,7 +124,7 @@ const CaptionSpan = styled.span`
   user-select: none;
   text-align: center;
   display: block;
-  overflow-y: none;
+  overflow-y: auto;
   flex-grow: 1;
   max-height: 60%;
   min-height: 0;
@@ -190,7 +191,6 @@ const Layer = styled.div`
 
 export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
   status,
-  questionTitle,
   questionText,
   skipQuestion,
   caption,
@@ -228,7 +228,7 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
         <FrostedGlassEffect blurValue={blurValue} status={status} showQuestion={showQuestion}>
           {!showQuestion && (
             <CenteredTextContainer>
-              <UnselectableSpan style={tapAnimation}><Typography variant={"h4"}>Tap to display question</Typography></UnselectableSpan>
+              <UnselectableSpan style={tapAnimation}><Typography variant={"h4"}>Tap to preview question</Typography></UnselectableSpan>
             </CenteredTextContainer>
           )}
           {showQuestion && (
