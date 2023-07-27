@@ -80,7 +80,7 @@ const Typography = styled(MuiTypography)<TypographyProps>(() => ({
 }))
 
 interface CardItem {
-  jobTitle: string
+  title: string
   imageSrc: string
 }
 
@@ -89,6 +89,7 @@ interface CreateQuestionsComponentProps {
   setInfo: React.Dispatch<React.SetStateAction<Info | undefined>>
   setDisableInterviewAnalysis: React.Dispatch<React.SetStateAction<boolean>>
   setDisableInterviewInteractiveFeedback: React.Dispatch<React.SetStateAction<boolean>>
+  initialTag?: string | null
 }
 
 const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestionsComponentProps) => {
@@ -106,20 +107,27 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   useEffect(() => {
+    if (createQuestionsComponentProps.initialTag) {
+      setSelectedTag(createQuestionsComponentProps.initialTag)
+      setStartDialogOpen(true)
+    }
+  }, [createQuestionsComponentProps.initialTag])
+
+  useEffect(() => {
     const fetchInterviewTags = async () => {
       const result = await API.graphql(graphqlOperation(getQuestionUsageMetaData, {}))
-
+      console.log(result)
       if ('data' in result) {
         const tags = result.data.getQuestionUsageMetaData.questionTags
         const allTagsFromDB = tags.map((item: { tag: string }) => {
-          return { jobTitle: item.tag, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+          return { title: item.tag, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
         })
 
         const recommendationsFromDB = result.data.getQuestionUsageMetaData.recommendations
 
         // Mapping the recommendations from DB to the recommendations state
         const recommendationsFromDBToState = recommendationsFromDB.map((item: string) => {
-          return { jobTitle: item, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+          return { title: item, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
         })
 
         // Set the recommendations state
@@ -127,15 +135,17 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
 
         // Sort the job titles by alphabetical order
         allTagsFromDB.sort((a: any, b: any) => {
-          if (a.jobTitle < b.jobTitle) {
+          if (a.title < b.title) {
             return -1
           }
-          if (a.jobTitle > b.jobTitle) {
+          if (a.title > b.title) {
             return 1
           }
 
           return 0
         })
+
+        console.log(allTagsFromDB)
 
         setAllTags(allTagsFromDB)
       }
@@ -145,8 +155,8 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   }, [])
 
   // const options = allTags.map(tag => ({
-  //   value: tag.jobTitle,
-  //   label: tag.jobTitle
+  //   value: tag.title,
+  //   label: tag.title
   // }))
 
   // const customStyles = {
@@ -168,13 +178,13 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   //   handleChooseJobTitle(selectedOption.value)
   // }
 
-  const handleChooseJobTitle = (jobTitle: string) => {
-    setSelectedTag(jobTitle)
+  const handleChooseJobTitle = (title: string) => {
+    setSelectedTag(title)
     setStartDialogOpen(true)
     auth.trackEvent('User_Interview_Functionality_Used', {
       action: 'Start_Mock_Interview_Dialog',
-      desc: 'User clicked on a job title and previewed to start the mock interview.',
-      jobTitle: jobTitle
+      desc: 'User clicked on a title and previewed to start the interview.',
+      title: title
     })
   }
 
@@ -295,7 +305,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
               <div key={index}>
                 <InterviewCard
                   sx={{ width: '260px' }}
-                  jobTitle={item.jobTitle}
+                  title={item.title}
                   imageSrc={item.imageSrc}
                   onClick={handleChooseJobTitle}
                 />
@@ -309,7 +319,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
               <Grid item xs={6} md={3} lg={3} xl={2} key={index}>
                 <InterviewCard
                   sx={{ width: isSmallScreen ? '160px' : '220px' }}
-                  jobTitle={item.jobTitle}
+                  title={item.title}
                   imageSrc={item.imageSrc}
                   onClick={handleChooseJobTitle}
                 />

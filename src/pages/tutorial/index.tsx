@@ -126,16 +126,12 @@ const Tutorial = () => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        setStepContent(
-          <UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial} />
-        )
+        setStepContent(<UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial} />)
         break
       case 1:
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         setStepContent(<EducationCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh} />)
         break
       case 2:
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         setStepContent(<WorkHistoryCard workDatas={workDatas} type={'tutorial'} refresh={handleRefresh} />)
         break
       case 3:

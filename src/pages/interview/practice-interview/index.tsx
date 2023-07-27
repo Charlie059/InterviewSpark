@@ -1,19 +1,11 @@
-/***********************************************************************************************
-  Name: PracticeInterview
-  Description: This file contains the UI for practice interview.
-  Author: Charlie Gong
-  Company: HireBeat Inc.
-  Contact: Xuhui.Gong@HireBeat.co
-  Create Date: 2023/06/19
-  Update Date: 2023/06/19
-  Copyright: © 2023 HireBeat Inc. All rights reserved.
-************************************************************************************************/
-
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import CreateQuestionsComponent from 'src/components/interview/InterviewComponents/createQuestions'
 import InterviewComponent from 'src/components/interview/InterviewComponents/PracticeInterview'
 import { Interview } from 'src/types/types'
+import { API, graphqlOperation } from 'aws-amplify'
+import { getQuestionUsageMetaData } from 'src/graphql/queries'
 
 // Define states for the interview process
 
@@ -26,10 +18,42 @@ interface Info {
 }
 
 function PracticeInterviewPage() {
+  const router = useRouter()
   const [interviews, setInterviews] = React.useState<Interview[]>([])
   const [info, setInfo] = React.useState<Info>()
   const [disableInterviewAnalysis, setDisableInterviewAnalysis] = React.useState<boolean>(true)
   const [disableInterviewInteractiveFeedback, setDisableInterviewInteractiveFeedback] = React.useState<boolean>(true)
+  const [topicTag, setTopicTag] = React.useState<string | null>(null)
+  const [allTags, setAllTags] = React.useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    const fetchInterviewTags = async () => {
+      const result = await API.graphql(graphqlOperation(getQuestionUsageMetaData, {}))
+      console.log(result)
+      if ('data' in result) {
+        const tags = result.data.getQuestionUsageMetaData.questionTags
+        const allTagsFromDB = new Set<string>(tags.map((item: { tag: string }) => item.tag))
+        console.log(allTagsFromDB)
+        setAllTags(allTagsFromDB)
+      }
+    }
+
+    fetchInterviewTags()
+  }, [])
+
+  useEffect(() => {
+    if (router.query.topicTag) {
+      const urlTopicTag = router.query.topicTag as string
+      if (allTags.has(urlTopicTag)) {
+        setTopicTag(urlTopicTag)
+      }
+    }
+  }, [router.query, allTags])
+
+  // Print the value of topicTag when it changes
+  useEffect(() => {
+    console.log(topicTag)
+  }, [topicTag])
 
   return (
     <>
@@ -46,6 +70,7 @@ function PracticeInterviewPage() {
           setInfo={setInfo}
           setDisableInterviewAnalysis={setDisableInterviewAnalysis}
           setDisableInterviewInteractiveFeedback={setDisableInterviewInteractiveFeedback}
+          initialTag={topicTag}
         />
       )}
     </>

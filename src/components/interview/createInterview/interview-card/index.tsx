@@ -8,7 +8,7 @@ import { Card, CardActionArea } from '@mui/material'
 
 interface Props {
   sx?: CSSObject
-  jobTitle: string
+  title: string
   imageSrc: string
   onClick: (s: string) => void
 }
@@ -18,7 +18,7 @@ const InterviewCard = (props: Props) => {
     <Card sx={props.sx ? props.sx : { width: '220px' }}>
       <CardActionArea
         onClick={() => {
-          props.onClick(props.jobTitle)
+          props.onClick(props.title)
         }}
         style={{
           backgroundColor: '#FFFFFF',
@@ -39,7 +39,7 @@ const InterviewCard = (props: Props) => {
             fontSize: '17px'
           }}
         >
-          {props.jobTitle}
+          {props.title}
         </Typography>
       </CardActionArea>
     </Card>
