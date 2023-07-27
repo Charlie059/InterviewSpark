@@ -24,6 +24,13 @@ import Log from 'src/middleware/loggerMiddleware'
 import { removeUserInterviewsByID } from 'src/graphql/mutations'
 import router from 'next/router'
 import { Interview } from 'src/types/types'
+import styled from 'styled-components'
+
+const StyledDataGrid = styled(DataGrid)`
+  .clickable-cell {
+    cursor: pointer;
+  }
+`
 
 const InterviewList = () => {
   const auth = useAuth()
@@ -103,20 +110,22 @@ const InterviewList = () => {
   }
 
   const columns = [
-    { field: 'id', headerName: 'ID', hide: true },
-    { field: 'interviewQuestionID', width: qIdWidth, hide: containerWidth < 800, headerName: 'ID' },
+    { field: 'id', headerName: 'ID', width: qIdWidth, hide: containerWidth < 800 },
+    { field: 'interviewQuestionID', width: qIdWidth, hide: true, headerName: 'ID' },
     { field: 'interviewQuestionTitle', width: qNameWidth, headerName: 'Question' },
     {
       field: 'interviewDateTime',
-      headerName: 'Date',
+      headerName: 'DateTime',
       width: qDateWidth,
       hide: containerWidth < 400,
       valueFormatter: (params: any) => {
         const date = new Date(params.value)
 
-        return format(date, 'dd MMM yyyy')
+        // Format the date to 'DD MMM YYYY, HH:mm' format
+        return format(date, 'dd MMM yyyy HH:mm')
       }
     },
+
     {
       field: 'interviewQuestionType',
       headerName: 'Type',
@@ -143,8 +152,8 @@ const InterviewList = () => {
     { field: 'interviewVideoKey', headerName: 'Video Key', hide: true },
     { field: 'interviewID', headerName: 'Interview ID', hide: true },
     {
-      field: 'operations',
-      headerName: 'Operations',
+      field: 'actions',
+      headerName: 'Actions',
       width: operationsWidth,
       sortable: false,
       filterable: false,
@@ -322,11 +331,11 @@ const InterviewList = () => {
           handleFilter={handleSort}
           onDelete={handleDelete}
           buttonText={'New Interview'}
-          buttonLink={'/interview/mock-interview'}
+          buttonLink={'/interview/practice-interview'}
           disableSearch={false}
         />
         <Box ref={containerRef}>
-          <DataGrid
+          <StyledDataGrid
             loading={loading}
             page={page}
             autoHeight
@@ -336,7 +345,12 @@ const InterviewList = () => {
             columns={columns.map(column => ({
               ...column,
               headerAlign: 'left',
-              align: 'left'
+              align: 'left',
+              cellClassName: ['id', 'interviewQuestionTitle', 'interviewDateTime', 'interviewQuestionType'].includes(
+                column.field
+              )
+                ? 'clickable-cell'
+                : ''
             }))}
             pageSize={pageSize}
             rowsPerPageOptions={[5]}
@@ -345,6 +359,30 @@ const InterviewList = () => {
             onSelectionModelChange={rows => {
               setSelectedRows(rows)
             }}
+            onRowClick={(param, event) => {
+              const clickedField = (event.target as HTMLElement).getAttribute('data-field')
+
+              // Check if clickedField is not null
+              if (
+                clickedField !== null &&
+                ['id', 'interviewQuestionTitle', 'interviewDateTime', 'interviewQuestionType'].includes(clickedField)
+              ) {
+                Log.info('View button clicked for interview ID:', param.row.interviewID)
+                const urlMessage = {
+                  interviewID: param.row.interviewID,
+                  interviewQuestionID: param.row.interviewQuestionID,
+                  interviewQuestionType: param.row.interviewQuestionType
+                }
+                const interviewsString = JSON.stringify(urlMessage)
+
+                router.push({
+                  pathname: '/interview/detail',
+                  query: { interview: interviewsString }
+                })
+              }
+            }}
+            disableColumnSelector
+            disableColumnFilter
           />
         </Box>
       </div>

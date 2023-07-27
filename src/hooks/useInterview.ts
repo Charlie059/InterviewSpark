@@ -1,6 +1,6 @@
 /***********************************************************************************************
-  Name: UseMockInterview.tsx
-  Description: This file contains the custom hook for mock interview.
+  Name: UseInterview.tsx
+  Description: This file contains the custom hook for interview.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
@@ -24,7 +24,7 @@ import { Interview } from 'src/types/types'
 import useChatGPTStream from './useChatGPTStream'
 import { usePollyByQueueTest } from './usePollyTest'
 
-// Define states for the mock interview process
+// Define states for the interview process
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
   FinishedQuestion = 'FINISHED_QUESTION',
@@ -81,7 +81,7 @@ type InterviewAction =
   | { type: typeof SET_QUESTION_INDEX; newIndex: number }
 
 // Define constants for other strings
-const WELCOME_WORDS = 'Welcome to the mock interview.'
+const WELCOME_WORDS = 'Welcome to the interview.'
 
 // Define the reducer for handling actions
 const interviewReducer = (state: InterviewState, action: InterviewAction) => {
@@ -125,8 +125,26 @@ const interviewReducer = (state: InterviewState, action: InterviewAction) => {
   }
 }
 
-// Define the custom hook for mock interview
-const useMockInterview = (interviews: Interview[]) => {
+interface Info {
+  questionNum: number
+  videoinput: string
+  audioinput: string
+  audiooutput: string
+  interviewTopic: string
+}
+
+interface InterviewHookProps {
+  interviews: Interview[]
+  disableInterviewAnalysis?: boolean
+  disableInterviewInteractiveFeedback?: boolean
+  info: Info
+}
+
+// Define the custom hook for interview
+const useInterview = (interviewHookProps: InterviewHookProps) => {
+  // Destructure the props
+  const { interviews, disableInterviewAnalysis, disableInterviewInteractiveFeedback, info } = interviewHookProps
+
   // Add error check for the interviews array
   if (!interviews || !Array.isArray(interviews) || interviews.length === 0) {
     throw new Error('The interviews array is either not an array or is empty.')
@@ -142,10 +160,21 @@ const useMockInterview = (interviews: Interview[]) => {
   const [isReading, setReading] = useState(false)
 
   // Using the custom hooks
-  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest({}, () => {
-    setReading(false)
-  })
-  const { transcribedText, handleStartTranscribe, handleStopTranscribe, transcribeError } = useTranscribe() // Use the custom hook for transcribing audio
+  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest(
+    {},
+    () => {
+      setReading(false)
+
+      // If the interview is in the interviewing state, start transcribing and recording
+      if (interviewState.status === InterviewStatus.Interviewing) {
+        startTranscribingAndRecording()
+      }
+    },
+    info.audiooutput
+  )
+  const { transcribedText, handleStartTranscribe, handleStopTranscribe, transcribeError } = useTranscribe(
+    info.audioinput
+  ) // Use the custom hook for transcribing audio
   const {
     webcamRef,
     setVideoOn,
@@ -156,7 +185,7 @@ const useMockInterview = (interviews: Interview[]) => {
     handleStopCapture,
     getVideoBlob,
     videoRecordingError
-  } = useVideoRecording() // Use the custom hook for video recording
+  } = useVideoRecording(info.audioinput) // Use the custom hook for video recording
   const { save, s3Error } = useS3Video() // Use the custom s3 saver hook for uploading video to S3
   const { generateResponse, chatGPTStreamError } = useChatGPTStream(addToQueue, start, end) // Use the useChatGPTStream Hook here
 
@@ -168,12 +197,26 @@ const useMockInterview = (interviews: Interview[]) => {
 
   // Helper function to start transcribing and recording
   function startTranscribingAndRecording() {
+    // If disableInterviewInteractiveFeedback is true, then we don't need to start transcribing
+    if (disableInterviewInteractiveFeedback) {
+      handleStartCapture() // Start recording
+
+      return
+    }
+
     handleStartTranscribe() // Start transcribing
     handleStartCapture() // Start recording
   }
 
   // Helper function to start transcribing and recording
   function stopTranscribingAndRecording() {
+    // If disableInterviewInteractiveFeedback is true, then we don't need to stop transcribing
+    if (disableInterviewInteractiveFeedback) {
+      interviewVideoLength.current = handleStopCapture() as number // Stop recording
+
+      return
+    }
+
     handleStopTranscribe() // Stop transcribing
     interviewVideoLength.current = handleStopCapture() as number // Stop recording
   }
@@ -205,11 +248,11 @@ const useMockInterview = (interviews: Interview[]) => {
   // Define a function to start the interview
   const startInterview = async () => {
     setReading(true)
-    if (interviewState.currentQuestionIndex === 0) addToQueue(WELCOME_WORDS)
     start()
+    if (interviewState.currentQuestionIndex === 0) addToQueue(WELCOME_WORDS)
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
     end()
-    startTranscribingAndRecording()
+
     dispatch({ type: START_QUESTION })
   }
 
@@ -233,10 +276,20 @@ const useMockInterview = (interviews: Interview[]) => {
   // Define a function to finish the current interview question
   const finishQuestion = async () => {
     stopTranscribingAndRecording()
+
+    // If disableInterviewInteractiveFeedback is true, then we don't need to generate response
+    if (disableInterviewInteractiveFeedback) {
+      dispatch({ type: FINISH_QUESTION })
+
+      return
+    }
+
     setReading(true)
 
     const interviewQuestion = interviews[interviewState.currentQuestionIndex].interviewQuestion
     const interviewAnswer = transcribedText.current
+
+    Logger.info('Interview Answer: ', interviewAnswer)
     generateResponse(interviewQuestion, interviewAnswer)
     dispatch({ type: FINISH_QUESTION })
   }
@@ -265,6 +318,13 @@ const useMockInterview = (interviews: Interview[]) => {
           updateVideoToDynamoDB(uniqueFilename!, filePath!)
             .then(() => {
               dispatch({ type: SAVED_QUESTION })
+
+              // If the interview analysis is disabled, resolve the promise here
+              if (disableInterviewAnalysis) {
+                resolve()
+
+                return
+              }
 
               // Start an analysis job
               API.graphql(
@@ -339,8 +399,13 @@ const useMockInterview = (interviews: Interview[]) => {
     getCaption: caption,
     isCapturing: isCapturing,
     isVideoEnabled,
-    isReading: isReading
+    isReading: isReading,
+
+    // Variables
+    videoInput: info.videoinput,
+    audioInput: info.audioinput,
+    audioOutput: info.audiooutput
   }
 }
 
-export default useMockInterview
+export default useInterview

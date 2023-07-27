@@ -19,7 +19,7 @@ let microphoneStream = undefined
 let transcribeClient = undefined
 let transcribedText = ''
 
-export const startRecording = async (language, callback) => {
+export const startRecording = async (language, callback, deviceId) => {
   if (!language) {
     return false
   }
@@ -28,10 +28,9 @@ export const startRecording = async (language, callback) => {
   }
 
   await createTranscribeClient()
-  createMicrophoneStream()
+  createMicrophoneStream(deviceId)
   await startStreaming(language, callback)
 }
-
 export const stopRecording = function () {
   if (microphoneStream) {
     microphoneStream.stop()
@@ -57,15 +56,20 @@ const createTranscribeClient = async () => {
   }
 }
 
-const createMicrophoneStream = async () => {
+const createMicrophoneStream = deviceId => {
   try {
     microphoneStream = new MicrophoneStream()
-    microphoneStream.setStream(
-      await window.navigator.mediaDevices.getUserMedia({
+    window.navigator.mediaDevices
+      .getUserMedia({
         video: false,
-        audio: true
+        audio: { deviceId: deviceId }
       })
-    )
+      .then(stream => {
+        microphoneStream.setStream(stream)
+      })
+      .catch(error => {
+        console.log(`Error getting audio stream: ${error.message}`)
+      })
   } catch (error) {
     throw new Error(`Error creating microphone stream: ${error.message}`)
   }

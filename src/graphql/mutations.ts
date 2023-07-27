@@ -32,6 +32,7 @@ export const createNewGuestUser = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -41,12 +42,14 @@ export const createUserInterviewQuestionList = /* GraphQL */ `
     $questionTag: String!
     $numOfBQ: Int!
     $numOfTech: Int!
+    $isDisableInterviewAnalysis: Boolean
   ) {
     createUserInterviewQuestionList(
       emailAddress: $emailAddress
       questionTag: $questionTag
       numOfBQ: $numOfBQ
       numOfTech: $numOfTech
+      isDisableInterviewAnalysis: $isDisableInterviewAnalysis
     ) {
       interviewList {
         interviewID
@@ -61,6 +64,7 @@ export const createUserInterviewQuestionList = /* GraphQL */ `
         interviewEstimatedSeconds
         interviewVideoLength
         interviewVideoPath
+        isDisableInterviewAnalysis
       }
     }
   }
@@ -86,6 +90,7 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -124,6 +129,7 @@ export const updateUserInterview = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -154,6 +160,7 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewEstimatedSeconds
       interviewVideoLength
       interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -192,6 +199,7 @@ export const updateUserProfile = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -210,6 +218,7 @@ export const removeUserInterviewsByID = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -224,6 +233,7 @@ export const removeUserResumeScanByID = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -336,6 +346,7 @@ export const removeUserEducationByID = /* GraphQL */ `
     removeUserEducationByID(emailAddress: $emailAddress, eduID: $eduID) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -406,6 +417,96 @@ export const removeUserWorkHistoryByID = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
+    }
+  }
+`;
+export const createUserSubscriptionRequest = /* GraphQL */ `
+  mutation CreateUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $planID: String!
+  ) {
+    createUserSubscriptionRequest(userEmail: $userEmail, planID: $planID) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const resumeUserSubscriptionRequest = /* GraphQL */ `
+  mutation ResumeUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+  ) {
+    resumeUserSubscriptionRequest(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const cancelUserSubscriptionRequest = /* GraphQL */ `
+  mutation CancelUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+  ) {
+    cancelUserSubscriptionRequest(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage = /* GraphQL */ `
+  mutation VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(
+    $userEmail: AWSEmail!
+  ) {
+    verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(
+      userEmail: $userEmail
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const handleMixpanelEvent = /* GraphQL */ `
+  mutation HandleMixpanelEvent(
+    $userEmail: AWSEmail!
+    $data: AWSJSON!
+    $eventType: String!
+  ) {
+    handleMixpanelEvent(
+      userEmail: $userEmail
+      data: $data
+      eventType: $eventType
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const updateUserSubscriptionCancelReason = /* GraphQL */ `
+  mutation UpdateUserSubscriptionCancelReason(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+    $cancelReason: AWSJSON!
+  ) {
+    updateUserSubscriptionCancelReason(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+      cancelReason: $cancelReason
+    ) {
+      isSuccessful
+      error
+      info
     }
   }
 `;

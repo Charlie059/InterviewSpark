@@ -30,8 +30,13 @@ interface ErrorState {
 const START_SYMBOL = '__START__'
 const END_SYMBOL = '__END__'
 
-export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: () => void) => {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+// Extend the HTMLAudioElement interface
+interface HTMLAudioElementExtended extends HTMLAudioElement {
+  setSinkId?(sinkId: string): Promise<void>
+}
+
+export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: () => void, audioOutput: string) => {
+  const audioRef = useRef<HTMLAudioElementExtended | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [queue, setQueue] = useState<string[]>([])
   const { region = 'us-east-1', voiceId = 'Ruth', engine = 'neural', sampleRate = '22050' } = options
@@ -91,17 +96,40 @@ export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: (
 
             if (audioRef.current) {
               audioRef.current.src = url
-              const playPromise = audioRef.current.play()
-              if (playPromise !== undefined) {
-                playPromise
+              if (typeof audioRef.current.setSinkId === 'function') {
+                audioRef.current
+                  .setSinkId(audioOutput)
                   .then(() => {
-                    return new Promise(resolve => {
-                      audioRef.current!.addEventListener('ended', resolve, { once: true })
+                    const playPromise = audioRef.current!.play()
+                    if (playPromise !== undefined) {
+                      playPromise
+                        .then(() => {
+                          return new Promise(resolve => {
+                            audioRef.current!.addEventListener('ended', resolve, { once: true })
+                          })
+                        })
+                        .then(() => {
+                          setIsLoading(false)
+                        })
+                    }
+                  })
+                  .catch(error => {
+                    Logger.error('Error:', error)
+                    setPollyError({ type: 'AWS-Polly-Error', message: `Failed to set audio output: ${error}` })
+                  })
+              } else {
+                const playPromise = audioRef.current.play()
+                if (playPromise !== undefined) {
+                  playPromise
+                    .then(() => {
+                      return new Promise(resolve => {
+                        audioRef.current!.addEventListener('ended', resolve, { once: true })
+                      })
                     })
-                  })
-                  .then(() => {
-                    setIsLoading(false)
-                  })
+                    .then(() => {
+                      setIsLoading(false)
+                    })
+                }
               }
             }
           } else {
@@ -122,12 +150,16 @@ export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: (
 
   useEffect(() => {
     if (!isLoading && queue.length > 0) {
-      const text = queue.shift()
+      // Remove the first element from the queue
+      const [text, ...rest] = queue
+      setQueue(rest)
+
+      console.log('que', queue)
+
       if (text === END_SYMBOL) {
         onComplete()
       }
       if (text !== START_SYMBOL && text !== END_SYMBOL) {
-        setQueue([...queue])
         synthesizeSpeech(text as string)
       }
     }

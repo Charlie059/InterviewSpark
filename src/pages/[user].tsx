@@ -12,12 +12,12 @@ import PublicProfile from 'src/components/profile/PublicProfile'
 import React, { ReactNode } from 'react'
 import BlankLayout from '../@core/layouts/BlankLayout'
 import Grid from '@mui/material/Grid'
-import Typography from "@mui/material/Typography";
-import Link from "next/link";
-import Button from "@mui/material/Button";
-import Box, {BoxProps} from "@mui/material/Box";
-import FooterIllustrations from "../views/pages/misc/FooterIllustrations";
-import {styled} from "@mui/material/styles";
+import Typography from '@mui/material/Typography'
+import Link from 'next/link'
+import Button from '@mui/material/Button'
+import Box, { BoxProps } from '@mui/material/Box'
+import FooterIllustrations from '../views/pages/misc/FooterIllustrations'
+import { styled } from '@mui/material/styles'
 
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -44,19 +44,19 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
   console.log()
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
- if(auth.user?.userName===user){
-    router.push('/user-profile/'+user)
+  if (auth.user?.userName === user) {
+    router.push('/user-profile/' + user)
   } else if (data?.isPublic) {
     return (
       <Grid container direction='row' justifyContent='center' alignItems='center' sx={{ mb: 2.7 }}>
         <Grid item xs={12} sm={10} md={8} lg={8} xl={8}>
-          <PublicProfile user={user} data={data}/>
+          <PublicProfile user={user} data={data} />
         </Grid>
       </Grid>
     )
   } else {
     // If user is unauthorized, redirect to 401 page
-    return(
+    return (
       <Box className='content-center'>
         <Box sx={{ p: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
           <BoxWrapper>
@@ -64,10 +64,9 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
               404
             </Typography>
             <Typography variant='h5' sx={{ mb: 2.5, letterSpacing: '0.18px', fontSize: '1.5rem !important' }}>
-              User Not Found ⚠️
+              Not Found ⚠️
             </Typography>
-            <Typography variant='body2'>We couldn&prime;t find the user you are looking for.</Typography>
-            <Typography variant='body2'> They might not have enabled profile sharing yet.</Typography>
+            <Typography variant='body2'>We couldn&prime;t find the resources are looking for.</Typography>
           </BoxWrapper>
           <Img alt='error-illustration' src='/images/pages/404.png' />
           <Button href='/' component={Link} variant='contained' sx={{ px: 5.5 }}>
@@ -108,8 +107,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
   }
 
   //if user data is private, return nothing
-  if(!data?.isPublic){
-    data={isPublic:false}
+  if (!data?.isPublic) {
+    data = { isPublic: false }
   }
 
   return {

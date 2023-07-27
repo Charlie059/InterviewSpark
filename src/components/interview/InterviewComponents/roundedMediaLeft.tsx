@@ -1,6 +1,6 @@
 /***********************************************************************************************
   Name: RoundedMediaLeft.tsx
-  Description: This file contains the custom hook for mock interview.
+  Description: This file contains the custom hook for interview.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
@@ -9,7 +9,7 @@
   Copyright: © 2023 HireBeat Inc. All rights reserved.
 ************************************************************************************************/
 
-import { FC, useRef } from 'react'
+import { FC, useRef, useState } from 'react'
 import Webcam from 'react-webcam'
 import styled from 'styled-components'
 import VideoIconButton from './videobutton'
@@ -26,6 +26,8 @@ enum InterviewStatus {
 }
 
 interface RoundedMediaProps {
+  videoInput: string
+  audioInput: string
   status: InterviewStatus
   getWebcamRef: any
   getVideoBlob: () => Blob | null
@@ -104,6 +106,8 @@ const Layer = styled.div`
 `
 
 export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
+  videoInput,
+  audioInput,
   status,
   getWebcamRef,
   getVideoBlob,
@@ -114,6 +118,8 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
   startReview
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  const [videoInterview] = useState<boolean>(videoInput !== '')
 
   const handleReviewClick = () => {
     startReview()
@@ -127,15 +133,36 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
   const shouldShowImg =
     !isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
 
+  const videoConstraints = {
+    deviceId: videoInput
+  }
+
+  const audioConstraints = {
+    deviceId: audioInput
+  }
+
   return (
     <RoundedDiv>
-      <StyledWebcamContainer isVisible={shouldShowWebcam}>
-        <Webcam audio={true} muted={true} ref={getWebcamRef} />
-      </StyledWebcamContainer>{' '}
-      {shouldShowImg && (
+      {videoInterview ? (
+        <>
+          <StyledWebcamContainer isVisible={shouldShowWebcam}>
+            <Webcam
+              audio={true}
+              muted={true}
+              ref={getWebcamRef}
+              videoConstraints={videoConstraints}
+              audioConstraints={audioConstraints}
+            />{' '}
+          </StyledWebcamContainer>
+          {shouldShowImg && (
+            <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />
+          )}
+        </>
+      ) : (
         <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />
       )}
-      {status !== InterviewStatus.FinishedQuestion && status !== InterviewStatus.Reviewing && (
+
+      {status !== InterviewStatus.FinishedQuestion && status !== InterviewStatus.Reviewing && videoInterview && (
         <Layer>
           <VideoIconButton
             onButtonClick={function (): void {

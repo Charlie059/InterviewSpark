@@ -1,3 +1,8 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
 type Education {
   eduID: String
   eduDegree: String
@@ -26,6 +31,7 @@ type Interview {
   interviewEstimatedSeconds: Int
   interviewVideoLength: String
   interviewVideoPath: String
+  isDisableInterviewAnalysis: Boolean
 }
 
 type InterviewList {
@@ -196,6 +202,7 @@ type Mutation {
     questionTag: String!
     numOfBQ: Int!
     numOfTech: Int!
+    isDisableInterviewAnalysis: Boolean
   ): InterviewList!
   createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
   updateUserInterview(
@@ -284,11 +291,22 @@ type Mutation {
     workDescription: String!
   ): WorkHistory!
   removeUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): OperationResult!
+  createUserSubscriptionRequest(userEmail: AWSEmail!, planID: String!): OperationResult!
+  resumeUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
+  cancelUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
+  verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(userEmail: AWSEmail!): OperationResult!
+  handleMixpanelEvent(userEmail: AWSEmail!, data: AWSJSON!, eventType: String!): OperationResult!
+  updateUserSubscriptionCancelReason(
+    userEmail: AWSEmail!
+    subscriptionId: String!
+    cancelReason: AWSJSON!
+  ): OperationResult!
 }
 
 type OperationResult {
   isSuccessful: Boolean!
   error: String
+  info: AWSJSON
 }
 
 type PaginatedInterviewList {
@@ -349,6 +367,39 @@ type Query {
   getUserResumeScans(emailAddress: AWSEmail!): ResumeScanList!
   getUserEducationByID(emailAddress: AWSEmail!, eduID: String!): Education!
   getUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): WorkHistory!
+  getUserCurrentActiveSubscriptionAndProducts(emailAddress: AWSEmail!): UserSubscriptionProductsList!
+}
+
+type UserSubscription {
+  cancelAtPeriodEnd: Boolean
+  currentPeriodEnd: AWSDateTime
+  currentPeriodStart: AWSDateTime
+  GSI1SK: String
+  planPeriod: String
+  planPeriodAmount: String
+  planStatus: String
+  planType: String
+  stripeCustomerID: String
+  subscriptionID: String!
+}
+
+type UserSubscriptionProduct {
+  GSI1SK: String
+  productDetail: String
+  productID: String
+  productName: String!
+  productNumUsage: Int!
+  productTotalNumUsage: Int!
+  subscriptionID: String!
+}
+
+type UserSubscriptionProducts {
+  userSubscription: UserSubscription!
+  userSubscriptionProduct: [UserSubscriptionProduct]!
+}
+
+type UserSubscriptionProductsList {
+  userSubscriptionProductsArray: [UserSubscriptionProducts]!
 }
 
 type Question {
@@ -368,6 +419,15 @@ type QuestionList {
 
 type QuestionUsageMetaData {
   totalNumOfQuestion: Int
+  questionTypes: [String]
+  questionTags: [QuestionTag]
+  recommendations: [String]
+}
+
+type QuestionTag {
+  tag: String
+  BQ: [Int]
+  TECH: [Int]
 }
 
 type ResumeScan {
@@ -391,8 +451,8 @@ type User {
 }
 
 type UserInterviewUsageMetaData {
-  userInterviewNumCount: Int
-  userInterviewQuestionSet: [Int]
+  userInterviewNumTotalCount: Int
+  userInterviewNumUniqueCount: Int
   userInterviewQuestionMap: AWSJSON
 }
 

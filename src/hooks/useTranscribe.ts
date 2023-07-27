@@ -6,7 +6,7 @@ interface ErrorState {
   message?: string
 }
 
-const useTranscribe = () => {
+const useTranscribe = (audioInput: string) => {
   const [isRecording, setIsRecording] = useState(false)
   const transcribedText = useRef('')
   const [language, setLanguage] = useState('en-US')
@@ -14,14 +14,19 @@ const useTranscribe = () => {
 
   const handleStartTranscribe = useCallback(async () => {
     setIsRecording(true)
+    console.log('audioInput', audioInput)
     try {
-      await startRecording(language, (data: any) => {
-        transcribedText.current = data as string
-      })
+      await startRecording(
+        language,
+        (data: any) => {
+          transcribedText.current = data as string
+        },
+        audioInput
+      )
     } catch (err: any) {
       setTranscribeError({ type: 'AWS-Transcribe-Error', message: err })
     }
-  }, [language])
+  }, [language, audioInput])
 
   const handleStopTranscribe = useCallback(() => {
     setIsRecording(false)

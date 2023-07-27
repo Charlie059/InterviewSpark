@@ -1,6 +1,6 @@
 /***********************************************************************************************
-  Name: MockInterview
-  Description: This file contains the UI for mock interview.
+  Name: PracticeInterview
+  Description: This file contains the UI for interview.
   Author: Charlie Gong
   Company: HireBeat Inc.
   Contact: Xuhui.Gong@HireBeat.co
@@ -11,21 +11,21 @@
 
 import Logger from 'src/middleware/loggerMiddleware'
 import React, { useCallback, useEffect, useRef } from 'react'
-import useMockInterview from 'src/hooks/useMockInterview'
+import useInterview from 'src/hooks/useInterview'
 import { useRouter } from 'next/router'
-import { RoundedMediaLeft } from 'src/components/interview/mockInterview/roundedMediaLeft'
-import PaginationBarWithNumber from 'src/components/interview/mockInterview/paginationBarWithNumber'
+import { RoundedMediaLeft } from 'src/components/interview/InterviewComponents/roundedMediaLeft'
+import PaginationBarWithNumber from 'src/components/interview/InterviewComponents/paginationBarWithNumber'
 import { Box, Grid } from '@mui/material'
-import MenuIconButton from 'src/components/interview/mockInterview/menuIconButton'
-import BlurDrawer from 'src/components/interview/mockInterview/blurDrawer'
-import TopArea from 'src/components/interview/mockInterview/topArea'
-import RoundedMediaRight from 'src/components/interview/mockInterview/roundedMediaRight'
-import InterviewButton from 'src/components/interview/mockInterview/interviewButton'
+import MenuIconButton from 'src/components/interview/InterviewComponents/menuIconButton'
+import BlurDrawer from 'src/components/interview/InterviewComponents/blurDrawer'
+import TopArea from 'src/components/interview/InterviewComponents/topArea'
+import RoundedMediaRight from 'src/components/interview/InterviewComponents/roundedMediaRight'
+import InterviewButton from 'src/components/interview/InterviewComponents/interviewButton'
 import LoadingScreen from 'src/components/loading/Loading'
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material'
 import { Interview } from 'src/types/types'
 
-// Define states for the mock interview process
+// Define states for the interview process
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
   FinishedQuestion = 'FINISHED_QUESTION',
@@ -50,15 +50,15 @@ interface TimerHandle {
   reset: () => void
 }
 
-interface MockInterviewComponentProps {
+interface InterviewComponentProps {
   interviews: Interview[]
   info: Info
+  disableInterviewAnalysis: boolean
+  disableInterviewInteractiveFeedback: boolean
 }
 
-function MockInterviewComponent(mockInterviewComponentProps: MockInterviewComponentProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { interviews, info } = mockInterviewComponentProps
-
+function InterviewComponent(interviewComponentProps: InterviewComponentProps) {
+  const { interviews, info, disableInterviewAnalysis, disableInterviewInteractiveFeedback } = interviewComponentProps
   const router = useRouter()
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [dialogOpen, setDialogOpen] = React.useState(false)
@@ -81,8 +81,15 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
     getWebcamRef,
     getVideoBlob,
     isVideoEnabled,
-    isReading
-  } = useMockInterview(interviews)
+    isReading,
+    videoInput,
+    audioInput
+  } = useInterview({
+    interviews: interviews,
+    disableInterviewAnalysis: disableInterviewAnalysis,
+    disableInterviewInteractiveFeedback: disableInterviewInteractiveFeedback,
+    info: info
+  })
 
   // Helper function to guard against multiple invocations of finishQuestion
   function guardedFinishQuestion() {
@@ -292,6 +299,8 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
           >
             <Grid item xs={0} sm={5} md={5.5} lg={4.5}>
               <RoundedMediaLeft
+                videoInput={videoInput}
+                audioInput={audioInput}
                 getWebcamRef={getWebcamRef}
                 getVideoBlob={getVideoBlob}
                 isVideoEnabled={isVideoEnabled}
@@ -340,4 +349,4 @@ function MockInterviewComponent(mockInterviewComponentProps: MockInterviewCompon
   )
 }
 
-export default MockInterviewComponent
+export default InterviewComponent

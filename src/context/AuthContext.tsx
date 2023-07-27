@@ -15,7 +15,7 @@ import Log from 'src/middleware/loggerMiddleware'
 
 // ** Get user
 import { getUserProfileData } from '../utils/getUser'
-import { createNewGuestUser } from 'src/graphql/mutations'
+import { handleMixpanelEvent } from 'src/graphql/mutations'
 
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
@@ -51,7 +51,9 @@ const defaultProvider: AuthValuesType = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve(),
-  currUser: handleCurrUser
+  currUser: handleCurrUser,
+  trackEvent: () => Promise.resolve(),
+  setMixpanelPeople: () => Promise.resolve()
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -164,35 +166,59 @@ const AuthProvider = ({ children }: Props) => {
 
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
     try {
-      const { user } = await Auth.signUp({
+      await Auth.signUp({
+        username: params.email,
         password: params.password,
-        username: params.email
+        attributes: {
+          'custom:emailAddress': params.email,
+          'custom:fName': params.fName,
+          'custom:lName': params.lName,
+          'custom:userName': params.username
+        }
+      }).then(async user => {
+        console.log(user)
+
+        Log.info('Verify email sent', user)
+        errorCallback ? errorCallback({ name: 'success' }) : null
       })
-
-      // TODO error condition check
-      try {
-        const response = await API.graphql(
-          graphqlOperation(createNewGuestUser, {
-            emailAddress: params.email,
-            userName: params.username,
-            fName: params.fName,
-            lName: params.lName
-          })
-        )
-
-        console.log('response', response)
-      } catch (error) {
-        console.error('Error adding new guest user:', error)
-
-        return null
-      }
-
-      Log.info('Verify email sent', user)
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
       errorCallback ? errorCallback(err) : null
-      Log.error(err)
+      console.log(err.message)
     }
+  }
+
+  // eventName: Any string to identify the event
+  // eventParams: Any object to describe the event
+  const trackEvent = async (eventName: string, eventParams?: { [key: string]: any }) => {
+    console.log('trackEvent', eventName, eventParams)
+    console.log('trackEvent user', user)
+    await API.graphql(
+      graphqlOperation(handleMixpanelEvent, {
+        userEmail: user?.userEmailAddress,
+        data: JSON.stringify({
+          eventName,
+          eventParams: { ...eventParams, email: user?.userEmailAddress, firstName: user?.fName, lastName: user?.lName } // Any built-in event properties that every call needs
+        }),
+        eventType: 'trackEvent'
+      })
+    )
+  }
+
+  // profileParams: Any object to describe the user profile
+  const setMixpanelPeople = async (profileParams: { [key: string]: any }) => {
+    await API.graphql(
+      graphqlOperation(handleMixpanelEvent, {
+        userEmail: user?.userEmailAddress,
+        data: JSON.stringify({
+          ...profileParams,
+          $email: user?.userEmailAddress,
+          $first_name: user?.fName,
+          $last_name: user?.lName // Any built-in profile properties that every call needs
+        }),
+        eventType: 'setPeople'
+      })
+    )
   }
 
   const values = {
@@ -203,7 +229,9 @@ const AuthProvider = ({ children }: Props) => {
     login: handleLogin,
     logout: handleLogout,
     register: handleRegister,
-    currUser: handleCurrUser
+    currUser: handleCurrUser,
+    trackEvent,
+    setMixpanelPeople
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>

@@ -29,7 +29,7 @@ describe('Login Page', () => {
     cy.get('button[type="submit"]').click()
 
     // Verify that the error message is displayed
-    cy.get('form').contains('Email or Password is invalid')
+    cy.get('form').contains('Incorrect username or password.')
   })
 
   it('shows an error message with invalid email', () => {
