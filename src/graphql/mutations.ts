@@ -180,6 +180,8 @@ export const updateUserProfile = /* GraphQL */ `
     $resumeKey: String
     $state: String
     $isPublic: String
+    $userIndustry: String
+    $userDreamJob: String
   ) {
     updateUserProfile(
       emailAddress: $emailAddress
@@ -196,6 +198,8 @@ export const updateUserProfile = /* GraphQL */ `
       resumeKey: $resumeKey
       state: $state
       isPublic: $isPublic
+      userIndustry: $userIndustry
+      userDreamJob: $userDreamJob
     ) {
       isSuccessful
       error
@@ -504,6 +508,15 @@ export const updateUserSubscriptionCancelReason = /* GraphQL */ `
       subscriptionId: $subscriptionId
       cancelReason: $cancelReason
     ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const updateNewUserStatus = /* GraphQL */ `
+  mutation UpdateNewUserStatus($userEmail: AWSEmail!, $isNewUser: Boolean!) {
+    updateNewUserStatus(userEmail: $userEmail, isNewUser: $isNewUser) {
       isSuccessful
       error
       info

@@ -15,6 +15,10 @@ import { useSpring, animated } from 'react-spring' // 引入react-spring
 import SkipNextSharpIcon from '@mui/icons-material/SkipNextSharp'
 import CaptionIconButton from './captionButton'
 import DynamicWave from './DynamicWave'
+import {
+  Card
+} from '@mui/material'
+import Typography from "@mui/material/Typography";
 
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
@@ -65,7 +69,6 @@ const RoundedDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3);
   font-size: 20px;
   user-select: none;
 `
@@ -92,25 +95,20 @@ const QuestionContainer = styled.div`
 `
 
 const UnselectableSpan = styled(animated.span)`
-  font-family: 'Poppins';
-  font-weight: 500;
-  font-size: 28px;
-  color: #cacaca;
+  variant: h6;
   user-select: none;
   text-align: center;
   display: inline-block;
 `
 
 const QuestionTagSpan = styled.span`
-  font-family: 'Poppins';
-  font-weight: 500;
-  font-size: 35px;
-  color: #000;
+  variant: h2;
   user-select: none;
   text-align: left;
   display: block;
 `
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const QuestionTitleSpan = styled.span`
   font-family: 'Poppins';
   font-weight: 400;
@@ -122,14 +120,11 @@ const QuestionTitleSpan = styled.span`
 `
 
 const CaptionSpan = styled.span`
-  font-family: 'Poppins';
-  font-weight: 300;
-  font-size: 18px;
-  color: #000;
+  variant: h6;
   user-select: none;
   text-align: center;
   display: block;
-  overflow-y: none;
+  overflow-y: auto;
   flex-grow: 1;
   max-height: 60%;
   min-height: 0;
@@ -137,20 +132,13 @@ const CaptionSpan = styled.span`
 `
 
 const SkipButtonText = styled.span`
-  font-family: 'Poppins';
-  font-weight: 400;
-  font-size: 14px;
-  color: #ffffff;
+  variant: body1;
   user-select: none;
   text-align: left;
   display: block;
 `
 
 const QuestionSpan = styled.span`
-  font-family: 'Poppins';
-  font-weight: 200;
-  font-size: 17px;
-  color: #000;
   user-select: none;
   text-align: left;
   display: block;
@@ -172,7 +160,6 @@ const ActionButton = styled(animated.button)`
   border-radius: 25px;
   padding: 8px;
   font-size: 16px;
-  box-shadow: 2px 2px 1px 1px rgba(0, 0, 0, 0.3);
   margin: 10px;
   cursor: pointer;
 `
@@ -204,7 +191,6 @@ const Layer = styled.div`
 
 export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
   status,
-  questionTitle,
   questionText,
   skipQuestion,
   caption,
@@ -233,7 +219,8 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
   const blurValue = status === InterviewStatus.SavedQuestion || status === InterviewStatus.Reviewing ? '0px' : '35px'
 
   return (
-    <RoundedDiv onClick={() => status === InterviewStatus.NotStarted && !showQuestion && setShowQuestion(true)}>
+    <Card onClick={() => status === InterviewStatus.NotStarted && !showQuestion && setShowQuestion(!showQuestion)}>
+      <RoundedDiv>
       <WaveContainer>
         <DynamicWave paused={!isReading} />
       </WaveContainer>
@@ -241,14 +228,13 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
         <FrostedGlassEffect blurValue={blurValue} status={status} showQuestion={showQuestion}>
           {!showQuestion && (
             <CenteredTextContainer>
-              <UnselectableSpan style={tapAnimation}>Tap to display question</UnselectableSpan>
+              <UnselectableSpan style={tapAnimation}><Typography variant={"h4"}>Tap to preview question</Typography></UnselectableSpan>
             </CenteredTextContainer>
           )}
           {showQuestion && (
-            <QuestionContainer>
-              <QuestionTagSpan>Question</QuestionTagSpan>
-              <QuestionTitleSpan>{questionTitle}</QuestionTitleSpan>
-              <QuestionSpan>{questionText}</QuestionSpan>
+            <QuestionContainer onClick={() => setShowQuestion(!showQuestion)}>
+            <QuestionTagSpan> <Typography variant={"h4"}>Question</Typography></QuestionTagSpan>
+              <QuestionSpan><Typography variant={"h6"}>{questionText}</Typography></QuestionSpan>
               <ActionButtonContainer>
                 <ActionButton
                   style={skipAnimation}
@@ -257,7 +243,7 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
                   }}
                 >
                   <SkipNextSharpIcon />
-                  <SkipButtonText> Skip this question </SkipButtonText>
+                  <SkipButtonText><Typography variant={"body1"} color={"#ffffff"}> Skip this question</Typography> </SkipButtonText>
                 </ActionButton>
               </ActionButtonContainer>
             </QuestionContainer>
@@ -268,7 +254,7 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
         <>
           {openTranscript && (
             <FrostedGlassEffect blurValue={blurValue} status={status} showQuestion={showQuestion}>
-              <CaptionSpan>{caption}</CaptionSpan>
+              <CaptionSpan><Typography variant={"h6"}>{caption}</Typography></CaptionSpan>
             </FrostedGlassEffect>
           )}
           <Layer>
@@ -281,7 +267,8 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
         </>
       )}
       {(status === InterviewStatus.SavedQuestion || status === InterviewStatus.Reviewing) && <></>}
-    </RoundedDiv>
+      </RoundedDiv>
+    </Card>
   )
 }
 

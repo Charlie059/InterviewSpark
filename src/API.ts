@@ -83,6 +83,9 @@ export type Profile = {
   userName?: string | null,
   userEmailAddress?: string | null,
   userRole?: string | null,
+  isNewUser?: boolean | null,
+  userDreamJob?: string | null,
+  userIndustry?: string | null,
 };
 
 export type WorkHistories = {
@@ -343,6 +346,8 @@ export type UpdateUserProfileMutationVariables = {
   resumeKey?: string | null,
   state?: string | null,
   isPublic?: string | null,
+  userIndustry?: string | null,
+  userDreamJob?: string | null,
 };
 
 export type UpdateUserProfileMutation = {
@@ -628,6 +633,20 @@ export type UpdateUserSubscriptionCancelReasonMutation = {
   },
 };
 
+export type UpdateNewUserStatusMutationVariables = {
+  userEmail: string,
+  isNewUser: boolean,
+};
+
+export type UpdateNewUserStatusMutation = {
+  updateNewUserStatus:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
 export type GetUserProfileQueryVariables = {
   emailAddress: string,
 };
@@ -652,6 +671,9 @@ export type GetUserProfileQuery = {
     userName?: string | null,
     userEmailAddress?: string | null,
     userRole?: string | null,
+    isNewUser?: boolean | null,
+    userDreamJob?: string | null,
+    userIndustry?: string | null,
   },
 };
 
@@ -679,6 +701,9 @@ export type GetUserProfileByUsernameQuery = {
     userName?: string | null,
     userEmailAddress?: string | null,
     userRole?: string | null,
+    isNewUser?: boolean | null,
+    userDreamJob?: string | null,
+    userIndustry?: string | null,
   },
 };
 

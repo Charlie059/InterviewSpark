@@ -45,14 +45,6 @@ const TableHeader = (props: TableHeaderProps) => {
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <Button
-          sx={{
-            mb: 2,
-            textTransform: 'none',
-            backgroundColor: '#3888FF',
-            color: 'white',
-            borderRadius: 5,
-            fontSize: '12px'
-          }}
           component={Link}
           variant='contained'
           href={buttonLink}

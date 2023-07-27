@@ -13,7 +13,7 @@ const Button = (theme: Theme) => {
       styleOverrides: {
         root: {
           fontWeight: 500,
-          borderRadius: 8,
+          borderRadius: 25,
           lineHeight: 1.715,
           padding: `${theme.spacing(1.75, 3)}`,
           '&.MuiButton-textPrimary:hover': {

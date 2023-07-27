@@ -22,6 +22,9 @@ export const getUserProfile = /* GraphQL */ `
       userName
       userEmailAddress
       userRole
+      isNewUser
+      userDreamJob
+      userIndustry
     }
   }
 `;
@@ -45,6 +48,9 @@ export const getUserProfileByUsername = /* GraphQL */ `
       userName
       userEmailAddress
       userRole
+      isNewUser
+      userDreamJob
+      userIndustry
     }
   }
 `;

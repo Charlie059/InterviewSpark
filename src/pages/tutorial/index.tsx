@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect } from 'react'
+import { useState, useEffect, ReactNode } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,17 +20,17 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { getUserEducations, getUserProfileByUsername, getUserWorkHistories } from 'src/graphql/queries'
 
 // ** Step Components Imports
-import UserProfile from 'src/components/profile/UserProfile'
-import ResumeScanPage from '../resume'
-import InterviewPage from '../interview'
-import EducationCard from 'src/components/profile/profile-cards/EducationCard'
-import WorkHistoryCard from 'src/components/profile/profile-cards/WorkHistoryCard'
+import TutorialEduCard from 'src/components/tutorial/TutorialEduCard'
+import TutorialTopicCard from '../../components/tutorial/TutorialTopicCard'
+import CTAPage from '../../components/interview/interviewProfile/CTAPage/CTAPage'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
-import { Education, Tab, UserProfileViewTypes, WorkHistory } from '../../context/types'
+import { Education, UserProfileViewTypes, WorkHistory } from '../../context/types'
 import { Profile } from '../../API'
+import UserOverview from '../../components/profile/UserOverview'
+import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 const steps = [
   {
@@ -42,16 +42,12 @@ const steps = [
     subtitle: 'Fill out education'
   },
   {
-    title: 'Experience',
-    subtitle: 'Fill out work history'
-  },
-  {
-    title: 'Resume',
-    subtitle: 'Upload resume'
+    title: 'Topic Interested',
+    subtitle: 'Select an interested topic'
   },
   {
     title: 'Interview',
-    subtitle: 'Start a practice interview'
+    subtitle: 'Start a mock interview'
   }
 ]
 
@@ -77,6 +73,7 @@ const StepperHeaderContainer = styled(CardContent)(({ theme }) => ({
 const Tutorial = () => {
   // ** States
   const [activeStep, setActiveStep] = useState(0)
+  const [selectedTopic, setSelectedTopic] = useState<string>('')
 
   const auth = useAuth()
   const user = auth.user?.userName
@@ -126,23 +123,16 @@ const Tutorial = () => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        setStepContent(
-          <UserProfile user={user} data={userData} type={UserProfileViewTypes.tutorial} tab={Tab.overview} />
-        )
+        setStepContent(<UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial} />)
         break
       case 1:
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setStepContent(<EducationCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh} />)
+        setStepContent(<TutorialEduCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh} />)
         break
       case 2:
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        setStepContent(<WorkHistoryCard workDatas={workDatas} type={'tutorial'} refresh={handleRefresh} />)
+        setStepContent(<TutorialTopicCard setSelectedTopic={setSelectedTopic} />)
         break
       case 3:
-        setStepContent(<ResumeScanPage type={'tutorial'} />)
-        break
-      case 4:
-        setStepContent(<InterviewPage />)
+        setStepContent(<CTAPage isTutorial={true} selectedTopic={selectedTopic} />)
         break
       default:
         setStepContent(null)
@@ -232,4 +222,5 @@ Tutorial.acl = {
   subject: 'acl-page'
 }
 
+Tutorial.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default Tutorial

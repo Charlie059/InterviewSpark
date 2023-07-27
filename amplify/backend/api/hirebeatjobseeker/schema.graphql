@@ -238,6 +238,8 @@ type Mutation {
     resumeKey: String
     state: String
     isPublic: String
+    userIndustry: String
+    userDreamJob: String
   ): OperationResult!
   removeUserInterviewsByID(
     emailAddress: AWSEmail!
@@ -301,6 +303,7 @@ type Mutation {
     subscriptionId: String!
     cancelReason: AWSJSON!
   ): OperationResult!
+  updateNewUserStatus(userEmail: AWSEmail!, isNewUser: Boolean!): OperationResult!
 }
 
 type OperationResult {
@@ -339,6 +342,9 @@ type Profile {
   userName: String
   userEmailAddress: String
   userRole: String
+  isNewUser: Boolean
+  userDreamJob: String
+  userIndustry: String
 }
 
 type Query {

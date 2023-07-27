@@ -2,7 +2,14 @@ import React from 'react'
 import { Box, Grid, Button, Typography } from '@mui/material'
 import Link from 'next/link'
 
-const CTAPage = () => {
+interface CTAPagePropsInterface {
+  isTutorial?: boolean;
+  selectedTopic?: string;
+}
+
+const CTAPage = (CTAPageProps : CTAPagePropsInterface) => {
+  const {isTutorial, selectedTopic} = CTAPageProps
+
   return (
     <Box
       sx={{
@@ -37,11 +44,20 @@ const CTAPage = () => {
 
         {/* Button */}
         <Grid item xs={12}>
-          <Link href='/interview/practice-interview' passHref>
-            <Button variant='contained' color='primary' size='large'>
-              Practice Now
-            </Button>
-          </Link>
+          {isTutorial? (
+            <Link href={`/interview/practice-interview?topicTag=${selectedTopic}`} passHref>
+              <Button variant='contained' color='primary' size='large'>
+                Practice Now
+              </Button>
+            </Link>) : (
+            <Link href='/interview/practice-interview' passHref>
+              <Button variant='contained' color='primary' size='large'>
+                Practice Now
+              </Button>
+            </Link>
+            )
+          }
+
         </Grid>
       </Grid>
     </Box>
