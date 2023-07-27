@@ -146,6 +146,10 @@ const ResumeList = () => {
         })
       )
       console.log(result)
+      auth.trackEvent('Resume_Functionality_Used', {
+        type: 'Resume_result_deleted',
+        resume_id: resumeIdToDelete
+      })
 
       // Check if the deletion was successful and update the list of resumes accordingly
       if ('data' in result && result.data.removeUserResumeScanByID.isSuccessful) {
@@ -179,7 +183,7 @@ const ResumeList = () => {
         <TableContainer>
           <Table size='small' sx={{ minWidth: 500 }}>
             <TableHead sx={{ backgroundColor: 'customColors.tableHeaderBg' }}>
-              <TableRow >
+              <TableRow>
                 <TableCell sx={{ height: '3.375rem' }}>File Name</TableCell>
                 <TableCell sx={{ height: '3.375rem' }}>Match Score</TableCell>
                 <TableCell sx={{ height: '3.375rem' }}>View</TableCell>
@@ -190,25 +194,26 @@ const ResumeList = () => {
               {resumes.map((item, index) => (
                 <TableRow hover key={index} sx={{ '&:last-of-type td': { border: 0 } }}>
                   <TableCell>
-                      <Box sx={{ width:"100%", display: 'flex', flexDirection: 'column' }}>
-                        {item.jobName && (
-                          <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
-                            For {item.jobName}
-                          </Typography>
-                        )}
-                        <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                          {item.displayName}
-                          {item.resumeUrl && (
-                            <IconButton
-                              sx={{height:'2rem'}}
-                              onClick={async () => {
-                                await refreshViewUrl({resumeName: item.resumeName})
-                              }}
-                            >
-                              <FileAccount/>
-                            </IconButton>)}
+                    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                      {item.jobName && (
+                        <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
+                          For {item.jobName}
                         </Typography>
-                      </Box>
+                      )}
+                      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                        {item.displayName}
+                        {item.resumeUrl && (
+                          <IconButton
+                            sx={{ height: '2rem' }}
+                            onClick={async () => {
+                              await refreshViewUrl({ resumeName: item.resumeName })
+                            }}
+                          >
+                            <FileAccount />
+                          </IconButton>
+                        )}
+                      </Typography>
+                    </Box>
                   </TableCell>
                   {item.resumeResults && (
                     <TableCell sx={{ color: 'text' }}>
@@ -226,6 +231,15 @@ const ResumeList = () => {
                         onClick={() => {
                           setOpenResume(true)
                           setResumeResult(item.resumeResults)
+                          auth.trackEvent('Resume_Functionality_Used', {
+                            type: 'View_Scan_Result',
+                            resumeResult: item.resumeResults,
+                            resumeName: item.resumeName,
+                            jobName: item.jobName,
+                            score: (
+                              JSON.parse(item.resumeResults)['Final Report']['Final_score'].toFixed(2) * 2
+                            ).toString()
+                          })
                         }}
                         target='_blank'
                         variant='outlined'
@@ -234,7 +248,6 @@ const ResumeList = () => {
                       >
                         View Scan Result
                       </Button>
-
                     </TableCell>
                   )}
                   {item.resumeName && (
@@ -259,22 +272,22 @@ const ResumeList = () => {
                     aria-describedby='user-view-edit-description'
                   >
                     <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleViewClose}>
-                      <Close/>
+                      <Close />
                     </IconButton>
                     <DialogContent>
-                      <FileDisplay url={resumeUrl} height = {700}/>
+                      <FileDisplay url={resumeUrl} height={700} />
                     </DialogContent>
                     <DialogActions sx={{ justifyContent: 'center' }}>
                       <Button
                         target='_blank'
                         variant='contained'
-                        sx={{mr: 2}}
+                        sx={{ mr: 2 }}
                         onClick={async () => {
-                          await refreshUrl({resumeName: item.resumeName})
+                          await refreshUrl({ resumeName: item.resumeName })
                         }}
                         href=''
                       >
-                        <Typography sx={{color: 'white'}}>Download</Typography>
+                        <Typography sx={{ color: 'white' }}>Download</Typography>
                       </Button>
                     </DialogActions>
                   </Dialog>
@@ -299,14 +312,15 @@ const ResumeList = () => {
         aria-describedby='user-view-edit-description'
       >
         <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleResumeClose}>
-          <Close/>
+          <Close />
         </IconButton>
         <DialogContent>
-          <><ResumeResults resumeResults={resumeResult} /></>
+          <>
+            <ResumeResults resumeResults={resumeResult} />
+          </>
         </DialogContent>
       </Dialog>
     </Card>
-
   )
 }
 

@@ -493,3 +493,20 @@ export const handleMixpanelEvent = /* GraphQL */ `
     }
   }
 `;
+export const updateUserSubscriptionCancelReason = /* GraphQL */ `
+  mutation UpdateUserSubscriptionCancelReason(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+    $cancelReason: AWSJSON!
+  ) {
+    updateUserSubscriptionCancelReason(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+      cancelReason: $cancelReason
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;

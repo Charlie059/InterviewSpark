@@ -95,6 +95,10 @@ const WorkHistoryCard = ({
         workDescription: workData.workHistoryJobDescription||'',
         workHistoryID: workData.workHistoryID
       }
+      auth.trackEvent('User_Profile_Settings', {
+        action: 'Update_Work_History',
+        ...workHistoryInput
+      })
 
       await API.graphql(graphqlOperation(updateUserWorkHistory, workHistoryInput))
     } else {
@@ -118,6 +122,10 @@ const WorkHistoryCard = ({
           workData.workHistoryID = createdWorkHistoryID
           updatedWorkHistoryDatas.push(workData)
           console.log('updated edu data: ', updatedWorkHistoryDatas)
+          auth.trackEvent('User_Profile_Settings', {
+            action: 'Create_Work_History',
+            ...workHistoryInput
+          })
         }else{
           throw('no data found')
         }
