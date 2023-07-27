@@ -340,7 +340,7 @@ function InterviewComponent(interviewComponentProps: InterviewComponentProps) {
             totalPages={interviews.length}
             currentPage={getInterviewState.currentQuestionIndex + 1}
             onPageChange={handlePageChange}
-            enableSelect={true}
+            enableSelect={false}
           />
         </Box>
       </Box>

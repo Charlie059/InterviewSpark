@@ -86,14 +86,19 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
   switch (status) {
     case InterviewStatus.NotStarted:
       buttonIcon = <PlayButtonIcon sx={{ width: '55px', height: '100%', color: '#FFFFFF' }} />
-      buttonText = "Start Mock Interview"
+      buttonText = <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Start Interview</Typography>
       ButtonCardColor = '#787EFF'
       break
     case InterviewStatus.Interviewing:
       buttonIcon = isReading ? (
-        <StopButtonIcon sx={{ width: '100%', height: '100%', color: '#F3F3F3' }} />
+        <StopButtonIcon sx={{ width: '55px', height: '100%', color: '#F3F3F3' }} />
       ) : (
-        <StopButtonIcon sx={{ width: '100%', height: '100%', color: '#FF6C4B' }} />
+        <StopButtonIcon sx={{ width: '55px', height: '100%', color: '#FF6C4B' }} />
+      )
+      buttonText =isReading ? (
+        <Typography variant={"h6"} color={"#F3F3F3"} sx={{marginRight:"20px"}}>Stop</Typography>
+        ):(
+        <Typography variant={"h6"} color={"#FF6C4B"} sx={{marginRight:"20px"}}>Stop</Typography>
       )
       ButtonCardColor = isReading ? '#E2E2E2' : '#DFDFDF'
       buttonDisabled = isReading
@@ -101,14 +106,22 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
     case InterviewStatus.FinishedQuestion:
       buttonIcon = <NextButtonIcon sx={{ width: '55px', height: '100%', color: '#FFFFFF' }} />
       ButtonCardColor = isReading ? '#E2E2E2' : '#666CFF'
-      buttonText = isReading ? 'Skip' : 'Next'
+      buttonText = isReading ? (
+        <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Skip</Typography>
+      ): (
+        <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Next</Typography>
+      )
       buttonDisabled = isReading
       break
 
     case InterviewStatus.Reviewing:
       buttonIcon = <NextButtonIcon sx={{ width: '55px', height: '100%', color: '#FFFFFF' }} />
       ButtonCardColor = '#666CFF'
-      buttonText = isReading ? 'Skip' : 'Next'
+      buttonText = isReading ? (
+          <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Skip</Typography>
+        ): (
+          <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Next</Typography>
+        )
       buttonDisabled = false
       break
 
@@ -124,7 +137,7 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
           disabled={buttonDisabled}
         >
           {buttonIcon}
-          {buttonText && <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>{buttonText}</Typography>}
+          {buttonText}
         </IconButton>
 
       </ButtonCard>
