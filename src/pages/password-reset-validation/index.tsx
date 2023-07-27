@@ -149,7 +149,7 @@ export default function PasswordResetValidation() {
                   justifyContent: 'center'
                 }}
               >
-                <BoxWrapper>
+                <BoxWrapper data-testid='auth-input-container'>
                   <Box sx={{ mb: 6 }}>
                     <TypographyStyled variant='h4'>Two-Factor Authentication</TypographyStyled>
                     <div className={styles.pageWrapper}>

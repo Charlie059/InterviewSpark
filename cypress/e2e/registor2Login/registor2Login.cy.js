@@ -58,4 +58,61 @@ describe('User Registration', () => {
       cy.url().should('include', '/interview')
     })
   })
+
+  it('Shows an error message with invalid email address', () => {
+    const invalidEmail = 'invalidemail'
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(invalidEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(testPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+  
+    // Verify that the error message is displayed
+    cy.get('form').contains('email must be a valid email')
+  })
+  
+  it('Shows an error message with short password', () => {
+    const shortPassword = 'Test1'
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(shortPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+  
+    // Verify that the error message is displayed
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long')
+  })
+
+  it('Shows an error message with password lacking uppercase and lowercase letters', () => {
+    const noCasePassword = '12345678'
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(noCasePassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+  
+    // Verify that the error message is displayed
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long')
+  })
+
+  it('Shows an error message with password lacking numbers', () => {
+    const noNumberPassword = 'TestPass'
+    cy.get('[data-testid="username-input"]').type('testUser')
+    cy.get('[data-testid="email-input"]').type(testEmail)
+    cy.get('[data-testid="fName-input"]').type('Charlie')
+    cy.get('[data-testid="lName-input"]').type('Gong')
+    cy.get('[data-testid="password-input"]').type(noNumberPassword)
+    cy.get('[data-testid="term-input"]').click()
+    cy.get('button[type="submit"]').click()
+  
+    // Verify that the error message is displayed
+    cy.get('form').contains('Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and be at least 8 characters long')
+  })
+  
 })
