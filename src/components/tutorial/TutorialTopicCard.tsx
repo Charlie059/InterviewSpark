@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 // ** React Imports
-import {useEffect, useState} from 'react'
+import {Dispatch, SetStateAction, useEffect, useState} from 'react'
 import {API, graphqlOperation} from "aws-amplify";
 import {getQuestionUsageMetaData} from "../../graphql/queries";
 import FormControl from "@mui/material/FormControl";
@@ -19,16 +19,21 @@ interface topicItem {
   title: string
 }
 
-const TutorialTopicCard = () => {
+interface TutorialTopicPropsInterface {
+  setSelectedTopic: Dispatch<SetStateAction<string>>
+}
+
+const TutorialTopicCard = (tutorialTopicProps: TutorialTopicPropsInterface) => {
+  const {setSelectedTopic} = tutorialTopicProps
+
   // States
   const[topicsList, setTopicsList] = useState<topicItem[]>([])
-  const[selectedTopics, setSelectedTopics] = useState<string>()
 
   const { control, handleSubmit } = useForm()
 
   const handleEditSubmit = async (formData: any) => {
     console.log('formData', formData)
-    setSelectedTopics(formData)
+    setSelectedTopic(formData.topicsInterested)
   }
 
   useEffect(
@@ -59,12 +64,6 @@ const TutorialTopicCard = () => {
       }
       fetchInterviewTags()
     }, []
-  )
-
-  useEffect(
-    () => {
-      console.log("selected topics", selectedTopics)
-    }, [selectedTopics]
   )
 
   return (

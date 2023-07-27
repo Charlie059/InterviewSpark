@@ -20,9 +20,9 @@ import { API, graphqlOperation } from 'aws-amplify'
 import {getUserEducations, getUserProfileByUsername, getUserWorkHistories} from 'src/graphql/queries'
 
 // ** Step Components Imports
-import InterviewPage from '../interview'
 import TutorialEduCard from 'src/components/tutorial/TutorialEduCard'
 import TutorialTopicCard from '../../components/tutorial/TutorialTopicCard'
+import CTAPage from "../../components/interview/interviewProfile/CTAPage/CTAPage";
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
@@ -72,6 +72,7 @@ const StepperHeaderContainer = styled(CardContent)(({ theme }) => ({
 const Tutorial = () => {
   // ** States
   const [activeStep, setActiveStep] = useState(0)
+  const [selectedTopic, setSelectedTopic] = useState<string>('')
 
   const auth = useAuth()
   const user = auth.user?.userName
@@ -128,10 +129,10 @@ const Tutorial = () => {
         setStepContent(<TutorialEduCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh}/>)
         break
       case 2:
-        setStepContent(<TutorialTopicCard />)
+        setStepContent(<TutorialTopicCard setSelectedTopic={setSelectedTopic} />)
         break
       case 3:
-        setStepContent(<InterviewPage />)
+        setStepContent(<CTAPage isTutorial={true} selectedTopic={selectedTopic} />)
         break
       default:
         setStepContent(null)
