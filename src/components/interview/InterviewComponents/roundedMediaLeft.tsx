@@ -132,8 +132,8 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
   const shouldShowWebcam =
     isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
 
-  // const shouldShowImg =
-  //   !isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
+  const shouldShowImg =
+    !isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
 
   const videoConstraints = {
     deviceId: videoInput
@@ -158,9 +158,9 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
               audioConstraints={audioConstraints}
             />{' '}
           </StyledWebcamContainer>
-          {/*{shouldShowImg && (*/}
-          {/*  <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />*/}
-          {/*)}*/}
+          {shouldShowImg && (
+            <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />
+          )}
         </>
       ) : (
         <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />
