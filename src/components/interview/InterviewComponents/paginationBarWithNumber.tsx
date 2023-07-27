@@ -11,7 +11,7 @@
 
 import React, { FC, useState, useEffect, memo } from 'react'
 import styled from 'styled-components'
-import { Box, Card } from '@mui/material'
+import { Box, Card, Typography } from '@mui/material'
 import { motion } from 'framer-motion'
 
 interface PaginationProps {
@@ -28,7 +28,7 @@ const PageNumber = styled(motion.div)<{ active: any }>`
   align-items: center;
   width: 23px;
   height: 23px;
-  color: ${props => (props.active ? '#FFFFFF' : '#2C434E')};
+  color: ${props => (props.active ? '#FFFFFF' : '')};
   background-color: ${props => (props.active ? '#8289F8' : 'transparent')};
   margin: 0 ${props => (props.active ? '10px' : '2px')};
   border-radius: 50%;
@@ -36,26 +36,24 @@ const PageNumber = styled(motion.div)<{ active: any }>`
   user-select: none;
 `
 
-const DotIndicator = styled(motion.div)`
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  margin-top: 0.1px;
-  margin-bottom: 7.2px;
-  color: #2c434e;
-  opacity: 0.5;
-  user-select: none;
-`
+// const DotIndicator = styled(motion.div)`
+//   cursor: pointer;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   padding: 10px;
+//   margin-top: 0.1px;
+//   margin-bottom: 7.2px;
+//   color: #2c434e;
+//   opacity: 0.5;
+//   user-select: none;
+// `
 
 const CardStyled = styled(Card)`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
   padding: 10px;
-  box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.4);
   border-radius: 50px;
   padding: 15px;
   user-select: none;
@@ -110,16 +108,17 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
   return (
     <Box sx={{ display: 'flex', height: '60px', justifyContent: 'center', transform: 'scale(0.65)' }}>
       <CardStyled>
-        <DotIndicator
-          style={{ alignSelf: 'center' }}
-          onClick={() => handleDotIndicatorClick('L')}
-          whileHover={{
-            scale: enableSelect ? 1.1 : 1
-          }}
-        >
-          ...
-        </DotIndicator>
+        {/*<DotIndicator*/}
+        {/*  style={{ alignSelf: 'center' }}*/}
+        {/*  onClick={() => handleDotIndicatorClick('L')}*/}
+        {/*  whileHover={{*/}
+        {/*    scale: enableSelect ? 1.1 : 1*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  ...*/}
+        {/*</DotIndicator>*/}
         {displayNumbers.map((number, i) => (
+          <Typography variant={"body1"} key={i}>
           <PageNumber
             key={i}
             active={number === currentPage ? 1 : 0}
@@ -148,18 +147,19 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
               scale: enableSelect ? (number === currentPage ? 1.9 : 1.5) : number === currentPage ? 1.9 : 1.5
             }}
           >
-            <div style={{ fontSize: '14px' }}>{number}</div>
+            <div>{number}</div>
           </PageNumber>
+          </Typography>
         ))}
-        <DotIndicator
-          style={{ alignSelf: 'center' }}
-          onClick={() => handleDotIndicatorClick('R')}
-          whileHover={{
-            scale: enableSelect ? 1.1 : 1
-          }}
-        >
-          ...
-        </DotIndicator>
+        {/*<DotIndicator*/}
+        {/*  style={{ alignSelf: 'center' }}*/}
+        {/*  onClick={() => handleDotIndicatorClick('R')}*/}
+        {/*  whileHover={{*/}
+        {/*    scale: enableSelect ? 1.1 : 1*/}
+        {/*  }}*/}
+        {/*>*/}
+        {/*  ...*/}
+        {/*</DotIndicator>*/}
       </CardStyled>
     </Box>
   )

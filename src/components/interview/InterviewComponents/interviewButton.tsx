@@ -10,7 +10,7 @@
 ************************************************************************************************/
 
 import React, { FC, useEffect, useState } from 'react'
-import { IconButton, Card } from '@mui/material'
+import { IconButton, Card, Typography} from '@mui/material'
 import styled from 'styled-components'
 import PlayButtonIcon from '@mui/icons-material/PlayArrowSharp'
 import StopButtonIcon from '@mui/icons-material/StopSharp'
@@ -45,9 +45,7 @@ const ButtonCard = styled(Card)<{ color: string; size: number; status: Interview
   justify-content: center;
   align-items: center;
   background-color: ${props => props.color};
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-  border-radius: 50%;
-  width: ${props => props.size}px;
+  border-radius: 50px;
   height: ${props => props.size}px;
   position: relative;
   ${props => (props.status === InterviewStatus.Loading ? 'display: none' : '')}
@@ -81,32 +79,49 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
   }
 
   let buttonIcon = null
+  let buttonText = null
   let buttonDisabled = false
   let ButtonCardColor = ''
 
   switch (status) {
     case InterviewStatus.NotStarted:
-      buttonIcon = <PlayButtonIcon sx={{ width: '100%', height: '100%', color: '#FFFFFF' }} />
+      buttonIcon = <PlayButtonIcon sx={{ width: '55px', height: '100%', color: '#FFFFFF' }} />
+      buttonText = <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Start Interview</Typography>
       ButtonCardColor = '#787EFF'
       break
     case InterviewStatus.Interviewing:
       buttonIcon = isReading ? (
-        <StopButtonIcon sx={{ width: '100%', height: '100%', color: '#F3F3F3' }} />
+        <StopButtonIcon sx={{ width: '55px', height: '100%', color: '#F3F3F3' }} />
       ) : (
-        <StopButtonIcon sx={{ width: '100%', height: '100%', color: '#FF6C4B' }} />
+        <StopButtonIcon sx={{ width: '55px', height: '100%', color: '#FF6C4B' }} />
+      )
+      buttonText =isReading ? (
+        <Typography variant={"h6"} color={"#F3F3F3"} sx={{marginRight:"20px"}}>Stop</Typography>
+        ):(
+        <Typography variant={"h6"} color={"#FF6C4B"} sx={{marginRight:"20px"}}>Stop</Typography>
       )
       ButtonCardColor = isReading ? '#E2E2E2' : '#DFDFDF'
       buttonDisabled = isReading
       break
     case InterviewStatus.FinishedQuestion:
-      buttonIcon = <NextButtonIcon sx={{ width: '100%', height: '100%', color: '#FFFFFF' }} />
+      buttonIcon = <NextButtonIcon sx={{ width: '55px', height: '100%', color: '#FFFFFF' }} />
       ButtonCardColor = isReading ? '#E2E2E2' : '#666CFF'
+      buttonText = isReading ? (
+        <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Skip</Typography>
+      ): (
+        <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Next</Typography>
+      )
       buttonDisabled = isReading
       break
 
     case InterviewStatus.Reviewing:
-      buttonIcon = <NextButtonIcon sx={{ width: '100%', height: '100%', color: '#FFFFFF' }} />
+      buttonIcon = <NextButtonIcon sx={{ width: '55px', height: '100%', color: '#FFFFFF' }} />
       ButtonCardColor = '#666CFF'
+      buttonText = isReading ? (
+          <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Skip</Typography>
+        ): (
+          <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Next</Typography>
+        )
       buttonDisabled = false
       break
 
@@ -116,20 +131,22 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
 
   return (
     <ButtonContainer>
-      <ButtonCard color={ButtonCardColor} size={buttonSize} status={status}>
+      <ButtonCard color={ButtonCardColor} size={buttonSize} status={status} onClick={() => handleButtonClick(status)}>
         <IconButton
           sx={{ width: '100%', height: '100%' }}
-          onClick={() => handleButtonClick(status)}
           disabled={buttonDisabled}
         >
           {buttonIcon}
+          {buttonText}
         </IconButton>
+
       </ButtonCard>
 
       {(status === InterviewStatus.FinishedQuestion || status === InterviewStatus.Reviewing) && !isReading && (
         <ButtonCard color='#666CFF' size={buttonSize} status={status}>
           <IconButton sx={{ width: '100%', height: '100%' }} onClick={onRetryClick}>
-            <RetryButtonIcon sx={{ width: '100%', height: '100%', color: '#FFFFFF' }} />
+            <RetryButtonIcon sx={{ width: '50px', height: '100%', color: '#FFFFFF' }} />
+            <Typography variant={"h6"} color={"#FFFFFF"} sx={{marginRight:"20px"}}>Retry</Typography>
           </IconButton>
         </ButtonCard>
       )}

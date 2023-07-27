@@ -14,6 +14,9 @@ import Webcam from 'react-webcam'
 import styled from 'styled-components'
 import VideoIconButton from './videobutton'
 import PlayCircleIcon from '@mui/icons-material/PlayCircle'
+import {
+  Card
+} from '@mui/material'
 
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
@@ -70,8 +73,6 @@ const RoundedDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
-  background-color: #ffffff;
 `
 
 const StyledWebcamContainer = styled.div<{ isVisible: boolean }>`
@@ -89,9 +90,9 @@ const StyledWebcamContainer = styled.div<{ isVisible: boolean }>`
 `
 
 const Img = styled('img')(({}) => ({
+  position:'absolute',
   bottom: 0,
   width: '70%',
-  position: 'absolute',
   opacity: 1,
   userSelect: 'none',
   userDrag: 'none',
@@ -130,6 +131,7 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
 
   const shouldShowWebcam =
     isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
+
   const shouldShowImg =
     !isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
 
@@ -142,7 +144,9 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
   }
 
   return (
-    <RoundedDiv>
+    <Card sx={{width:"100%"}}>
+      <RoundedDiv>
+
       {videoInterview ? (
         <>
           <StyledWebcamContainer isVisible={shouldShowWebcam}>
@@ -198,6 +202,7 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
           <Img alt='Encouragement Illustration' src='/images/pages/create-app-dialog-illustration-light.png' />
         </>
       )}
-    </RoundedDiv>
+      </RoundedDiv>
+    </Card>
   )
 }
