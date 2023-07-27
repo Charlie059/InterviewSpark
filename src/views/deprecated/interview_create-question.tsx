@@ -54,7 +54,7 @@ const CreateQuestionsPage = () => {
     const interviewsString = JSON.stringify(fetchedInterviews)
 
     router.push({
-      pathname: '/interview/mock-interview',
+      pathname: '/interview/practice-interview',
       query: { interviews: interviewsString }
     })
   }
