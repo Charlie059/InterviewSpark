@@ -102,7 +102,9 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
         postalCode: data.postalCode,
         resumeKey: data.resumeKey,
         state: data.state,
-        isPublic: data.isPublic
+        isPublic: data.isPublic,
+        userIndustry: data.userIndustry,
+        userDreamJob: data.userDreamJob
       }
 
       const result = await API.graphql(graphqlOperation(updateUserProfile, input))
@@ -218,13 +220,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                 <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                   <Box sx={{ display: 'flex' }}>
                     <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Dream Job: </Typography>
-                    <Typography variant='body2'></Typography>
+                    <Typography variant='body2'>{profileData.userDreamJob}</Typography>
                   </Box>
                 </Grid>
                 <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                   <Box sx={{ display: 'flex' }}>
                     <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Industry: </Typography>
-                    <Typography variant='body2'></Typography>
+                    <Typography variant='body2'>{profileData.userIndustry}</Typography>
                   </Box>
                 </Grid>
               </Grid>
@@ -371,13 +373,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   <Grid item xs={12} sm={6}>
                     <FormControl>
                       <Controller
-                        name='dreamJob'
+                        name='userDreamJob'
                         control={control}
                         render={({ field: { value, onChange }}) => (
                           <TextField
                             fullWidth
                             label='My Dream Job'
-                            defaultValue=''
+                            defaultValue={profileData.userDreamJob}
                             value={value}
                             onChange={onChange}
                           />
@@ -389,12 +391,12 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                     <FormControl fullWidth>
                       <InputLabel>Industry</InputLabel>
                       <Controller
-                        name='industry'
+                        name='userIndustry'
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Select
                             label='industry'
-                            defaultValue=''
+                            defaultValue={profileData.userIndustry}
                             onChange={onChange}
                             value={value}
                           >

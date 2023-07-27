@@ -34,6 +34,8 @@ export type UserDataType =
       userName?: string | null
       userEmailAddress?: string | null
       userRole?: string | null
+      userIndustry?: string | null
+      userDreamJob?: string | null
     }
   | null
   | undefined
