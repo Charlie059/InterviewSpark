@@ -28,8 +28,9 @@ import TutorialEduCard from 'src/components/tutorial/TutorialEduCard'
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
-import {Education, WorkHistory} from "../../context/types";
+import {Education, UserProfileViewTypes, WorkHistory} from "../../context/types";
 import {Profile} from "../../API";
+import UserOverview from "../../components/profile/UserOverview";
 
 const steps = [
   {
@@ -122,7 +123,7 @@ const Tutorial = () => {
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
-        setStepContent(<UserProfile user={user} data={userData} type={'tutorial'} />)
+        setStepContent(<UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial}/>)
         break
       case 1:
         // eslint-disable-next-line @typescript-eslint/no-empty-function
