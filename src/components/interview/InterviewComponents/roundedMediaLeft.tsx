@@ -17,6 +17,7 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import {
   Card
 } from '@mui/material'
+
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
   FinishedQuestion = 'FINISHED_QUESTION',
@@ -130,8 +131,9 @@ export const RoundedMediaLeft: FC<RoundedMediaProps> = ({
 
   const shouldShowWebcam =
     isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
-  const shouldShowImg =
-    !isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
+
+  // const shouldShowImg =
+  //   !isVideoEnabled && [InterviewStatus.FinishedQuestion, InterviewStatus.Reviewing].indexOf(status) === -1
 
   const videoConstraints = {
     deviceId: videoInput

@@ -28,7 +28,7 @@ const PageNumber = styled(motion.div)<{ active: any }>`
   align-items: center;
   width: 23px;
   height: 23px;
-  color: ${props => (props.active ? '#FFFFFF' : '#2C434E')};
+  color: ${props => (props.active ? '#FFFFFF' : '')};
   background-color: ${props => (props.active ? '#8289F8' : 'transparent')};
   margin: 0 ${props => (props.active ? '10px' : '2px')};
   border-radius: 50%;
@@ -36,18 +36,18 @@ const PageNumber = styled(motion.div)<{ active: any }>`
   user-select: none;
 `
 
-const DotIndicator = styled(motion.div)`
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  margin-top: 0.1px;
-  margin-bottom: 7.2px;
-  color: #2c434e;
-  opacity: 0.5;
-  user-select: none;
-`
+// const DotIndicator = styled(motion.div)`
+//   cursor: pointer;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   padding: 10px;
+//   margin-top: 0.1px;
+//   margin-bottom: 7.2px;
+//   color: #2c434e;
+//   opacity: 0.5;
+//   user-select: none;
+// `
 
 const CardStyled = styled(Card)`
   display: flex;
@@ -118,7 +118,7 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
         {/*  ...*/}
         {/*</DotIndicator>*/}
         {displayNumbers.map((number, i) => (
-          <Typography variant={"body1"}>
+          <Typography variant={"body1"} key={i}>
           <PageNumber
             key={i}
             active={number === currentPage ? 1 : 0}
