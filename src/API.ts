@@ -346,6 +346,8 @@ export type UpdateUserProfileMutationVariables = {
   resumeKey?: string | null,
   state?: string | null,
   isPublic?: string | null,
+  userIndustry?: string | null,
+  userDreamJob?: string | null,
 };
 
 export type UpdateUserProfileMutation = {

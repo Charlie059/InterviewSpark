@@ -238,6 +238,8 @@ type Mutation {
     resumeKey: String
     state: String
     isPublic: String
+    userIndustry: String
+    userDreamJob: String
   ): OperationResult!
   removeUserInterviewsByID(
     emailAddress: AWSEmail!
