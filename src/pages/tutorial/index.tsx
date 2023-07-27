@@ -20,10 +20,9 @@ import { API, graphqlOperation } from 'aws-amplify'
 import {getUserEducations, getUserProfileByUsername, getUserWorkHistories} from 'src/graphql/queries'
 
 // ** Step Components Imports
-import UserProfile from 'src/components/profile/UserProfile'
-import ResumeScanPage from '../resume'
 import InterviewPage from '../interview'
 import TutorialEduCard from 'src/components/tutorial/TutorialEduCard'
+import TutorialTopicCard from '../../components/tutorial/TutorialTopicCard'
 
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
@@ -42,8 +41,8 @@ const steps = [
     subtitle: 'Fill out education'
   },
   {
-    title: 'Resume',
-    subtitle: 'Upload resume'
+    title: 'Topic Interested',
+    subtitle: 'Select an interested topic'
   },
   {
     title: 'Interview',
@@ -126,11 +125,10 @@ const Tutorial = () => {
         setStepContent(<UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial}/>)
         break
       case 1:
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         setStepContent(<TutorialEduCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh}/>)
         break
       case 2:
-        setStepContent(<ResumeScanPage type={'tutorial'} />)
+        setStepContent(<TutorialTopicCard />)
         break
       case 3:
         setStepContent(<InterviewPage />)
