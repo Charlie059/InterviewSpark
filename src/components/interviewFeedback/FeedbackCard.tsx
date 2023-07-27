@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
 import Typography from '@mui/material/Typography'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
-import { Box, Button } from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import ClampLines from 'react-clamp-lines'
 import { FiCheckCircle, FiAlertCircle, FiCheck } from 'react-icons/fi'
 import ReactPlayer from 'react-player'
@@ -568,53 +568,64 @@ export default function InterviewFeedbackCard(props: Props) {
           <Close/>
         </IconButton>}
       </CardContent>
-
-      {videoUrl ? (
-        <ReactPlayer url={videoUrl} controls width='100%' height='400px' />
-      ) : shouldDisplayIcon ? (
-        <Box style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>{getIcon()}</Box>
-      ) : (
-        getChartOptions() && (
-          <ReactApexcharts
-            options={getChartOptions().optionsRadial}
-            series={getChartOptions().seriesRadial}
-            height={200}
-            type='radialBar'
-          />
-        )
-      )}
-
-      <CardContent sx={{ height: isDetailPage ? '100%' : '125px', maxHeight: '500px' }}>
-        {isDetailPage ? (
-          <StyledDiv>
-            <Typography  variant={'body1'}>
-              {cardText}
-              <br />
-              <br />
-              {getHintText()}
-            </Typography>
-          </StyledDiv>
+      <Grid container spacing={6}>
+        {videoUrl ? (
+          <Grid item xs={12} lg={isDetailPage?12:8}>
+            <ReactPlayer url={videoUrl} controls width='100%' height='400px' />
+          </Grid>
+        ) : shouldDisplayIcon ? (
+            <Grid item xs={12} lg={12}>
+          <Box style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>{getIcon()}</Box>
+            </Grid>
         ) : (
-            <Typography variant={'body1'}>
-            <ClampLines
-              buttons={false}
-              text={cardText!}
-              id='really-unique-id'
-              lines={3}
-              ellipsis='...'
-              innerElement='p'
+          getChartOptions() && (
+            <Grid item xs={12} lg={12}>
+            <ReactApexcharts
+              options={getChartOptions().optionsRadial}
+              series={getChartOptions().seriesRadial}
+              height={200}
+              type='radialBar'
             />
-            </Typography>
+            </Grid>
+          )
         )}
-      </CardContent>
+        <Grid item xs={12} lg={videoUrl?(isDetailPage?12:4):12}>
+          <CardContent sx={{ height: isDetailPage ? '100%' : '125px', maxHeight: '500px' }}>
+            {isDetailPage ? (
+              <StyledDiv>
+                <Typography  variant={'body1'}>
+                  {cardText}
+                  <br />
+                  <br />
+                  {getHintText()}
+                </Typography>
+              </StyledDiv>
+            ) : (
+              <Typography variant={'body1'}>
+                <ClampLines
+                  buttons={false}
+                  text={cardText!}
+                  id='really-unique-id'
+                  lines={3}
+                  ellipsis='...'
+                  innerElement='p'
+                />
+              </Typography>
+            )}
+          </CardContent>
 
-      <CardActions sx={{justifyContent: 'center'}} >
-        {!isDetailPage && (
-          <Button variant={'outlined'} onClick={props.onDetailClick}>
-            More
-          </Button>
-        )}
-      </CardActions>
+          <CardActions sx={{justifyContent: 'center'}} >
+            {!isDetailPage && (
+              <Button variant={'outlined'} onClick={props.onDetailClick}>
+                More
+              </Button>
+            )}
+          </CardActions>
+        </Grid>
+      </Grid>
+
+
+
     </Card>
   )
 }
