@@ -613,6 +613,21 @@ export type HandleMixpanelEventMutation = {
   },
 };
 
+export type UpdateUserSubscriptionCancelReasonMutationVariables = {
+  userEmail: string,
+  subscriptionId: string,
+  cancelReason: string,
+};
+
+export type UpdateUserSubscriptionCancelReasonMutation = {
+  updateUserSubscriptionCancelReason:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
 export type GetUserProfileQueryVariables = {
   emailAddress: string,
 };

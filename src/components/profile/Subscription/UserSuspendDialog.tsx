@@ -18,6 +18,9 @@ import { useSubscription } from 'src/hooks/useSubscription'
 import { CircularProgress } from '@mui/material'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { API, graphqlOperation } from 'aws-amplify'
+import { updateUserSubscriptionCancelReason } from 'src/graphql/mutations'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface UserSuspendDialogInterface {
   dialogParams: DialogSelectParam
@@ -26,40 +29,58 @@ interface UserSuspendDialogInterface {
 }
 
 const surveyOptions = [
-  "I did not understand how to use this product",
-  "I did not find the product useful",
-  "I had a bad experience (bugs, delay, support, etc.)",
-  "I found an alternative tool",
-  "It is too expensive",
-  "Just taking a break, will be back soon",
-  "Other reasons"
+  'I did not understand how to use this product',
+  'I did not find the product useful',
+  'I had a bad experience (bugs, delay, support, etc.)',
+  'I found an alternative tool',
+  'It is too expensive',
+  'Just taking a break, will be back soon',
+  'Other reasons'
 ]
 
-const initialSurveyOptions = surveyOptions.map((option) => ({
+const initialSurveyOptions = surveyOptions.map(option => ({
   label: option,
-  checked: false,
-}));
+  checked: false
+}))
 
 const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterface) => {
   const { dialogParams, setDialogParams, userSubscription } = userSuspendDialogInterface
   const { handleUserConfirmCancelSubscription } = useSubscription(userSubscription)
   const [isLoading, setIsLoading] = useState(false)
   const [survey, setSurvey] = useState(initialSurveyOptions)
+  const auth = useAuth()
 
   const handleChange = (event: { target: { name: string; checked: any } }) => {
-    setSurvey((prevSurvey) =>
-      prevSurvey.map((option) =>
-        option.label === event.target.name ? { ...option, checked: event.target.checked} : option
+    setSurvey(prevSurvey =>
+      prevSurvey.map(option =>
+        option.label === event.target.name ? { ...option, checked: event.target.checked } : option
       )
     )
-  };
+  }
 
-  const handleClose = () => {
+  const handleClose = async () => {
     setDialogParams({
       ...dialogParams,
       confirmCancel: false,
       cancel: false
     })
+
+    // Update user cancel subscription survey to graphql
+
+    try {
+      // Use graphql to crate a new interview
+      await API.graphql(
+        graphqlOperation(updateUserSubscriptionCancelReason, {
+          userEmail: auth.user?.userEmailAddress,
+          subscriptionId: userSubscription.subscriptionID,
+
+          // Transform the survey array to AWSJSON type
+          cancelReason: JSON.stringify(survey)
+        })
+      )
+    } catch (error) {
+      console.log('Error updateUserSubscriptionCancelReason', error)
+    }
 
     // Refresh the page
     window.location.reload()
@@ -133,7 +154,7 @@ const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterfac
               }}
             >
               <Icon fontSize='5.5rem' icon={'mdi:check-circle-outline'} />
-              <Typography variant='h4' sx={{ m:4 }}>
+              <Typography variant='h4' sx={{ m: 4 }}>
                 Unsubscribed
               </Typography>
               <Typography variant='body1'>
@@ -141,15 +162,15 @@ const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterfac
               </Typography>
               <FormControl sx={{ mt: 4, mr: 4 }}>
                 <Typography variant='body1'>What made you cancel your subscription?</Typography>
-                <Grid container sx={{mt:1, mb:2}}>
+                <Grid container sx={{ mt: 1, mb: 2 }}>
                   {survey.map((option, index) => (
                     <Grid item xs={12} sm={12} md={12} key={index}>
                       <FormControlLabel
-                        label={<Typography variant="body2">{option.label}</Typography>}
+                        label={<Typography variant='body2'>{option.label}</Typography>}
                         control={<Checkbox checked={option.checked} onChange={handleChange} name={option.label} />}
                       />
-                    </Grid>)
-                  )}
+                    </Grid>
+                  ))}
                 </Grid>
               </FormControl>
             </Box>

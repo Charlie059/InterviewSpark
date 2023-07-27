@@ -296,6 +296,11 @@ type Mutation {
   cancelUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
   verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(userEmail: AWSEmail!): OperationResult!
   handleMixpanelEvent(userEmail: AWSEmail!, data: AWSJSON!, eventType: String!): OperationResult!
+  updateUserSubscriptionCancelReason(
+    userEmail: AWSEmail!
+    subscriptionId: String!
+    cancelReason: AWSJSON!
+  ): OperationResult!
 }
 
 type OperationResult {
