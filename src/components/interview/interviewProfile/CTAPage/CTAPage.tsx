@@ -6,7 +6,6 @@ const CTAPage = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -15,16 +14,16 @@ const CTAPage = () => {
         padding: 2
       }}
     >
-      <Grid container spacing={12}>
+      <Grid container spacing={10}>
         {/* Image section */}
         <Grid item xs={12}>
-          <img src='' alt='AI-powered Interview' style={{ maxWidth: '100%', height: 'auto' }} />
+          <img src='/images/banners/interviewCTA.svg' alt='AI-powered Interview' style={{ maxWidth: '30%' }} />
         </Grid>
 
         {/* Text section */}
         <Grid item xs={12}>
           <Typography variant='h5' component='div'>
-            Ace Your Interviews with AI-Powered Simulations
+            Unlock your interview potential and land your dream job with confidence!
           </Typography>
         </Grid>
 
@@ -38,9 +37,9 @@ const CTAPage = () => {
 
         {/* Button */}
         <Grid item xs={12}>
-          <Link href='/interview/mock-interview' passHref>
+          <Link href='/interview/practice-interview' passHref>
             <Button variant='contained' color='primary' size='large'>
-              Start First Interview
+              Practice Now
             </Button>
           </Link>
         </Grid>

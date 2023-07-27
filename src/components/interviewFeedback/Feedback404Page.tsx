@@ -40,7 +40,7 @@ function FeedbackAnalysisPage() {
             Thank you!
           </Title>
           <Title level={4} style={{ fontFamily: 'Montserrat' }}>
-            You've completed your mock interview!
+            You've completed your practice interview!
           </Title>
           <Paragraph style={{ fontFamily: 'Montserrat' }}>
             'We are currently analyzing your feedback. Please be patient as this might take some time.'

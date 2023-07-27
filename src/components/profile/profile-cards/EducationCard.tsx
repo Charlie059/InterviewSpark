@@ -98,6 +98,10 @@ const EducationCard = ({
       }
 
       await API.graphql(graphqlOperation(updateUserEducation, eduInput))
+      auth.trackEvent('User_Profile_Settings', {
+        action: 'Edit_Education_History',
+        ...eduInput
+      })
     } else {
       // If no existing education entry is found, create a new one
       console.log(eduData.eduStartDate.toISOString())
@@ -120,6 +124,10 @@ const EducationCard = ({
           eduData.eduID = createdEduID
           updatedEduDatas.push(eduData)
           console.log('updated edu data: ', updatedEduDatas)
+          auth.trackEvent('User_Profile_Settings', {
+            action: 'Create_Education_History',
+            ...eduInput
+          })
         }else{
           throw('no data found')
         }

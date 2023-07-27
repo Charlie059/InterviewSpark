@@ -13,6 +13,9 @@ const DeviceSelector: React.FC<DeviceSelectorProps> = ({ deviceType, onChange, d
 
   useEffect(() => {
     const getDevices = async () => {
+      // Request access to devices
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+
       const mediaDevices = await navigator.mediaDevices.enumerateDevices()
 
       const filteredDevices = mediaDevices.filter(device => device.kind === deviceType)

@@ -89,6 +89,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
       }
 
       const result = await API.graphql(graphqlOperation(updateUserProfile, input))
+      auth.trackEvent('User_Profile_Settings', {
+        action: 'Update_Profile',
+        ...input
+      })
+      auth.setMixpanelPeople({
+        ...input
+      })
 
       return result
     } catch (error) {
@@ -139,7 +146,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} sm={12} md={5} lg={5}>
+      <Grid item xs={12} sm={12} md={type === "tutorial" ? 12 : 5} lg={type === "tutorial" ? 12 : 5}>
         <Card>
           <CardContent>
             <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
