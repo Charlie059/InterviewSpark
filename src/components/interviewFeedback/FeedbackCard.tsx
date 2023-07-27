@@ -8,7 +8,6 @@ import { Box, Button, Grid } from '@mui/material'
 import ClampLines from 'react-clamp-lines'
 import { FiCheckCircle, FiAlertCircle, FiCheck } from 'react-icons/fi'
 import ReactPlayer from 'react-player'
-import styled from 'styled-components'
 import Close from "mdi-material-ui/Close";
 import IconButton from "@mui/material/IconButton";
 
@@ -549,13 +548,9 @@ export default function InterviewFeedbackCard(props: Props) {
     }
   }
 
-  const StyledDiv = styled.div`
-    max-height: 500px;
-    overflow-y: auto;
-  `
+
 
   return (
-
     <Card>
       <CardContent>
         <Typography
@@ -568,10 +563,13 @@ export default function InterviewFeedbackCard(props: Props) {
           <Close/>
         </IconButton>}
       </CardContent>
+      <CardContent>
       <Grid container spacing={6}>
         {videoUrl ? (
           <Grid item xs={12} lg={isDetailPage?12:8}>
-            <ReactPlayer url={videoUrl} controls width='100%' height='400px' />
+            <Card >
+              <ReactPlayer url={videoUrl} controls width='100%' height='400px' />
+            </Card>
           </Grid>
         ) : shouldDisplayIcon ? (
             <Grid item xs={12} lg={12}>
@@ -590,29 +588,27 @@ export default function InterviewFeedbackCard(props: Props) {
           )
         )}
         <Grid item xs={12} lg={videoUrl?(isDetailPage?12:4):12}>
-          <CardContent sx={{ height: isDetailPage ? '100%' : '125px', maxHeight: '500px' }}>
+          <div style={{ height: isDetailPage ? '' :(videoUrl?'300px': '75px') }}>
             {isDetailPage ? (
-              <StyledDiv>
                 <Typography  variant={'body1'}>
                   {cardText}
                   <br />
                   <br />
                   {getHintText()}
                 </Typography>
-              </StyledDiv>
             ) : (
-              <Typography variant={'body1'}>
+              <Typography variant={videoUrl?'h6':'body1'}>
                 <ClampLines
                   buttons={false}
                   text={cardText!}
                   id='really-unique-id'
-                  lines={3}
+                  lines={videoUrl?10:3}
                   ellipsis='...'
                   innerElement='p'
                 />
               </Typography>
             )}
-          </CardContent>
+          </div>
 
           <CardActions sx={{justifyContent: 'center'}} >
             {!isDetailPage && (
@@ -623,9 +619,7 @@ export default function InterviewFeedbackCard(props: Props) {
           </CardActions>
         </Grid>
       </Grid>
-
-
-
+      </CardContent>
     </Card>
   )
 }

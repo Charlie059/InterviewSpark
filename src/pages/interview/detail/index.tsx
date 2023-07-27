@@ -73,7 +73,7 @@ const InterviewDetails = () => {
             setCardData([
               {
                 cardName: 'Video',
-                cardText: 'Interview Question: "' + result.data.getUserInterviewMetaData.interviewQuestion + '"',
+                cardText: 'Interview Question: "' + <br/>+ result.data.getUserInterviewMetaData.interviewQuestion + '"',
                 cardValue: null,
                 extraInfo: null,
                 videoUrl: videoUrl
@@ -84,7 +84,7 @@ const InterviewDetails = () => {
             setCardData([
               {
                 cardName: 'Video',
-                cardText: 'Interview Question: "' + result.data.getUserInterviewMetaData.interviewQuestion + '"',
+                cardText: 'Interview Question:\n "'+ result.data.getUserInterviewMetaData.interviewQuestion + '"',
                 cardValue: null,
                 extraInfo: null,
                 videoUrl: videoUrl
@@ -224,7 +224,17 @@ const InterviewDetails = () => {
                   </Grid>
                 ))}
               </Grid>
-              <Dialog open={modalOpen} onClose={handleClose}>
+              <Dialog
+                open={modalOpen}
+                onClose={handleClose}
+                scroll='body'
+                sx={{
+                  '& .MuiPaper-root': {
+                    width: '100%',
+                    maxWidth: 1000,
+                  }
+                }}
+              >
                 <InterviewFeedbackCard {...currentCard} isDetailPage={true} handleClose={handleClose}/>
               </Dialog>
             </Grid>
