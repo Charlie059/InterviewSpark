@@ -4,7 +4,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
 // ** MUI Imports
-import { Box, IconButton, Button, Grid, Avatar, Select, MenuItem, LinearProgress, Typography } from '@mui/material'
+import { Box, IconButton, Button, Grid, Avatar, Select, MenuItem, LinearProgress, Typography, useTheme } from '@mui/material'
 import ArticleIcon from '@mui/icons-material/Article'
 import CameraAltIcon from '@mui/icons-material/CameraAlt'
 import MicIcon from '@mui/icons-material/Mic'
@@ -162,6 +162,9 @@ const StartInterviewDialog = (props: {
       setCurrentStep(0)
     }, 300)
   }
+  const theme = useTheme()
+
+  console.log(theme.palette.warning)
 
   return (
     <Box>
@@ -262,14 +265,21 @@ const StartInterviewDialog = (props: {
                             sx={{
                               fontSize: 14,
                               marginTop: '8px',
-                              fontWeight: 300
+                              fontWeight: 500,
+                              color: planType === 'Free'?
+                                theme.palette.mode === 'light' ?
+                                  theme.palette.error.light:
+                                  theme.palette.error.dark:
+                                theme.palette.mode === 'light' ?
+                                  theme.palette.info.light:
+                                  theme.palette.info.light
                             }}
                             align='center'
                           >
                             {planType === 'Free'
                               ? currentUsage / totalUsage !== 1
                                 ? 'Limited AI practices available on Free Tier.'
-                                : 'Free unlimited practices without AI feedback. '
+                                : 'AI feeback usage depleted! '
                               : 'Enjoy unlimited interviews with AI feedback.'}
                             {planType === 'Free' && currentUsage / totalUsage === 1 && (
 
