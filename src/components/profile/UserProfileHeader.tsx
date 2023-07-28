@@ -259,7 +259,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           </Grid>
           <Grid item xs={12} sm={12} md={5} lg={5} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
             {type == 'Profile' && (
-              <div>
+              <div style={{display:'none'}}>
                 {data.isPublic && (
                   <Button
                     variant='outlined'
@@ -271,7 +271,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   </Button>
                 )}
                 <FormControlLabel
-                  control={<Switch checked={data.isPublic} onChange={toggle} />}
+                  control={<Switch  checked={data.isPublic} onChange={toggle} />}
                   label='Public'
                   aria-owns={open ? 'mouse-over-popover' : undefined}
                   aria-haspopup='true'
