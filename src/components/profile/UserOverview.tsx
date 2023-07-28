@@ -33,22 +33,22 @@ import { getServerSideProps } from '../../pages/user-profile/[user]'
 const UserOverview = ({ user, data, type }: { user: any; data: any; type?: string }) => {
   // ** Industry List
   const industryList = [
-    "Agriculture",
-    "Arts and Entertainment",
-    "Construction",
-    "Education",
-    "Finance and Insurance",
-    "Government",
-    "Healthcare",
-    "Hospitality and Food Services",
-    "Information and Technology",
-    "Manufacturing",
-    "Professional Services",
-    "Real Estate and Rental and Leasing",
-    "Retail Trade",
-    "Transportation and Warehousing",
-    "Wholesale Trade",
-    "Other"
+    'Agriculture',
+    'Arts and Entertainment',
+    'Construction',
+    'Education',
+    'Finance and Insurance',
+    'Government',
+    'Healthcare',
+    'Hospitality and Food Services',
+    'Information and Technology',
+    'Manufacturing',
+    'Professional Services',
+    'Real Estate and Rental and Leasing',
+    'Retail Trade',
+    'Transportation and Warehousing',
+    'Wholesale Trade',
+    'Other'
   ]
 
   // ** States
@@ -165,7 +165,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} sm={12} md={type === "tutorial" ? 12 : 5} lg={type === "tutorial" ? 12 : 5}>
+      <Grid item xs={12} sm={12} md={type === 'tutorial' ? 12 : 5} lg={type === 'tutorial' ? 12 : 5}>
         <Card>
           <CardContent>
             <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -211,7 +211,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                 </Box>
               </Grid>
             </Grid>
-            <Grid sx={{mt: 6}}>
+            <Grid sx={{ mt: 6 }}>
               <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Typography variant='h6'>Career Goal</Typography>
               </Box>
@@ -369,13 +369,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                     </FormControl>
                   </Grid>
                 </Grid>
-                <Grid container sx={{mt:1}} spacing={6}>
+                <Grid container sx={{ mt: 1 }} spacing={6}>
                   <Grid item xs={12} sm={6}>
                     <FormControl>
                       <Controller
                         name='userDreamJob'
                         control={control}
-                        render={({ field: { value, onChange }}) => (
+                        render={({ field: { value, onChange } }) => (
                           <TextField
                             fullWidth
                             label='My Dream Job'
@@ -400,7 +400,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                             onChange={onChange}
                             value={value}
                           >
-                            {industry.map((industry) => (
+                            {industry.map(industry => (
                               <MenuItem key={industry} value={industry}>
                                 {industry}
                               </MenuItem>
@@ -426,25 +426,35 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
           </Dialog>
         </Card>
       </Grid>
-      <Grid item xs={12} sm={12} md={7} lg={7}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            {educations && type !== 'tutorial' && (
-              <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            {workHistories && type !== 'tutorial' && (
-              <WorkHistoryCard
-                type='private'
-                workDatas={workHistories}
-                setWorkDatas={setWorkHistories}
-                refresh={handleRefresh}
-              />
-            )}
+
+      {type !== 'tutorial' ? (
+        <Grid item xs={12} sm={12} md={7} lg={7}>
+          <Grid container spacing={6}>
+            <Grid item xs={12}>
+              {educations && type !== 'tutorial' && (
+                <EducationCard
+                  type='private'
+                  eduDatas={educations}
+                  setEduDatas={setEducations}
+                  refresh={handleRefresh}
+                />
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              {workHistories && type !== 'tutorial' && (
+                <WorkHistoryCard
+                  type='private'
+                  workDatas={workHistories}
+                  setWorkDatas={setWorkHistories}
+                  refresh={handleRefresh}
+                />
+              )}
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      ) : (
+        <> </>
+      )}
     </Grid>
   )
 }
