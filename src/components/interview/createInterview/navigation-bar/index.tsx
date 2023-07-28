@@ -22,17 +22,12 @@ const NavBar = (props: Props) => {
     <Box display='flex' justifyContent='space-between' alignItems={'center'}>
       <Box display='flex'>
         {props.navBarElements.map((navBarElement, index) => (
-          <Box key={index} sx={{ display: 'flex', gap: 2 }}>
+          <Box key={index} sx={{ display: 'flex' }} padding={1}>
             {index !== 0 ? (
-              <Typography sx={{ fontSize: 20, fontFamily: 'Montserrat', fontWeight: 600, ml: 2 }}> {' > '} </Typography>
+              <Typography variant={'h6'}> {' > '} </Typography>
             ) : null}
             <Typography
-              sx={{
-                fontSize: 20,
-                fontFamily: 'Montserrat',
-                fontWeight: 600,
-                color: navBarElement.path ? 'primary.main' : 'black'
-              }}
+              variant={'h6'}
             >
               {navBarElement.path ? <Link href={navBarElement.path}>{navBarElement.name}</Link> : navBarElement.name}
             </Typography>

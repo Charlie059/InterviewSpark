@@ -1,14 +1,13 @@
-import React, { ReactNode, useEffect, useState } from 'react'
-import { Box, Modal, Grid, Typography, Avatar } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import {Box, Grid, Typography, Dialog, IconButton} from '@mui/material'
 import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
-import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewMetaData } from 'src/graphql/queries'
 import { useRouter } from 'next/router'
 import { useAuth } from 'src/hooks/useAuth'
 import { Storage } from '@aws-amplify/storage'
 import FeedbackAnalysisPage from 'src/components/interviewFeedback/Feedback404Page'
+import CloseIcon from "@mui/icons-material/Close";
 
 type CardDataType = {
   cardName: string
@@ -43,6 +42,7 @@ const InterviewDetails = () => {
     const interviewID = interviewsParam ? interviews.interviewID : null
     const interviewQuestionID = interviewsParam ? interviews.interviewQuestionID : null
     const interviewQuestionType = interviewsParam ? interviews.interviewQuestionType : null
+    let haveAnalysis = false
 
     const fetchInterviewDetails = async () => {
       const userEmailAddress = auth.user?.userEmailAddress
@@ -59,11 +59,6 @@ const InterviewDetails = () => {
         )
         if ('data' in result) {
           console.log('Interview details:', result.data.getUserInterviewMetaData)
-
-          // Decode string by JSON.parse
-          const interviewDetails = JSON.parse(result.data.getUserInterviewMetaData.interviewAnalysis)
-          console.log('Interview details:', interviewDetails)
-
           const videoKey = result.data.getUserInterviewMetaData.interviewVideoKey.replace('.webm', '.mp4')
 
           // Get interview video URL from S3
@@ -71,94 +66,115 @@ const InterviewDetails = () => {
             level: 'private'
           })
 
-          setCardData([
-            {
-              cardName: 'Video',
-              cardText: 'Interview Question: "' + result.data.getUserInterviewMetaData.interviewQuestion + '"',
-              cardValue: null,
-              extraInfo: null,
-              videoUrl: videoUrl
-            },
-            {
-              cardName: 'UM Counter',
-              cardText: interviewDetails.umFeedback,
-              cardValue: interviewDetails.umCounter,
-              extraInfo: null
-            },
-            {
-              cardName: 'Vocabulary',
-              cardText: interviewDetails.vocabularyFeedback,
-              cardValue: interviewDetails.vocabularyScore,
-              extraInfo: interviewDetails.vocabularyKeywords
-            },
-            {
-              cardName: 'Power Word',
-              cardText: interviewDetails.powerWordsFeedback,
-              cardValue: interviewDetails.powerWordsScore,
-              extraInfo: interviewDetails.powerWords
-            },
-            {
-              cardName: 'Answer Relevance',
-              cardText: interviewDetails.answerRelevanceFeedback,
-              cardValue: interviewDetails.answerRelevanceScore,
-              extraInfo: null
-            },
-            {
-              cardName: 'Authenticity Score',
-              cardText: interviewDetails.authenticityFeedback,
-              cardValue: interviewDetails.authenticityScore,
-              extraInfo: null
-            },
-            {
-              cardName: 'Filler Words',
-              cardText: interviewDetails.fillerWordsFeedback,
-              cardValue: interviewDetails.fillerWordsScore,
-              extraInfo: null
-            },
-            {
-              cardName: 'Negative Tone',
-              cardText: interviewDetails.negativeToneFeedback,
-              cardValue: interviewDetails.negativeToneScore,
-              extraInfo: null
-            },
-            {
-              cardName: 'Volume',
-              cardText: interviewDetails.volumeFeedback,
-              cardValue: interviewDetails.loudness,
-              extraInfo: null
-            },
-            {
-              cardName: 'Pace of Speech',
-              cardText: interviewDetails.paceOfSpeechFeedback,
-              cardValue: interviewDetails.paceOfSpeech,
-              extraInfo: null
-            },
-            {
-              cardName: 'Lighting',
-              cardText: interviewDetails.rekognitionScores.brightness_score_feedback,
-              cardValue: interviewDetails.rekognitionScores.brightness_score,
-              extraInfo: null
-            },
-            {
-              cardName: 'Eye Contact',
-              cardText: interviewDetails.rekognitionScores.eye_contact_score_feedback,
-              cardValue: interviewDetails.rekognitionScores.eye_contact_score,
-              extraInfo: null
-            },
-            {
-              cardName: 'Smile',
-              cardText: interviewDetails.rekognitionScores.smile_score_feedback,
-              cardValue: interviewDetails.rekognitionScores.smile_score,
-              extraInfo: null
-            },
-            {
-              cardName: 'Calm',
-              cardText: interviewDetails.rekognitionScores.emotions_feedback,
-              cardValue: null,
-              extraInfo: interviewDetails.rekognitionScores.emotions
-            }
-          ])
-        }
+          haveAnalysis = result.data.getUserInterviewMetaData.interviewAnalysis
+
+          // Decode string by JSON.parse
+          if(!haveAnalysis){
+            setCardData([
+              {
+                cardName: 'Video',
+                cardText: 'Interview Question: "' + <br/>+ result.data.getUserInterviewMetaData.interviewQuestion + '"',
+                cardValue: null,
+                extraInfo: null,
+                videoUrl: videoUrl
+              }])
+          }else{
+            const interviewDetails = JSON.parse(result.data.getUserInterviewMetaData.interviewAnalysis)
+            console.log('Interview details:', interviewDetails)
+            setCardData([
+              {
+                cardName: 'Video',
+                cardText: 'Interview Question:\n "'+ result.data.getUserInterviewMetaData.interviewQuestion + '"',
+                cardValue: null,
+                extraInfo: null,
+                videoUrl: videoUrl
+              },
+
+              // {
+              //   cardName: 'UM Counter',
+              //   cardText: interviewDetails.umFeedback,
+              //   cardValue: interviewDetails.umCounter,
+              //   extraInfo: null
+              // },
+
+              {
+                cardName: 'Vocabulary',
+                cardText: interviewDetails.vocabularyFeedback,
+                cardValue: interviewDetails.vocabularyScore,
+                extraInfo: interviewDetails.vocabularyKeywords
+              },
+              {
+                cardName: 'Power Words',
+                cardText: interviewDetails.powerWordsFeedback,
+                cardValue: interviewDetails.powerWordsScore,
+                extraInfo: interviewDetails.powerWords
+              },
+              {
+                cardName: 'Answer Relevance',
+                cardText: interviewDetails.answerRelevanceFeedback,
+                cardValue: interviewDetails.answerRelevanceScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Authenticity Score',
+                cardText: interviewDetails.authenticityFeedback,
+                cardValue: interviewDetails.authenticityScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Filler Words',
+                cardText: interviewDetails.fillerWordsFeedback,
+                cardValue: interviewDetails.fillerWordsScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Negative Tone',
+                cardText: interviewDetails.negativeToneFeedback,
+                cardValue: interviewDetails.negativeToneScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Volume',
+                cardText: interviewDetails.volumeFeedback,
+                cardValue: interviewDetails.loudness,
+                extraInfo: null
+              },
+              {
+                cardName: 'Pace of Speech',
+                cardText: interviewDetails.paceOfSpeechFeedback,
+                cardValue: interviewDetails.paceOfSpeech,
+                extraInfo: null
+              },
+
+              // {
+              //   cardName: 'Lighting',
+              //   cardText: interviewDetails.rekognitionScores.brightness_score_feedback,
+              //   cardValue: interviewDetails.rekognitionScores.brightness_score,
+              //   extraInfo: null
+              // },
+              // {
+              //   cardName: 'Eye Contact',
+              //   cardText: interviewDetails.rekognitionScores.eye_contact_score_feedback,
+              //   cardValue: interviewDetails.rekognitionScores.eye_contact_score,
+              //   extraInfo: null
+              // },
+
+              // {
+              //   cardName: 'Smile',
+              //   cardText: interviewDetails.rekognitionScores.smile_score_feedback,
+              //   cardValue: interviewDetails.rekognitionScores.smile_score,
+              //   extraInfo: null
+              // },
+              // {
+              //   cardName: 'Calm',
+              //   cardText: interviewDetails.rekognitionScores.emotions_feedback,
+              //   cardValue: null,
+              //   extraInfo: interviewDetails.rekognitionScores.emotions
+              // }
+            ])
+          }
+          }
+
       } catch (error) {
         console.error('Error fetching interview details:', error)
         setShowLoadingPage(true)
@@ -177,38 +193,52 @@ const InterviewDetails = () => {
       {showLoadingPage ? (
         <FeedbackAnalysisPage />
       ) : (
-        <div style={{ backgroundColor: '#F2F7FE' }}>
-          <Box padding={10}>
-            <NavBar
-              navBarElements={[
-                { name: 'HomePage', path: '/interview' },
-                { name: 'Interview Question Review', path: undefined }
-              ]}
-              closeNavLink='/interview'
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-              <Typography sx={{ fontFamily: 'Montserrat', fontSize: 36, mt: 2 }}>Question Review</Typography>
-              <Avatar
-                sx={{ width: 40, height: 40 }}
-                alt={(auth.user?.fName || '') + (auth.user?.lName || '') || 'john doe'}
-                src={
-                  (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (auth.user?.photoImgKey || '') ||
-                  'public/images/avatars/1.png'
-                }
-              />{' '}
-            </Box>
-          </Box>
-          <Grid container>
-            {cardData.map((card, index) => (
-              <Grid xs={12} sm={6} md={4} lg={3} key={index}>
-                <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
+          <Grid container spacing={6}>
+            {/*<Grid item xs = {12}>*/}
+            {/*  <NavBar*/}
+            {/*    navBarElements={[*/}
+            {/*      { name: 'HomePage', path: '/interview' },*/}
+            {/*      { name: 'Interview Question Review', path: undefined }*/}
+            {/*    ]}*/}
+            {/*    closeNavLink='/interview'*/}
+            {/*  />*/}
+            {/*</Grid>*/}
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Typography variant={'h4'}>Question Review</Typography>
+                <IconButton
+                  onClick={() => {
+                    router.push('/interview')
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+
+            </Grid>
+            <Grid item xs={12}>
+              <Grid container spacing={8}>
+                {cardData.map((card, index) => (
+                  <Grid item xs={card.cardName === 'Video' ? 12 : 12} sm={card.cardName === 'Video' ? 12 : 6} md={card.cardName === 'Video' ? 12 : 4} lg={card.cardName === 'Video' ? 12 : 3} key={index}>
+                  <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
+                  </Grid>
+                ))}
               </Grid>
-            ))}
+              <Dialog
+                open={modalOpen}
+                onClose={handleClose}
+                scroll='body'
+                sx={{
+                  '& .MuiPaper-root': {
+                    width: '100%',
+                    maxWidth: 1000,
+                  }
+                }}
+              >
+                <InterviewFeedbackCard {...currentCard} isDetailPage={true} handleClose={handleClose}/>
+              </Dialog>
+            </Grid>
           </Grid>
-          <Modal open={modalOpen} onClose={handleClose}>
-            <InterviewFeedbackCard {...currentCard} isDetailPage={true} />
-          </Modal>
-        </div>
       )}
     </>
   )
@@ -219,5 +249,5 @@ InterviewDetails.acl = {
   subject: 'acl-page'
 }
 
-InterviewDetails.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+// InterviewDetails.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default InterviewDetails

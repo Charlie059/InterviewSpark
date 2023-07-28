@@ -35,7 +35,7 @@ const StyledDataGrid = styled(DataGrid)`
 const InterviewList = () => {
   const auth = useAuth()
   const [interviews, setInterviews] = useState<Interview[]>([])
-  const [pageSize] = useState<number>(5)
+  const [pageSize] = useState<number>(10)
   const [page, setPage] = useState<number>(0)
   const [totalRecords, setTotalRecords] = useState<number>(0)
   const [value, setValue] = useState<string>('')
@@ -235,13 +235,20 @@ const InterviewList = () => {
           }
         )
 
+
+        const filteredInterviewList = interviewList.filter((entry: any) => {
+          // Keep the entry in the filteredInterviewList if interviewVideo is not an empty string and not null
+          return entry.interviewVideoKey !== "" && entry.interviewVideoKey !== null;
+        });
+
+
         // Set the id field to the interviewList based on the interviewDateTime start from 1
-        interviewList.forEach((interview: any, index: number) => {
+        filteredInterviewList.forEach((interview: any, index: number) => {
           interview.id = index + 1
         })
-        console.log('Interviews:', interviewList)
-        setInterviews(interviewList)
-        setTotalRecords(interviewList.length)
+        console.log('Interviews:', filteredInterviewList)
+        setInterviews(filteredInterviewList)
+        setTotalRecords(filteredInterviewList.length)
       }
     } catch (error) {
       console.error('Error fetching interviews:', error)
