@@ -164,7 +164,6 @@ const StartInterviewDialog = (props: {
   }
   const theme = useTheme()
 
-  console.log(theme.palette.warning)
 
   return (
     <Box>
