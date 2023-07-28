@@ -167,6 +167,7 @@ const StartInterviewDialog = (props: {
     <Box>
       <Dialog
         open={props.open}
+        scroll='body'
         disableEscapeKeyDown
         maxWidth='md'
         fullWidth={true}
@@ -183,7 +184,7 @@ const StartInterviewDialog = (props: {
                 <CloseIcon />
               </IconButton>
             </Grid>
-            <Typography sx={{ fontSize: 36, mt: -2, fontWeight: 600, color: 'black' }} align='center'>
+            <Typography variant={'h4'} align='center'>
               {`Start Interview: ${props.interviewTopic}`}
             </Typography>
             <Typography sx={{ fontSize: 18, mt: 2, color: 'black', fontWeight: 600 }} align='center'>
@@ -252,25 +253,27 @@ const StartInterviewDialog = (props: {
                             }}
                             align='center'
                           >
-                            {planType === 'Free' ? `${currentUsage} / ${totalUsage}` : 'Infinity'}
+                            {planType === 'Free' ? `${currentUsage} / ${totalUsage}` : 'Infinite'}
                           </Typography>
                         </Grid>
                         <Grid item>
                           <Typography
+                            variant={'body2'}
                             sx={{
-                              fontSize: 11,
+                              fontSize: 14,
                               marginTop: '8px',
-                              color: '#343434',
                               fontWeight: 300
                             }}
                             align='center'
                           >
                             {planType === 'Free'
                               ? currentUsage / totalUsage !== 1
-                                ? 'Limited AI practices available for you.'
-                                : 'Free unlimited non-AI practices. '
-                              : 'Enjoy unlimited interviews and analysis.'}
+                                ? 'Limited AI practices available on Free Tier.'
+                                : 'Free unlimited practices without AI feedback. '
+                              : 'Enjoy unlimited interviews with AI feedback.'}
                             {planType === 'Free' && currentUsage / totalUsage === 1 && (
+
+                              //# TODO change href to stripe
                               <Link href='/upgrade' passHref>
                                 <MuiLink sx={{ color: '#3f51b5', textDecoration: 'underline' }}>
                                   Click here to upgrade.
