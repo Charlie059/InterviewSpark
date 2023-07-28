@@ -24,7 +24,7 @@ const TutorialEduCard = ({
 }: {
   eduDatas: Education[]
   type: string
-  setEduDatas?: React.Dispatch<React.SetStateAction<Education[] | undefined>>
+  setEduDatas?: React.Dispatch<React.SetStateAction<Education[]>>
   refresh: () => void
 }) => {
   // States
@@ -61,9 +61,13 @@ const TutorialEduCard = ({
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
+    const newEduEntry = [{...eduD, [name]:value}]
 
     // @ts-ignore
     setEduD(prevData => ({ ...prevData, [name]: value }))
+
+    // @ts-ignore
+    setEduDatas?.(newEduEntry)
   }
 
   const handleEditSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

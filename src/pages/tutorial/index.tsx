@@ -90,7 +90,7 @@ const Tutorial = () => {
   }
   const [stepContent, setStepContent] = useState<React.ReactNode>()
   let userData: Profile
-  let eduDatas: Education[] = []
+  const [eduDatas, setEduDatas] = useState<Education[]>([])
   let workDatas: WorkHistory[] = []
 
   async function getData() {
@@ -105,7 +105,7 @@ const Tutorial = () => {
         graphqlOperation(getUserWorkHistories, { emailAddress: auth.user?.userEmailAddress })
       )
       if ('data' in eduData) {
-        eduDatas = eduData.data.getUserEducations.educations
+        setEduDatas(eduData.data.getUserEducations.educations)
         console.log('eduData get', eduData)
       }
       if ('data' in workData) {
@@ -126,7 +126,7 @@ const Tutorial = () => {
         setStepContent(<UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial} />)
         break
       case 1:
-        setStepContent(<TutorialEduCard eduDatas={eduDatas} type={'tutorial'} refresh={handleRefresh} />)
+        setStepContent(<TutorialEduCard eduDatas={eduDatas} setEduDatas={setEduDatas} type={'tutorial'} refresh={handleRefresh} />)
         break
       case 2:
         setStepContent(<TutorialTopicCard setSelectedTopic={setSelectedTopic} />)
@@ -148,6 +148,10 @@ const Tutorial = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStep])
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>)=>{
+    event.preventDefault()
+    console.log("I got something!: ", event.target )
+  }
   const renderFooter = () => {
     const stepCondition = activeStep === steps.length - 1
 
@@ -163,6 +167,7 @@ const Tutorial = () => {
           Previous
         </Button>
         <Button
+          type="submit"
           variant='contained'
           color={stepCondition ? 'success' : 'primary'}
           {...(!stepCondition ? { endIcon: <Icon icon='mdi:arrow-right' /> } : {})}
@@ -204,12 +209,16 @@ const Tutorial = () => {
       <div style={{ width: '80%' }}>
         <CardContent>
           <Grid container spacing={3}>
+            <form onSubmit={handleSubmit}>
+
+
             <Grid item xs={12}>
               {stepContent}
             </Grid>
             <Grid item xs={12}>
               {renderFooter()}
             </Grid>
+            </form>
           </Grid>
         </CardContent>
       </div>
