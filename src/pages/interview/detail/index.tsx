@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Box, Grid, Typography, Dialog, IconButton} from '@mui/material'
+import { Box, Grid, Typography, Dialog, IconButton } from '@mui/material'
 import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewMetaData } from 'src/graphql/queries'
@@ -7,7 +7,8 @@ import { useRouter } from 'next/router'
 import { useAuth } from 'src/hooks/useAuth'
 import { Storage } from '@aws-amplify/storage'
 import FeedbackAnalysisPage from 'src/components/interviewFeedback/Feedback404Page'
-import CloseIcon from "@mui/icons-material/Close";
+import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'react-hot-toast'
 
 type CardDataType = {
   cardName: string
@@ -69,22 +70,39 @@ const InterviewDetails = () => {
           haveAnalysis = result.data.getUserInterviewMetaData.interviewAnalysis
 
           // Decode string by JSON.parse
-          if(!haveAnalysis){
+          if (!haveAnalysis) {
+            // If isDisableInterviewAnalysis false, toasts the user that the analysis is not ready yet
+            if (!result.data.getUserInterviewMetaData.isDisableInterviewAnalysis) {
+              toast.error(
+                'Analysis is not ready yet. Please try again later. It may take up to 30 minutes to process the video.',
+                {
+                  duration: 10000,
+                  position: 'top-center'
+                }
+              )
+            } else {
+              // Custom info toast message for when the user has disabled interview analysis
+              toast('Interview analysis is disabled. Please upgrade to premium to enable it.', {
+                duration: 10000,
+                position: 'top-center'
+              })
+            }
             setCardData([
               {
                 cardName: 'Video',
-                cardText: 'Interview Question: "' + <br/>+ result.data.getUserInterviewMetaData.interviewQuestion + '"',
+                cardText: result.data.getUserInterviewMetaData.interviewQuestion,
                 cardValue: null,
                 extraInfo: null,
                 videoUrl: videoUrl
-              }])
-          }else{
+              }
+            ])
+          } else {
             const interviewDetails = JSON.parse(result.data.getUserInterviewMetaData.interviewAnalysis)
             console.log('Interview details:', interviewDetails)
             setCardData([
               {
                 cardName: 'Video',
-                cardText: 'Interview Question:\n "'+ result.data.getUserInterviewMetaData.interviewQuestion + '"',
+                cardText: result.data.getUserInterviewMetaData.interviewQuestion,
                 cardValue: null,
                 extraInfo: null,
                 videoUrl: videoUrl
@@ -136,7 +154,7 @@ const InterviewDetails = () => {
               {
                 cardName: 'Volume',
                 cardText: interviewDetails.volumeFeedback,
-                cardValue: interviewDetails.loudness,
+                cardValue: interviewDetails.volume,
                 extraInfo: null
               },
               {
@@ -144,7 +162,7 @@ const InterviewDetails = () => {
                 cardText: interviewDetails.paceOfSpeechFeedback,
                 cardValue: interviewDetails.paceOfSpeech,
                 extraInfo: null
-              },
+              }
 
               // {
               //   cardName: 'Lighting',
@@ -173,8 +191,7 @@ const InterviewDetails = () => {
               // }
             ])
           }
-          }
-
+        }
       } catch (error) {
         console.error('Error fetching interview details:', error)
         setShowLoadingPage(true)
@@ -193,52 +210,58 @@ const InterviewDetails = () => {
       {showLoadingPage ? (
         <FeedbackAnalysisPage />
       ) : (
-          <Grid container spacing={6}>
-            {/*<Grid item xs = {12}>*/}
-            {/*  <NavBar*/}
-            {/*    navBarElements={[*/}
-            {/*      { name: 'HomePage', path: '/interview' },*/}
-            {/*      { name: 'Interview Question Review', path: undefined }*/}
-            {/*    ]}*/}
-            {/*    closeNavLink='/interview'*/}
-            {/*  />*/}
-            {/*</Grid>*/}
-            <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <Typography variant={'h4'}>Question Review</Typography>
-                <IconButton
-                  onClick={() => {
-                    router.push('/interview')
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-
-            </Grid>
-            <Grid item xs={12}>
-              <Grid container spacing={8}>
-                {cardData.map((card, index) => (
-                  <Grid item xs={card.cardName === 'Video' ? 12 : 12} sm={card.cardName === 'Video' ? 12 : 6} md={card.cardName === 'Video' ? 12 : 4} lg={card.cardName === 'Video' ? 12 : 3} key={index}>
-                  <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
-                  </Grid>
-                ))}
-              </Grid>
-              <Dialog
-                open={modalOpen}
-                onClose={handleClose}
-                scroll='body'
-                sx={{
-                  '& .MuiPaper-root': {
-                    width: '100%',
-                    maxWidth: 1000,
-                  }
+        <Grid container spacing={6}>
+          {/*<Grid item xs = {12}>*/}
+          {/*  <NavBar*/}
+          {/*    navBarElements={[*/}
+          {/*      { name: 'HomePage', path: '/interview' },*/}
+          {/*      { name: 'Interview Question Review', path: undefined }*/}
+          {/*    ]}*/}
+          {/*    closeNavLink='/interview'*/}
+          {/*  />*/}
+          {/*</Grid>*/}
+          <Grid item xs={12}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant={'h4'}>Question Review</Typography>
+              <IconButton
+                onClick={() => {
+                  router.push('/interview')
                 }}
               >
-                <InterviewFeedbackCard {...currentCard} isDetailPage={true} handleClose={handleClose}/>
-              </Dialog>
-            </Grid>
+                <CloseIcon />
+              </IconButton>
+            </Box>
           </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={8}>
+              {cardData.map((card, index) => (
+                <Grid
+                  item
+                  xs={card.cardName === 'Video' ? 12 : 12}
+                  sm={card.cardName === 'Video' ? 12 : 6}
+                  md={card.cardName === 'Video' ? 12 : 4}
+                  lg={card.cardName === 'Video' ? 12 : 3}
+                  key={index}
+                >
+                  <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
+                </Grid>
+              ))}
+            </Grid>
+            <Dialog
+              open={modalOpen}
+              onClose={handleClose}
+              scroll='body'
+              sx={{
+                '& .MuiPaper-root': {
+                  width: '100%',
+                  maxWidth: 1000
+                }
+              }}
+            >
+              <InterviewFeedbackCard {...currentCard} isDetailPage={true} handleClose={handleClose} />
+            </Dialog>
+          </Grid>
+        </Grid>
       )}
     </>
   )
