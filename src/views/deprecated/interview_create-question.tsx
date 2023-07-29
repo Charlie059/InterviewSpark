@@ -14,6 +14,7 @@ import router from 'next/router'
 import { API, graphqlOperation } from 'aws-amplify'
 import { createUserInterviewWithQuestion } from 'src/graphql/mutations'
 import QuickViewQuestion from 'src/components/interview/createInterview/quick-view-question'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const CreateQuestionsPage = () => {
   const [interviewQuestions, setInterviewQuestions] = useState<InterviewQuestion[]>([])
@@ -47,7 +48,7 @@ const CreateQuestionsPage = () => {
         fetchedInterviews.push(result.data.createUserInterviewWithQuestion)
       } else {
         // Handle the case where result does not have a 'data' property
-        console.error('Failed to create interview with question:', questionID)
+        Logger.error('Failed to create interview with question:', questionID)
       }
     }
 

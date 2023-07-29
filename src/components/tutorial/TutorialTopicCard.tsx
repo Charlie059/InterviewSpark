@@ -28,7 +28,6 @@ const TutorialTopicCard = (tutorialTopicProps: TutorialTopicPropsInterface) => {
   const { handleSubmit } = useForm()
 
   const handleEditSubmit = async (formData: any) => {
-    console.log('formData', formData)
     setSelectedTopic(formData.topicsInterested)
   }
 
@@ -52,7 +51,6 @@ const TutorialTopicCard = (tutorialTopicProps: TutorialTopicPropsInterface) => {
 
           return 0
         })
-        console.log(allTagsFromDB)
         setTopicsList(allTagsFromDB)
       }
     }

@@ -29,6 +29,7 @@ import Button from '@mui/material/Button'
 import { updateUserProfile } from '../../graphql/mutations'
 import { InferGetServerSidePropsType } from 'next/types'
 import { getServerSideProps } from '../../pages/user-profile/[user]'
+import Logger from '../../middleware/loggerMiddleware'
 
 const UserOverview = ({ user, data, type }: { user: any; data: any; type?: string }) => {
   // ** Industry List
@@ -70,14 +71,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   const handleEditSubmit = async (formData: any) => {
     setOpenEdit(false)
-    console.log('formData', formData)
     setProfileData(formData)
     updateProfile(formData)
       .then(response => {
-        console.log(response)
+        Logger.info('Profile updated successfully', response)
       })
       .catch(e => {
-        console.log(e)
+        Logger.error('Error updating profile', e)
       })
   }
 
@@ -86,7 +86,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
   const { control, handleSubmit } = useForm({ defaultValues })
 
   const updateProfile = async (data: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    console.log('updateProfile data', data)
     try {
       const input = {
         emailAddress: data.userEmailAddress,
@@ -118,7 +117,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
       return result
     } catch (error) {
-      console.log(error)
+      Logger.error('Error updating profile', error)
     }
   }
 
@@ -145,7 +144,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
         emailAddress
       })
     )
-    console.log('Result:', workHistoryResponse)
 
     //setEducations
     if ('data' in workHistoryResponse) {

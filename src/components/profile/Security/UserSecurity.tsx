@@ -29,6 +29,7 @@ import * as yup from 'yup'
 import { Auth } from 'aws-amplify'
 import toast from 'react-hot-toast'
 import { useAuth } from 'src/hooks/useAuth'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface State {
   currentPassword: string
@@ -82,12 +83,9 @@ const UserSecurity = () => {
       .then(async () => {
         // Form is valid
         const currentUser = await Auth.currentAuthenticatedUser()
-        console.log(currentUser)
 
         try {
           const res = await Auth.changePassword(currentUser, values.currentPassword, values.newPassword)
-          console.log(res)
-
           if (res === 'SUCCESS') {
             // Clear errors
             setErrors({})
@@ -112,7 +110,7 @@ const UserSecurity = () => {
             toast.error('Failed to change password')
           }
         } catch (error) {
-          console.log(error)
+          Logger.error('Failed to change password', error)
 
           toast.error(`Failed to change password: ${error}`)
         }

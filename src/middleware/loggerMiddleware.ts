@@ -40,15 +40,21 @@ export function error(...messages: any[]): void {
 }
 
 function getFunctionName(): string {
-  const error = new Error()
-  const stack = error.stack?.split('\n')
-  if (stack) {
-    const functionName = stack[3].trim().split(' ')[1]
-
-    return functionName ? functionName : ''
-  } else {
-    return ''
+  const originalPrepareStackTrace = Error.prepareStackTrace
+  Error.prepareStackTrace = function (_, stack) {
+    return stack
   }
+
+  const error = new Error()
+  Error.captureStackTrace(error, getFunctionName)
+
+  const stack: NodeJS.CallSite[] = error.stack as any
+
+  const functionName = stack[2].getFunctionName()
+
+  Error.prepareStackTrace = originalPrepareStackTrace
+
+  return functionName ? functionName : ''
 }
 
 export default {

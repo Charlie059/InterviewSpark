@@ -49,7 +49,7 @@ export function useSubscription(userSubscription: UserSubscription | null) {
         throw new Error('No data received in response')
       }
     } catch (error) {
-      Logger.error(error)
+      Logger.error('Error creating subscription request', error)
 
       return { isSuccessful: false }
     }
@@ -68,12 +68,10 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       )
 
       if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccessful) {
-        console.log('Subscription cancellation is successful', result.data.cancelUserSubscriptionRequest.info)
-
         return result.data.cancelUserSubscriptionRequest.isSuccessful
       }
     } catch (error) {
-      console.error('Error cancelling subscription', error)
+      Logger.error('Error cancelling subscription', error)
 
       return false
     }
@@ -92,12 +90,10 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       )
 
       if ('data' in result && result.data.resumeUserSubscriptionRequest.isSuccessful) {
-        console.log('Subscription resuming is successful', result.data)
-
         return result.data.resumeUserSubscriptionRequest.isSuccessful
       }
     } catch (error) {
-      console.error('Error resuming subscription', error)
+      Logger.error('Error resuming subscription', error)
 
       return false
     }

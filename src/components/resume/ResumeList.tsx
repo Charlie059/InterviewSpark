@@ -36,10 +36,11 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { getUserResumeScans } from '../../graphql/queries'
 import { removeUserResumeScanByID, updateUserResumeScanURL } from '../../graphql/mutations'
 import router from 'next/router'
-import FileDisplay from "../file-display/FileDisplay";
-import DialogActions from "@mui/material/DialogActions";
+import FileDisplay from '../file-display/FileDisplay'
+import DialogActions from '@mui/material/DialogActions'
 import Close from 'mdi-material-ui/Close'
-import FileAccount from "mdi-material-ui/FileAccount";
+import FileAccount from 'mdi-material-ui/FileAccount'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface Resume {
   jobName: string
@@ -82,9 +83,9 @@ const ResumeList = () => {
           resumeUrl: newUrl
         })
       )
-      console.log(result)
+      Logger.info('Result:', result)
     } catch (error) {
-      console.error(error)
+      Logger.error('Error:', error)
     }
   }
 
@@ -99,25 +100,20 @@ const ResumeList = () => {
       })
     )
 
-    console.log('Result:', result)
     if ('data' in result) {
       const resumeList = result.data.getUserResumeScans.resumeScanList
-      console.log('ResumeList: ', resumeList)
       if (resumeList.length === 0) {
         // @ts-ignore
         const emptyR: Resume = {
           displayName: 'No Resume Please Upload'
         }
         setResumes([emptyR])
-        console.log('currentPage is', router.query.user)
         if (!router.query.user) {
           router.replace('/resume')
         }
       } else {
         // for (const r of resumeList) {
-        //   console.log(r.resumeName);
         //   const newUrl = await Storage.get(r.resumeName);
-        //   console.log("new url:", newUrl);
         //
         //   await updateResumeUrl(r.resumeScanID, newUrl);
         // }
@@ -145,7 +141,6 @@ const ResumeList = () => {
           resumeScanID: resumeIdToDelete
         })
       )
-      console.log(result)
       auth.trackEvent('Resume_Functionality_Used', {
         type: 'Resume_result_deleted',
         resume_id: resumeIdToDelete
@@ -156,7 +151,7 @@ const ResumeList = () => {
         await getResume()
       }
     } catch (error) {
-      console.error(error)
+      Logger.error('Error:', error)
     }
   }
 

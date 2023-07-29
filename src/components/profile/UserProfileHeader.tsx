@@ -36,6 +36,7 @@ import Popover from '@mui/material/Popover'
 import * as React from 'react'
 
 import { useAuth } from 'src/hooks/useAuth'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
@@ -52,8 +53,6 @@ type diagTypes = 'profile' | 'cover'
 
 const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   // ** State
-  console.log('date check:', data.joiningDate)
-
   const joiningDate = format(new Date(data.joiningDate), 'PP')
 
   const [showCover, setShowCover] = useState<boolean>(false)
@@ -77,14 +76,11 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     } else if (type == 'Public') {
       setEditable(false)
       setShowCover(true)
-      console.log('show cover: ', showCover)
     } else {
       setEditable(false)
       setShowCover(false)
     }
-    console.log(process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL)
     const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey
-    console.log(proPicUrl)
     const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey
     data.emailAddress = data.userEmailAddress
     setProPicUrl(proPicUrl)
@@ -114,14 +110,13 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
       const key = `${dateStamp}.${fileType}`
       await Storage.put(key, file, { level: 'public' }) //public bucket
         .then(async result => {
-          console.log('Upload successful:', result)
+          Logger.info('Upload successful:', result)
           if (dialogType == 'profile') {
             data.photoImgKey = key
           } else {
             data.coverImgKey = key
           }
           data.emailAddress = data.userEmailAddress
-          console.log('data to update:', data)
           await API.graphql(graphqlOperation(updateUserProfile, data))
           await Storage.get(key, { level: 'public' }).then(newUrl => {
             if (dialogType == 'profile') {
@@ -133,7 +128,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           })
         })
         .catch(error => {
-          console.error('Error uploading file:', error)
+          Logger.error('Error uploading file:', error)
         })
     }
   }
@@ -142,7 +137,6 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     //use state to refresh component
     setRefresh(Date.now())
     data.isPublic = !data.isPublic
-    console.log('public to update:', data)
     await API.graphql(graphqlOperation(updateUserProfile, data))
     auth.trackEvent('User_Profile_Settings', { action: 'Toggle_Profile_Public_Status', isPublic: data.isPublic })
   }
@@ -165,10 +159,11 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
 
   const handleCopyClose = async () => {
     try {
+      // TODO Change url to env variable
       await navigator.clipboard.writeText('https://www.hirebeat.me/' + auth.user?.userName)
       setLinkCopied(true)
     } catch (error) {
-      console.error('Error copying link:', error)
+      Logger.error('Error copying link:', error)
     }
   }
 
@@ -259,7 +254,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           </Grid>
           <Grid item xs={12} sm={12} md={5} lg={5} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
             {type == 'Profile' && (
-              <div style={{display:'none'}}>
+              <div style={{ display: 'none' }}>
                 {data.isPublic && (
                   <Button
                     variant='outlined'
@@ -271,7 +266,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   </Button>
                 )}
                 <FormControlLabel
-                  control={<Switch  checked={data.isPublic} onChange={toggle} />}
+                  control={<Switch checked={data.isPublic} onChange={toggle} />}
                   label='Public'
                   aria-owns={open ? 'mouse-over-popover' : undefined}
                   aria-haspopup='true'

@@ -32,6 +32,7 @@ import { Profile } from '../../API'
 import UserOverview from '../../components/profile/UserOverview'
 import { createUserEducation } from 'src/graphql/mutations'
 import { Dialog, IconButton } from '@mui/material'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const steps = [
   {
@@ -129,9 +130,9 @@ const Tutorial = (tutorialProps: TutorialProps) => {
 
     try {
       const eduResult = await API.graphql(graphqlOperation(createUserEducation, eduInput))
-      console.log('created edu data', eduResult)
+      Logger.info('created edu data', eduResult)
     } catch (e) {
-      console.error('Error creating education entry:', e)
+      Logger.error('Error creating education entry:', e)
     }
   }
 
@@ -165,8 +166,6 @@ const Tutorial = (tutorialProps: TutorialProps) => {
 
   useEffect(() => {
     getData().then(() => {
-      console.log('outer data', userData, eduData, selectedTopic)
-
       if (activeStep === 2 && eduData && eduData[0]) updateEduProfile(eduData[0])
 
       getStepContent(activeStep)

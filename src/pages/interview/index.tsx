@@ -12,6 +12,7 @@ import { getUserInterviewUsageMetaData, getUserProfile } from 'src/graphql/queri
 import { useAuth } from 'src/hooks/useAuth'
 import Tutorial from 'src/components/tutorial/Tutorial'
 import { updateNewUserStatus } from 'src/graphql/mutations'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const InterviewPage = () => {
   const auth = useAuth()
@@ -30,13 +31,11 @@ const InterviewPage = () => {
           graphqlOperation(getUserInterviewUsageMetaData, { emailAddress: auth.user?.userEmailAddress })
         )
 
-        console.log(userInterviewUsageMetaData)
-
         if ('data' in userInterviewUsageMetaData) {
           setUserInterviewUsageMetaData(userInterviewUsageMetaData.data.getUserInterviewUsageMetaData)
         }
       } catch (error) {
-        console.error('Error fetching user interview usage meta data', error)
+        Logger.error('Error fetching user interview usage meta data', error)
       }
     }
 
@@ -83,7 +82,9 @@ const InterviewPage = () => {
         graphqlOperation(updateNewUserStatus, { userEmail: auth.user?.userEmailAddress, isNewUser: false })
       )
       if ('data' in data) {
-        console.log('data', data)
+        if (!data.data.updateNewUserStatus.isSuccessful) {
+          Logger.error('Error resetting isNewUser to false in DB', data.data.updateNewUserStatus.error)
+        }
       }
     }
 

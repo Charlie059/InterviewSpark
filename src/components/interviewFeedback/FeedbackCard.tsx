@@ -157,7 +157,6 @@ export default function InterviewFeedbackCard(props: Props) {
     },
     seriesRadial: [100]
   }
-  console.log(cardName, ':', cardValue)
 
   // Define vocabularyOptions chart options
   const percentOptions: any = {
@@ -348,7 +347,6 @@ export default function InterviewFeedbackCard(props: Props) {
     switch (cardName) {
       case 'Volume':
         // if cardValue is less than -35, set color to yellow, else if -35 to -1, set color to green, else set color to yellow
-        console.log('Volume cardValue: ', cardValue)
         if (cardValue && cardValue < -35) {
           return (
             <div

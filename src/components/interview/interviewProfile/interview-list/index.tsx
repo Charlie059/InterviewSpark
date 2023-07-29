@@ -25,6 +25,7 @@ import { removeUserInterviewsByID } from 'src/graphql/mutations'
 import router from 'next/router'
 import { Interview } from 'src/types/types'
 import styled from 'styled-components'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const StyledDataGrid = styled(DataGrid)`
   .clickable-cell {
@@ -235,23 +236,20 @@ const InterviewList = () => {
           }
         )
 
-
         const filteredInterviewList = interviewList.filter((entry: any) => {
           // Keep the entry in the filteredInterviewList if interviewVideo is not an empty string and not null
-          return entry.interviewVideoKey !== "" && entry.interviewVideoKey !== null;
-        });
-
+          return entry.interviewVideoKey !== '' && entry.interviewVideoKey !== null
+        })
 
         // Set the id field to the interviewList based on the interviewDateTime start from 1
         filteredInterviewList.forEach((interview: any, index: number) => {
           interview.id = index + 1
         })
-        console.log('Interviews:', filteredInterviewList)
         setInterviews(filteredInterviewList)
         setTotalRecords(filteredInterviewList.length)
       }
     } catch (error) {
-      console.error('Error fetching interviews:', error)
+      Logger.error('Error fetching interviews:', error)
     } finally {
       setLoading(false)
     }
@@ -273,7 +271,6 @@ const InterviewList = () => {
 
     // Use getUserInterviewMetaData by GraphQL and get interviewVideoKey
     try {
-      console.log(selectedInterview)
       const result = await API.graphql(
         graphqlOperation(getUserInterviewMetaData, {
           emailAddress,
@@ -295,17 +292,15 @@ const InterviewList = () => {
           await Storage.remove(interviewVideoKey, { level: 'private' })
           await Storage.remove(interviewVideoKeyMp4, { level: 'private' })
         } catch (error) {
-          console.error('Error removing video from S3:', error)
+          Logger.error('Error removing video from S3:', error)
         }
       }
     } catch (error) {
-      console.error('Error getUserInterviewMetaData:', error)
+      Logger.error('Error getUserInterviewMetaData:', error)
     }
 
     // Remove the interview from DynamoDB and update the INT MetaData
     try {
-      console.log(emailAddress)
-      console.log('Deleting interview:', selectedInterview)
       await API.graphql(
         graphqlOperation(removeUserInterviewsByID, {
           emailAddress,
@@ -320,7 +315,7 @@ const InterviewList = () => {
       setSelectedInterview(null)
       fetchInterviews()
     } catch (error) {
-      console.error('Error deleting interviews:', error)
+      Logger.error('Error deleting interviews:', error)
     }
   }
 

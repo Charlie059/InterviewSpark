@@ -45,6 +45,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/router'
 import TermsDialog from 'src/components/register/termsDialog'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface FormData {
   email: string
@@ -169,16 +170,14 @@ const Register = ({ onRegister }: Props) => {
     const err = await new Promise<any>(resolve => {
       register({ email, username, password, fName, lName }, err => {
         if (err.name !== 'success') {
-          console.log(err)
+          Logger.error('error registering user', err)
           resolve(err)
         } else {
-          console.log('success')
           resolve(undefined)
         }
       })
     })
-    console.log(err) // Access the err value here
-    console.log(err?.name)
+
     if (err) {
       //general err handling
       setError('email', {

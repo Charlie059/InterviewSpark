@@ -108,7 +108,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   useEffect(() => {
     const fetchInterviewTags = async () => {
       const result = await API.graphql(graphqlOperation(getQuestionUsageMetaData, {}))
-      console.log(result)
       if ('data' in result) {
         const tags = result.data.getQuestionUsageMetaData.questionTags
         const allTagsFromDB = tags.map((item: { tag: string }) => {
@@ -136,9 +135,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
 
           return 0
         })
-
-        console.log(allTagsFromDB)
-
         setAllTags(allTagsFromDB)
       }
     }
@@ -206,9 +202,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
         // Translate to JSON object
         const info = JSON.parse(res.info)
 
-        // Set up hot toast
-        console.log(info)
-
         toast.success(info.message, {
           position: 'top-center',
           duration: 10000
@@ -220,7 +213,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   }
 
   const handleStartInterview = async (info: Info) => {
-    console.log(info)
     setLoading(true)
 
     const numOfBQ = info.questionNum
@@ -252,7 +244,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
         setLoading(false)
       }
     } catch (error) {
-      Logger.error(error)
+      Logger.error('Error in creating interview', error)
     }
   }
 

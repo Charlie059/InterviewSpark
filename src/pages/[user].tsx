@@ -18,6 +18,7 @@ import Button from '@mui/material/Button'
 import Box, { BoxProps } from '@mui/material/Box'
 import FooterIllustrations from '../views/pages/misc/FooterIllustrations'
 import { styled } from '@mui/material/styles'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const BoxWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -41,7 +42,6 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
   // ** Hooks
   const auth = useAuth()
   const router = useRouter()
-  console.log()
 
   //TODO CHECK IF user = auth.user?.userName || IF data.isPublic, IF NOT display not authorized
   if (auth.user?.userName === user) {
@@ -81,7 +81,6 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
 
 export const getServerSideProps: GetServerSideProps = async ({ params }: GetServerSidePropsContext) => {
   const userName = params?.user
-  console.log(userName)
 
   // Get userProfile data from GraphQL
   let data = null
@@ -100,10 +99,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
       if ('data' in workData) {
         data.workHistory = workData.data.getUserWorkHistories.workHistory
       }
-      console.log(data)
     }
   } catch (error) {
-    console.error('Error fetching user data', error)
+    Logger.error('Error fetching user data', error)
   }
 
   //if user data is private, return nothing

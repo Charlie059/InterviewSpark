@@ -369,15 +369,6 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     // No need to handle AWS-DynamoDB-Error here because it is handled in the saveVideo function
   }, [chatGPTStreamError, pollyError, s3Error, transcribeError, videoRecordingError])
 
-  // TODO Testing
-  useEffect(() => {
-    Logger.debug(transcribedText)
-  }, [transcribedText])
-
-  useEffect(() => {
-    console.log(interviewState)
-  }, [interviewState])
-
   // Return necessary states and functions for the component to use this hook
   return {
     // Actions

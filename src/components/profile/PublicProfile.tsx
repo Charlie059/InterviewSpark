@@ -16,20 +16,12 @@ import BlankLayout from '../../@core/layouts/BlankLayout'
 import EducationCard from './profile-cards/EducationCard'
 import WorkHistoryCard from './profile-cards/WorkHistoryCard'
 
-
 // @ts-ignore
-const PublicProfile = ({ user, data }:{user:string, data:any}) => {
+const PublicProfile = ({ user, data }: { user: string; data: any }) => {
   // ** State
-
-  console.log('current profile page is for', user)
-  console.log('current data is:', data)
-
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profileData, setProfileData] = useState(data)
-
-  console.log('initial data')
-  console.log(data)
   const dashwidth = 12
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -90,17 +82,17 @@ const PublicProfile = ({ user, data }:{user:string, data:any}) => {
             </Grid>
           </CardContent>
         </Card>
-    </Grid>
+      </Grid>
       <Grid item xs={8}>
-        <Grid item sx={{mb:5}}>
+        <Grid item sx={{ mb: 5 }}>
           {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-          <EducationCard type="public" eduDatas={data.educations} refresh={()=>{}}/>
+          <EducationCard type='public' eduDatas={data.educations} refresh={() => {}} />
         </Grid>
         <Grid>
           {/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-          <WorkHistoryCard type="public" workDatas={data.workHistory} refresh={()=>{}}/>
+          <WorkHistoryCard type='public' workDatas={data.workHistory} refresh={() => {}} />
         </Grid>
-    </Grid>
+      </Grid>
     </Grid>
   )
 }

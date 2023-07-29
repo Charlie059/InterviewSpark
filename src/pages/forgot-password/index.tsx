@@ -107,7 +107,7 @@ const ForgotPassword = () => {
       })
     } catch (error) {
       setErrorMessage('Error resetting password, please try again')
-      console.error('Error resetting password', error)
+      Logger.error('Error resetting password', error)
     }
   }
 

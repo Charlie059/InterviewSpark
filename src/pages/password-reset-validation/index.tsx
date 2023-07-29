@@ -27,7 +27,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 import { Auth } from 'aws-amplify'
 import { Button, FormControl, FormHelperText, IconButton, InputAdornment, OutlinedInput } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import Log from 'src/middleware/loggerMiddleware'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
@@ -115,7 +115,7 @@ export default function PasswordResetValidation() {
       // if successful, redirect to login page
       router.push('/login')
     } catch (error) {
-      Log.error(error)
+      Logger.error(error)
       setError('code', { message: 'Invalid code' })
     }
   }
@@ -128,7 +128,7 @@ export default function PasswordResetValidation() {
       setSuccess('Verification code successfully sent')
     } catch (err) {
       setError('code', { message: 'Error resending verification code' })
-      Log.error(err)
+      Logger.error(err)
     }
   }
 

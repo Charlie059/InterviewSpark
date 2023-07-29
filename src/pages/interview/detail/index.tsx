@@ -9,6 +9,7 @@ import { Storage } from '@aws-amplify/storage'
 import FeedbackAnalysisPage from 'src/components/interviewFeedback/Feedback404Page'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-hot-toast'
+import Logger from 'src/middleware/loggerMiddleware'
 
 type CardDataType = {
   cardName: string
@@ -59,7 +60,6 @@ const InterviewDetails = () => {
           })
         )
         if ('data' in result) {
-          console.log('Interview details:', result.data.getUserInterviewMetaData)
           const videoKey = result.data.getUserInterviewMetaData.interviewVideoKey.replace('.webm', '.mp4')
 
           // Get interview video URL from S3
@@ -98,7 +98,6 @@ const InterviewDetails = () => {
             ])
           } else {
             const interviewDetails = JSON.parse(result.data.getUserInterviewMetaData.interviewAnalysis)
-            console.log('Interview details:', interviewDetails)
             setCardData([
               {
                 cardName: 'Video',
@@ -193,10 +192,8 @@ const InterviewDetails = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching interview details:', error)
         setShowLoadingPage(true)
-
-        console.log('Interview not found')
+        Logger.error('Error in fetching interview details', error)
       }
     }
 

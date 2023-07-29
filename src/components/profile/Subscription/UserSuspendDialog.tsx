@@ -21,6 +21,7 @@ import toast from 'react-hot-toast'
 import { API, graphqlOperation } from 'aws-amplify'
 import { updateUserSubscriptionCancelReason } from 'src/graphql/mutations'
 import { useAuth } from 'src/hooks/useAuth'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface UserSuspendDialogInterface {
   dialogParams: DialogSelectParam
@@ -79,7 +80,7 @@ const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterfac
         })
       )
     } catch (error) {
-      console.log('Error updateUserSubscriptionCancelReason', error)
+      Logger.error('Error updateUserSubscriptionCancelReason', error)
     }
 
     // Refresh the page

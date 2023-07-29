@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { Auth } from 'aws-amplify'
 import { Polly, SynthesizeSpeechCommand } from '@aws-sdk/client-polly'
+import Logger from 'src/middleware/loggerMiddleware'
 
 type UsePollyOptions = {
   region?: string
@@ -70,7 +71,7 @@ export const usePolly = (text: string | null, options: UsePollyOptions = {}) => 
           reader.read().then(processStream)
         }
       } catch (error) {
-        console.error('Error:', error)
+        Logger.error('An error occurred while reading the stream:', error)
       } finally {
         setIsLoading(false)
       }

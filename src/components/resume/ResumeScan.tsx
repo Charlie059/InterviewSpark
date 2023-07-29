@@ -36,6 +36,7 @@ import Auth from '@aws-amplify/auth'
 import { createUserResumeScan } from 'src/graphql/mutations'
 import { Lambda } from 'aws-sdk'
 import ResumeResults from './ResumeResults'
+import Logger from 'src/middleware/loggerMiddleware'
 
 // Styled component for the heading inside the dropzone area
 
@@ -79,9 +80,6 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
   const [show, setShow] = useState<boolean>(!nocollapse)
 
   async function putResume(resumePack: ResumePack) {
-    console.log('resumePack: ')
-    console.log(resumePack.display_name)
-
     const emailAddress = user?.userEmailAddress || ''
     const displayName = resumePack.display_name
     const resumeName = resumePack.resume_name
@@ -97,7 +95,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
       jobName,
       resumeResults
     }
-    console.log('Payload to be stored in DB:', payload)
+
     const result = await API.graphql(graphqlOperation(createUserResumeScan, payload))
 
     return result
@@ -112,7 +110,6 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
       InvocationType: 'RequestResponse'
     }
     Auth.currentCredentials().then(credentials => {
-      console.log(credentials)
       const lambda = new Lambda({
         region: 'us-east-1',
         credentials: Auth.essentialCredentials(credentials)
@@ -127,10 +124,8 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
           const responseData = JSON.parse(JSON.parse(response.Payload).body)
 
           resumePack.resume_results = responseData
-          console.log(responseData)
-          console.log(resumePack)
+
           putResume(resumePack).then(async () => {
-            console.log(router)
             if (router.route == '/resume') {
               await router.replace('/resume/list')
             } else {
@@ -202,14 +197,14 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     const suffix = docType == 'pdf' ? '.pdf' : '.docx'
     const cvName = timestamp + suffix
     try {
-      await Storage.put(cvName, resume).catch(e => console.log(e))
+      await Storage.put(cvName, resume).catch(e => Logger.error(e))
       const url = await Storage.get(cvName, { expires: 604800 })
       data.resume_url = url
       data.resume_name = cvName
       data.display_name = name
       await scanResume(data)
     } catch (error) {
-      console.log('Error uploading file: ', error)
+      Logger.error('Error uploading file: ', error)
     }
 
     setCollapsed(false)

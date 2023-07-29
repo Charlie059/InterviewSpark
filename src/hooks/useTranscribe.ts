@@ -14,7 +14,6 @@ const useTranscribe = (audioInput: string) => {
 
   const handleStartTranscribe = useCallback(async () => {
     setIsRecording(true)
-    console.log('audioInput', audioInput)
     try {
       await startRecording(
         language,

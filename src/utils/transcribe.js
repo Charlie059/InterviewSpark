@@ -13,6 +13,7 @@ import MicrophoneStream from 'microphone-stream'
 import { StartStreamTranscriptionCommand } from '@aws-sdk/client-transcribe-streaming'
 import { Buffer } from 'buffer'
 import { Auth } from 'aws-amplify'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const SAMPLE_RATE = 44100
 let microphoneStream = undefined
@@ -68,7 +69,7 @@ const createMicrophoneStream = deviceId => {
         microphoneStream.setStream(stream)
       })
       .catch(error => {
-        console.log(`Error getting audio stream: ${error.message}`)
+        Logger.log(`Error getting audio stream: ${error.message}`)
       })
   } catch (error) {
     throw new Error(`Error creating microphone stream: ${error.message}`)

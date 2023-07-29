@@ -11,7 +11,7 @@ import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataT
 import { API, Auth, graphqlOperation, Storage } from 'aws-amplify'
 
 // ** Logger
-import Log from 'src/middleware/loggerMiddleware'
+import Logger from 'src/middleware/loggerMiddleware'
 
 // ** Get user
 import { getUserProfileData } from '../utils/getUser'
@@ -20,7 +20,6 @@ import { handleMixpanelEvent } from 'src/graphql/mutations'
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
     const currentSession = await Auth.currentSession()
-    console.log('currentSession', currentSession)
 
     if (currentSession.isValid()) {
       const userInfo = await Auth.currentUserInfo()
@@ -29,14 +28,13 @@ const handleCurrUser = async (): Promise<UserDataType | null> => {
       if (Object.keys(userInfo).length === 0) return null
 
       const user = await getUserProfileData(userInfo.attributes.email)
-      Log.error(user)
 
       return user
     } else {
       return null
     }
   } catch (error) {
-    Log.info('Error getting session')
+    Logger.info('Error getting session')
 
     return null
   }
@@ -72,42 +70,34 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      Log.info('AuthProvider')
-
       // Check if there is a valid session in the browser.
       const session = await Auth.currentSession()
 
       if (session.isValid()) {
         // If there is a session, set the loading state to true and get the current authenticated user.
         setLoading(true)
-        console.log('setLoading(true)')
 
         const user = await handleCurrUser()
 
-        Log.debug('user', user)
         if (user) {
           // Set the loading state to false and the user data to the local state.
           setLoading(false)
-          console.log('setLoading(false)')
           setUser({ ...user })
         } else {
           // If there is no user, set the loading state to false.
           setLoading(false)
-          console.log('setLoading(false)')
           setUser(null)
         }
       } else {
         // If there is no session, set the loading state to false.
         setLoading(false)
-        console.log('setLoading(false)')
         setUser(null)
       }
     }
 
     initAuth().catch(err => {
-      Log.info(err)
+      Logger.info(err)
       setLoading(false)
-      console.log('setLoading(false)')
     })
   }, [])
 
@@ -120,7 +110,7 @@ const AuthProvider = ({ children }: Props) => {
           const user = await getUserProfileData(emailAddress)
 
           setUser(user)
-          Log.info(user)
+          Logger.info(user)
 
           //set default S3 level to private
           Storage.configure({ level: 'private' })
@@ -138,11 +128,11 @@ const AuthProvider = ({ children }: Props) => {
         })
         .catch(err => {
           errorCallback ? errorCallback(err) : null
-          Log.info(err)
+          Logger.info(err)
         })
     } catch (err: any) {
       errorCallback ? errorCallback(err) : null
-      Log.info(err)
+      Logger.info(err)
     }
   }
 
@@ -157,13 +147,11 @@ const AuthProvider = ({ children }: Props) => {
         router.push('/login')
       })
       .catch(err => {
-        Log.info(err)
+        Logger.info(err)
       })
   }
 
   const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
-    console.log('handleRegister', params)
-
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
     try {
       await Auth.signUp({
@@ -176,23 +164,20 @@ const AuthProvider = ({ children }: Props) => {
           'custom:userName': params.username
         }
       }).then(async user => {
-        console.log(user)
-
-        Log.info('Verify email sent', user)
+        Logger.info('Verify email sent', user)
         errorCallback ? errorCallback({ name: 'success' }) : null
       })
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
       errorCallback ? errorCallback(err) : null
-      console.log(err.message)
+      Logger.error(err)
     }
   }
 
   // eventName: Any string to identify the event
   // eventParams: Any object to describe the event
   const trackEvent = async (eventName: string, eventParams?: { [key: string]: any }) => {
-    console.log('trackEvent', eventName, eventParams)
-    console.log('trackEvent user', user)
+    Logger.info('Tracking event', eventName, eventParams)
     await API.graphql(
       graphqlOperation(handleMixpanelEvent, {
         userEmail: user?.userEmailAddress,

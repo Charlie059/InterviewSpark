@@ -57,8 +57,6 @@ const useS3Video = () => {
 
       const filePath = 'private/' + fullFilePath.substring(0, endIndex)
 
-      console.log('filePath: ', filePath)
-
       return { uniqueFilename, filePath }
     } catch (error: any) {
       Logger.error('Error saving video: ', error)

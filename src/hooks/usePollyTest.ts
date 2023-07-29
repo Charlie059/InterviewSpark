@@ -154,8 +154,6 @@ export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: (
       const [text, ...rest] = queue
       setQueue(rest)
 
-      console.log('que', queue)
-
       if (text === END_SYMBOL) {
         onComplete()
       }

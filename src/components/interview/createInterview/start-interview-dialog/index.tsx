@@ -139,7 +139,7 @@ const StartInterviewDialog = (props: {
         setCurrentUsage(productNumUsage)
         setTotalUsage(productTotalNumUsage)
       } catch (err) {
-        Logger.error(err)
+        Logger.error('Error in fetching usage', err)
       }
     }
 
@@ -246,7 +246,7 @@ const StartInterviewDialog = (props: {
         throw new Error('No data received in response')
       }
     } catch (error) {
-      Logger.error(error)
+      Logger.error('Error in subscription request', error)
       toast.error('Subscription request failed. Please try again later.', {
         position: 'top-center',
         duration: 5000
@@ -310,7 +310,6 @@ const StartInterviewDialog = (props: {
                         sx={{ width: '100%' }}
                         value={questionNum}
                         onChange={e => {
-                          console.log(e.target.value)
                           setQuestionNum(e.target.value as number)
                         }}
                       >
@@ -401,7 +400,6 @@ const StartInterviewDialog = (props: {
                         deviceType='videoinput'
                         onChange={id => {
                           setVideoinput(id)
-                          console.log(id)
                         }}
                         defaultDevice={videoinput}
                       />

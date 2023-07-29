@@ -3,6 +3,7 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { useRouter } from 'next/router'
 import { GetServerSideProps, GetServerSidePropsContext, InferGetServerSidePropsType } from 'next/types'
 import { getUserProfileByUsername } from 'src/graphql/queries'
+import Logger from 'src/middleware/loggerMiddleware'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
@@ -34,7 +35,6 @@ const UserProfileTab = ({ user, profileData }: InferGetServerSidePropsType<typeo
 
 export const getServerSideProps: GetServerSideProps = async ({ params }: GetServerSidePropsContext) => {
   const userName = params?.user
-  console.log(userName)
 
   // Get userProfile data from GraphQL
   let profileData: UserDataType = null
@@ -45,7 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }: GetServ
       profileData = userData.data.getUserProfileByUsername
     }
   } catch (error) {
-    console.error('Error fetching user data', error)
+    Logger.error('Error fetching user data', error)
   }
 
   return {
