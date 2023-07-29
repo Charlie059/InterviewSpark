@@ -35,7 +35,7 @@ interface HTMLAudioElementExtended extends HTMLAudioElement {
   setSinkId?(sinkId: string): Promise<void>
 }
 
-export const usePollyByQueueTest = (options: UsePollyOptions = {}, onComplete: () => void, audioOutput: string) => {
+export const usePollyQueue = (options: UsePollyOptions = {}, onComplete: () => void, audioOutput: string) => {
   const audioRef = useRef<HTMLAudioElementExtended | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [queue, setQueue] = useState<string[]>([])

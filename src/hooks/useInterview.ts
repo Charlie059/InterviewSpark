@@ -22,7 +22,7 @@ import { Interview } from 'src/types/types'
 
 // import { usePollyByQueue } from './usePollyByQueue'
 import useChatGPTStream from './useChatGPTStream'
-import { usePollyByQueueTest } from './usePollyTest'
+import { usePollyQueue } from './usePollyQueue'
 
 // Define states for the interview process
 enum InterviewStatus {
@@ -160,7 +160,7 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
   const [isReading, setReading] = useState(false)
 
   // Using the custom hooks
-  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest(
+  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyQueue(
     {},
     () => {
       setReading(false)
