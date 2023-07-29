@@ -73,6 +73,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 // ** Global css styles
 import '../../styles/globals.css'
 
+// ** Set log level
+import { setLogLevel, LogLevel } from 'src/middleware/loggerMiddleware'
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage
@@ -127,6 +130,8 @@ const App = (props: ExtendedAppProps) => {
   const isPublic = Component.isPublic ?? false
 
   const aclAbilities = Component.acl ?? defaultACLObj
+
+  setLogLevel(LogLevel.ERROR)
 
   return (
     <CacheProvider value={emotionCache}>

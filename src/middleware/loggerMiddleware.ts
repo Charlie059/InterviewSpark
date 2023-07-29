@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-enum LogLevel {
+export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
   WARN = 2,
@@ -10,7 +10,11 @@ enum LogLevel {
 let logLevel = LogLevel.DEBUG
 
 export function setLogLevel(level: LogLevel): void {
-  logLevel = level
+  if (process.env.NODE_ENV === 'production') {
+    logLevel = LogLevel.ERROR
+  } else {
+    logLevel = level
+  }
 }
 
 function log(level: LogLevel, levelStr: string, color: (s: string) => string, ...messages: any[]): void {
