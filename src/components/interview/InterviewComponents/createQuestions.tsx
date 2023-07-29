@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Avatar, Box, Grid } from '@mui/material'
-import MuiTypography, { TypographyProps } from '@mui/material/Typography'
+import { Box, Grid } from '@mui/material'
+import Typography from '@mui/material/Typography'
 import { NavBar } from 'src/components/interview/createInterview/navigation-bar'
 import InterviewCard from 'src/components/interview/createInterview/interview-card'
 import StartInterviewDialog from 'src/components/interview/createInterview/start-interview-dialog'
-import { styled } from '@mui/material/styles'
 import { useAuth } from 'src/hooks/useAuth'
 import LoadingScreen from 'src/components/loading/Loading'
 import { API, graphqlOperation } from 'aws-amplify'
@@ -73,12 +72,6 @@ interface Info {
   interviewTopic: string
 }
 
-const Typography = styled(MuiTypography)<TypographyProps>(() => ({
-  fontFamily: 'Montserrat',
-  color: 'black',
-  fontWeight: 600
-}))
-
 interface CardItem {
   title: string
   imageSrc: string
@@ -97,7 +90,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     createQuestionsComponentProps
   const auth = useAuth()
   const [loading, setLoading] = useState(false)
-  const [user] = useState(auth.user)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [recommendations, setRecommendations] = useState<CardItem[]>([])
   const [allTags, setAllTags] = useState<CardItem[]>([])
@@ -120,14 +112,14 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
       if ('data' in result) {
         const tags = result.data.getQuestionUsageMetaData.questionTags
         const allTagsFromDB = tags.map((item: { tag: string }) => {
-          return { title: item.tag, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+          return { title: item.tag }
         })
 
         const recommendationsFromDB = result.data.getQuestionUsageMetaData.recommendations
 
         // Mapping the recommendations from DB to the recommendations state
         const recommendationsFromDBToState = recommendationsFromDB.map((item: string) => {
-          return { title: item, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+          return { title: item }
         })
 
         // Set the recommendations state
@@ -217,7 +209,10 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
         // Set up hot toast
         console.log(info)
 
-        toast.success(info.message, { duration: 3000 })
+        toast.success(info.message, {
+          position: 'top-center',
+          duration: 10000
+        })
       }
 
       return res
@@ -271,24 +266,24 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
           lgText={'Generating interview questions'}
         />
       ) : (
-        <Box sx={{ padding: 5 }}>
+        <Box sx={{ padding: 20 }}>
           <NavBar
             navBarElements={[
-              { name: 'HomePage', path: '/interview' },
+              { name: 'Home', path: '/interview' },
               { name: 'Create Practice Interview', path: undefined }
             ]}
             closeNavLink='/interview'
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-            <Typography sx={{ fontSize: 36, mt: 2 }}>Practice Interview Topic</Typography>
-            <Avatar
-              sx={{ width: 40, height: 40 }}
-              alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}
-              src={
-                (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (user?.photoImgKey || '') ||
-                'public/images/avatars/1.png'
-              }
-            />
+            <Typography variant={'h4'}>Practice Interview Topic</Typography>
+            {/*<Avatar*/}
+            {/*  sx={{ width: 40, height: 40 }}*/}
+            {/*  alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}*/}
+            {/*  src={*/}
+            {/*    (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (user?.photoImgKey || '') ||*/}
+            {/*    'public/images/avatars/1.png'*/}
+            {/*  }*/}
+            {/*/>*/}
           </Box>
           {/* <Box sx={{ width: '100%' }}>
             <Select
@@ -312,13 +307,14 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
               </div>
             ))}
           </Carousel> */}
-
-          <Typography sx={{ fontSize: 20, mt: 6 }}>All Topics</Typography>
-          <Grid container spacing={6} sx={{ mt: 0 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
+            <Typography variant={'h6'}>All Topics</Typography>
+          </Box>
+          <Grid container columns={8} spacing={6} sx={{ mt: 0, alignItems: 'center', justifyContent: 'center' }}>
             {allTags.map((item, index) => (
-              <Grid item xs={6} md={3} lg={3} xl={2} key={index}>
+              <Grid item xs={4} md={4} lg={2} xl={2} key={index}>
                 <InterviewCard
-                  sx={{ width: isSmallScreen ? '160px' : '220px' }}
+                  sx={{ width: isSmallScreen ? '100%' : '100%' }}
                   title={item.title}
                   imageSrc={item.imageSrc}
                   onClick={handleChooseJobTitle}

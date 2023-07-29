@@ -22,9 +22,11 @@ const NavBar = (props: Props) => {
     <Box display='flex' justifyContent='space-between' alignItems={'center'}>
       <Box display='flex'>
         {props.navBarElements.map((navBarElement, index) => (
-          <Box key={index} sx={{ display: 'flex' }} padding={1}>
+          <Box key={index} sx={{ display: 'flex'}} >
             {index !== 0 ? (
-              <Typography variant={'h6'}> {' > '} </Typography>
+              <>
+                <Typography variant={'h6'} sx={{ display: 'flex', marginLeft:'6px', marginRight:'6px'}} > {' > '} </Typography>
+              </>
             ) : null}
             <Typography
               variant={'h6'}

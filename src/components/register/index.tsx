@@ -187,7 +187,7 @@ const Register = ({ onRegister }: Props) => {
       })
     } else {
       onRegister(email)
-      toast.success('registered')
+      toast.success('Email sent! Please check your inbox or spam folder.')
     }
   }
 
@@ -215,12 +215,17 @@ const Register = ({ onRegister }: Props) => {
   return (
     <Box className='content-right'>
       {!hidden ? (
-        <Grid container sx={{alignItems: 'center'}}>
-          <Grid item xs={12} sx={{mt:30, ml: 20, textAlign: 'center'}}>
-            <TypographyStyled variant='h4' color='primary.main'> Accelerate Your Interview Success</TypographyStyled>
+        <Grid container sx={{ alignItems: 'center' }}>
+          <Grid item xs={12} sx={{ mt: 30, ml: 20, textAlign: 'center' }}>
+            <TypographyStyled variant='h4' color='primary.main'>
+              {' '}
+              Accelerate Your Interview Success
+            </TypographyStyled>
           </Grid>
           <Grid item xs={12}>
-            <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}
+            >
               <RegisterIllustrationWrapper>
                 <RegisterIllustration
                   alt='register-illustration'
