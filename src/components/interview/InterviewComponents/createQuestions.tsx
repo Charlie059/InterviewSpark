@@ -72,8 +72,6 @@ interface Info {
   interviewTopic: string
 }
 
-
-
 interface CardItem {
   title: string
   imageSrc: string
@@ -114,14 +112,14 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
       if ('data' in result) {
         const tags = result.data.getQuestionUsageMetaData.questionTags
         const allTagsFromDB = tags.map((item: { tag: string }) => {
-          return { title: item.tag, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+          return { title: item.tag }
         })
 
         const recommendationsFromDB = result.data.getQuestionUsageMetaData.recommendations
 
         // Mapping the recommendations from DB to the recommendations state
         const recommendationsFromDBToState = recommendationsFromDB.map((item: string) => {
-          return { title: item, imageSrc: '/images/cards/pexels-luis-quintero-2471234.jpg' }
+          return { title: item }
         })
 
         // Set the recommendations state
@@ -211,7 +209,10 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
         // Set up hot toast
         console.log(info)
 
-        toast.success(info.message, { duration: 3000 })
+        toast.success(info.message, {
+          position: 'top-center',
+          duration: 10000
+        })
       }
 
       return res
@@ -274,7 +275,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
             closeNavLink='/interview'
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-            <Typography variant={"h4"}>Practice Interview Topic</Typography>
+            <Typography variant={'h4'}>Practice Interview Topic</Typography>
             {/*<Avatar*/}
             {/*  sx={{ width: 40, height: 40 }}*/}
             {/*  alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}*/}
@@ -307,9 +308,9 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
             ))}
           </Carousel> */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
-          <Typography variant={'h6'}>All Topics</Typography>
+            <Typography variant={'h6'}>All Topics</Typography>
           </Box>
-          <Grid container columns={8} spacing={6} sx={{ mt: 0, alignItems: 'center', justifyContent: 'center'}}>
+          <Grid container columns={8} spacing={6} sx={{ mt: 0, alignItems: 'center', justifyContent: 'center' }}>
             {allTags.map((item, index) => (
               <Grid item xs={4} md={4} lg={2} xl={2} key={index}>
                 <InterviewCard

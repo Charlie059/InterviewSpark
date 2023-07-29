@@ -4,21 +4,33 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
 // ** MUI Imports
-import { Box, IconButton, Button, Grid, Avatar, Select, MenuItem, LinearProgress, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Button,
+  Grid,
+  Avatar,
+  Select,
+  MenuItem,
+  LinearProgress,
+  Typography,
+  useTheme,
+  ButtonBase
+} from '@mui/material'
 import ArticleIcon from '@mui/icons-material/Article'
 import CameraAltIcon from '@mui/icons-material/CameraAlt'
 import MicIcon from '@mui/icons-material/Mic'
 import SpeakerIcon from '@mui/icons-material/Speaker'
 import StorageIcon from '@mui/icons-material/Storage'
-import { Link as MuiLink } from '@mui/material'
-import React, { ReactNode, useEffect, useState } from 'react'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
+import React, { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import DeviceSelector from 'src/components/interview/createInterview/device_selector/device_selector'
-import Link from 'next/link'
 import Logger from 'src/middleware/loggerMiddleware'
 import { useAuth } from 'src/hooks/useAuth'
 import { useFetchSubscription } from 'src/hooks/useFetchSubscription'
+import toast from 'react-hot-toast'
+import { API, graphqlOperation } from 'aws-amplify'
+import { createUserSubscriptionRequest } from 'src/graphql/mutations'
 
 interface Info {
   questionNum: number
@@ -100,6 +112,7 @@ const StartInterviewDialog = (props: {
   setOpen: (v: boolean) => void
   startInterview: (info: Info) => void
 }) => {
+  const theme = useTheme()
   const questionNumChoice = [1, 2, 3, 4, 5, 6]
   const [questionNum, setQuestionNum] = useState<number>(3)
   const [currentStep, setCurrentStep] = useState(0)
@@ -111,6 +124,7 @@ const StartInterviewDialog = (props: {
   const [totalUsage, setTotalUsage] = useState(10)
   const auth = useAuth()
   const { userSubscriptionProductsList } = useFetchSubscription(auth.user?.userEmailAddress || null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const fetchUsage = () => {
@@ -141,6 +155,28 @@ const StartInterviewDialog = (props: {
         audiooutput: audiooutput,
         interviewTopic: props.interviewTopic
       }
+
+      // If user is not guarantee microphone then don't start the interview
+      if (audioinput === '') {
+        toast.error(
+          'Please select a microphone to start the interview. If you cannot see your microphone, please refer to the FAQ section.',
+          {
+            position: 'top-center',
+            duration: 10000
+          }
+        )
+
+        return
+      } else if (audiooutput === '') {
+        toast.error(
+          'Please select a speaker to start the interview. If you cannot see your speaker, please refer to the FAQ section.',
+          {
+            position: 'top-center',
+            duration: 10000
+          }
+        )
+      }
+
       props.startInterview(Info)
       handleClose()
     } else {
@@ -162,8 +198,65 @@ const StartInterviewDialog = (props: {
       setCurrentStep(0)
     }, 300)
   }
-  const theme = useTheme()
 
+  const handleClickToSubscribe = async () => {
+    // Call GraphQL API to subscribe
+    try {
+      setIsLoading(true)
+
+      // Log the event
+      Logger.info('User clicked plan upgrade')
+
+      // TODO: Get Prime Plan ID from DB
+      const planID = 2
+
+      // Check if we have user's email
+      if (!auth.user?.userEmailAddress) {
+        throw new Error('No user email found')
+      }
+
+      Logger.debug('User email found', auth.user?.userEmailAddress)
+
+      const result = await API.graphql(
+        graphqlOperation(createUserSubscriptionRequest, {
+          userEmail: auth.user?.userEmailAddress,
+          planID: planID
+        })
+      )
+
+      Logger.debug('Subscription request result', result)
+
+      // Check if 'data' exists in result
+      if ('data' in result!) {
+        if (result.data.createUserSubscriptionRequest.isSuccessful) {
+          toast.success('Redirecting to Stripe Checkout...', {
+            position: 'top-center',
+            duration: 5000
+          })
+          const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
+
+          // Redirect to Stripe Checkout
+          window.location.href = infoJSON.url
+
+          return { infoJSON, isSuccessful: true }
+        } else {
+          throw new Error('Subscription request failed: ' + result.data.createUserSubscriptionRequest.error)
+        }
+      } else {
+        throw new Error('No data received in response')
+      }
+    } catch (error) {
+      Logger.error(error)
+      toast.error('Subscription request failed. Please try again later.', {
+        position: 'top-center',
+        duration: 5000
+      })
+
+      return { isSuccessful: false }
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <Box>
@@ -265,29 +358,37 @@ const StartInterviewDialog = (props: {
                               fontSize: 14,
                               marginTop: '8px',
                               fontWeight: 500,
-                              color: planType === 'Free'?
-                                theme.palette.mode === 'light' ?
-                                  theme.palette.error.light:
-                                  theme.palette.error.dark:
-                                theme.palette.mode === 'light' ?
-                                  theme.palette.info.light:
-                                  theme.palette.info.light
+                              color:
+                                planType === 'Free'
+                                  ? theme.palette.mode === 'light'
+                                    ? theme.palette.error.light
+                                    : theme.palette.error.dark
+                                  : theme.palette.mode === 'light'
+                                  ? theme.palette.info.light
+                                  : theme.palette.info.light
                             }}
                             align='center'
                           >
                             {planType === 'Free'
                               ? currentUsage / totalUsage !== 1
                                 ? 'Limited AI practices available on Free Tier.'
-                                : 'AI feeback usage depleted! '
+                                : 'AI feedback depleted! '
                               : 'Enjoy unlimited interviews with AI feedback.'}
                             {planType === 'Free' && currentUsage / totalUsage === 1 && (
-
-                              //# TODO change href to stripe
-                              <Link href='/upgrade' passHref>
-                                <MuiLink sx={{ color: '#3f51b5', textDecoration: 'underline' }}>
+                              <ButtonBase onClick={handleClickToSubscribe} disabled={isLoading}>
+                                <Typography
+                                  variant='body2'
+                                  sx={{
+                                    color: '#3f51b5',
+                                    textDecoration: 'underline',
+                                    cursor: 'pointer',
+                                    fontSize: 11,
+                                    fontWeight: 800
+                                  }}
+                                >
                                   Click here to upgrade.
-                                </MuiLink>
-                              </Link>
+                                </Typography>
+                              </ButtonBase>
                             )}
                           </Typography>
                         </Grid>
@@ -356,7 +457,5 @@ const StartInterviewDialog = (props: {
     </Box>
   )
 }
-
-StartInterviewDialog.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
 export default StartInterviewDialog
