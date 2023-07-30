@@ -11,6 +11,7 @@ const Dialog = (theme: Theme, skin: Skin) => {
         paper: {
           boxShadow: theme.shadows[skin === 'bordered' ? 0 : 10],
           ...(skin === 'bordered' && { border: `1px solid ${theme.palette.divider}` }),
+          borderRadius: 20,
           '&:not(.MuiDialog-paperFullScreen)': {
             '@media (max-width:599px)': {
               margin: theme.spacing(4),

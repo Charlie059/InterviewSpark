@@ -28,6 +28,7 @@ import CanViewNavLink from 'src/layouts/components/acl/CanViewNavLink'
 
 // ** Util Import
 import { handleURLQueries } from 'src/@core/layouts/utils'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface Props {
   parent?: boolean
@@ -88,6 +89,7 @@ const VerticalNavLink = ({
   // ** Hooks
   const theme = useTheme()
   const router = useRouter()
+  const auth = useAuth()
 
   // ** Vars
   const { mode, navCollapsed } = settings
@@ -136,7 +138,7 @@ const VerticalNavLink = ({
         }}
       >
         <MenuNavLink
-          component={'a'}
+          component={Link}
           {...(item.disabled && { tabIndex: -1 })}
           className={isNavLinkActive() ? 'active' : ''}
           href={item.path === undefined ? '/' : `${item.path}`}
@@ -145,6 +147,12 @@ const VerticalNavLink = ({
             if (item.path === undefined) {
               e.preventDefault()
               e.stopPropagation()
+            } else {
+              auth.trackEvent('User_Mouse_Click', {
+                category: 'Left_Navigation',
+                desc: 'User clicked on left navigation list',
+                destination: item.path
+              })
             }
             if (navVisible) {
               toggleNavVisibility()

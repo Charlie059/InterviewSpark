@@ -24,11 +24,12 @@ interface AclGuardProps {
   children: ReactNode
   guestGuard: boolean
   aclAbilities: ACLObj
+  isPublic: boolean
 }
 
 const AclGuard = (props: AclGuardProps) => {
   // ** Props
-  const { aclAbilities, children, guestGuard } = props
+  const { aclAbilities, children, guestGuard, isPublic} = props
 
   const [ability, setAbility] = useState<AppAbility | undefined>(undefined)
 
@@ -37,7 +38,7 @@ const AclGuard = (props: AclGuardProps) => {
   const router = useRouter()
 
   // If guestGuard is true and user is not logged in or its an error page, render the page without checking access
-  if (guestGuard || router.route === '/404' || router.route === '/500' || router.route === '/') {
+  if (guestGuard || router.route === '/404' || router.route === '/500' || router.route === '/'|| isPublic) {
     return <>{children}</>
   }
 

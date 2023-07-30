@@ -1,67 +1,73 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/router'
+import React, { useEffect, useState } from 'react'
+import { Box, Grid, Typography, Dialog, IconButton } from '@mui/material'
+import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
 import { API, graphqlOperation } from 'aws-amplify'
-import { Box, DialogContent, Grid, IconButton, IconButtonProps, Typography, styled } from '@mui/material'
 import { getUserInterviewMetaData } from 'src/graphql/queries'
+import { useRouter } from 'next/router'
 import { useAuth } from 'src/hooks/useAuth'
-import { Storage } from 'aws-amplify'
-import MenuOpenIcon from '@mui/icons-material/MenuOpen'
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import PauseIcon from '@mui/icons-material/Pause'
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import { Storage } from '@aws-amplify/storage'
+import FeedbackAnalysisPage from 'src/components/interviewFeedback/Feedback404Page'
+import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'react-hot-toast'
+import Logger from 'src/middleware/loggerMiddleware'
 
-interface Interview {
-  interviewID: string
-  interviewDateTime: string
-  interviewQuestionID: string
-  interviewVideoKey: string
-  interviewQuestion: string
-  interviewQuestionTitle: string
-  interviewQuestionType: string
-  interviewQuestionSampleAns: string
-  interviewFeedback: string
+type CardDataType = {
+  cardName: string
+  cardText?: string
+  cardValue?: number | null
+  extraInfo: any
+  onDetailClick?: () => void
+  videoUrl?: string
+  isDetailPage?: boolean
 }
 
-interface InterviewDetailsProps {
-  interview: Interview
-}
-
-const StyledPlayButton = styled(({ ...props }: IconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
-  backgroundColor: '#CDCDCD',
-
-  '& .MuiSvgIcon-root': {
-    fontSize: '2rem'
-  },
-  padding: theme.spacing(4.1),
-  margin: theme.spacing(0, 1.2)
-}))
-
-const StyledButton = styled(({ ...props }: IconButtonProps) => <IconButton {...props} />)(({ theme }) => ({
-  backgroundColor: '#CDCDCD',
-
-  '& .MuiSvgIcon-root': {
-    fontSize: '1rem'
-  },
-  padding: theme.spacing(3.1),
-  margin: theme.spacing(0, 1.2)
-}))
-
-const InterviewDetails = ({}: InterviewDetailsProps) => {
-  const auth = useAuth()
-  const [interviewDetails, setInterviewDetails] = useState<Interview | null>(null)
-  const [videoUrl, setVideoUrl] = useState<string | null>(null)
+const InterviewDetails = () => {
+  const [modalOpen, setModalOpen] = useState(false)
+  const [cardData, setCardData] = useState<CardDataType[]>([])
+  const [currentCard, setCurrentCard] = useState<CardDataType>(cardData[0])
+  const [showLoadingPage, setShowLoadingPage] = useState(false)
   const router = useRouter()
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [playing, setPlaying] = useState<boolean>(false)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [showDetail, setShowDetail] = useState(false)
+  const auth = useAuth()
+
+  // Define the mixPanel event tracker
+  function mixPanelTracker(data: object, action: string, desc: string) {
+    auth.trackEvent('User_Interview_Review_Functionality_Used', {
+      action: action,
+      desc: desc,
+      ...data
+    })
+
+    // User tracking
+    auth.setMixpanelPeople({
+      action: action,
+      desc: desc,
+      ...data
+    })
+  }
+
+  const handleCardClick = (index: number) => {
+    // Mixpanel track event
+    mixPanelTracker(
+      cardData[index],
+      'Interview_Review_Card_Clicked',
+      'User clicked on a card in the interview review page.'
+    )
+
+    setCurrentCard(cardData[index])
+    setModalOpen(true)
+  }
+
+  const handleClose = () => {
+    setModalOpen(false)
+  }
 
   useEffect(() => {
     const interviewsParam = router.query.interview as any
     const interviews = JSON.parse(interviewsParam)
     const interviewID = interviewsParam ? interviews.interviewID : null
     const interviewQuestionID = interviewsParam ? interviews.interviewQuestionID : null
+    const interviewQuestionType = interviewsParam ? interviews.interviewQuestionType : null
+    let haveAnalysis = false
 
     const fetchInterviewDetails = async () => {
       const userEmailAddress = auth.user?.userEmailAddress
@@ -72,15 +78,152 @@ const InterviewDetails = ({}: InterviewDetailsProps) => {
           graphqlOperation(getUserInterviewMetaData, {
             emailAddress: userEmailAddress,
             interviewID: interviewID,
-            interviewQuestionID: interviewQuestionID
+            interviewQuestionID: interviewQuestionID,
+            interviewQuestionType: interviewQuestionType
           })
         )
         if ('data' in result) {
-          console.log('Interview details:', result.data.getUserInterviewMetaData)
-          setInterviewDetails(result.data.getUserInterviewMetaData)
+          const videoKey = result.data.getUserInterviewMetaData.interviewVideoKey
+
+          // Get interview video URL from S3
+          const videoUrl = await Storage.get(videoKey, {
+            level: 'private'
+          })
+
+          haveAnalysis = result.data.getUserInterviewMetaData.interviewAnalysis
+
+          // Setup mixpanel tracker
+          mixPanelTracker(
+            result.data.getUserInterviewMetaData,
+            'Interview_Review_Page_Loaded',
+            'User loaded the interview review page.'
+          )
+
+          // Decode string by JSON.parse
+          if (!haveAnalysis) {
+            // If isDisableInterviewAnalysis false, toasts the user that the analysis is not ready yet
+            if (!result.data.getUserInterviewMetaData.isDisableInterviewAnalysis) {
+              toast.error(
+                'Analysis is not ready yet. Please try again later. It may take up to 30 minutes to process the video.',
+                {
+                  duration: 10000,
+                  position: 'top-center'
+                }
+              )
+            } else {
+              // Custom info toast message for when the user has disabled interview analysis
+              toast('Interview analysis is disabled. Please upgrade to premium to enable it.', {
+                duration: 10000,
+                position: 'top-center'
+              })
+            }
+            setCardData([
+              {
+                cardName: 'Video',
+                cardText: result.data.getUserInterviewMetaData.interviewQuestion,
+                cardValue: null,
+                extraInfo: null,
+                videoUrl: videoUrl
+              }
+            ])
+          } else {
+            const interviewDetails = JSON.parse(result.data.getUserInterviewMetaData.interviewAnalysis)
+            setCardData([
+              {
+                cardName: 'Video',
+                cardText: result.data.getUserInterviewMetaData.interviewQuestion,
+                cardValue: null,
+                extraInfo: null,
+                videoUrl: videoUrl
+              },
+
+              // {
+              //   cardName: 'UM Counter',
+              //   cardText: interviewDetails.umFeedback,
+              //   cardValue: interviewDetails.umCounter,
+              //   extraInfo: null
+              // },
+
+              {
+                cardName: 'Vocabulary',
+                cardText: interviewDetails.vocabularyFeedback,
+                cardValue: interviewDetails.vocabularyScore,
+                extraInfo: interviewDetails.vocabularyKeywords
+              },
+              {
+                cardName: 'Power Words',
+                cardText: interviewDetails.powerWordsFeedback,
+                cardValue: interviewDetails.powerWordsScore,
+                extraInfo: interviewDetails.powerWords
+              },
+              {
+                cardName: 'Answer Relevance',
+                cardText: interviewDetails.answerRelevanceFeedback,
+                cardValue: interviewDetails.answerRelevanceScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Authenticity Score',
+                cardText: interviewDetails.authenticityFeedback,
+                cardValue: interviewDetails.authenticityScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Filler Words',
+                cardText: interviewDetails.fillerWordsFeedback,
+                cardValue: interviewDetails.fillerWordsScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Negative Tone',
+                cardText: interviewDetails.negativeToneFeedback,
+                cardValue: interviewDetails.negativeToneScore,
+                extraInfo: null
+              },
+              {
+                cardName: 'Volume',
+                cardText: interviewDetails.volumeFeedback,
+                cardValue: interviewDetails.volume,
+                extraInfo: null
+              },
+              {
+                cardName: 'Pace of Speech',
+                cardText: interviewDetails.paceOfSpeechFeedback,
+                cardValue: interviewDetails.paceOfSpeech,
+                extraInfo: null
+              }
+
+              // {
+              //   cardName: 'Lighting',
+              //   cardText: interviewDetails.rekognitionScores.brightness_score_feedback,
+              //   cardValue: interviewDetails.rekognitionScores.brightness_score,
+              //   extraInfo: null
+              // },
+              // {
+              //   cardName: 'Eye Contact',
+              //   cardText: interviewDetails.rekognitionScores.eye_contact_score_feedback,
+              //   cardValue: interviewDetails.rekognitionScores.eye_contact_score,
+              //   extraInfo: null
+              // },
+
+              // {
+              //   cardName: 'Smile',
+              //   cardText: interviewDetails.rekognitionScores.smile_score_feedback,
+              //   cardValue: interviewDetails.rekognitionScores.smile_score,
+              //   extraInfo: null
+              // },
+              // {
+              //   cardName: 'Calm',
+              //   cardText: interviewDetails.rekognitionScores.emotions_feedback,
+              //   cardValue: null,
+              //   extraInfo: interviewDetails.rekognitionScores.emotions
+              // }
+            ])
+          }
         }
       } catch (error) {
-        console.error('Error fetching interview details:', error)
+        setShowLoadingPage(true)
+        Logger.error('Error in fetching interview details', error)
       }
     }
 
@@ -88,270 +231,67 @@ const InterviewDetails = ({}: InterviewDetailsProps) => {
       fetchInterviewDetails()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    // TODO: Change the url time
-    if (interviewDetails?.interviewVideoKey) {
-      Storage.get(interviewDetails.interviewVideoKey, { level: 'private' })
-        .then(url => setVideoUrl(url))
-        .catch(error => console.error('Error getting video URL:', error))
-    }
-  }, [interviewDetails])
-
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (playing) {
-        videoRef.current.pause()
-      } else {
-        videoRef.current.play()
-      }
-      setPlaying(!playing)
-    }
-  }
-
-  const renderPageContent = () => {
-    switch (currentPage) {
-      case 0:
-        return (
-          <>
-            <DialogContent
-              sx={{
-                position: 'relative',
-                pr: { xs: 5, sm: 12 },
-                pl: { xs: 4, sm: 11 },
-                pt: { xs: 8, sm: 12.5 },
-                pb: { xs: 5, sm: 12.5 },
-                height: '280px'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  sx={{
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'medium',
-                    fontSize: '20px',
-                    color: '#4C4E64B2' // 4C4E64 * 87%
-                  }}
-                >
-                  Question {interviewDetails?.interviewQuestionID}
-                </Typography>
-
-                <Typography
-                  variant='h3'
-                  sx={{
-                    lineHeight: '2.5rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'bold',
-                    fontSize: '15px',
-                    color: '#000000E0' // 000000 * 87%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestionTitle}
-                </Typography>
-                <br />
-                <Typography
-                  sx={{
-                    // mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'regular',
-                    fontSize: '18px',
-                    color: '#4C4E64A6' // 4C4E64 * 65%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestion}
-                </Typography>
-              </div>
-            </DialogContent>
-            <StyledButton onClick={() => setCurrentPage(currentPage + 1)}>
-              <ArrowForwardIosIcon />
-            </StyledButton>
-          </>
-        )
-      case 1:
-        return (
-          <>
-            <DialogContent
-              sx={{
-                position: 'relative',
-                pr: { xs: 5, sm: 12 },
-                pl: { xs: 4, sm: 11 },
-                pt: { xs: 8, sm: 12.5 },
-                pb: { xs: 5, sm: 12.5 },
-                height: '280px'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  variant='h3'
-                  sx={{
-                    lineHeight: '2.5rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'bold',
-                    fontSize: '15px',
-                    color: '#000000E0' // 000000 * 87%
-                  }}
-                >
-                  Feedback
-                </Typography>
-
-                <br />
-                <Typography
-                  sx={{
-                    mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'regular',
-                    fontSize: '18px',
-                    color: '#4C4E64A6' // 4C4E64 * 65%
-                  }}
-                >
-                  {interviewDetails?.interviewFeedback}
-                </Typography>
-              </div>
-            </DialogContent>
-
-            <StyledButton onClick={() => setCurrentPage(currentPage - 1)}>
-              <ArrowBackIosNewIcon />
-            </StyledButton>
-            {/* <StyledButton onClick={() => setCurrentPage(currentPage + 1)}>
-              <ArrowForwardIosIcon />
-            </StyledButton> */}
-          </>
-        )
-      case 2:
-        return (
-          <>
-            <DialogContent
-              sx={{
-                position: 'relative',
-                pr: { xs: 5, sm: 12 },
-                pl: { xs: 4, sm: 11 },
-                pt: { xs: 8, sm: 12.5 },
-                pb: { xs: 5, sm: 12.5 },
-                height: '280px'
-              }}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Typography
-                  sx={{
-                    mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'medium',
-                    fontSize: '20px',
-                    color: '#4C4E64B2' // 4C4E64 * 87%
-                  }}
-                >
-                  Question {interviewDetails?.interviewQuestionID}
-                </Typography>
-
-                <Typography
-                  variant='h3'
-                  sx={{
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'bold',
-                    fontSize: '45px',
-                    color: '#000000E0' // 000000 * 87%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestionTitle}
-                </Typography>
-                <br />
-                <Typography
-                  sx={{
-                    // mb: 3,
-                    lineHeight: '2rem',
-                    fontFamily: 'Inter, sans-serif',
-                    fontWeight: 'regular',
-                    fontSize: '18px',
-                    color: '#4C4E64A6' // 4C4E64 * 65%
-                  }}
-                >
-                  {interviewDetails?.interviewQuestion}
-                </Typography>
-              </div>
-            </DialogContent>
-
-            <StyledButton onClick={() => setCurrentPage(currentPage - 1)}>
-              <ArrowBackIosNewIcon />
-            </StyledButton>
-          </>
-        )
-      default:
-        return null
-    }
-  }
+  }, [auth.user?.userEmailAddress, router.query.interview, showLoadingPage])
 
   return (
-    <Box>
-      <Grid container direction='column' alignItems='center'>
-        <Box sx={{ margin: 20 }}></Box>
-        <Grid item xs={12}>
-          <Grid container spacing={5} alignItems='center'>
-            <Grid item xs={6}>
-              <Box width='500px' height='380px' sx={{ position: 'relative' }}>
-                {interviewDetails && (
-                  <div>
-                    {videoUrl ? (
-                      <video
-                        ref={videoRef}
-                        src={videoUrl}
-                        width='100%'
-                        height='auto'
-                        controls
-                        style={{ borderRadius: '15px' }}
-                      />
-                    ) : (
-                      <Typography variant='body1' gutterBottom>
-                        Interview Video Key: {interviewDetails.interviewVideoKey}
-                      </Typography>
-                    )}
-                  </div>
-                )}
-              </Box>
-            </Grid>
-            <Grid item xs={6}>
-              <Box
-                width='500px'
-                height='380px'
-                borderRadius={'15px'}
-                style={{ overflow: 'hidden', backgroundColor: '#EBEBEB', position: 'relative' }}
+    <>
+      {showLoadingPage ? (
+        <FeedbackAnalysisPage />
+      ) : (
+        <Grid container spacing={6}>
+          {/*<Grid item xs = {12}>*/}
+          {/*  <NavBar*/}
+          {/*    navBarElements={[*/}
+          {/*      { name: 'HomePage', path: '/interview' },*/}
+          {/*      { name: 'Interview Question Review', path: undefined }*/}
+          {/*    ]}*/}
+          {/*    closeNavLink='/interview'*/}
+          {/*  />*/}
+          {/*</Grid>*/}
+          <Grid item xs={12}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography variant={'h4'}>Question Review</Typography>
+              <IconButton
+                onClick={() => {
+                  router.push('/interview')
+                }}
               >
-                {!showDetail && (
-                  <MenuOpenIcon style={{ position: 'absolute', bottom: 0, right: 0, margin: 5, color: '#0f0f0f0f' }} />
-                )}
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container spacing={8}>
+              {cardData.map((card, index) => (
                 <Grid
-                  container
-                  alignItems='center'
-                  justifyContent='center'
-                  style={{ height: '100%' }}
-                  onClick={() => {
-                    setShowDetail(true)
-                  }}
+                  item
+                  xs={card.cardName === 'Video' ? 12 : 12}
+                  sm={card.cardName === 'Video' ? 12 : 6}
+                  md={card.cardName === 'Video' ? 12 : 4}
+                  lg={card.cardName === 'Video' ? 12 : 3}
+                  key={index}
                 >
-                  {!showDetail ? (
-                    <img src='/images/favicon.png' alt='logo' width={'15%'} height={'auto'} />
-                  ) : (
-                    renderPageContent()
-                  )}
+                  <InterviewFeedbackCard {...card} onDetailClick={() => handleCardClick(index)} />
                 </Grid>
-              </Box>
+              ))}
             </Grid>
+            <Dialog
+              open={modalOpen}
+              onClose={handleClose}
+              scroll='body'
+              sx={{
+                '& .MuiPaper-root': {
+                  width: '100%',
+                  maxWidth: 1000
+                }
+              }}
+            >
+              <InterviewFeedbackCard {...currentCard} isDetailPage={true} handleClose={handleClose} />
+            </Dialog>
           </Grid>
         </Grid>
-
-        <Box margin={4}></Box>
-        <Box width='100%' height='100%' p={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <StyledPlayButton onClick={togglePlay}>{playing ? <PauseIcon /> : <PlayArrowIcon />}</StyledPlayButton>
-        </Box>
-
-        <Box margin={2}></Box>
-      </Grid>
-    </Box>
+      )}
+    </>
   )
 }
 
@@ -360,4 +300,5 @@ InterviewDetails.acl = {
   subject: 'acl-page'
 }
 
+// InterviewDetails.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 export default InterviewDetails

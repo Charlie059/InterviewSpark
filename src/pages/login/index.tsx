@@ -40,6 +40,8 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV2 from 'src/views/pages/auth/FooterIllustrationsV2'
+import { useRouter } from 'next/router'
+import { Auth } from 'aws-amplify'
 
 // styled components
 const MidWrapper = styled(Box)<BoxProps>(({ theme }) => ({
@@ -106,13 +108,21 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = (data: FormData) => {
+  const router = useRouter()
+
+  const onSubmit = async (data: FormData) => {
     const { email, password } = data
-    auth.login({ email, password, rememberMe }, () => {
+    auth.login({ email, password, rememberMe }, async err => {
       setError('email', {
         type: 'manual',
-        message: 'Email or Password is invalid'
+        message: err.message
       })
+      if (err.name == 'UserNotConfirmedException') {
+        await Auth.resendSignUp(email)
+        router.push(`/register?email=${email}&registered=true`)
+      } else if (err.name == 'UserNotFoundException') {
+        router.push(`/register?email=${email}`)
+      }
     })
   }
 

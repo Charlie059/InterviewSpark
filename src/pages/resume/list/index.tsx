@@ -6,23 +6,31 @@ import PageHeader from 'src/@core/components/page-header'
 
 import ResumeScan from "src/components/resume/ResumeScan";
 import ResumeList from "src/components/resume/ResumeList";
+import {useState} from "react";
 
 // import { useState } from "react";
 // import ResumeScanPage from "../index";
 
 const ResumeListPage = () => {
+
+  const [componentKey, setComponentKey] = useState<number>(Date.now());
+
+  const reloadComponent = () => {
+    setComponentKey(Date.now());
+  };
+
   return (
     <DropzoneWrapper>
       <Grid container spacing={6} className='match-height'>
         <PageHeader
-          title={<Typography variant='h5'>Resume Analysis</Typography>}
+          title={<Typography variant='h5'>Resume Analysis History</Typography>}
           subtitle={<Typography variant='body2'>Upload Your Resume Here</Typography>}
         />
         <Grid item xs={12}>
-           <ResumeScan nocollapse={false}/>
+           <ResumeScan reload={reloadComponent} nocollapse={false}/>
         </Grid>
         <Grid item xs={12}>
-          <ResumeList />
+          <ResumeList key={componentKey}/>
         </Grid>
       </Grid>
     </DropzoneWrapper>

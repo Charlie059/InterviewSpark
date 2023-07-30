@@ -36,6 +36,11 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { getUserResumeScans } from '../../graphql/queries'
 import { removeUserResumeScanByID, updateUserResumeScanURL } from '../../graphql/mutations'
 import router from 'next/router'
+import FileDisplay from '../file-display/FileDisplay'
+import DialogActions from '@mui/material/DialogActions'
+import Close from 'mdi-material-ui/Close'
+import FileAccount from 'mdi-material-ui/FileAccount'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface Resume {
   jobName: string
@@ -56,10 +61,12 @@ const ResumeList = () => {
   const [resumeResult, setResumeResult] = useState<string>('')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshResume, setRefreshResume] = useState<boolean>(false)
+  const [resumeUrl, setResumeUrl] = useState<string>('')
+  const [viewResume, setViewResume] = useState<boolean>(false)
 
   // const handleResumeClickOpen = () => setOpenResume(true);
   const handleResumeClose = () => setOpenResume(false)
-
+  const handleViewClose = () => setViewResume(false)
   const auth = useAuth()
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,9 +83,9 @@ const ResumeList = () => {
           resumeUrl: newUrl
         })
       )
-      console.log(result)
+      Logger.info('Result:', result)
     } catch (error) {
-      console.error(error)
+      Logger.error('Error:', error)
     }
   }
 
@@ -93,35 +100,34 @@ const ResumeList = () => {
       })
     )
 
-    console.log('Result:', result)
     if ('data' in result) {
       const resumeList = result.data.getUserResumeScans.resumeScanList
-      console.log('ResumeList: ', resumeList)
       if (resumeList.length === 0) {
         // @ts-ignore
         const emptyR: Resume = {
           displayName: 'No Resume Please Upload'
         }
         setResumes([emptyR])
-        console.log('currentPage is', router.query.user)
         if (!router.query.user) {
           router.replace('/resume')
         }
       } else {
         // for (const r of resumeList) {
-        //   console.log(r.resumeName);
         //   const newUrl = await Storage.get(r.resumeName);
-        //   console.log("new url:", newUrl);
         //
         //   await updateResumeUrl(r.resumeScanID, newUrl);
         // }
-        setResumes(resumeList)
+        setResumes(resumeList.reverse())
       }
     }
   }
 
   const refreshUrl = async ({ resumeName }: { resumeName: string }) => {
     window.open(await Storage.get(resumeName, { expires: 604800 }))
+  }
+  const refreshViewUrl = async ({ resumeName }: { resumeName: string }) => {
+    setResumeUrl(await Storage.get(resumeName, { expires: 604800 }))
+    setViewResume(true)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -135,14 +141,17 @@ const ResumeList = () => {
           resumeScanID: resumeIdToDelete
         })
       )
-      console.log(result)
+      auth.trackEvent('Resume_Functionality_Used', {
+        type: 'Resume_result_deleted',
+        resume_id: resumeIdToDelete
+      })
 
       // Check if the deletion was successful and update the list of resumes accordingly
       if ('data' in result && result.data.removeUserResumeScanByID.isSuccessful) {
         await getResume()
       }
     } catch (error) {
-      console.error(error)
+      Logger.error('Error:', error)
     }
   }
 
@@ -155,14 +164,6 @@ const ResumeList = () => {
   // @ts-ignore
   return (
     <Card>
-      {refreshResume ? (
-        <>
-          <p>yes!</p>
-          {async () => await getResume()}
-        </>
-      ) : (
-        <></>
-      )}
       <CardHeader
         title='Resume Analysis'
         titleTypographyProps={{ variant: 'h6' }}
@@ -179,43 +180,35 @@ const ResumeList = () => {
             <TableHead sx={{ backgroundColor: 'customColors.tableHeaderBg' }}>
               <TableRow>
                 <TableCell sx={{ height: '3.375rem' }}>File Name</TableCell>
-                <TableCell sx={{ height: '3.375rem' }}>Resume File</TableCell>
                 <TableCell sx={{ height: '3.375rem' }}>Match Score</TableCell>
                 <TableCell sx={{ height: '3.375rem' }}>View</TableCell>
-                <TableCell sx={{ height: '3.375rem' }}></TableCell>
+                <TableCell sx={{ height: '3.375rem' }}>Delete</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {resumes.map((item, index) => (
                 <TableRow hover key={index} sx={{ '&:last-of-type td': { border: 0 } }}>
                   <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                      {item.jobName && (
                         <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
-                          {item.displayName}
+                          For {item.jobName}
                         </Typography>
-                        {item.jobName && (
-                          <Typography variant='body2' sx={{ color: 'text.disabled' }}>
-                            For {item.jobName}
-                          </Typography>
+                      )}
+                      <Typography variant='body2' sx={{ color: 'text.disabled' }}>
+                        {item.displayName}
+                        {item.resumeUrl && (
+                          <IconButton
+                            sx={{ height: '2rem' }}
+                            onClick={async () => {
+                              await refreshViewUrl({ resumeName: item.resumeName })
+                            }}
+                          >
+                            <FileAccount />
+                          </IconButton>
                         )}
-                      </Box>
+                      </Typography>
                     </Box>
-                  </TableCell>
-                  <TableCell>
-                    {item.resumeUrl && (
-                      <Button
-                        target='_blank'
-                        variant='contained'
-                        sx={{ mr: 2 }}
-                        onClick={async () => {
-                          await refreshUrl({ resumeName: item.resumeName })
-                        }}
-                        href=''
-                      >
-                        <Typography sx={{ color: 'white' }}>Download</Typography>
-                      </Button>
-                    )}
                   </TableCell>
                   {item.resumeResults && (
                     <TableCell sx={{ color: 'text' }}>
@@ -233,6 +226,15 @@ const ResumeList = () => {
                         onClick={() => {
                           setOpenResume(true)
                           setResumeResult(item.resumeResults)
+                          auth.trackEvent('Resume_Functionality_Used', {
+                            type: 'View_Scan_Result',
+                            resumeResult: item.resumeResults,
+                            resumeName: item.resumeName,
+                            jobName: item.jobName,
+                            score: (
+                              JSON.parse(item.resumeResults)['Final Report']['Final_score'].toFixed(2) * 2
+                            ).toString()
+                          })
                         }}
                         target='_blank'
                         variant='outlined'
@@ -241,24 +243,6 @@ const ResumeList = () => {
                       >
                         View Scan Result
                       </Button>
-                      <Dialog
-                        open={openResume}
-                        onClose={handleResumeClose}
-                        scroll='body'
-                        aria-labelledby='user-view-edit'
-                        sx={{
-                          '& .MuiPaper-root': {
-                            width: '100%',
-                            maxWidth: 1000,
-                            p: [2, 10]
-                          }
-                        }}
-                        aria-describedby='user-view-edit-description'
-                      >
-                        <DialogContent>
-                          <ResumeResults resumeResults={resumeResult} />
-                        </DialogContent>
-                      </Dialog>
                     </TableCell>
                   )}
                   {item.resumeName && (
@@ -268,12 +252,69 @@ const ResumeList = () => {
                       </Button>
                     </TableCell>
                   )}
+                  <Dialog
+                    open={viewResume}
+                    onClose={handleViewClose}
+                    scroll='body'
+                    aria-labelledby='user-view-edit'
+                    sx={{
+                      '& .MuiPaper-root': {
+                        width: '100%',
+                        maxWidth: 1000,
+                        p: [2, 10]
+                      }
+                    }}
+                    aria-describedby='user-view-edit-description'
+                  >
+                    <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleViewClose}>
+                      <Close />
+                    </IconButton>
+                    <DialogContent>
+                      <FileDisplay url={resumeUrl} height={700} />
+                    </DialogContent>
+                    <DialogActions sx={{ justifyContent: 'center' }}>
+                      <Button
+                        target='_blank'
+                        variant='contained'
+                        sx={{ mr: 2 }}
+                        onClick={async () => {
+                          await refreshUrl({ resumeName: item.resumeName })
+                        }}
+                        href=''
+                      >
+                        <Typography sx={{ color: 'white' }}>Download</Typography>
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </CardContent>
+      <Dialog
+        open={openResume}
+        onClose={handleResumeClose}
+        scroll='body'
+        aria-labelledby='user-view-edit'
+        sx={{
+          '& .MuiPaper-root': {
+            width: '100%',
+            maxWidth: 1000,
+            p: [2, 10]
+          }
+        }}
+        aria-describedby='user-view-edit-description'
+      >
+        <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleResumeClose}>
+          <Close />
+        </IconButton>
+        <DialogContent>
+          <>
+            <ResumeResults resumeResults={resumeResult} />
+          </>
+        </DialogContent>
+      </Dialog>
     </Card>
   )
 }

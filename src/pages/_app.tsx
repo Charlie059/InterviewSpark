@@ -73,6 +73,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 // ** Global css styles
 import '../../styles/globals.css'
 
+// ** Set log level
+import { setLogLevel, LogLevel } from 'src/middleware/loggerMiddleware'
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage
@@ -103,7 +106,7 @@ if (themeConfig.routingLoader) {
 const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   if (guestGuard) {
     return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>
-  } else if (!guestGuard && !authGuard) {
+  } else if (!authGuard) {
     return <>{children}</>
   } else {
     return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>
@@ -124,8 +127,11 @@ const App = (props: ExtendedAppProps) => {
   const authGuard = Component.authGuard ?? true
 
   const guestGuard = Component.guestGuard ?? false
+  const isPublic = Component.isPublic ?? false
 
   const aclAbilities = Component.acl ?? defaultACLObj
+
+  setLogLevel(LogLevel.ERROR)
 
   return (
     <CacheProvider value={emotionCache}>
@@ -144,7 +150,7 @@ const App = (props: ExtendedAppProps) => {
                 <ThemeComponent settings={settings}>
                   <WindowWrapper>
                     <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                      <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                      <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} isPublic={isPublic}>
                         {getLayout(<Component {...pageProps} />)}
                       </AclGuard>
                     </Guard>

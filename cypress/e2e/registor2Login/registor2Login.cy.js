@@ -5,7 +5,7 @@ describe('User Registration', () => {
   const getUniqueId = () => Cypress._.uniqueId(uniqueSeed)
   const testUsername = 'testuser' + getUniqueId()
   const testEmail = `${testUsername}@${serverId}.mailosaur.net`
-  const testPassword = 'password1234'
+  const testPassword = 'Testing1234'
 
   beforeEach(() => {
     cy.visit('/register')

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Logger
-import Log from 'src/middleware/loggerMiddleware'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface GuestGuardProps {
   children: ReactNode
@@ -21,17 +21,17 @@ const GuestGuard = (props: GuestGuardProps) => {
   const router = useRouter()
   useEffect(() => {
     const getAuth = async () => {
-      Log.info('GuestGuard')
+      Logger.info('GuestGuard')
       try {
         const userData = await auth.currUser()
-        Log.info('GuestGuard', userData)
+        Logger.info('GuestGuard', userData)
 
         if (!router.isReady) return
 
         // Return to home page
         if (userData) router.replace('/')
       } catch (error) {
-        Log.error('GuestGuard: no curr user')
+        Logger.error('GuestGuard: no curr user')
       }
     }
     getAuth()

@@ -2,10 +2,25 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const startInterviewVideoAnalysis = /* GraphQL */ `
+  mutation StartInterviewVideoAnalysis(
+    $emailAddress: AWSEmail!
+    $interviewID: String!
+    $interviewQuestionID: String!
+    $interviewQuestionType: String!
+  ) {
+    startInterviewVideoAnalysis(
+      emailAddress: $emailAddress
+      interviewID: $interviewID
+      interviewQuestionID: $interviewQuestionID
+      interviewQuestionType: $interviewQuestionType
+    )
+  }
+`;
 export const createNewGuestUser = /* GraphQL */ `
   mutation CreateNewGuestUser(
     $emailAddress: AWSEmail!
-    $userName: String
+    $userName: String!
     $fName: String!
     $lName: String!
   ) {
@@ -17,6 +32,40 @@ export const createNewGuestUser = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
+    }
+  }
+`;
+export const createUserInterviewQuestionList = /* GraphQL */ `
+  mutation CreateUserInterviewQuestionList(
+    $emailAddress: AWSEmail!
+    $questionTag: String!
+    $numOfBQ: Int!
+    $numOfTech: Int!
+    $isDisableInterviewAnalysis: Boolean
+  ) {
+    createUserInterviewQuestionList(
+      emailAddress: $emailAddress
+      questionTag: $questionTag
+      numOfBQ: $numOfBQ
+      numOfTech: $numOfTech
+      isDisableInterviewAnalysis: $isDisableInterviewAnalysis
+    ) {
+      interviewList {
+        interviewID
+        interviewDateTime
+        interviewQuestionID
+        interviewVideoKey
+        interviewQuestion
+        interviewQuestionTitle
+        interviewQuestionType
+        interviewFeedback
+        interviewAnalysis
+        interviewEstimatedSeconds
+        interviewVideoLength
+        interviewVideoPath
+        isDisableInterviewAnalysis
+      }
     }
   }
 `;
@@ -37,17 +86,36 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
+      interviewAnalysis
+      interviewEstimatedSeconds
+      interviewVideoLength
+      interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
-export const createInterviewWithQuestion = /* GraphQL */ `
-  mutation CreateInterviewWithQuestion(
+export const updateUserInterview = /* GraphQL */ `
+  mutation UpdateUserInterview(
     $emailAddress: AWSEmail!
-    $questionID: String!
+    $interviewID: String!
+    $interviewQuestionID: String!
+    $interviewQuestionType: String!
+    $interviewFeedback: String
+    $interviewAnalysis: String
+    $interviewVideoKey: String
+    $interviewVideoPath: String
+    $interviewVideoLength: String
   ) {
-    createInterviewWithQuestion(
+    updateUserInterview(
       emailAddress: $emailAddress
-      questionID: $questionID
+      interviewID: $interviewID
+      interviewQuestionID: $interviewQuestionID
+      interviewQuestionType: $interviewQuestionType
+      interviewFeedback: $interviewFeedback
+      interviewAnalysis: $interviewAnalysis
+      interviewVideoKey: $interviewVideoKey
+      interviewVideoPath: $interviewVideoPath
+      interviewVideoLength: $interviewVideoLength
     ) {
       interviewID
       interviewDateTime
@@ -57,6 +125,11 @@ export const createInterviewWithQuestion = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
+      interviewAnalysis
+      interviewEstimatedSeconds
+      interviewVideoLength
+      interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -83,6 +156,11 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
+      interviewAnalysis
+      interviewEstimatedSeconds
+      interviewVideoLength
+      interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -94,14 +172,16 @@ export const updateUserProfile = /* GraphQL */ `
     $city: String
     $contact: String
     $country: String
-    $coverImgURL: String
+    $coverImgKey: String
     $fName: String
     $lName: String
-    $photoImgURL: String
+    $photoImgKey: String
     $postalCode: String
     $resumeKey: String
     $state: String
     $isPublic: String
+    $userIndustry: String
+    $userDreamJob: String
   ) {
     updateUserProfile(
       emailAddress: $emailAddress
@@ -110,17 +190,20 @@ export const updateUserProfile = /* GraphQL */ `
       city: $city
       contact: $contact
       country: $country
-      coverImgURL: $coverImgURL
+      coverImgKey: $coverImgKey
       fName: $fName
       lName: $lName
-      photoImgURL: $photoImgURL
+      photoImgKey: $photoImgKey
       postalCode: $postalCode
       resumeKey: $resumeKey
       state: $state
       isPublic: $isPublic
+      userIndustry: $userIndustry
+      userDreamJob: $userDreamJob
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -129,14 +212,17 @@ export const removeUserInterviewsByID = /* GraphQL */ `
     $emailAddress: AWSEmail!
     $interviewID: String!
     $interviewQuestionID: String!
+    $interviewQuestionType: String!
   ) {
     removeUserInterviewsByID(
       emailAddress: $emailAddress
       interviewID: $interviewID
       interviewQuestionID: $interviewQuestionID
+      interviewQuestionType: $interviewQuestionType
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -151,6 +237,7 @@ export const removeUserResumeScanByID = /* GraphQL */ `
     ) {
       isSuccessful
       error
+      info
     }
   }
 `;
@@ -197,6 +284,242 @@ export const updateUserResumeScanURL = /* GraphQL */ `
       resumeResults
       resumeUrl
       resumeScanID
+    }
+  }
+`;
+export const createUserEducation = /* GraphQL */ `
+  mutation CreateUserEducation(
+    $emailAddress: AWSEmail!
+    $eduDegree: String!
+    $eduFieldStudy: String!
+    $eduSchool: String!
+    $eduStartDate: AWSDate!
+    $eduEndDate: AWSDate!
+  ) {
+    createUserEducation(
+      emailAddress: $emailAddress
+      eduDegree: $eduDegree
+      eduFieldStudy: $eduFieldStudy
+      eduSchool: $eduSchool
+      eduStartDate: $eduStartDate
+      eduEndDate: $eduEndDate
+    ) {
+      eduID
+      eduDegree
+      eduFieldStudy
+      eduSchool
+      eduStartDate
+      eduEndDate
+      eduIcon
+      eduActivity
+    }
+  }
+`;
+export const updateUserEducation = /* GraphQL */ `
+  mutation UpdateUserEducation(
+    $emailAddress: AWSEmail!
+    $eduID: String!
+    $eduDegree: String!
+    $eduFieldStudy: String!
+    $eduSchool: String!
+    $eduStartDate: AWSDate!
+    $eduEndDate: AWSDate!
+  ) {
+    updateUserEducation(
+      emailAddress: $emailAddress
+      eduID: $eduID
+      eduDegree: $eduDegree
+      eduFieldStudy: $eduFieldStudy
+      eduSchool: $eduSchool
+      eduStartDate: $eduStartDate
+      eduEndDate: $eduEndDate
+    ) {
+      eduID
+      eduDegree
+      eduFieldStudy
+      eduSchool
+      eduStartDate
+      eduEndDate
+      eduIcon
+      eduActivity
+    }
+  }
+`;
+export const removeUserEducationByID = /* GraphQL */ `
+  mutation RemoveUserEducationByID($emailAddress: AWSEmail!, $eduID: String!) {
+    removeUserEducationByID(emailAddress: $emailAddress, eduID: $eduID) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const createUserWorkHistory = /* GraphQL */ `
+  mutation CreateUserWorkHistory(
+    $emailAddress: AWSEmail!
+    $workCompany: String!
+    $workPosition: String!
+    $workStartDate: AWSDate!
+    $workEndDate: AWSDate!
+    $workDescription: String!
+  ) {
+    createUserWorkHistory(
+      emailAddress: $emailAddress
+      workCompany: $workCompany
+      workPosition: $workPosition
+      workStartDate: $workStartDate
+      workEndDate: $workEndDate
+      workDescription: $workDescription
+    ) {
+      workHistoryID
+      workHistoryJobTitle
+      workHistoryEmployer
+      workHistoryStartDate
+      workHistoryEndDate
+      workHistoryJobDescription
+      workHistoryIcon
+    }
+  }
+`;
+export const updateUserWorkHistory = /* GraphQL */ `
+  mutation UpdateUserWorkHistory(
+    $emailAddress: AWSEmail!
+    $workHistoryID: String!
+    $workCompany: String!
+    $workPosition: String!
+    $workStartDate: AWSDate!
+    $workEndDate: AWSDate!
+    $workDescription: String!
+  ) {
+    updateUserWorkHistory(
+      emailAddress: $emailAddress
+      workHistoryID: $workHistoryID
+      workCompany: $workCompany
+      workPosition: $workPosition
+      workStartDate: $workStartDate
+      workEndDate: $workEndDate
+      workDescription: $workDescription
+    ) {
+      workHistoryID
+      workHistoryJobTitle
+      workHistoryEmployer
+      workHistoryStartDate
+      workHistoryEndDate
+      workHistoryJobDescription
+      workHistoryIcon
+    }
+  }
+`;
+export const removeUserWorkHistoryByID = /* GraphQL */ `
+  mutation RemoveUserWorkHistoryByID(
+    $emailAddress: AWSEmail!
+    $workHistoryID: String!
+  ) {
+    removeUserWorkHistoryByID(
+      emailAddress: $emailAddress
+      workHistoryID: $workHistoryID
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const createUserSubscriptionRequest = /* GraphQL */ `
+  mutation CreateUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $planID: String!
+  ) {
+    createUserSubscriptionRequest(userEmail: $userEmail, planID: $planID) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const resumeUserSubscriptionRequest = /* GraphQL */ `
+  mutation ResumeUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+  ) {
+    resumeUserSubscriptionRequest(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const cancelUserSubscriptionRequest = /* GraphQL */ `
+  mutation CancelUserSubscriptionRequest(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+  ) {
+    cancelUserSubscriptionRequest(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage = /* GraphQL */ `
+  mutation VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(
+    $userEmail: AWSEmail!
+  ) {
+    verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(
+      userEmail: $userEmail
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const handleMixpanelEvent = /* GraphQL */ `
+  mutation HandleMixpanelEvent(
+    $userEmail: AWSEmail!
+    $data: AWSJSON!
+    $eventType: String!
+  ) {
+    handleMixpanelEvent(
+      userEmail: $userEmail
+      data: $data
+      eventType: $eventType
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const updateUserSubscriptionCancelReason = /* GraphQL */ `
+  mutation UpdateUserSubscriptionCancelReason(
+    $userEmail: AWSEmail!
+    $subscriptionId: String!
+    $cancelReason: AWSJSON!
+  ) {
+    updateUserSubscriptionCancelReason(
+      userEmail: $userEmail
+      subscriptionId: $subscriptionId
+      cancelReason: $cancelReason
+    ) {
+      isSuccessful
+      error
+      info
+    }
+  }
+`;
+export const updateNewUserStatus = /* GraphQL */ `
+  mutation UpdateNewUserStatus($userEmail: AWSEmail!, $isNewUser: Boolean!) {
+    updateNewUserStatus(userEmail: $userEmail, isNewUser: $isNewUser) {
+      isSuccessful
+      error
+      info
     }
   }
 `;

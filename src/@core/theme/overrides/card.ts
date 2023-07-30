@@ -10,6 +10,7 @@ const Card = (theme: Theme, skin: Skin) => {
       styleOverrides: {
         root: {
           ...(skin === 'bordered' && { border: `1px solid ${theme.palette.divider}` }),
+          borderRadius: 20,
           '& .card-more-options': {
             marginTop: theme.spacing(-1),
             marginRight: theme.spacing(-3)

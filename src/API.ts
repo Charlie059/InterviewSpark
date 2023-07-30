@@ -6,6 +6,12 @@ export type OperationResult = {
   __typename: "OperationResult",
   isSuccessful: boolean,
   error?: string | null,
+  info?: string | null,
+};
+
+export type InterviewList = {
+  __typename: "InterviewList",
+  interviewList?:  Array<Interview | null > | null,
 };
 
 export type Interview = {
@@ -18,6 +24,11 @@ export type Interview = {
   interviewQuestionTitle?: string | null,
   interviewQuestionType?: string | null,
   interviewFeedback?: string | null,
+  interviewAnalysis?: string | null,
+  interviewEstimatedSeconds?: number | null,
+  interviewVideoLength?: string | null,
+  interviewVideoPath?: string | null,
+  isDisableInterviewAnalysis?: boolean | null,
 };
 
 export type ResumeScan = {
@@ -30,20 +41,35 @@ export type ResumeScan = {
   resumeScanID: string,
 };
 
-export type User = {
-  __typename: "User",
-  userEmailAddress: string,
-  userRole: string,
-  userName: string,
-  allowPublicInterview: boolean,
+export type Education = {
+  __typename: "Education",
+  eduID?: string | null,
+  eduDegree?: string | null,
+  eduFieldStudy?: string | null,
+  eduSchool?: string | null,
+  eduStartDate?: string | null,
+  eduEndDate?: string | null,
+  eduIcon?: string | null,
+  eduActivity?: string | null,
+};
+
+export type WorkHistory = {
+  __typename: "WorkHistory",
+  workHistoryID?: string | null,
+  workHistoryJobTitle?: string | null,
+  workHistoryEmployer?: string | null,
+  workHistoryStartDate?: string | null,
+  workHistoryEndDate?: string | null,
+  workHistoryJobDescription?: string | null,
+  workHistoryIcon?: string | null,
 };
 
 export type Profile = {
   __typename: "Profile",
   fName?: string | null,
   lName?: string | null,
-  photoImgURL?: string | null,
-  coverImgURL?: string | null,
+  photoImgKey?: string | null,
+  coverImgKey?: string | null,
   resumeKey?: string | null,
   addressLine1?: string | null,
   addressLine2?: string | null,
@@ -57,6 +83,9 @@ export type Profile = {
   userName?: string | null,
   userEmailAddress?: string | null,
   userRole?: string | null,
+  isNewUser?: boolean | null,
+  userDreamJob?: string | null,
+  userIndustry?: string | null,
 };
 
 export type WorkHistories = {
@@ -64,27 +93,9 @@ export type WorkHistories = {
   workHistory?:  Array<WorkHistory | null > | null,
 };
 
-export type WorkHistory = {
-  __typename: "WorkHistory",
-  workHistoryJobTitle?: string | null,
-  workHistoryEmployer?: string | null,
-  workHistoryStartDate?: string | null,
-  workHistoryEndDate?: string | null,
-  workHistoryJobDescription?: string | null,
-};
-
 export type Educations = {
   __typename: "Educations",
   educations?:  Array<Education | null > | null,
-};
-
-export type Education = {
-  __typename: "Education",
-  eduDegree?: string | null,
-  eduFieldStudy?: string | null,
-  eduSchool?: string | null,
-  eduStartDate?: string | null,
-  eduEndDate?: string | null,
 };
 
 export type PaginatedInterviewList = {
@@ -94,21 +105,26 @@ export type PaginatedInterviewList = {
   totalRecords?: number | null,
 };
 
-export type InterviewList = {
-  __typename: "InterviewList",
-  interviewList?:  Array<Interview | null > | null,
-};
-
 export type UserInterviewUsageMetaData = {
   __typename: "UserInterviewUsageMetaData",
-  userInterviewNumCount?: number | null,
-  userInterviewQuestionSet?: Array< number | null > | null,
+  userInterviewNumTotalCount?: number | null,
+  userInterviewNumUniqueCount?: number | null,
   userInterviewQuestionMap?: string | null,
 };
 
 export type QuestionUsageMetaData = {
   __typename: "QuestionUsageMetaData",
   totalNumOfQuestion?: number | null,
+  questionTypes?: Array< string | null > | null,
+  questionTags?:  Array<QuestionTag | null > | null,
+  recommendations?: Array< string | null > | null,
+};
+
+export type QuestionTag = {
+  __typename: "QuestionTag",
+  tag?: string | null,
+  BQ?: Array< number | null > | null,
+  TECH?: Array< number | null > | null,
 };
 
 export type Question = {
@@ -140,9 +156,56 @@ export type ResumeScanList = {
   resumeScanList?:  Array<ResumeScan | null > | null,
 };
 
+export type UserSubscriptionProductsList = {
+  __typename: "UserSubscriptionProductsList",
+  userSubscriptionProductsArray:  Array<UserSubscriptionProducts | null >,
+};
+
+export type UserSubscriptionProducts = {
+  __typename: "UserSubscriptionProducts",
+  userSubscription: UserSubscription,
+  userSubscriptionProduct:  Array<UserSubscriptionProduct | null >,
+};
+
+export type UserSubscription = {
+  __typename: "UserSubscription",
+  cancelAtPeriodEnd?: boolean | null,
+  currentPeriodEnd?: string | null,
+  currentPeriodStart?: string | null,
+  GSI1SK?: string | null,
+  planPeriod?: string | null,
+  planPeriodAmount?: string | null,
+  planStatus?: string | null,
+  planType?: string | null,
+  stripeCustomerID?: string | null,
+  subscriptionID: string,
+};
+
+export type UserSubscriptionProduct = {
+  __typename: "UserSubscriptionProduct",
+  GSI1SK?: string | null,
+  productDetail?: string | null,
+  productID?: string | null,
+  productName: string,
+  productNumUsage: number,
+  productTotalNumUsage: number,
+  subscriptionID: string,
+};
+
+export type StartInterviewVideoAnalysisMutationVariables = {
+  emailAddress: string,
+  interviewID: string,
+  interviewQuestionID: string,
+  interviewQuestionType: string,
+};
+
+export type StartInterviewVideoAnalysisMutation = {
+  startInterviewVideoAnalysis: string,
+};
+
 export type CreateNewGuestUserMutationVariables = {
   emailAddress: string,
-  userName?: string | null,
+  userName: string,
   fName: string,
   lName: string,
 };
@@ -152,6 +215,37 @@ export type CreateNewGuestUserMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type CreateUserInterviewQuestionListMutationVariables = {
+  emailAddress: string,
+  questionTag: string,
+  numOfBQ: number,
+  numOfTech: number,
+  isDisableInterviewAnalysis?: boolean | null,
+};
+
+export type CreateUserInterviewQuestionListMutation = {
+  createUserInterviewQuestionList:  {
+    __typename: "InterviewList",
+    interviewList?:  Array< {
+      __typename: "Interview",
+      interviewID?: string | null,
+      interviewDateTime?: string | null,
+      interviewQuestionID?: string | null,
+      interviewVideoKey?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionTitle?: string | null,
+      interviewQuestionType?: string | null,
+      interviewFeedback?: string | null,
+      interviewAnalysis?: string | null,
+      interviewEstimatedSeconds?: number | null,
+      interviewVideoLength?: string | null,
+      interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
+    } | null > | null,
   },
 };
 
@@ -171,16 +265,28 @@ export type CreateUserInterviewWithQuestionMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewAnalysis?: string | null,
+    interviewEstimatedSeconds?: number | null,
+    interviewVideoLength?: string | null,
+    interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
-export type CreateInterviewWithQuestionMutationVariables = {
+export type UpdateUserInterviewMutationVariables = {
   emailAddress: string,
-  questionID: string,
+  interviewID: string,
+  interviewQuestionID: string,
+  interviewQuestionType: string,
+  interviewFeedback?: string | null,
+  interviewAnalysis?: string | null,
+  interviewVideoKey?: string | null,
+  interviewVideoPath?: string | null,
+  interviewVideoLength?: string | null,
 };
 
-export type CreateInterviewWithQuestionMutation = {
-  createInterviewWithQuestion:  {
+export type UpdateUserInterviewMutation = {
+  updateUserInterview:  {
     __typename: "Interview",
     interviewID?: string | null,
     interviewDateTime?: string | null,
@@ -190,6 +296,11 @@ export type CreateInterviewWithQuestionMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewAnalysis?: string | null,
+    interviewEstimatedSeconds?: number | null,
+    interviewVideoLength?: string | null,
+    interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
@@ -212,6 +323,11 @@ export type UpdateInterviewVideoKeyMutation = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewAnalysis?: string | null,
+    interviewEstimatedSeconds?: number | null,
+    interviewVideoLength?: string | null,
+    interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
@@ -222,14 +338,16 @@ export type UpdateUserProfileMutationVariables = {
   city?: string | null,
   contact?: string | null,
   country?: string | null,
-  coverImgURL?: string | null,
+  coverImgKey?: string | null,
   fName?: string | null,
   lName?: string | null,
-  photoImgURL?: string | null,
+  photoImgKey?: string | null,
   postalCode?: string | null,
   resumeKey?: string | null,
   state?: string | null,
   isPublic?: string | null,
+  userIndustry?: string | null,
+  userDreamJob?: string | null,
 };
 
 export type UpdateUserProfileMutation = {
@@ -237,6 +355,7 @@ export type UpdateUserProfileMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -244,6 +363,7 @@ export type RemoveUserInterviewsByIDMutationVariables = {
   emailAddress: string,
   interviewID: string,
   interviewQuestionID: string,
+  interviewQuestionType: string,
 };
 
 export type RemoveUserInterviewsByIDMutation = {
@@ -251,6 +371,7 @@ export type RemoveUserInterviewsByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -264,6 +385,7 @@ export type RemoveUserResumeScanByIDMutation = {
     __typename: "OperationResult",
     isSuccessful: boolean,
     error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -306,17 +428,222 @@ export type UpdateUserResumeScanURLMutation = {
   },
 };
 
-export type GetUserQueryVariables = {
+export type CreateUserEducationMutationVariables = {
   emailAddress: string,
+  eduDegree: string,
+  eduFieldStudy: string,
+  eduSchool: string,
+  eduStartDate: string,
+  eduEndDate: string,
 };
 
-export type GetUserQuery = {
-  getUser:  {
-    __typename: "User",
-    userEmailAddress: string,
-    userRole: string,
-    userName: string,
-    allowPublicInterview: boolean,
+export type CreateUserEducationMutation = {
+  createUserEducation:  {
+    __typename: "Education",
+    eduID?: string | null,
+    eduDegree?: string | null,
+    eduFieldStudy?: string | null,
+    eduSchool?: string | null,
+    eduStartDate?: string | null,
+    eduEndDate?: string | null,
+    eduIcon?: string | null,
+    eduActivity?: string | null,
+  },
+};
+
+export type UpdateUserEducationMutationVariables = {
+  emailAddress: string,
+  eduID: string,
+  eduDegree: string,
+  eduFieldStudy: string,
+  eduSchool: string,
+  eduStartDate: string,
+  eduEndDate: string,
+};
+
+export type UpdateUserEducationMutation = {
+  updateUserEducation:  {
+    __typename: "Education",
+    eduID?: string | null,
+    eduDegree?: string | null,
+    eduFieldStudy?: string | null,
+    eduSchool?: string | null,
+    eduStartDate?: string | null,
+    eduEndDate?: string | null,
+    eduIcon?: string | null,
+    eduActivity?: string | null,
+  },
+};
+
+export type RemoveUserEducationByIDMutationVariables = {
+  emailAddress: string,
+  eduID: string,
+};
+
+export type RemoveUserEducationByIDMutation = {
+  removeUserEducationByID:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type CreateUserWorkHistoryMutationVariables = {
+  emailAddress: string,
+  workCompany: string,
+  workPosition: string,
+  workStartDate: string,
+  workEndDate: string,
+  workDescription: string,
+};
+
+export type CreateUserWorkHistoryMutation = {
+  createUserWorkHistory:  {
+    __typename: "WorkHistory",
+    workHistoryID?: string | null,
+    workHistoryJobTitle?: string | null,
+    workHistoryEmployer?: string | null,
+    workHistoryStartDate?: string | null,
+    workHistoryEndDate?: string | null,
+    workHistoryJobDescription?: string | null,
+    workHistoryIcon?: string | null,
+  },
+};
+
+export type UpdateUserWorkHistoryMutationVariables = {
+  emailAddress: string,
+  workHistoryID: string,
+  workCompany: string,
+  workPosition: string,
+  workStartDate: string,
+  workEndDate: string,
+  workDescription: string,
+};
+
+export type UpdateUserWorkHistoryMutation = {
+  updateUserWorkHistory:  {
+    __typename: "WorkHistory",
+    workHistoryID?: string | null,
+    workHistoryJobTitle?: string | null,
+    workHistoryEmployer?: string | null,
+    workHistoryStartDate?: string | null,
+    workHistoryEndDate?: string | null,
+    workHistoryJobDescription?: string | null,
+    workHistoryIcon?: string | null,
+  },
+};
+
+export type RemoveUserWorkHistoryByIDMutationVariables = {
+  emailAddress: string,
+  workHistoryID: string,
+};
+
+export type RemoveUserWorkHistoryByIDMutation = {
+  removeUserWorkHistoryByID:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type CreateUserSubscriptionRequestMutationVariables = {
+  userEmail: string,
+  planID: string,
+};
+
+export type CreateUserSubscriptionRequestMutation = {
+  createUserSubscriptionRequest:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type ResumeUserSubscriptionRequestMutationVariables = {
+  userEmail: string,
+  subscriptionId: string,
+};
+
+export type ResumeUserSubscriptionRequestMutation = {
+  resumeUserSubscriptionRequest:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type CancelUserSubscriptionRequestMutationVariables = {
+  userEmail: string,
+  subscriptionId: string,
+};
+
+export type CancelUserSubscriptionRequestMutation = {
+  cancelUserSubscriptionRequest:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsageMutationVariables = {
+  userEmail: string,
+};
+
+export type VerifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsageMutation = {
+  verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type HandleMixpanelEventMutationVariables = {
+  userEmail: string,
+  data: string,
+  eventType: string,
+};
+
+export type HandleMixpanelEventMutation = {
+  handleMixpanelEvent:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type UpdateUserSubscriptionCancelReasonMutationVariables = {
+  userEmail: string,
+  subscriptionId: string,
+  cancelReason: string,
+};
+
+export type UpdateUserSubscriptionCancelReasonMutation = {
+  updateUserSubscriptionCancelReason:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
+export type UpdateNewUserStatusMutationVariables = {
+  userEmail: string,
+  isNewUser: boolean,
+};
+
+export type UpdateNewUserStatusMutation = {
+  updateNewUserStatus:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
   },
 };
 
@@ -329,8 +656,8 @@ export type GetUserProfileQuery = {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
-    photoImgURL?: string | null,
-    coverImgURL?: string | null,
+    photoImgKey?: string | null,
+    coverImgKey?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,
@@ -344,6 +671,9 @@ export type GetUserProfileQuery = {
     userName?: string | null,
     userEmailAddress?: string | null,
     userRole?: string | null,
+    isNewUser?: boolean | null,
+    userDreamJob?: string | null,
+    userIndustry?: string | null,
   },
 };
 
@@ -356,8 +686,8 @@ export type GetUserProfileByUsernameQuery = {
     __typename: "Profile",
     fName?: string | null,
     lName?: string | null,
-    photoImgURL?: string | null,
-    coverImgURL?: string | null,
+    photoImgKey?: string | null,
+    coverImgKey?: string | null,
     resumeKey?: string | null,
     addressLine1?: string | null,
     addressLine2?: string | null,
@@ -371,6 +701,9 @@ export type GetUserProfileByUsernameQuery = {
     userName?: string | null,
     userEmailAddress?: string | null,
     userRole?: string | null,
+    isNewUser?: boolean | null,
+    userDreamJob?: string | null,
+    userIndustry?: string | null,
   },
 };
 
@@ -383,11 +716,13 @@ export type GetUserWorkHistoriesQuery = {
     __typename: "WorkHistories",
     workHistory?:  Array< {
       __typename: "WorkHistory",
+      workHistoryID?: string | null,
       workHistoryJobTitle?: string | null,
       workHistoryEmployer?: string | null,
       workHistoryStartDate?: string | null,
       workHistoryEndDate?: string | null,
       workHistoryJobDescription?: string | null,
+      workHistoryIcon?: string | null,
     } | null > | null,
   },
 };
@@ -401,11 +736,40 @@ export type GetUserEducationsQuery = {
     __typename: "Educations",
     educations?:  Array< {
       __typename: "Education",
+      eduID?: string | null,
       eduDegree?: string | null,
       eduFieldStudy?: string | null,
       eduSchool?: string | null,
       eduStartDate?: string | null,
       eduEndDate?: string | null,
+      eduIcon?: string | null,
+      eduActivity?: string | null,
+    } | null > | null,
+  },
+};
+
+export type GetUserInterviewListQueryVariables = {
+  emailAddress: string,
+};
+
+export type GetUserInterviewListQuery = {
+  getUserInterviewList:  {
+    __typename: "InterviewList",
+    interviewList?:  Array< {
+      __typename: "Interview",
+      interviewID?: string | null,
+      interviewDateTime?: string | null,
+      interviewQuestionID?: string | null,
+      interviewVideoKey?: string | null,
+      interviewQuestion?: string | null,
+      interviewQuestionTitle?: string | null,
+      interviewQuestionType?: string | null,
+      interviewFeedback?: string | null,
+      interviewAnalysis?: string | null,
+      interviewEstimatedSeconds?: number | null,
+      interviewVideoLength?: string | null,
+      interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -429,6 +793,11 @@ export type GetUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewAnalysis?: string | null,
+      interviewEstimatedSeconds?: number | null,
+      interviewVideoLength?: string | null,
+      interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -452,6 +821,11 @@ export type GetUserInterviewsByMonthQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewAnalysis?: string | null,
+      interviewEstimatedSeconds?: number | null,
+      interviewVideoLength?: string | null,
+      interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -460,6 +834,7 @@ export type GetUserInterviewMetaDataQueryVariables = {
   emailAddress: string,
   interviewID: string,
   interviewQuestionID: string,
+  interviewQuestionType: string,
 };
 
 export type GetUserInterviewMetaDataQuery = {
@@ -473,6 +848,11 @@ export type GetUserInterviewMetaDataQuery = {
     interviewQuestionTitle?: string | null,
     interviewQuestionType?: string | null,
     interviewFeedback?: string | null,
+    interviewAnalysis?: string | null,
+    interviewEstimatedSeconds?: number | null,
+    interviewVideoLength?: string | null,
+    interviewVideoPath?: string | null,
+    isDisableInterviewAnalysis?: boolean | null,
   },
 };
 
@@ -494,6 +874,11 @@ export type SearchUserInterviewsQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewAnalysis?: string | null,
+      interviewEstimatedSeconds?: number | null,
+      interviewVideoLength?: string | null,
+      interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -516,6 +901,11 @@ export type SearchUserInterviewsPaginatedQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewAnalysis?: string | null,
+      interviewEstimatedSeconds?: number | null,
+      interviewVideoLength?: string | null,
+      interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
     nextToken?: string | null,
     totalRecords?: number | null,
@@ -529,8 +919,8 @@ export type GetUserInterviewUsageMetaDataQueryVariables = {
 export type GetUserInterviewUsageMetaDataQuery = {
   getUserInterviewUsageMetaData:  {
     __typename: "UserInterviewUsageMetaData",
-    userInterviewNumCount?: number | null,
-    userInterviewQuestionSet?: Array< number | null > | null,
+    userInterviewNumTotalCount?: number | null,
+    userInterviewNumUniqueCount?: number | null,
     userInterviewQuestionMap?: string | null,
   },
 };
@@ -539,6 +929,14 @@ export type GetQuestionUsageMetaDataQuery = {
   getQuestionUsageMetaData:  {
     __typename: "QuestionUsageMetaData",
     totalNumOfQuestion?: number | null,
+    questionTypes?: Array< string | null > | null,
+    questionTags?:  Array< {
+      __typename: "QuestionTag",
+      tag?: string | null,
+      BQ?: Array< number | null > | null,
+      TECH?: Array< number | null > | null,
+    } | null > | null,
+    recommendations?: Array< string | null > | null,
   },
 };
 
@@ -648,6 +1046,11 @@ export type GetUserInterviewsByQuestionIDQuery = {
       interviewQuestionTitle?: string | null,
       interviewQuestionType?: string | null,
       interviewFeedback?: string | null,
+      interviewAnalysis?: string | null,
+      interviewEstimatedSeconds?: number | null,
+      interviewVideoLength?: string | null,
+      interviewVideoPath?: string | null,
+      isDisableInterviewAnalysis?: boolean | null,
     } | null > | null,
   },
 };
@@ -668,5 +1071,78 @@ export type GetUserResumeScansQuery = {
       resumeUrl?: string | null,
       resumeScanID: string,
     } | null > | null,
+  },
+};
+
+export type GetUserEducationByIDQueryVariables = {
+  emailAddress: string,
+  eduID: string,
+};
+
+export type GetUserEducationByIDQuery = {
+  getUserEducationByID:  {
+    __typename: "Education",
+    eduID?: string | null,
+    eduDegree?: string | null,
+    eduFieldStudy?: string | null,
+    eduSchool?: string | null,
+    eduStartDate?: string | null,
+    eduEndDate?: string | null,
+    eduIcon?: string | null,
+    eduActivity?: string | null,
+  },
+};
+
+export type GetUserWorkHistoryByIDQueryVariables = {
+  emailAddress: string,
+  workHistoryID: string,
+};
+
+export type GetUserWorkHistoryByIDQuery = {
+  getUserWorkHistoryByID:  {
+    __typename: "WorkHistory",
+    workHistoryID?: string | null,
+    workHistoryJobTitle?: string | null,
+    workHistoryEmployer?: string | null,
+    workHistoryStartDate?: string | null,
+    workHistoryEndDate?: string | null,
+    workHistoryJobDescription?: string | null,
+    workHistoryIcon?: string | null,
+  },
+};
+
+export type GetUserCurrentActiveSubscriptionAndProductsQueryVariables = {
+  emailAddress: string,
+};
+
+export type GetUserCurrentActiveSubscriptionAndProductsQuery = {
+  getUserCurrentActiveSubscriptionAndProducts:  {
+    __typename: "UserSubscriptionProductsList",
+    userSubscriptionProductsArray:  Array< {
+      __typename: "UserSubscriptionProducts",
+      userSubscription:  {
+        __typename: "UserSubscription",
+        cancelAtPeriodEnd?: boolean | null,
+        currentPeriodEnd?: string | null,
+        currentPeriodStart?: string | null,
+        GSI1SK?: string | null,
+        planPeriod?: string | null,
+        planPeriodAmount?: string | null,
+        planStatus?: string | null,
+        planType?: string | null,
+        stripeCustomerID?: string | null,
+        subscriptionID: string,
+      },
+      userSubscriptionProduct:  Array< {
+        __typename: "UserSubscriptionProduct",
+        GSI1SK?: string | null,
+        productDetail?: string | null,
+        productID?: string | null,
+        productName: string,
+        productNumUsage: number,
+        productTotalNumUsage: number,
+        subscriptionID: string,
+      } | null >,
+    } | null >,
   },
 };

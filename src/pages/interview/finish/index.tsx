@@ -1,14 +1,34 @@
-import React, { ReactNode, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Box, Grid, Button, Typography } from '@mui/material'
+import { Typography, Button, Card, Space } from 'antd'
+import { CheckCircleTwoTone } from '@ant-design/icons'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import Confetti from 'react-confetti'
+import { useAuth } from 'src/hooks/useAuth'
+
+const { Title, Paragraph } = Typography
 
 function FinishedInterviewPage() {
   const router = useRouter()
   const [showConfetti, setShowConfetti] = useState(false)
+  const auth = useAuth()
+
+  function mixPanelTracker() {
+    auth.trackEvent('User_Interview_Functionality_Used', {
+      action: 'Finish_Interview',
+      desc: 'User finished a interview.'
+    })
+
+    // User tracking
+    auth.setMixpanelPeople({
+      action: 'Finish_Interview',
+      desc: 'User finished a interview.'
+    })
+  }
 
   const handleGoToHomePage = () => {
+    // Mixpanel track event
+    mixPanelTracker()
     router.push('/interview')
   }
 
@@ -22,33 +42,47 @@ function FinishedInterviewPage() {
   }, [])
 
   return (
-    <Grid container direction='column' alignItems='center'>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundSize: 'cover',
+        width: '100%',
+
+        backgroundImage:
+          'url(https://hirebeatjobseeker8d3233807f804e91a21f26d39e1a0e214038-staging.s3.amazonaws.com/public/finishInterview.png)'
+      }}
+    >
       {showConfetti && <Confetti />}
-      <Box sx={{ margin: 20 }}></Box>
-      <Grid item xs={12}>
-        <Typography variant='h3' gutterBottom>
-          Congratulations on completing your mock interview!
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant='h6' gutterBottom>
-          You've taken an important step towards your career goals. By practicing mock interviews, you're improving your
-          communication skills and learning how to present yourself effectively.
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Typography variant='body1' gutterBottom>
-          Don't forget to review the feedback you received and work on any areas that need improvement. Keep practicing,
-          and soon you'll be more confident and better prepared for real interviews.
-        </Typography>
-      </Grid>
-      <Box sx={{ margin: 20 }}></Box>
-      <Grid item xs={12}>
-        <Button variant='contained' color='primary' onClick={handleGoToHomePage}>
-          Back to Interview Page
-        </Button>
-      </Grid>
-    </Grid>
+      <Card
+        style={{
+          width: '50%',
+          borderRadius: '25px',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)'
+        }}
+      >
+        <Space direction='vertical' size='large' style={{ width: '100%', textAlign: 'center' }}>
+          <CheckCircleTwoTone style={{ fontSize: '72px' }} twoToneColor='#52c41a' rev={undefined} />
+          <Title level={2} style={{ fontFamily: 'Montserrat' }}>
+            Congratulations!
+          </Title>
+          <Title level={4} style={{ fontFamily: 'Montserrat' }}>
+            You've completed your practice interview!
+          </Title>
+          <Paragraph style={{ fontFamily: 'Montserrat' }}>
+            You've taken an important step towards your career goals. By practicing interviews, you're improving your
+            communication skills and learning how to present yourself effectively. Don't forget to review the feedback
+            you received and work on any areas that need improvement. Keep practicing, and soon you'll be more confident
+            and better prepared for real interviews.
+          </Paragraph>
+          <Button type='primary' size='large' style={{ fontFamily: 'Montserrat' }} onClick={handleGoToHomePage}>
+            Back to Interview Page
+          </Button>
+        </Space>
+      </Card>
+    </div>
   )
 }
 
@@ -57,5 +91,6 @@ FinishedInterviewPage.acl = {
   subject: 'acl-page'
 }
 
-FinishedInterviewPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+FinishedInterviewPage.getLayout = (page: React.ReactNode) => <BlankLayout>{page}</BlankLayout>
+
 export default FinishedInterviewPage

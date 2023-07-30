@@ -1,17 +1,20 @@
 // src/utils/getUser.ts
 import { API, graphqlOperation } from 'aws-amplify'
-import { GetUserQuery } from '../API'
-import { getUser } from '../graphql/queries'
+import { GetUserProfileQuery } from 'src/API'
+import { getUserProfile } from '../graphql/queries'
+import Logger from '../middleware/loggerMiddleware'
 
-export const getUserData = async (emailAddress: string) => {
+export const getUserProfileData = async (emailAddress: string) => {
   try {
-    const response = (await API.graphql(graphqlOperation(getUser, { emailAddress }))) as { data: GetUserQuery }
+    const response = (await API.graphql(graphqlOperation(getUserProfile, { emailAddress }))) as {
+      data: GetUserProfileQuery
+    }
 
-    const userData = response.data.getUser
+    const userData = response.data.getUserProfile
 
     return userData
   } catch (error) {
-    console.error('Error fetching user data:', error)
+    Logger.error('Error fetching user data:', error)
 
     return null
   }

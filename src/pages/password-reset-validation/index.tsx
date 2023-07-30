@@ -27,7 +27,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 import { Auth } from 'aws-amplify'
 import { Button, FormControl, FormHelperText, IconButton, InputAdornment, OutlinedInput } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import Log from 'src/middleware/loggerMiddleware'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
@@ -76,12 +76,16 @@ export default function PasswordResetValidation() {
   const { skin } = settings
 
   // ** Vars
-  const schema = yup.object().shape({
-    //have a minimum of 6 characters and a maximum of 128 characters
-    //Your users must create a password that Contains at least 1 of the following types of characters.
-    // numbers, special character, uppercase, lowercase.
+  const passwordValidation = yup
+    .string()
+    .required('Password is required')
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+      'Must contain 8 characters, at least one uppercase letter, one lowercase letter and one number'
+    )
 
-    password: yup.string().min(6).required()
+  const schema = yup.object().shape({
+    password: passwordValidation
   })
 
   const defaultValues = {
@@ -111,7 +115,7 @@ export default function PasswordResetValidation() {
       // if successful, redirect to login page
       router.push('/login')
     } catch (error) {
-      Log.error(error)
+      Logger.error(error)
       setError('code', { message: 'Invalid code' })
     }
   }
@@ -124,7 +128,7 @@ export default function PasswordResetValidation() {
       setSuccess('Verification code successfully sent')
     } catch (err) {
       setError('code', { message: 'Error resending verification code' })
-      Log.error(err)
+      Logger.error(err)
     }
   }
 

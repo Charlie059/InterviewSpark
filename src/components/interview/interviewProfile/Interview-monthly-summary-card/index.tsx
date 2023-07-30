@@ -6,19 +6,63 @@ import { useAuth } from 'src/hooks/useAuth'
 import { ApexOptions } from 'apexcharts'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewsByMonth } from 'src/graphql/queries'
+import Logger from 'src/middleware/loggerMiddleware'
+import React from 'react'
 
 const InterviewUsageSummaryThisMonth = () => {
   // ** Hook
+  const cardRef = useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLDivElement>(null)
+
   const theme = useTheme()
+  const auth = useAuth()
+
+  // ** State
+  const [cardHeight, setCardHeight] = useState(0)
+  const [textHeight, setTextHeight] = useState(0)
 
   // Store the interview count data in the state
   const [data, setData] = useState<number[]>([])
   const [interviewTotalCount, setInterviewTotalCount] = useState<number>(0)
 
-  const auth = useAuth()
+  // Update the card height when the window resizes
+  useEffect(() => {
+    const updateCardHeight = () => {
+      if (cardRef.current) {
+        const height = cardRef.current.offsetHeight
+        setCardHeight(height)
+      }
+    }
+
+    updateCardHeight()
+
+    window.addEventListener('resize', updateCardHeight)
+
+    return () => {
+      window.removeEventListener('resize', updateCardHeight)
+    }
+  }, [])
+
+  // update the text height when the window resizes
+  useEffect(() => {
+    const updateTextHeight = () => {
+      if (textRef.current) {
+        const height = textRef.current.offsetHeight
+        setTextHeight(height)
+      }
+    }
+
+    updateTextHeight()
+
+    window.addEventListener('resize', updateTextHeight)
+
+    return () => {
+      window.removeEventListener('resize', updateTextHeight)
+    }
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,11 +81,10 @@ const InterviewUsageSummaryThisMonth = () => {
           // Get the list of interviews from the result data
           const interviewList = result.data.getUserInterviewsByMonth.interviewList
 
-          // Filter out the interviews that in this month
-          const currentDate = new Date()
-
           // Count the number of interviews per day
-          const interviewCounts = Array.from({ length: currentDate.getDate() }, () => 0)
+          const maxDaysInMonth = 31
+          const interviewCounts = Array.from({ length: maxDaysInMonth }, () => 0)
+
           interviewList.forEach((interview: { interviewDateTime: string }) => {
             const interviewDate = new Date(interview.interviewDateTime)
             const dayOfMonth = interviewDate.getDate()
@@ -63,7 +106,7 @@ const InterviewUsageSummaryThisMonth = () => {
           setInterviewTotalCount(interviewList.length)
         }
       } catch (error) {
-        console.error(error)
+        Logger.error('Interview monthly summary error: ', error)
       }
     }
 
@@ -117,16 +160,25 @@ const InterviewUsageSummaryThisMonth = () => {
     }
   }
 
-  return (
-    <Card style={{ borderRadius: '25px', aspectRatio: '1', height: '220px' }}>
-      <CardContent>
-        <Typography variant='h6' sx={{ mb: 2.5 }}>
-          This Month
-        </Typography>
-        <Typography variant='body2'>Total Questions This Month</Typography>
-        <Typography variant='h5'>{interviewTotalCount}</Typography>
+  // Set the height of the chart
+  let chartHeight = '40%'
+  if (textHeight && cardHeight) {
+    if (cardHeight - 55 < textHeight) chartHeight = '0%' // hide the chart if there is not enough space
+    else chartHeight = `${(1 - textHeight / cardHeight) * 50}%`
+  }
 
-        <ReactApexcharts type='line' height={70} options={options} series={[{ data: data }]} />
+  return (
+    <Card ref={cardRef} style={{ borderRadius: '25px', aspectRatio: '1' }}>
+      <CardContent>
+        <div ref={textRef}>
+          <Typography variant='h6' sx={{ mb: 2.5 }}>
+            This Month
+          </Typography>
+          <Typography variant='body2'>Total Questions This Month</Typography>
+          <Typography variant='h5'>{interviewTotalCount}</Typography>
+        </div>
+
+        <ReactApexcharts height={chartHeight} type='line' options={options} series={[{ data: data }]} />
       </CardContent>
     </Card>
   )

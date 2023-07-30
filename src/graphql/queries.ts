@@ -2,23 +2,13 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getUser = /* GraphQL */ `
-  query GetUser($emailAddress: AWSEmail!) {
-    getUser(emailAddress: $emailAddress) {
-      userEmailAddress
-      userRole
-      userName
-      allowPublicInterview
-    }
-  }
-`;
 export const getUserProfile = /* GraphQL */ `
   query GetUserProfile($emailAddress: AWSEmail!) {
     getUserProfile(emailAddress: $emailAddress) {
       fName
       lName
-      photoImgURL
-      coverImgURL
+      photoImgKey
+      coverImgKey
       resumeKey
       addressLine1
       addressLine2
@@ -32,6 +22,9 @@ export const getUserProfile = /* GraphQL */ `
       userName
       userEmailAddress
       userRole
+      isNewUser
+      userDreamJob
+      userIndustry
     }
   }
 `;
@@ -40,8 +33,8 @@ export const getUserProfileByUsername = /* GraphQL */ `
     getUserProfileByUsername(userName: $userName) {
       fName
       lName
-      photoImgURL
-      coverImgURL
+      photoImgKey
+      coverImgKey
       resumeKey
       addressLine1
       addressLine2
@@ -55,6 +48,9 @@ export const getUserProfileByUsername = /* GraphQL */ `
       userName
       userEmailAddress
       userRole
+      isNewUser
+      userDreamJob
+      userIndustry
     }
   }
 `;
@@ -62,11 +58,13 @@ export const getUserWorkHistories = /* GraphQL */ `
   query GetUserWorkHistories($emailAddress: AWSEmail!) {
     getUserWorkHistories(emailAddress: $emailAddress) {
       workHistory {
+        workHistoryID
         workHistoryJobTitle
         workHistoryEmployer
         workHistoryStartDate
         workHistoryEndDate
         workHistoryJobDescription
+        workHistoryIcon
       }
     }
   }
@@ -75,11 +73,35 @@ export const getUserEducations = /* GraphQL */ `
   query GetUserEducations($emailAddress: AWSEmail!) {
     getUserEducations(emailAddress: $emailAddress) {
       educations {
+        eduID
         eduDegree
         eduFieldStudy
         eduSchool
         eduStartDate
         eduEndDate
+        eduIcon
+        eduActivity
+      }
+    }
+  }
+`;
+export const getUserInterviewList = /* GraphQL */ `
+  query GetUserInterviewList($emailAddress: AWSEmail!) {
+    getUserInterviewList(emailAddress: $emailAddress) {
+      interviewList {
+        interviewID
+        interviewDateTime
+        interviewQuestionID
+        interviewVideoKey
+        interviewQuestion
+        interviewQuestionTitle
+        interviewQuestionType
+        interviewFeedback
+        interviewAnalysis
+        interviewEstimatedSeconds
+        interviewVideoLength
+        interviewVideoPath
+        isDisableInterviewAnalysis
       }
     }
   }
@@ -104,6 +126,11 @@ export const getUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewAnalysis
+        interviewEstimatedSeconds
+        interviewVideoLength
+        interviewVideoPath
+        isDisableInterviewAnalysis
       }
       nextToken
       totalRecords
@@ -122,6 +149,11 @@ export const getUserInterviewsByMonth = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewAnalysis
+        interviewEstimatedSeconds
+        interviewVideoLength
+        interviewVideoPath
+        isDisableInterviewAnalysis
       }
     }
   }
@@ -131,11 +163,13 @@ export const getUserInterviewMetaData = /* GraphQL */ `
     $emailAddress: AWSEmail!
     $interviewID: String!
     $interviewQuestionID: String!
+    $interviewQuestionType: String!
   ) {
     getUserInterviewMetaData(
       emailAddress: $emailAddress
       interviewID: $interviewID
       interviewQuestionID: $interviewQuestionID
+      interviewQuestionType: $interviewQuestionType
     ) {
       interviewID
       interviewDateTime
@@ -145,6 +179,11 @@ export const getUserInterviewMetaData = /* GraphQL */ `
       interviewQuestionTitle
       interviewQuestionType
       interviewFeedback
+      interviewAnalysis
+      interviewEstimatedSeconds
+      interviewVideoLength
+      interviewVideoPath
+      isDisableInterviewAnalysis
     }
   }
 `;
@@ -160,6 +199,11 @@ export const searchUserInterviews = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewAnalysis
+        interviewEstimatedSeconds
+        interviewVideoLength
+        interviewVideoPath
+        isDisableInterviewAnalysis
       }
     }
   }
@@ -182,6 +226,11 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewAnalysis
+        interviewEstimatedSeconds
+        interviewVideoLength
+        interviewVideoPath
+        isDisableInterviewAnalysis
       }
       nextToken
       totalRecords
@@ -191,8 +240,8 @@ export const searchUserInterviewsPaginated = /* GraphQL */ `
 export const getUserInterviewUsageMetaData = /* GraphQL */ `
   query GetUserInterviewUsageMetaData($emailAddress: AWSEmail!) {
     getUserInterviewUsageMetaData(emailAddress: $emailAddress) {
-      userInterviewNumCount
-      userInterviewQuestionSet
+      userInterviewNumTotalCount
+      userInterviewNumUniqueCount
       userInterviewQuestionMap
     }
   }
@@ -201,6 +250,13 @@ export const getQuestionUsageMetaData = /* GraphQL */ `
   query GetQuestionUsageMetaData {
     getQuestionUsageMetaData {
       totalNumOfQuestion
+      questionTypes
+      questionTags {
+        tag
+        BQ
+        TECH
+      }
+      recommendations
     }
   }
 `;
@@ -296,6 +352,11 @@ export const getUserInterviewsByQuestionID = /* GraphQL */ `
         interviewQuestionTitle
         interviewQuestionType
         interviewFeedback
+        interviewAnalysis
+        interviewEstimatedSeconds
+        interviewVideoLength
+        interviewVideoPath
+        isDisableInterviewAnalysis
       }
     }
   }
@@ -310,6 +371,68 @@ export const getUserResumeScans = /* GraphQL */ `
         resumeResults
         resumeUrl
         resumeScanID
+      }
+    }
+  }
+`;
+export const getUserEducationByID = /* GraphQL */ `
+  query GetUserEducationByID($emailAddress: AWSEmail!, $eduID: String!) {
+    getUserEducationByID(emailAddress: $emailAddress, eduID: $eduID) {
+      eduID
+      eduDegree
+      eduFieldStudy
+      eduSchool
+      eduStartDate
+      eduEndDate
+      eduIcon
+      eduActivity
+    }
+  }
+`;
+export const getUserWorkHistoryByID = /* GraphQL */ `
+  query GetUserWorkHistoryByID(
+    $emailAddress: AWSEmail!
+    $workHistoryID: String!
+  ) {
+    getUserWorkHistoryByID(
+      emailAddress: $emailAddress
+      workHistoryID: $workHistoryID
+    ) {
+      workHistoryID
+      workHistoryJobTitle
+      workHistoryEmployer
+      workHistoryStartDate
+      workHistoryEndDate
+      workHistoryJobDescription
+      workHistoryIcon
+    }
+  }
+`;
+export const getUserCurrentActiveSubscriptionAndProducts = /* GraphQL */ `
+  query GetUserCurrentActiveSubscriptionAndProducts($emailAddress: AWSEmail!) {
+    getUserCurrentActiveSubscriptionAndProducts(emailAddress: $emailAddress) {
+      userSubscriptionProductsArray {
+        userSubscription {
+          cancelAtPeriodEnd
+          currentPeriodEnd
+          currentPeriodStart
+          GSI1SK
+          planPeriod
+          planPeriodAmount
+          planStatus
+          planType
+          stripeCustomerID
+          subscriptionID
+        }
+        userSubscriptionProduct {
+          GSI1SK
+          productDetail
+          productID
+          productName
+          productNumUsage
+          productTotalNumUsage
+          subscriptionID
+        }
       }
     }
   }

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid'
 import { IconButton } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-import Log from 'src/middleware/loggerMiddleware'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface InterviewQuestion {
   id: number
@@ -63,14 +63,14 @@ const InterviewQuestionList = (props: Props) => {
           <IconButton
             color='primary'
             onClick={() => {
-              Log.info('View button clicked for interview ID:', params.row.interviewID)
+              Logger.info('View button clicked for interview ID:', params.row.interviewID)
             }}
           ></IconButton>
           <IconButton
             color='secondary'
             onClick={() => {
               onDeleteInterview(params.row.id)
-              Log.info('Delete button clicked for interview ID:', params.row.interviewID)
+              Logger.info('Delete button clicked for interview ID:', params.row.interviewID)
             }}
           >
             <DeleteIcon color='disabled' />
@@ -81,7 +81,7 @@ const InterviewQuestionList = (props: Props) => {
   ]
 
   useEffect(() => {
-    Log.info('interviewQuestions:', interviewQuestions)
+    Logger.info('interviewQuestions:', interviewQuestions)
   }, [interviewQuestions])
 
   return (

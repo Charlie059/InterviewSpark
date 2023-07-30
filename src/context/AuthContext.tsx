@@ -8,14 +8,14 @@ import { useRouter } from 'next/router'
 import { AuthValuesType, RegisterParams, LoginParams, ErrCallbackType, UserDataType } from './types'
 
 // ** Aws-amplify
-import { API, Auth, graphqlOperation } from 'aws-amplify'
+import { API, Auth, graphqlOperation, Storage } from 'aws-amplify'
 
 // ** Logger
-import Log from 'src/middleware/loggerMiddleware'
+import Logger from 'src/middleware/loggerMiddleware'
 
 // ** Get user
-import { getUserData } from '../utils/getUser'
-import { createNewGuestUser } from 'src/graphql/mutations'
+import { getUserProfileData } from '../utils/getUser'
+import { handleMixpanelEvent } from 'src/graphql/mutations'
 
 const handleCurrUser = async (): Promise<UserDataType | null> => {
   try {
@@ -27,15 +27,14 @@ const handleCurrUser = async (): Promise<UserDataType | null> => {
       // Check if Auth return empty
       if (Object.keys(userInfo).length === 0) return null
 
-      const user = await getUserData(userInfo.attributes.email)
-      Log.info(user)
+      const user = await getUserProfileData(userInfo.attributes.email)
 
       return user
     } else {
       return null
     }
   } catch (error) {
-    Log.info('Error getting session')
+    Logger.info('Error getting session')
 
     return null
   }
@@ -50,7 +49,9 @@ const defaultProvider: AuthValuesType = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve(),
-  currUser: handleCurrUser
+  currUser: handleCurrUser,
+  trackEvent: () => Promise.resolve(),
+  setMixpanelPeople: () => Promise.resolve()
 }
 
 const AuthContext = createContext(defaultProvider)
@@ -69,70 +70,70 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      Log.info('AuthProvider')
-
       // Check if there is a valid session in the browser.
       const session = await Auth.currentSession()
 
       if (session.isValid()) {
         // If there is a session, set the loading state to true and get the current authenticated user.
         setLoading(true)
-        console.log('setLoading(true)')
 
         const user = await handleCurrUser()
 
-        Log.info(user)
         if (user) {
           // Set the loading state to false and the user data to the local state.
           setLoading(false)
-          console.log('setLoading(false)')
           setUser({ ...user })
         } else {
           // If there is no user, set the loading state to false.
           setLoading(false)
-          console.log('setLoading(false)')
           setUser(null)
         }
       } else {
         // If there is no session, set the loading state to false.
         setLoading(false)
-        console.log('setLoading(false)')
         setUser(null)
       }
     }
 
     initAuth().catch(err => {
-      Log.info(err)
+      Logger.info(err)
       setLoading(false)
-      console.log('setLoading(false)')
     })
   }, [])
 
   const handleLogin = (params: LoginParams, errorCallback?: ErrCallbackType) => {
     // Use the `Auth.signIn` method to sign in the user with the provided username and password.
-    Auth.signIn(params.email, params.password)
-      .then(async userData => {
-        const emailAddress = userData.attributes.email
-        const user = await getUserData(emailAddress)
+    try {
+      Auth.signIn(params.email, params.password)
+        .then(async userData => {
+          const emailAddress = userData.attributes.email
+          const user = await getUserProfileData(emailAddress)
 
-        setUser(user)
-        Log.info(user)
+          setUser(user)
+          Logger.info(user)
 
-        // if user is null, return error
-        if (!user) {
-          errorCallback ? errorCallback({ Error: 'User not found in database' }) : null
+          //set default S3 level to private
+          Storage.configure({ level: 'private' })
 
-          return
-        }
+          // if user is null, return error
+          if (!user) {
+            errorCallback ? errorCallback({ Error: 'User not found in database' }) : null
 
-        // Get the return URL from the router query, if it exists, and redirect the user to the specified URL or to the root URL if no return URL was specified.
-        const redirectURL = router.query.returnUrl || '/'
-        router.replace(redirectURL as string)
-      })
-      .catch(err => {
-        errorCallback ? errorCallback(err) : null
-        Log.info(err)
-      })
+            return
+          }
+
+          // Get the return URL from the router query, if it exists, and redirect the user to the specified URL or to the root URL if no return URL was specified.
+          const redirectURL = router.query.returnUrl || '/'
+          router.replace(redirectURL as string)
+        })
+        .catch(err => {
+          errorCallback ? errorCallback(err) : null
+          Logger.info(err)
+        })
+    } catch (err: any) {
+      errorCallback ? errorCallback(err) : null
+      Logger.info(err)
+    }
   }
 
   const handleLogout = () => {
@@ -146,44 +147,63 @@ const AuthProvider = ({ children }: Props) => {
         router.push('/login')
       })
       .catch(err => {
-        Log.info(err)
+        Logger.info(err)
       })
   }
 
   const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
-    console.log('handleRegister', params)
-
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
     try {
-      const { user } = await Auth.signUp({
+      await Auth.signUp({
+        username: params.email,
         password: params.password,
-        username: params.email
+        attributes: {
+          'custom:emailAddress': params.email,
+          'custom:fName': params.fName,
+          'custom:lName': params.lName,
+          'custom:userName': params.username
+        }
+      }).then(async user => {
+        Logger.info('Verify email sent', user)
+        errorCallback ? errorCallback({ name: 'success' }) : null
       })
-
-      // TODO error condition check
-      try {
-        const response = await API.graphql(
-          graphqlOperation(createNewGuestUser, {
-            emailAddress: params.email,
-            userName: params.username,
-            fName: params.fName,
-            lName: params.lName
-          })
-        )
-
-        console.log('response', response)
-      } catch (error) {
-        console.error('Error adding new guest user:', error)
-
-        return null
-      }
-
-      Log.info('Verify email sent', user)
     } catch (err: any) {
       // If an error occurred, throw it so it can be handled by the caller.
       errorCallback ? errorCallback(err) : null
-      Log.error(err)
+      Logger.error(err)
     }
+  }
+
+  // eventName: Any string to identify the event
+  // eventParams: Any object to describe the event
+  const trackEvent = async (eventName: string, eventParams?: { [key: string]: any }) => {
+    Logger.info('Tracking event', eventName, eventParams)
+    await API.graphql(
+      graphqlOperation(handleMixpanelEvent, {
+        userEmail: user?.userEmailAddress,
+        data: JSON.stringify({
+          eventName,
+          eventParams: { ...eventParams, email: user?.userEmailAddress, firstName: user?.fName, lastName: user?.lName } // Any built-in event properties that every call needs
+        }),
+        eventType: 'trackEvent'
+      })
+    )
+  }
+
+  // profileParams: Any object to describe the user profile
+  const setMixpanelPeople = async (profileParams: { [key: string]: any }) => {
+    await API.graphql(
+      graphqlOperation(handleMixpanelEvent, {
+        userEmail: user?.userEmailAddress,
+        data: JSON.stringify({
+          ...profileParams,
+          $email: user?.userEmailAddress,
+          $first_name: user?.fName,
+          $last_name: user?.lName // Any built-in profile properties that every call needs
+        }),
+        eventType: 'setPeople'
+      })
+    )
   }
 
   const values = {
@@ -194,7 +214,9 @@ const AuthProvider = ({ children }: Props) => {
     login: handleLogin,
     logout: handleLogout,
     register: handleRegister,
-    currUser: handleCurrUser
+    currUser: handleCurrUser,
+    trackEvent,
+    setMixpanelPeople
   }
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>

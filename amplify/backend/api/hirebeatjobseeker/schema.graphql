@@ -1,0 +1,477 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Education {
+  eduID: String
+  eduDegree: String
+  eduFieldStudy: String
+  eduSchool: String
+  eduStartDate: AWSDate
+  eduEndDate: AWSDate
+  eduIcon: String
+  eduActivity: String
+}
+
+type Educations {
+  educations: [Education]
+}
+
+type Interview {
+  interviewID: String
+  interviewDateTime: AWSDateTime
+  interviewQuestionID: String
+  interviewVideoKey: String
+  interviewQuestion: String
+  interviewQuestionTitle: String
+  interviewQuestionType: String
+  interviewFeedback: String
+  interviewAnalysis: String
+  interviewEstimatedSeconds: Int
+  interviewVideoLength: String
+  interviewVideoPath: String
+  isDisableInterviewAnalysis: Boolean
+}
+
+type InterviewList {
+  interviewList: [Interview]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+type Mutation {
+  startInterviewVideoAnalysis(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+    interviewQuestionType: String!
+  ): String!
+
+  createNewGuestUser(emailAddress: AWSEmail!, userName: String!, fName: String!, lName: String!): OperationResult!
+  createUserInterviewQuestionList(
+    emailAddress: AWSEmail!
+    questionTag: String!
+    numOfBQ: Int!
+    numOfTech: Int!
+    isDisableInterviewAnalysis: Boolean
+  ): InterviewList!
+  createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+  updateUserInterview(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+    interviewQuestionType: String!
+    interviewFeedback: String
+    interviewAnalysis: String
+    interviewVideoKey: String
+    interviewVideoPath: String
+    interviewVideoLength: String
+  ): Interview!
+  updateInterviewVideoKey(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    questionID: String!
+    interviewVideoKey: String!
+    interviewFeedback: String!
+  ): Interview!
+  updateUserProfile(
+    emailAddress: AWSEmail!
+    addressLine1: String
+    addressLine2: String
+    city: String
+    contact: String
+    country: String
+    coverImgKey: String
+    fName: String
+    lName: String
+    photoImgKey: String
+    postalCode: String
+    resumeKey: String
+    state: String
+    isPublic: String
+    userIndustry: String
+    userDreamJob: String
+  ): OperationResult!
+  removeUserInterviewsByID(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+    interviewQuestionType: String!
+  ): OperationResult!
+  removeUserResumeScanByID(emailAddress: AWSEmail!, resumeScanID: String!): OperationResult!
+  createUserResumeScan(
+    emailAddress: AWSEmail!
+    resumeUrl: String!
+    displayName: String!
+    jobName: String!
+    resumeName: String!
+    resumeResults: String!
+  ): ResumeScan!
+  updateUserResumeScanURL(emailAddress: AWSEmail!, resumeID: String, resumeUrl: String!): ResumeScan!
+  createUserEducation(
+    emailAddress: AWSEmail!
+    eduDegree: String!
+    eduFieldStudy: String!
+    eduSchool: String!
+    eduStartDate: AWSDate!
+    eduEndDate: AWSDate!
+  ): Education!
+  updateUserEducation(
+    emailAddress: AWSEmail!
+    eduID: String!
+    eduDegree: String!
+    eduFieldStudy: String!
+    eduSchool: String!
+    eduStartDate: AWSDate!
+    eduEndDate: AWSDate!
+  ): Education!
+  removeUserEducationByID(emailAddress: AWSEmail!, eduID: String!): OperationResult!
+  createUserWorkHistory(
+    emailAddress: AWSEmail!
+    workCompany: String!
+    workPosition: String!
+    workStartDate: AWSDate!
+    workEndDate: AWSDate!
+    workDescription: String!
+  ): WorkHistory!
+  updateUserWorkHistory(
+    emailAddress: AWSEmail!
+    workHistoryID: String!
+    workCompany: String!
+    workPosition: String!
+    workStartDate: AWSDate!
+    workEndDate: AWSDate!
+    workDescription: String!
+  ): WorkHistory!
+  removeUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): OperationResult!
+  createUserSubscriptionRequest(userEmail: AWSEmail!, planID: String!): OperationResult!
+  resumeUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
+  cancelUserSubscriptionRequest(userEmail: AWSEmail!, subscriptionId: String!): OperationResult!
+  verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage(userEmail: AWSEmail!): OperationResult!
+  handleMixpanelEvent(userEmail: AWSEmail!, data: AWSJSON!, eventType: String!): OperationResult!
+  updateUserSubscriptionCancelReason(
+    userEmail: AWSEmail!
+    subscriptionId: String!
+    cancelReason: AWSJSON!
+  ): OperationResult!
+  updateNewUserStatus(userEmail: AWSEmail!, isNewUser: Boolean!): OperationResult!
+}
+
+type OperationResult {
+  isSuccessful: Boolean!
+  error: String
+  info: AWSJSON
+}
+
+type PaginatedInterviewList {
+  interviewList: [Interview]
+  nextToken: String
+  totalRecords: Int
+}
+
+type PaginatedQuestionList {
+  questionList: [Question]
+  nextToken: String
+  totalRecords: Int
+}
+
+type Profile {
+  fName: String
+  lName: String
+  photoImgKey: String
+  coverImgKey: String
+  resumeKey: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  postalCode: String
+  country: String
+  joiningDate: String
+  contact: String
+  isPublic: Boolean
+  userName: String
+  userEmailAddress: String
+  userRole: String
+  isNewUser: Boolean
+  userDreamJob: String
+  userIndustry: String
+}
+
+type Query {
+  getUserProfile(emailAddress: AWSEmail!): Profile!
+  getUserProfileByUsername(userName: String!): Profile!
+  getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!
+  getUserEducations(emailAddress: AWSEmail!): Educations!
+  getUserInterviewList(emailAddress: AWSEmail!): InterviewList!
+  getUserInterviewsPaginated(emailAddress: AWSEmail!, limit: Int, nextToken: String): PaginatedInterviewList!
+  getUserInterviewsByMonth(emailAddress: AWSEmail!): InterviewList!
+  getUserInterviewMetaData(
+    emailAddress: AWSEmail!
+    interviewID: String!
+    interviewQuestionID: String!
+    interviewQuestionType: String!
+  ): Interview!
+  searchUserInterviews(emailAddress: AWSEmail!, keyword: String!): InterviewList!
+  searchUserInterviewsPaginated(emailAddress: AWSEmail!, keyword: String!): PaginatedInterviewList!
+  getUserInterviewUsageMetaData(emailAddress: AWSEmail!): UserInterviewUsageMetaData!
+  getQuestionUsageMetaData: QuestionUsageMetaData!
+  getQuestionMetaData(questionID: String!): Question!
+  getQuestionsPaginated(limit: Int, nextToken: String): PaginatedQuestionList!
+  searchQuestions(keyword: String!): QuestionList!
+  searchQuestionsPaginated(keyword: String!, limit: Int!, nextToken: String): PaginatedQuestionList!
+  getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
+  getUserResumeScans(emailAddress: AWSEmail!): ResumeScanList!
+  getUserEducationByID(emailAddress: AWSEmail!, eduID: String!): Education!
+  getUserWorkHistoryByID(emailAddress: AWSEmail!, workHistoryID: String!): WorkHistory!
+  getUserCurrentActiveSubscriptionAndProducts(emailAddress: AWSEmail!): UserSubscriptionProductsList!
+}
+
+type UserSubscription {
+  cancelAtPeriodEnd: Boolean
+  currentPeriodEnd: AWSDateTime
+  currentPeriodStart: AWSDateTime
+  GSI1SK: String
+  planPeriod: String
+  planPeriodAmount: String
+  planStatus: String
+  planType: String
+  stripeCustomerID: String
+  subscriptionID: String!
+}
+
+type UserSubscriptionProduct {
+  GSI1SK: String
+  productDetail: String
+  productID: String
+  productName: String!
+  productNumUsage: Int!
+  productTotalNumUsage: Int!
+  subscriptionID: String!
+}
+
+type UserSubscriptionProducts {
+  userSubscription: UserSubscription!
+  userSubscriptionProduct: [UserSubscriptionProduct]!
+}
+
+type UserSubscriptionProductsList {
+  userSubscriptionProductsArray: [UserSubscriptionProducts]!
+}
+
+type Question {
+  GSI1PK: String
+  interviewQuestion: String
+  interviewQuestionSampleAns: String
+  interviewQuestionType: String
+  interviewQuestionTitle: String
+  QuestionID: String
+  difficulty: String
+  estimatedSecond: Int
+}
+
+type QuestionList {
+  questionList: [Question]
+}
+
+type QuestionUsageMetaData {
+  totalNumOfQuestion: Int
+  questionTypes: [String]
+  questionTags: [QuestionTag]
+  recommendations: [String]
+}
+
+type QuestionTag {
+  tag: String
+  BQ: [Int]
+  TECH: [Int]
+}
+
+type ResumeScan {
+  displayName: String
+  jobName: String
+  resumeName: String
+  resumeResults: String
+  resumeUrl: String
+  resumeScanID: String!
+}
+
+type ResumeScanList {
+  resumeScanList: [ResumeScan]
+}
+
+type User {
+  userEmailAddress: AWSEmail!
+  userRole: String!
+  userName: String!
+  allowPublicInterview: Boolean!
+}
+
+type UserInterviewUsageMetaData {
+  userInterviewNumTotalCount: Int
+  userInterviewNumUniqueCount: Int
+  userInterviewQuestionMap: AWSJSON
+}
+
+type WorkHistories {
+  workHistory: [WorkHistory]
+}
+
+type WorkHistory {
+  workHistoryID: String
+  workHistoryJobTitle: String
+  workHistoryEmployer: String
+  workHistoryStartDate: AWSDate
+  workHistoryEndDate: AWSDate
+  workHistoryJobDescription: String
+  workHistoryIcon: String
+}

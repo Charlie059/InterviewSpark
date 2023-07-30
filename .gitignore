@@ -36,6 +36,12 @@ yarn-error.log*
 
 src/aws-exports.js
 
+# yarn lock
+yarn.lock
+
+#cypress
+cypress.env.json
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
@@ -57,7 +63,3 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
-
-
-#cypress
-cypress.env.json

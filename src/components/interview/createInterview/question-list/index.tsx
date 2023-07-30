@@ -6,7 +6,7 @@ import { Box, Card, IconButton } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import QuestionListHeader from '../question-list-table-header/index'
 import { InterviewQuestion } from '../interview-question-selection-result-list'
-import Log from 'src/middleware/loggerMiddleware'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface Props {
   setSelectedRows: (rows: InterviewQuestion[]) => void
@@ -156,7 +156,7 @@ const QuestionList = ({ setSelectedRows, setShowQuickViewQuestion }: Props) => {
           <IconButton
             color='primary'
             onClick={() => {
-              Log.info('View button clicked for interview ID:', params.row.interviewID)
+              Logger.info('View button clicked for interview ID:', params.row.interviewID)
               setShowQuickViewQuestion(true)
             }}
           >
@@ -228,7 +228,7 @@ const QuestionList = ({ setSelectedRows, setShowQuickViewQuestion }: Props) => {
       }
       setLoading(false)
     } catch (error) {
-      console.error('Error fetching interviews:', error)
+      Logger.error('Error fetching interviews:', error)
     }
   }
 
@@ -253,8 +253,6 @@ const QuestionList = ({ setSelectedRows, setShowQuickViewQuestion }: Props) => {
           return { ...question, id: question.QuestionID }
         })
 
-        console.log(questionList)
-
         // Add the next token to the list of tokens
         if (result.data.searchQuestionsPaginated.nextToken) {
           if (searchTokens.length === 0) {
@@ -267,7 +265,7 @@ const QuestionList = ({ setSelectedRows, setShowQuickViewQuestion }: Props) => {
       }
       setLoading(false)
     } catch (error) {
-      console.error('Error fetching interviews:', error)
+      Logger.error('Error fetching interviews:', error)
     }
   }
 
