@@ -1,13 +1,13 @@
 {
   "api": {
-    "hirebeatjobseeker": {
+    "interviewspark": {
       "dependsOn": [],
       "output": {
         "authConfig": {
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDate": "2024-04-15T21:56:20.079Z",
+              "apiKeyExpirationDate": "2024-07-29T07:40:03.801Z",
               "apiKeyExpirationDays": 365,
               "description": ""
             },
@@ -20,7 +20,7 @@
     }
   },
   "auth": {
-    "HireBeatJobSeeker": {
+    "interviewspark932d1669": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -29,10 +29,7 @@
           "SMS"
         ],
         "passwordProtectionSettings": {
-          "passwordPolicyCharacters": [
-            "REQUIRES_LOWERCASE",
-            "REQUIRES_NUMBERS"
-          ],
+          "passwordPolicyCharacters": [],
           "passwordPolicyMinLength": 8
         },
         "signupAttributes": [
@@ -51,33 +48,20 @@
     }
   },
   "function": {},
-  "parameters": {
-    "AMPLIFY_function_resumeScanAPINewAmp_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "resumeScanAPINewAmp"
-        }
-      ]
-    },
-    "AMPLIFY_function_resumeScanAPINewAmp_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "resumeScanAPINewAmp"
-        }
-      ]
-    }
-  },
   "predictions": {
-    "transcription5847e459": {
+    "interviewSparkPolly": {
+      "convertType": "speechGenerator",
+      "providerPlugin": "awscloudformation",
+      "service": "Polly"
+    },
+    "interviewSparkTranscribe": {
       "convertType": "transcription",
       "providerPlugin": "awscloudformation",
       "service": "Transcribe"
     }
   },
   "storage": {
-    "s382ae0ffc": {
+    "interviewsparks3": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"

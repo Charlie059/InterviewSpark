@@ -64,6 +64,7 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       }
     } catch (error) {
       Logger.error('Error creating subscription request', error)
+      console.error(error)
 
       return { isSuccessful: false }
     }

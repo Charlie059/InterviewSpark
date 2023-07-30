@@ -1,13 +1,14 @@
 {
-    "resourceName": "transcription5847e459",
-    "convertPolicyName": "transcriptionPolicy5847e459",
+    "resourceName": "interviewSparkPolly",
+    "convertPolicyName": "speechGeneratorPolicy341053a3",
     "authRoleName": {
         "Ref": "AuthRoleName"
     },
     "unauthRoleName": {
         "Ref": "UnauthRoleName"
     },
-    "convertType": "transcription",
+    "convertType": "speechGenerator",
     "language": "en-US",
+    "voice": "Ruth",
     "access": "auth"
 }

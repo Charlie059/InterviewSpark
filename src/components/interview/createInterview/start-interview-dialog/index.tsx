@@ -314,7 +314,7 @@ const StartInterviewDialog = (props: {
                               value={(currentUsage / totalUsage) * 100}
                             />
                           )}
-                          {planType === 'Prime' && (
+                          {planType === 'Premium' && (
                             <LinearProgress style={{ height: '100%' }} variant='determinate' value={0} />
                           )}
                           <Typography

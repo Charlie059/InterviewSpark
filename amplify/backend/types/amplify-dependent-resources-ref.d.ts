@@ -1,13 +1,13 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "hirebeatjobseeker": {
+    "interviewspark": {
       "GraphQLAPIEndpointOutput": "string",
       "GraphQLAPIIdOutput": "string",
       "GraphQLAPIKeyOutput": "string"
     }
   },
   "auth": {
-    "HireBeatJobSeeker": {
+    "interviewspark932d1669": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
       "IdentityPoolId": "string",
@@ -18,13 +18,18 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "predictions": {
-    "transcription5847e459": {
+    "interviewSparkPolly": {
+      "language": "string",
+      "region": "string",
+      "voice": "string"
+    },
+    "interviewSparkTranscribe": {
       "language": "string",
       "region": "string"
     }
   },
   "storage": {
-    "s382ae0ffc": {
+    "interviewsparks3": {
       "BucketName": "string",
       "Region": "string"
     }
