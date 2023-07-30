@@ -118,7 +118,17 @@ const VerticalNavHeader = (props: Props) => {
       ) : (
         <StyledLink href='/'>
           {navCollapsed && !navHover ? null : (
-            <img src='/images/pages/apple-touch-icon.png' alt='Logo' style={{ width: '55%', maxWidth: '400px' }} />
+            <img
+              src='https://interviewsparks324926-staging.s3.amazonaws.com/public/Logo400.png'
+              alt='Logo'
+              style={{
+                width: '92%',
+                maxWidth: '200px',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                transform: 'translateY(-4px) translateX(-5px)'
+              }}
+            />
           )}
         </StyledLink>
       )}

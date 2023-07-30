@@ -15,7 +15,12 @@ const Logo = () => {
   return (
     <Box display='flex'>
       <Box sx={{ marginLeft: 6, marginTop: 10 }}>
-        <img src='/images/HireBeat-Logo.png' alt='logo' width={160} onClick={handleClose} />
+        <img
+          src='https://interviewsparks324926-staging.s3.amazonaws.com/public/Logo.svg'
+          alt='logo'
+          width={160}
+          onClick={handleClose}
+        />
       </Box>
       <Box flex={1} />
       <Box sx={{ marginRight: 6, marginTop: 10 }}>

@@ -15,7 +15,17 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-        <img src='/images/pages/apple-touch-icon.png' alt='Logo' style={{ width: '45%', maxWidth: '400px' }} />
+        <img
+          src='https://interviewsparks324926-staging.s3.amazonaws.com/public/Logo.svg'
+          alt='Logo'
+          style={{
+            width: '200%',
+            maxWidth: '1000px',
+            height: '150px',
+            objectFit: 'cover',
+            objectPosition: 'center'
+          }}
+        />
       </Box>
       <CircularProgress disableShrink sx={{ mt: 6 }} />
     </Box>
