@@ -4,14 +4,31 @@ import { Typography, Button, Card, Space } from 'antd'
 import { CheckCircleTwoTone } from '@ant-design/icons'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import Confetti from 'react-confetti'
+import { useAuth } from 'src/hooks/useAuth'
 
 const { Title, Paragraph } = Typography
 
 function FinishedInterviewPage() {
   const router = useRouter()
   const [showConfetti, setShowConfetti] = useState(false)
+  const auth = useAuth()
+
+  function mixPanelTracker() {
+    auth.trackEvent('User_Interview_Functionality_Used', {
+      action: 'Finish_Interview',
+      desc: 'User finished a interview.'
+    })
+
+    // User tracking
+    auth.setMixpanelPeople({
+      action: 'Finish_Interview',
+      desc: 'User finished a interview.'
+    })
+  }
 
   const handleGoToHomePage = () => {
+    // Mixpanel track event
+    mixPanelTracker()
     router.push('/interview')
   }
 

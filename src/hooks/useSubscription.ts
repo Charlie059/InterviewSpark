@@ -41,6 +41,20 @@ export function useSubscription(userSubscription: UserSubscription | null) {
         if (result.data.createUserSubscriptionRequest.isSuccessful) {
           const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
 
+          // Log the event
+          auth.trackEvent('UserCreateNewSubscriptionRequest', {
+            action: 'User Clicked Plan Upgrade',
+            currentPlan: 'Free',
+            newPlan: 'Premium'
+          })
+
+          // Log the event user
+          auth.setMixpanelPeople({
+            action: 'User Clicked Plan Upgrade',
+            currentPlan: 'Free',
+            newPlan: 'Premium'
+          })
+
           return { infoJSON, isSuccessful: true }
         } else {
           throw new Error('Subscription request failed: ' + result.data.createUserSubscriptionRequest.error)
@@ -68,6 +82,20 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       )
 
       if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccessful) {
+        // Log the event
+        auth.trackEvent('UserCreateNewCancelSubscriptionRequest', {
+          action: 'User Clicked Plan Cancel',
+          currentPlan: 'Premium',
+          newPlan: 'Free'
+        })
+
+        // Log the event user
+        auth.setMixpanelPeople({
+          action: 'User Clicked Plan Cancel',
+          currentPlan: 'Premium',
+          newPlan: 'Free'
+        })
+
         return result.data.cancelUserSubscriptionRequest.isSuccessful
       }
     } catch (error) {
@@ -88,6 +116,20 @@ export function useSubscription(userSubscription: UserSubscription | null) {
           subscriptionId
         })
       )
+
+      // Log the event
+      auth.trackEvent('UserCreateNewResumeSubscriptionRequest', {
+        action: 'User Clicked Plan Resume',
+        currentPlan: 'Free',
+        newPlan: 'Premium'
+      })
+
+      // Log the event user
+      auth.setMixpanelPeople({
+        action: 'User Clicked Plan Resume',
+        currentPlan: 'Free',
+        newPlan: 'Premium'
+      })
 
       if ('data' in result && result.data.resumeUserSubscriptionRequest.isSuccessful) {
         return result.data.resumeUserSubscriptionRequest.isSuccessful

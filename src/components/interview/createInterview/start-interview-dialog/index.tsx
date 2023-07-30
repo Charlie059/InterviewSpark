@@ -29,8 +29,7 @@ import Logger from 'src/middleware/loggerMiddleware'
 import { useAuth } from 'src/hooks/useAuth'
 import { useFetchSubscription } from 'src/hooks/useFetchSubscription'
 import toast from 'react-hot-toast'
-import { API, graphqlOperation } from 'aws-amplify'
-import { createUserSubscriptionRequest } from 'src/graphql/mutations'
+import { useSubscription } from 'src/hooks/useSubscription'
 
 interface Info {
   questionNum: number
@@ -126,6 +125,9 @@ const StartInterviewDialog = (props: {
   const { userSubscriptionProductsList } = useFetchSubscription(auth.user?.userEmailAddress || null)
   const [isLoading, setIsLoading] = useState(false)
 
+  // Hooks
+  const { handleUserClickPlanUpgrade } = useSubscription(null)
+
   useEffect(() => {
     const fetchUsage = () => {
       try {
@@ -207,9 +209,6 @@ const StartInterviewDialog = (props: {
       // Log the event
       Logger.info('User clicked plan upgrade')
 
-      // TODO: Get Prime Plan ID from DB
-      const planID = 2
-
       // Check if we have user's email
       if (!auth.user?.userEmailAddress) {
         throw new Error('No user email found')
@@ -217,33 +216,16 @@ const StartInterviewDialog = (props: {
 
       Logger.debug('User email found', auth.user?.userEmailAddress)
 
-      const result = await API.graphql(
-        graphqlOperation(createUserSubscriptionRequest, {
-          userEmail: auth.user?.userEmailAddress,
-          planID: planID
-        })
-      )
+      const result = await handleUserClickPlanUpgrade()
+      setIsLoading(false)
+      if (result.isSuccessful) {
+        toast.success('Redirecting to Stripe payment page')
 
-      Logger.debug('Subscription request result', result)
-
-      // Check if 'data' exists in result
-      if ('data' in result!) {
-        if (result.data.createUserSubscriptionRequest.isSuccessful) {
-          toast.success('Redirecting to Stripe Checkout...', {
-            position: 'top-center',
-            duration: 5000
-          })
-          const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
-
-          // Redirect to Stripe Checkout
-          window.location.href = infoJSON.url
-
-          return { infoJSON, isSuccessful: true }
-        } else {
-          throw new Error('Subscription request failed: ' + result.data.createUserSubscriptionRequest.error)
-        }
+        // Redirect to the stripe payment page
+        window.location.href = result.infoJSON.url
       } else {
-        throw new Error('No data received in response')
+        toast.error('Error upgrading plan')
+        Logger.error('Error upgrading plan', result)
       }
     } catch (error) {
       Logger.error('Error in subscription request', error)
@@ -279,7 +261,7 @@ const StartInterviewDialog = (props: {
                 <CloseIcon />
               </IconButton>
             </Grid>
-            <Typography variant={'h4'} align='center'>
+            <Typography variant={'body1'} align='center' sx={{ fontSize: '35px', fontWeight: 600 }}>
               {`Start Interview: ${props.interviewTopic}`}
             </Typography>
             <Typography sx={{ fontSize: 18, mt: 2, color: 'black', fontWeight: 600 }} align='center'>

@@ -195,6 +195,22 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
 
   /* Define helper functions for the interview process */
 
+  // Define the mixPanel event tracker
+  function mixPanelTracker(data: object, action: string, desc: string) {
+    auth.trackEvent('User_Interview_Functionality_Used', {
+      action: action,
+      desc: desc,
+      ...data
+    })
+
+    // User tracking
+    auth.setMixpanelPeople({
+      action: action,
+      desc: desc,
+      ...data
+    })
+  }
+
   // Helper function to start transcribing and recording
   function startTranscribingAndRecording() {
     // If disableInterviewInteractiveFeedback is true, then we don't need to start transcribing
@@ -239,6 +255,18 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
         })
       )
 
+      // Mixpanel tracking
+      mixPanelTracker(
+        {
+          interviewInfo: interviews[interviewState.currentQuestionIndex],
+          interviewVideoLength: interviewVideoLength.current,
+          interviewVideoPath: filePath,
+          interviewVideoKey: uniqueFileName
+        },
+        'Interview Video Saved',
+        'User saved a interview video.'
+      )
+
       return Promise.resolve()
     } catch (error) {
       return Promise.reject(error)
@@ -253,11 +281,17 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
     end()
 
+    // Mixpanel tracking
+    mixPanelTracker(interviews[interviewState.currentQuestionIndex], 'Start Interview', 'User started a interview.')
+
     dispatch({ type: START_QUESTION })
   }
 
   // Define a function to start the review
   const startReview = async () => {
+    // Mixpanel tracking
+    mixPanelTracker(interviews[interviewState.currentQuestionIndex], 'Start Review', 'User started a interview review.')
+
     dispatch({ type: START_REVIEW })
   }
 
@@ -291,6 +325,14 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
 
     Logger.info('Interview Answer: ', interviewAnswer)
     generateResponse(interviewQuestion, interviewAnswer)
+
+    // Mixpanel tracking
+    mixPanelTracker(
+      { interviewInfo: interviews[interviewState.currentQuestionIndex], interviewAnswer: interviewAnswer },
+      'Finish Question',
+      'User finished a interview question and listened to the response.'
+    )
+
     dispatch({ type: FINISH_QUESTION })
   }
 
@@ -298,14 +340,19 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
   const retryQuestion = async () => {
     setReading(true)
 
-    // Check if the interview process has started
-    if (interviewState.status === InterviewStatus.Interviewing) {
-      stopTranscribingAndRecording() // Stop recording and capturing, then play the audio again
-    }
     start()
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
     end()
-    startTranscribingAndRecording()
+
+    // startTranscribingAndRecording()
+
+    // Mixpanel tracking
+    mixPanelTracker(
+      interviews[interviewState.currentQuestionIndex],
+      'Retry Question',
+      'User retried a interview question'
+    )
+
     dispatch({ type: RETRY_QUESTION })
   }
 

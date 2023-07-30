@@ -186,7 +186,10 @@ const Register = ({ onRegister }: Props) => {
       })
     } else {
       onRegister(email)
-      toast.success('Email sent! Please check your inbox or spam folder.')
+      toast.success('Email sent! Please check your inbox or spam folder', {
+        duration: 5000,
+        position: 'top-center'
+      })
     }
   }
 

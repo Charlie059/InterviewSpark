@@ -49,7 +49,7 @@ const steps = [
   },
   {
     title: 'Interview',
-    subtitle: 'Start a mock interview'
+    subtitle: 'Start a practice interview'
   }
 ]
 
@@ -144,19 +144,49 @@ const Tutorial = (tutorialProps: TutorialProps) => {
     }
   }
 
+  const mixPanelEventTracker = (step: number, info: object) => {
+    //Transfer the object to JSON
+    const infoJSON = JSON.stringify(info)
+
+    // Log the event
+    auth.trackEvent('UserClickTutorial', {
+      action: 'User Clicked Tutorial',
+      currentStep: step,
+      info: infoJSON
+    })
+
+    // Log the event user
+    auth.setMixpanelPeople({
+      action: 'User Clicked Tutorial',
+      currentStep: step,
+      info: infoJSON
+    })
+  }
+
   const getStepContent = (step: number) => {
     switch (step) {
       case 0:
         setStepContent(<UserOverview user={user} data={userData} type={UserProfileViewTypes.tutorial} />)
+
         break
       case 1:
         setStepContent(<TutorialEduCard setEduData={setEduData} />)
+
+        // Log the event
+        mixPanelEventTracker(step, userData)
         break
       case 2:
         setStepContent(<TutorialTopicCard setSelectedTopic={setSelectedTopic} />)
+
+        // Log the event
+        mixPanelEventTracker(step, eduData)
         break
       case 3:
         setStepContent(<CTAPage isTutorial={true} selectedTopic={selectedTopic} />)
+
+        // Log the event
+        mixPanelEventTracker(step, { selectedTopic: selectedTopic })
+
         break
       default:
         setStepContent(null)

@@ -170,7 +170,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     setSelectedTag(title)
     setStartDialogOpen(true)
     auth.trackEvent('User_Interview_Functionality_Used', {
-      action: 'Start_Mock_Interview_Dialog',
+      action: 'Start_Interview_Dialog',
       desc: 'User clicked on a title and previewed to start the interview.',
       title: title
     })
@@ -188,12 +188,6 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
       const res = result.data.verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage
       const isSuccessful = res.isSuccessful
       const info = res.info
-
-      auth.trackEvent('User_Interview_Functionality_Used', {
-        action: 'Start_Mock_Interview',
-        desc: 'User started a mock interview.',
-        ...info
-      })
 
       if (isSuccessful) {
         setDisableInterviewAnalysis(false)
@@ -240,11 +234,36 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
       if ('data' in result) {
         setInterviews(result.data.createUserInterviewQuestionList.interviewList)
         setInfo(info)
-
         setLoading(false)
+
+        // Event tracking
+        mixPanelTracker(isDisableInterviewAnalysis)
       }
     } catch (error) {
       Logger.error('Error in creating interview', error)
+    }
+
+    function mixPanelTracker(isDisableInterviewAnalysis: boolean) {
+      auth.trackEvent('User_Interview_Functionality_Used', {
+        action: 'Start_Interview',
+        desc: 'User started a interview.',
+        ...info,
+        isDisableInterviewAnalysis: isDisableInterviewAnalysis,
+        numOfBQ: numOfBQ,
+        numOfTech: numOfTech,
+        questionTag: info.interviewTopic
+      })
+
+      // User tracking
+      auth.setMixpanelPeople({
+        action: 'Start_Interview',
+        desc: 'User started a interview.',
+        ...info,
+        isDisableInterviewAnalysis: isDisableInterviewAnalysis,
+        numOfBQ: numOfBQ,
+        numOfTech: numOfTech,
+        questionTag: info.interviewTopic
+      })
     }
   }
 

@@ -29,7 +29,30 @@ const InterviewDetails = () => {
   const router = useRouter()
   const auth = useAuth()
 
+  // Define the mixPanel event tracker
+  function mixPanelTracker(data: object, action: string, desc: string) {
+    auth.trackEvent('User_Interview_Review_Functionality_Used', {
+      action: action,
+      desc: desc,
+      ...data
+    })
+
+    // User tracking
+    auth.setMixpanelPeople({
+      action: action,
+      desc: desc,
+      ...data
+    })
+  }
+
   const handleCardClick = (index: number) => {
+    // Mixpanel track event
+    mixPanelTracker(
+      cardData[index],
+      'Interview_Review_Card_Clicked',
+      'User clicked on a card in the interview review page.'
+    )
+
     setCurrentCard(cardData[index])
     setModalOpen(true)
   }
@@ -60,7 +83,7 @@ const InterviewDetails = () => {
           })
         )
         if ('data' in result) {
-          const videoKey = result.data.getUserInterviewMetaData.interviewVideoKey.replace('.webm', '.mp4')
+          const videoKey = result.data.getUserInterviewMetaData.interviewVideoKey
 
           // Get interview video URL from S3
           const videoUrl = await Storage.get(videoKey, {
@@ -68,6 +91,13 @@ const InterviewDetails = () => {
           })
 
           haveAnalysis = result.data.getUserInterviewMetaData.interviewAnalysis
+
+          // Setup mixpanel tracker
+          mixPanelTracker(
+            result.data.getUserInterviewMetaData,
+            'Interview_Review_Page_Loaded',
+            'User loaded the interview review page.'
+          )
 
           // Decode string by JSON.parse
           if (!haveAnalysis) {
@@ -200,6 +230,7 @@ const InterviewDetails = () => {
     if (interviewID) {
       fetchInterviewDetails()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth.user?.userEmailAddress, router.query.interview, showLoadingPage])
 
   return (

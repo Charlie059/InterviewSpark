@@ -125,9 +125,4 @@ const DiscussPage = () => {
   )
 }
 
-DiscussPage.acl = {
-  action: 'read',
-  subject: 'discuss-page'
-}
-
 export default DiscussPage
