@@ -44,12 +44,10 @@ const TableHeader = (props: TableHeaderProps) => {
         )}
       </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-        <Button
-          component={Link}
-          variant='contained'
-          href={buttonLink}
-        >
-          {buttonText} {/* Use buttonText prop */}
+        <Button component={'a'} variant='contained' href={buttonLink}>
+          <a>
+            {buttonText} {/* Use buttonText prop */}
+          </a>
         </Button>
       </Box>
     </Box>

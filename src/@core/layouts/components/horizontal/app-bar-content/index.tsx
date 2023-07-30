@@ -111,9 +111,11 @@ const AppBarContent = (props: Props) => {
               </linearGradient>
             </defs>
           </svg> */}
-          <Typography variant='h6' sx={{ ml: 2, fontWeight: 700, lineHeight: 1.2 }}>
-            {themeConfig.templateName}
-          </Typography>
+          <a>
+            <Typography variant='h6' sx={{ ml: 2, fontWeight: 700, lineHeight: 1.2 }}>
+              {themeConfig.templateName}
+            </Typography>
+          </a>
         </StyledLink>
       )}
       {userAppBarContent ? userAppBarContent(props) : null}

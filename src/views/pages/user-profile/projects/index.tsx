@@ -172,7 +172,7 @@ const Projects = ({ data }: { data: ProjectsTabType[] }) => {
                     </Box>
                     <Box
                       href='/'
-                      component={Link}
+                      component={'a'}
                       onClick={(e: SyntheticEvent) => e.preventDefault()}
                       sx={{
                         display: 'flex',

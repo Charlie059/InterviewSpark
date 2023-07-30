@@ -70,15 +70,19 @@ const CTAPage = (CTAPageProps: CTAPagePropsInterface) => {
                 mixPanelEventTracker({ selectedTopic: selectedTopic })
               }}
             >
-              <Button variant='contained' color='primary' size='large'>
-                Practice Now
-              </Button>
+              <a>
+                <Button variant='contained' color='primary' size='large'>
+                  Practice Now
+                </Button>
+              </a>
             </Link>
           ) : (
             <Link href='/interview/practice-interview' passHref>
-              <Button variant='contained' color='primary' size='large'>
-                Practice Now
-              </Button>
+              <a>
+                <Button variant='contained' color='primary' size='large'>
+                  Practice Now
+                </Button>
+              </a>
             </Link>
           )}
         </Grid>

@@ -69,8 +69,8 @@ const PublicProfileGuest = ({ user, data }: InferGetServerSidePropsType<typeof g
             <Typography variant='body2'>We couldn&prime;t find the resources are looking for.</Typography>
           </BoxWrapper>
           <Img alt='error-illustration' src='/images/pages/404.png' />
-          <Button href='/' component={Link} variant='contained' sx={{ px: 5.5 }}>
-            Back to Login
+          <Button href='/' variant='contained' sx={{ px: 5.5 }}>
+            <a>Back to Login</a>
           </Button>
         </Box>
         <FooterIllustrations image='/images/pages/misc-404-object.png' />

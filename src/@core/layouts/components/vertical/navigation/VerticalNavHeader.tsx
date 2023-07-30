@@ -117,9 +117,11 @@ const VerticalNavHeader = (props: Props) => {
         userNavMenuBranding(props)
       ) : (
         <StyledLink href='/'>
-          {navCollapsed && !navHover ? null : (
-            <img src='/images/pages/apple-touch-icon.png' alt='Logo' style={{ width: '55%', maxWidth: '400px' }} />
-          )}
+          <a>
+            {navCollapsed && !navHover ? null : (
+              <img src='/images/pages/apple-touch-icon.png' alt='Logo' style={{ width: '55%', maxWidth: '400px' }} />
+            )}
+          </a>
         </StyledLink>
       )}
 
