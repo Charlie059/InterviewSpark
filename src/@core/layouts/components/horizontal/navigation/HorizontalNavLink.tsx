@@ -85,7 +85,7 @@ const HorizontalNavLink = (props: Props) => {
     <CanViewNavLink navLink={item}>
       <Wrapper {...(!hasParent ? { component: 'div', sx: { py: settings.skin === 'bordered' ? 2.625 : 2.75 } } : {})}>
         <ListItem
-          component={Link}
+          component={'a'}
           disabled={item.disabled}
           {...(item.disabled && { tabIndex: -1 })}
           className={clsx({ active: isNavLinkActive() })}
@@ -119,32 +119,30 @@ const HorizontalNavLink = (props: Props) => {
                 })
           }}
         >
-          <a>
-            <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  ...(menuTextTruncate && { overflow: 'hidden' })
-                }}
-              >
-                <ListItemIcon sx={{ mr: hasParent ? 3 : 2.5, color: 'text.primary' }}>
-                  <UserIcon icon={icon} fontSize={icon === navSubItemIcon ? '0.5rem' : '1.5rem'} />
-                </ListItemIcon>
-                <Typography {...(menuTextTruncate && { noWrap: true })}>
-                  <Translations text={item.title} />
-                </Typography>
-              </Box>
-              {item.badgeContent ? (
-                <Chip
-                  size='small'
-                  label={item.badgeContent}
-                  color={item.badgeColor || 'primary'}
-                  sx={{ ml: 1.5, '& .MuiChip-label': { px: 2.5, lineHeight: 1.385, textTransform: 'capitalize' } }}
-                />
-              ) : null}
+          <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                ...(menuTextTruncate && { overflow: 'hidden' })
+              }}
+            >
+              <ListItemIcon sx={{ mr: hasParent ? 3 : 2.5, color: 'text.primary' }}>
+                <UserIcon icon={icon} fontSize={icon === navSubItemIcon ? '0.5rem' : '1.5rem'} />
+              </ListItemIcon>
+              <Typography {...(menuTextTruncate && { noWrap: true })}>
+                <Translations text={item.title} />
+              </Typography>
             </Box>
-          </a>
+            {item.badgeContent ? (
+              <Chip
+                size='small'
+                label={item.badgeContent}
+                color={item.badgeColor || 'primary'}
+                sx={{ ml: 1.5, '& .MuiChip-label': { px: 2.5, lineHeight: 1.385, textTransform: 'capitalize' } }}
+              />
+            ) : null}
+          </Box>
         </ListItem>
       </Wrapper>
     </CanViewNavLink>
