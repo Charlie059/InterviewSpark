@@ -77,7 +77,7 @@ export type WorkHistory = {
 
 export enum PlanType {
   Free = 'Free',
-  Prime = 'Prime'
+  Premium = 'Premium'
 }
 
 export enum PlanPeriod {

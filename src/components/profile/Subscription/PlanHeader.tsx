@@ -41,13 +41,13 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
   }
 
   const getPlanButton = (userSubscription: UserSubscription) => {
-    if (userSubscription.planType === PlanType.Prime && userSubscription.cancelAtPeriodEnd) {
+    if (userSubscription.planType === PlanType.Premium && userSubscription.cancelAtPeriodEnd) {
       return (
         <Button variant='contained' onClick={userConfirmResumeSubscriptionHandler} sx={{ mr: 6 }} disabled={isLoading}>
           {isLoading ? <CircularProgress size={24} /> : 'Resume'}
         </Button>
       )
-    } else if (userSubscription.planType === PlanType.Prime && !userSubscription.cancelAtPeriodEnd) {
+    } else if (userSubscription.planType === PlanType.Premium && !userSubscription.cancelAtPeriodEnd) {
       return (
         <Button
           variant='outlined'

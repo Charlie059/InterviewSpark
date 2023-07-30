@@ -77,7 +77,7 @@ export const UserUpgradeDialog = (userUpgradeDialog: UserUpgradeDialogInterface)
           id='user-view-plans'
           sx={{ textAlign: 'center', fontSize: '2rem !important', color: 'primary.main' }}
         >
-          Prime
+          Premium
         </DialogTitle>
         <DialogContent
           sx={{

@@ -17,7 +17,7 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       // Log the event
       Logger.info('User clicked plan upgrade')
 
-      // TODO: Get Prime Plan ID from DB
+      // TODO: Get Premium Plan ID from DB
       const planID = 2
 
       // Check if we have user's email
