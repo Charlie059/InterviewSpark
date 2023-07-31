@@ -24,9 +24,9 @@ class CustomDocument extends Document {
           <link
             rel='apple-touch-icon'
             sizes='180x180'
-            href='https://interviewsparks324926-staging.s3.amazonaws.com/public/spark.png'
+            href={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'spark.png'}
           />
-          <link rel='shortcut icon' href='https://interviewsparks324926-staging.s3.amazonaws.com/public/spark.png' />
+          <link rel='shortcut icon' href={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'spark.png'} />
         </Head>
         <body>
           <Main />

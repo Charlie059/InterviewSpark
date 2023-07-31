@@ -16,7 +16,7 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
     >
       <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
         <img
-          src='https://interviewsparks324926-staging.s3.amazonaws.com/public/Logo.svg'
+          src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'Logo.svg'}
           alt='Logo'
           style={{
             width: '200%',

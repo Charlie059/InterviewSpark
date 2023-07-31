@@ -32,7 +32,7 @@ const InterviewCard = (props: Props) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            fontSize: '17px'
+            fontSize: 'calc(0.7vw + 9px)'
           }}
         >
           {props.title}
