@@ -19,7 +19,6 @@ import {
 
 import TableHeader from '../../../table-header'
 import DeleteIcon from '@mui/icons-material/Delete'
-import VisibilityIcon from '@mui/icons-material/Visibility'
 import Log from 'src/middleware/loggerMiddleware'
 import { removeUserInterviewsByID } from 'src/graphql/mutations'
 import router from 'next/router'
