@@ -1,5 +1,6 @@
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState, useEffect } from 'react'
+import { toast } from 'react-hot-toast'
 
 type DeviceSelectorProps = {
   deviceType: 'videoinput' | 'audioinput' | 'audiooutput'
@@ -13,8 +14,23 @@ const DeviceSelector: React.FC<DeviceSelectorProps> = ({ deviceType, onChange, d
 
   useEffect(() => {
     const getDevices = async () => {
-      // Request access to devices
-      await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      try {
+        // Request access to devices
+        await navigator.mediaDevices.getUserMedia({ audio: true })
+      } catch (err) {
+        console.log(err)
+        toast.error('Please allow access to your microphone to use this feature and refresh the page.', {
+          duration: 10000
+        })
+      }
+
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true })
+      } catch (err) {
+        toast.success(
+          'You can proceed with the interview without using a camera. However, if you wish to use a camera during the interview, please grant access to your camera and refresh the page.'
+        )
+      }
 
       const mediaDevices = await navigator.mediaDevices.enumerateDevices()
 
