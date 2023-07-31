@@ -16,7 +16,7 @@ const Logo = () => {
     <Box display='flex'>
       <Box sx={{ marginLeft: 6, marginTop: 10 }}>
         <img
-          src='https://interviewsparks324926-staging.s3.amazonaws.com/public/Logo.svg'
+          src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'Logo.svg'}
           alt='logo'
           width={160}
           onClick={handleClose}

@@ -117,18 +117,46 @@ const VerticalNavHeader = (props: Props) => {
         userNavMenuBranding(props)
       ) : (
         <StyledLink href='/'>
-          {navCollapsed && !navHover ? null : (
-            <img
-              src='https://interviewsparks324926-staging.s3.amazonaws.com/public/Logo400.png'
-              alt='Logo'
+          {navCollapsed && !navHover ? (
+            <div
               style={{
-                width: '92%',
-                maxWidth: '200px',
-                objectFit: 'cover',
-                objectPosition: 'center',
-                transform: 'translateY(-4px) translateX(-5px)'
+                width: '105px',
+                height: '75px',
+                overflow: 'hidden'
               }}
-            />
+            >
+              <img
+                src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'spark.png'}
+                alt='Logo'
+                style={{
+                  width: '43%',
+                  height: '50%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  transform: 'translateY(15px) translateX(-4px)'
+                }}
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                width: '200px',
+                height: '75px',
+                overflow: 'hidden'
+              }}
+            >
+              <img
+                src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'Logo.svg'}
+                alt='Logo'
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'center',
+                  transform: 'translateY(5px) translateX(-5px)'
+                }}
+              />
+            </div>
           )}
         </StyledLink>
       )}
