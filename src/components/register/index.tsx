@@ -1,6 +1,5 @@
 // ** React Imports
 import React, { ReactNode, useState, Fragment, use, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 
 // ** Next Import
 import Link from 'next/link'
@@ -44,7 +43,6 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 import toast from 'react-hot-toast'
-import { useRouter } from 'next/router'
 import TermsDialog from 'src/components/register/termsDialog'
 import Logger from 'src/middleware/loggerMiddleware'
 
@@ -125,7 +123,6 @@ const Register = ({ onRegister, emailParam }: Props) => {
   const { register } = useAuth()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const router = useRouter()
 
   // ** Vars
   const { skin } = settings
