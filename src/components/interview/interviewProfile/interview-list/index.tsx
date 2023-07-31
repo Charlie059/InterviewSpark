@@ -82,7 +82,7 @@ const InterviewList = () => {
 
     let columnRatios: number[] = []
 
-    if (containerWidth < 500) {
+    if (containerWidth < 450) {
       columnRatios = [0, 6, 0, 0, 3]
     } else if (containerWidth < 800) {
       columnRatios = [0, 6, 3, 0, 3]
@@ -118,7 +118,7 @@ const InterviewList = () => {
       field: 'interviewDateTime',
       headerName: 'DateTime',
       width: qDateWidth,
-      hide: containerWidth < 400,
+      hide: containerWidth < 450,
       valueFormatter: (params: any) => {
         const date = new Date(params.value)
 
@@ -334,7 +334,7 @@ const InterviewList = () => {
           selectedRows={selectedRows}
           handleFilter={handleSort}
           onDelete={handleDelete}
-          buttonText={containerWidth < 500 ? 'New' : 'New Interview'}
+          buttonText={containerWidth < 450 ? 'New' : 'New Interview'}
           buttonLink={'/interview/practice-interview'}
           disableSearch={false}
         />
