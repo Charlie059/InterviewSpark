@@ -29,7 +29,11 @@ export default function RegisterPage() {
     setRegistered(true)
   }
 
-  return <div>{registered ? <VerifyCode username={username} /> : <Register onRegister={handleRegister} />}</div>
+  return (
+    <div>
+      {registered ? <VerifyCode username={username} /> : <Register emailParam={username} onRegister={handleRegister} />}
+    </div>
+  )
 }
 
 RegisterPage.guestGuard = true
