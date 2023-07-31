@@ -242,7 +242,7 @@ const Tutorial = (tutorialProps: TutorialProps) => {
       <Grid container>
         <Grid item xs={12} sm={12} md={12} lg={12}>
           <Box display='flex' justifyContent='center' position='relative'>
-            <Typography variant='h4' marginTop={'40px'}>
+            <Typography variant='h4' marginTop={'40px'} padding={'20px'} style={{ lineHeight: '1.5' }}>
               Welcome to the InterviewSpark
             </Typography>
             <IconButton
@@ -258,11 +258,11 @@ const Tutorial = (tutorialProps: TutorialProps) => {
           </Box>
         </Grid>
         <Grid item xs={12} sm={12} md={12} lg={12}>
-          <Box display='flex' justifyContent='center' position='relative'>
+          <Box display='flex' justifyContent='center' position='relative' paddingLeft={'20px'} paddingRight={'20px'}>
             <Typography variant='body1'>Your guide to acing the next big interview!</Typography>
           </Box>
         </Grid>
-        <Grid item xs={12} sm={12} md={4} lg={4}>
+        <Grid item xs={12} sm={12} md={5} lg={4}>
           <StepperHeaderContainer>
             <StepperWrapper sx={{ height: '100%', '& .MuiStepLabel-label': { cursor: 'pointer' } }}>
               <Stepper connector={<></>} activeStep={activeStep} orientation='vertical'>
@@ -286,7 +286,7 @@ const Tutorial = (tutorialProps: TutorialProps) => {
           </StepperHeaderContainer>
         </Grid>
 
-        <Grid item xs={12} sm={12} md={8} lg={8} ref={gridRef}>
+        <Grid item xs={12} sm={12} md={7} lg={8} ref={gridRef}>
           <Grid container spacing={3}>
             <form onSubmit={handleSubmit}>
               <Grid item xs={12}>
