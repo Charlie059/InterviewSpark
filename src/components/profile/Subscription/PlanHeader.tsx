@@ -85,7 +85,7 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
           sx={{ mr: 6 }}
           disabled={isLoading}
         >
-          Upgrade Plan
+          Upgrade
         </Button>
       )
     }
