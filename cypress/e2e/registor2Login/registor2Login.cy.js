@@ -554,8 +554,7 @@ describe('User Registration', () => {
     cy.wait(2000)
 
     // Make sure the confirmation page is displayed
-    cy.visit('http://localhost:3000/password-reset-validation');
-    cy.url().should('eq', 'http://localhost:3000/password-reset-validation/', { timeout: 100000 })
+    cy.url().should('include', '/password-reset-validation/', { timeout: 100000 })
 
     // Check the email for the verification code
     cy.mailosaurGetMessage(serverId, {
@@ -624,8 +623,7 @@ describe('User Registration', () => {
       cy.wait(2000)
 
       // Make sure the confirmation page is displayed
-      cy.visit('http://localhost:3000/password-reset-validation')
-      cy.url().should('eq', 'http://localhost:3000/password-reset-validation/', { timeout: 20000 })
+      cy.url().should('include', '/password-reset-validation/', { timeout: 100000 })
 
       // Check the email for the verification code
       cy.mailosaurGetMessage(serverId, {
@@ -696,8 +694,7 @@ describe('User Registration', () => {
       cy.wait(2000)
 
       // Change this to a URL your app navigates to after successful login
-      cy.visit('http://localhost:3000/password-reset-validation');
-      cy.url().should('eq', 'http://localhost:3000/password-reset-validation/', { timeout: 20000 })
+      cy.url().should('include', '/password-reset-validation/', { timeout: 100000 })
 
       // Find the email input by its type and type the email
       cy.get('form')
@@ -713,7 +710,7 @@ describe('User Registration', () => {
 
       cy.wait(2000)
 
-      // Make sure the confirmation page is displayed
+      // // Make sure the confirmation page is displayed
       cy.visit('http://localhost:3000/password-reset-validation');
       cy.url().should('eq', 'http://localhost:3000/password-reset-validation/', { timeout: 100000 })
 
