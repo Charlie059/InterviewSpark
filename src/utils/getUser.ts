@@ -2,6 +2,7 @@
 import { API, graphqlOperation } from 'aws-amplify'
 import { GetUserProfileQuery } from 'src/API'
 import { getUserProfile } from '../graphql/queries'
+import Logger from '../middleware/loggerMiddleware'
 
 export const getUserProfileData = async (emailAddress: string) => {
   try {
@@ -13,7 +14,7 @@ export const getUserProfileData = async (emailAddress: string) => {
 
     return userData
   } catch (error) {
-    console.error('Error fetching user data:', error)
+    Logger.error('Error fetching user data:', error)
 
     return null
   }

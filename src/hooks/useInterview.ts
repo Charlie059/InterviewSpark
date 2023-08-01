@@ -22,7 +22,7 @@ import { Interview } from 'src/types/types'
 
 // import { usePollyByQueue } from './usePollyByQueue'
 import useChatGPTStream from './useChatGPTStream'
-import { usePollyByQueueTest } from './usePollyTest'
+import { usePollyQueue } from './usePollyQueue'
 
 // Define states for the interview process
 enum InterviewStatus {
@@ -160,7 +160,7 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
   const [isReading, setReading] = useState(false)
 
   // Using the custom hooks
-  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyByQueueTest(
+  const { caption, audioRef, addToQueue, start, end, pollyError } = usePollyQueue(
     {},
     () => {
       setReading(false)
@@ -194,6 +194,22 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
   const interviewVideoLength = useRef(0) // Use ref to store the video length
 
   /* Define helper functions for the interview process */
+
+  // Define the mixPanel event tracker
+  function mixPanelTracker(data: object, action: string, desc: string) {
+    auth.trackEvent('User_Interview_Functionality_Used', {
+      action: action,
+      desc: desc,
+      ...data
+    })
+
+    // User tracking
+    auth.setMixpanelPeople({
+      action: action,
+      desc: desc,
+      ...data
+    })
+  }
 
   // Helper function to start transcribing and recording
   function startTranscribingAndRecording() {
@@ -239,6 +255,18 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
         })
       )
 
+      // Mixpanel tracking
+      mixPanelTracker(
+        {
+          interviewInfo: interviews[interviewState.currentQuestionIndex],
+          interviewVideoLength: interviewVideoLength.current,
+          interviewVideoPath: filePath,
+          interviewVideoKey: uniqueFileName
+        },
+        'Interview Video Saved',
+        'User saved a interview video.'
+      )
+
       return Promise.resolve()
     } catch (error) {
       return Promise.reject(error)
@@ -253,11 +281,17 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
     end()
 
+    // Mixpanel tracking
+    mixPanelTracker(interviews[interviewState.currentQuestionIndex], 'Start Interview', 'User started a interview.')
+
     dispatch({ type: START_QUESTION })
   }
 
   // Define a function to start the review
   const startReview = async () => {
+    // Mixpanel tracking
+    mixPanelTracker(interviews[interviewState.currentQuestionIndex], 'Start Review', 'User started a interview review.')
+
     dispatch({ type: START_REVIEW })
   }
 
@@ -291,6 +325,14 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
 
     Logger.info('Interview Answer: ', interviewAnswer)
     generateResponse(interviewQuestion, interviewAnswer)
+
+    // Mixpanel tracking
+    mixPanelTracker(
+      { interviewInfo: interviews[interviewState.currentQuestionIndex], interviewAnswer: interviewAnswer },
+      'Finish Question',
+      'User finished a interview question and listened to the response.'
+    )
+
     dispatch({ type: FINISH_QUESTION })
   }
 
@@ -298,14 +340,19 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
   const retryQuestion = async () => {
     setReading(true)
 
-    // Check if the interview process has started
-    if (interviewState.status === InterviewStatus.Interviewing) {
-      stopTranscribingAndRecording() // Stop recording and capturing, then play the audio again
-    }
     start()
     addToQueue(interviews[interviewState.currentQuestionIndex].interviewQuestion)
     end()
-    startTranscribingAndRecording()
+
+    // startTranscribingAndRecording()
+
+    // Mixpanel tracking
+    mixPanelTracker(
+      interviews[interviewState.currentQuestionIndex],
+      'Retry Question',
+      'User retried a interview question'
+    )
+
     dispatch({ type: RETRY_QUESTION })
   }
 
@@ -368,15 +415,6 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
 
     // No need to handle AWS-DynamoDB-Error here because it is handled in the saveVideo function
   }, [chatGPTStreamError, pollyError, s3Error, transcribeError, videoRecordingError])
-
-  // TODO Testing
-  useEffect(() => {
-    Logger.debug(transcribedText)
-  }, [transcribedText])
-
-  useEffect(() => {
-    console.log(interviewState)
-  }, [interviewState])
 
   // Return necessary states and functions for the component to use this hook
   return {

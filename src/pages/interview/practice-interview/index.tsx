@@ -6,8 +6,7 @@ import InterviewComponent from 'src/components/interview/InterviewComponents/Pra
 import { Interview } from 'src/types/types'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getQuestionUsageMetaData } from 'src/graphql/queries'
-
-// Define states for the interview process
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface Info {
   questionNum: number
@@ -29,16 +28,18 @@ function PracticeInterviewPage() {
   useEffect(() => {
     const fetchInterviewTags = async () => {
       const result = await API.graphql(graphqlOperation(getQuestionUsageMetaData, {}))
-      console.log(result)
       if ('data' in result) {
         const tags = result.data.getQuestionUsageMetaData.questionTags
         const allTagsFromDB = new Set<string>(tags.map((item: { tag: string }) => item.tag))
-        console.log(allTagsFromDB)
         setAllTags(allTagsFromDB)
       }
     }
 
-    fetchInterviewTags()
+    try {
+      fetchInterviewTags()
+    } catch (err) {
+      Logger.error('Error fetching interview tags', err)
+    }
   }, [])
 
   useEffect(() => {
@@ -49,11 +50,6 @@ function PracticeInterviewPage() {
       }
     }
   }, [router.query, allTags])
-
-  // Print the value of topicTag when it changes
-  useEffect(() => {
-    console.log(topicTag)
-  }, [topicTag])
 
   return (
     <>

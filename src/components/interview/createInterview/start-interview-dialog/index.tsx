@@ -4,21 +4,32 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
 // ** MUI Imports
-import { Box, IconButton, Button, Grid, Avatar, Select, MenuItem, LinearProgress, Typography } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Button,
+  Grid,
+  Avatar,
+  Select,
+  MenuItem,
+  LinearProgress,
+  Typography,
+  useTheme,
+  ButtonBase
+} from '@mui/material'
 import ArticleIcon from '@mui/icons-material/Article'
 import CameraAltIcon from '@mui/icons-material/CameraAlt'
 import MicIcon from '@mui/icons-material/Mic'
 import SpeakerIcon from '@mui/icons-material/Speaker'
 import StorageIcon from '@mui/icons-material/Storage'
-import { Link as MuiLink } from '@mui/material'
-import React, { ReactNode, useEffect, useState } from 'react'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
+import React, { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import DeviceSelector from 'src/components/interview/createInterview/device_selector/device_selector'
-import Link from 'next/link'
 import Logger from 'src/middleware/loggerMiddleware'
 import { useAuth } from 'src/hooks/useAuth'
 import { useFetchSubscription } from 'src/hooks/useFetchSubscription'
+import toast from 'react-hot-toast'
+import { useSubscription } from 'src/hooks/useSubscription'
 
 interface Info {
   questionNum: number
@@ -100,6 +111,7 @@ const StartInterviewDialog = (props: {
   setOpen: (v: boolean) => void
   startInterview: (info: Info) => void
 }) => {
+  const theme = useTheme()
   const questionNumChoice = [1, 2, 3, 4, 5, 6]
   const [questionNum, setQuestionNum] = useState<number>(3)
   const [currentStep, setCurrentStep] = useState(0)
@@ -111,6 +123,10 @@ const StartInterviewDialog = (props: {
   const [totalUsage, setTotalUsage] = useState(10)
   const auth = useAuth()
   const { userSubscriptionProductsList } = useFetchSubscription(auth.user?.userEmailAddress || null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Hooks
+  const { handleUserClickPlanUpgrade } = useSubscription(null)
 
   useEffect(() => {
     const fetchUsage = () => {
@@ -125,7 +141,7 @@ const StartInterviewDialog = (props: {
         setCurrentUsage(productNumUsage)
         setTotalUsage(productTotalNumUsage)
       } catch (err) {
-        Logger.error(err)
+        Logger.error('Error in fetching usage', err)
       }
     }
 
@@ -141,6 +157,28 @@ const StartInterviewDialog = (props: {
         audiooutput: audiooutput,
         interviewTopic: props.interviewTopic
       }
+
+      // If user is not guarantee microphone then don't start the interview
+      if (audioinput === '') {
+        toast.error(
+          'Please select a microphone to start the interview. If you cannot see your microphone, please refer to the FAQ section.',
+          {
+            position: 'top-center',
+            duration: 10000
+          }
+        )
+
+        return
+      } else if (audiooutput === '') {
+        toast.error(
+          'Please select a speaker to start the interview. If you cannot see your speaker, please refer to the FAQ section.',
+          {
+            position: 'top-center',
+            duration: 10000
+          }
+        )
+      }
+
       props.startInterview(Info)
       handleClose()
     } else {
@@ -163,10 +201,50 @@ const StartInterviewDialog = (props: {
     }, 300)
   }
 
+  const handleClickToSubscribe = async () => {
+    // Call GraphQL API to subscribe
+    try {
+      setIsLoading(true)
+
+      // Log the event
+      Logger.info('User clicked plan upgrade')
+
+      // Check if we have user's email
+      if (!auth.user?.userEmailAddress) {
+        throw new Error('No user email found')
+      }
+
+      Logger.debug('User email found', auth.user?.userEmailAddress)
+
+      const result = await handleUserClickPlanUpgrade()
+      setIsLoading(false)
+      if (result.isSuccessful) {
+        toast.success('Redirecting to Stripe payment page')
+
+        // Redirect to the stripe payment page
+        window.location.href = result.infoJSON.url
+      } else {
+        toast.error('Error upgrading plan')
+        Logger.error('Error upgrading plan', result)
+      }
+    } catch (error) {
+      Logger.error('Error in subscription request', error)
+      toast.error('Subscription request failed. Please try again later.', {
+        position: 'top-center',
+        duration: 5000
+      })
+
+      return { isSuccessful: false }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <Box>
       <Dialog
         open={props.open}
+        scroll='body'
         disableEscapeKeyDown
         maxWidth='md'
         fullWidth={true}
@@ -183,7 +261,7 @@ const StartInterviewDialog = (props: {
                 <CloseIcon />
               </IconButton>
             </Grid>
-            <Typography sx={{ fontSize: 36, mt: -2, fontWeight: 600, color: 'black' }} align='center'>
+            <Typography variant={'body1'} align='center' sx={{ fontSize: '35px', fontWeight: 600 }}>
               {`Start Interview: ${props.interviewTopic}`}
             </Typography>
             <Typography sx={{ fontSize: 18, mt: 2, color: 'black', fontWeight: 600 }} align='center'>
@@ -214,7 +292,6 @@ const StartInterviewDialog = (props: {
                         sx={{ width: '100%' }}
                         value={questionNum}
                         onChange={e => {
-                          console.log(e.target.value)
                           setQuestionNum(e.target.value as number)
                         }}
                       >
@@ -237,7 +314,7 @@ const StartInterviewDialog = (props: {
                               value={(currentUsage / totalUsage) * 100}
                             />
                           )}
-                          {planType === 'Prime' && (
+                          {planType === 'Premium' && (
                             <LinearProgress style={{ height: '100%' }} variant='determinate' value={0} />
                           )}
                           <Typography
@@ -252,30 +329,47 @@ const StartInterviewDialog = (props: {
                             }}
                             align='center'
                           >
-                            {planType === 'Free' ? `${currentUsage} / ${totalUsage}` : 'Infinity'}
+                            {planType === 'Free' ? `${currentUsage} / ${totalUsage}` : 'Infinite'}
                           </Typography>
                         </Grid>
                         <Grid item>
                           <Typography
+                            variant={'body2'}
                             sx={{
-                              fontSize: 11,
+                              fontSize: 14,
                               marginTop: '8px',
-                              color: '#343434',
-                              fontWeight: 300
+                              fontWeight: 500,
+                              color:
+                                planType === 'Free'
+                                  ? theme.palette.mode === 'light'
+                                    ? theme.palette.error.light
+                                    : theme.palette.error.dark
+                                  : theme.palette.mode === 'light'
+                                  ? theme.palette.info.light
+                                  : theme.palette.info.light
                             }}
                             align='center'
                           >
                             {planType === 'Free'
                               ? currentUsage / totalUsage !== 1
-                                ? 'Limited AI practices available for you.'
-                                : 'Free unlimited non-AI practices. '
-                              : 'Enjoy unlimited interviews and analysis.'}
+                                ? 'Limited AI practices available on Free Tier.'
+                                : 'AI feedback depleted! '
+                              : 'Enjoy unlimited interviews with AI feedback.'}
                             {planType === 'Free' && currentUsage / totalUsage === 1 && (
-                              <Link href='/upgrade' passHref>
-                                <MuiLink sx={{ color: '#3f51b5', textDecoration: 'underline' }}>
+                              <ButtonBase onClick={handleClickToSubscribe} disabled={isLoading}>
+                                <Typography
+                                  variant='body2'
+                                  sx={{
+                                    color: '#3f51b5',
+                                    textDecoration: 'underline',
+                                    cursor: 'pointer',
+                                    fontSize: 11,
+                                    fontWeight: 800
+                                  }}
+                                >
                                   Click here to upgrade.
-                                </MuiLink>
-                              </Link>
+                                </Typography>
+                              </ButtonBase>
                             )}
                           </Typography>
                         </Grid>
@@ -288,7 +382,6 @@ const StartInterviewDialog = (props: {
                         deviceType='videoinput'
                         onChange={id => {
                           setVideoinput(id)
-                          console.log(id)
                         }}
                         defaultDevice={videoinput}
                       />
@@ -344,7 +437,5 @@ const StartInterviewDialog = (props: {
     </Box>
   )
 }
-
-StartInterviewDialog.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
 export default StartInterviewDialog

@@ -35,6 +35,7 @@ const UserSubscription = () => {
   const auth = useAuth()
   const { userSubscriptionProductsList } = useFetchSubscription(auth.user?.userEmailAddress || null)
 
+  // TODO: use for loop
   return (
     <>
       <SubscriptionDialogs

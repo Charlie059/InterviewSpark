@@ -17,7 +17,7 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       // Log the event
       Logger.info('User clicked plan upgrade')
 
-      // TODO: Get Prime Plan ID from DB
+      // TODO: Get Premium Plan ID from DB
       const planID = 2
 
       // Check if we have user's email
@@ -41,6 +41,20 @@ export function useSubscription(userSubscription: UserSubscription | null) {
         if (result.data.createUserSubscriptionRequest.isSuccessful) {
           const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
 
+          // Log the event
+          auth.trackEvent('UserCreateNewSubscriptionRequest', {
+            action: 'User Clicked Plan Upgrade',
+            currentPlan: 'Free',
+            newPlan: 'Premium'
+          })
+
+          // Log the event user
+          auth.setMixpanelPeople({
+            action: 'User Clicked Plan Upgrade',
+            currentPlan: 'Free',
+            newPlan: 'Premium'
+          })
+
           return { infoJSON, isSuccessful: true }
         } else {
           throw new Error('Subscription request failed: ' + result.data.createUserSubscriptionRequest.error)
@@ -49,7 +63,8 @@ export function useSubscription(userSubscription: UserSubscription | null) {
         throw new Error('No data received in response')
       }
     } catch (error) {
-      Logger.error(error)
+      Logger.error('Error creating subscription request', error)
+      console.error(error)
 
       return { isSuccessful: false }
     }
@@ -68,12 +83,24 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       )
 
       if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccessful) {
-        console.log('Subscription cancellation is successful', result.data.cancelUserSubscriptionRequest.info)
+        // Log the event
+        auth.trackEvent('UserCreateNewCancelSubscriptionRequest', {
+          action: 'User Clicked Plan Cancel',
+          currentPlan: 'Premium',
+          newPlan: 'Free'
+        })
+
+        // Log the event user
+        auth.setMixpanelPeople({
+          action: 'User Clicked Plan Cancel',
+          currentPlan: 'Premium',
+          newPlan: 'Free'
+        })
 
         return result.data.cancelUserSubscriptionRequest.isSuccessful
       }
     } catch (error) {
-      console.error('Error cancelling subscription', error)
+      Logger.error('Error cancelling subscription', error)
 
       return false
     }
@@ -91,13 +118,25 @@ export function useSubscription(userSubscription: UserSubscription | null) {
         })
       )
 
-      if ('data' in result && result.data.resumeUserSubscriptionRequest.isSuccessful) {
-        console.log('Subscription resuming is successful', result.data)
+      // Log the event
+      auth.trackEvent('UserCreateNewResumeSubscriptionRequest', {
+        action: 'User Clicked Plan Resume',
+        currentPlan: 'Free',
+        newPlan: 'Premium'
+      })
 
+      // Log the event user
+      auth.setMixpanelPeople({
+        action: 'User Clicked Plan Resume',
+        currentPlan: 'Free',
+        newPlan: 'Premium'
+      })
+
+      if ('data' in result && result.data.resumeUserSubscriptionRequest.isSuccessful) {
         return result.data.resumeUserSubscriptionRequest.isSuccessful
       }
     } catch (error) {
-      console.error('Error resuming subscription', error)
+      Logger.error('Error resuming subscription', error)
 
       return false
     }

@@ -42,7 +42,11 @@ const ResumeScanPage = (props: ResumeScanPageProps) => {
       <Grid container spacing={6} className='match-height'>
         <PageHeader
           title={<Typography variant='h5'>Resume Parser</Typography>}
-          subtitle={<Typography variant='body1'>Try our AI Resume Parser and see if your resume would pass the first round of scrutiny!</Typography>}
+          subtitle={
+            <Typography variant='body1'>
+              Try our AI Resume Parser and see if your resume would pass the first round of scrutiny!
+            </Typography>
+          }
         />
         <Grid item xs={12}>
           <ResumeScan nocollapse={true} type={type} />
@@ -50,11 +54,6 @@ const ResumeScanPage = (props: ResumeScanPageProps) => {
       </Grid>
     </DropzoneWrapper>
   )
-}
-
-ResumeScanPage.acl = {
-  action: 'read',
-  subject: 'acl-page'
 }
 
 export default ResumeScanPage

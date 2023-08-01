@@ -66,7 +66,6 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
   useEffect(() => {
     const initialNumbers = Array.from({ length: Math.min(5, totalPages) }, (_, i) => i + 1)
     setDisplayNumbers(initialNumbers)
-    console.log('initialNumbers', initialNumbers)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -92,7 +91,6 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
   const handleDotIndicatorClick = (direction: string) => {
     if (!enableSelect) return
     if (direction === 'R' && displayNumbers[displayNumbers.length - 1] <= totalPages) {
-      console.log('Shift right')
       const shift = calculatePageShift()
       if (shift + displayNumbers[displayNumbers.length - 1] <= totalPages) {
         setDisplayNumbers(displayNumbers.map(number => Math.min(number + shift, totalPages)))
@@ -118,37 +116,37 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
         {/*  ...*/}
         {/*</DotIndicator>*/}
         {displayNumbers.map((number, i) => (
-          <Typography variant={"body1"} key={i}>
-          <PageNumber
-            key={i}
-            active={number === currentPage ? 1 : 0}
-            onClick={() => handleNumberClick(number)}
-            initial={{ scale: 1, opacity: 0.4 }}
-            animate={{
-              scale:
-                number === currentPage
-                  ? 1.8
-                  : displayNumbers.includes(currentPage)
-                  ? Math.abs(i - displayNumbers.indexOf(currentPage)) === 1
-                    ? 1.4
-                    : 1.1
-                  : 1,
-              opacity:
-                number === currentPage
-                  ? 1
-                  : displayNumbers.includes(currentPage)
-                  ? Math.abs(i - displayNumbers.indexOf(currentPage)) === 1
-                    ? 0.6
+          <Typography variant={'body1'} key={i}>
+            <PageNumber
+              key={i}
+              active={number === currentPage ? 1 : 0}
+              onClick={() => handleNumberClick(number)}
+              initial={{ scale: 1, opacity: 0.4 }}
+              animate={{
+                scale:
+                  number === currentPage
+                    ? 1.8
+                    : displayNumbers.includes(currentPage)
+                    ? Math.abs(i - displayNumbers.indexOf(currentPage)) === 1
+                      ? 1.4
+                      : 1.1
+                    : 1,
+                opacity:
+                  number === currentPage
+                    ? 1
+                    : displayNumbers.includes(currentPage)
+                    ? Math.abs(i - displayNumbers.indexOf(currentPage)) === 1
+                      ? 0.6
+                      : 0.4
                     : 0.4
-                  : 0.4
-            }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 2, duration: 2 }}
-            whileHover={{
-              scale: enableSelect ? (number === currentPage ? 1.9 : 1.5) : number === currentPage ? 1.9 : 1.5
-            }}
-          >
-            <div>{number}</div>
-          </PageNumber>
+              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30, mass: 2, duration: 2 }}
+              whileHover={{
+                scale: enableSelect ? (number === currentPage ? 1.9 : 1.5) : number === currentPage ? 1.9 : 1.5
+              }}
+            >
+              <div>{number}</div>
+            </PageNumber>
           </Typography>
         ))}
         {/*<DotIndicator*/}

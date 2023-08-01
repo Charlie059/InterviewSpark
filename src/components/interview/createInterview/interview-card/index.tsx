@@ -1,8 +1,6 @@
 // ** MUI Imports
 import { CSSObject, Typography } from '@mui/material'
 
-import { ReactNode } from 'react'
-import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 import { Card, CardActionArea } from '@mui/material'
 
@@ -15,13 +13,12 @@ interface Props {
 
 const InterviewCard = (props: Props) => {
   return (
-    <Card sx={props.sx ? props.sx : { width: '220px' }}>
+    <Card sx={props.sx ? props.sx : { width: '100%' , display:"flex"}}>
       <CardActionArea
         onClick={() => {
           props.onClick(props.title)
         }}
         style={{
-          backgroundColor: '#FFFFFF',
           height: '120px',
           position: 'relative'
         }}
@@ -35,8 +32,7 @@ const InterviewCard = (props: Props) => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            color: '#6E6E6E',
-            fontSize: '17px'
+            fontSize: 'calc(0.7vw + 9px)'
           }}
         >
           {props.title}
@@ -45,6 +41,5 @@ const InterviewCard = (props: Props) => {
     </Card>
   )
 }
-InterviewCard.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
 
 export default InterviewCard

@@ -9,6 +9,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewsByMonth } from 'src/graphql/queries'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface InterviewPromotionProps {
   height: number
@@ -94,7 +95,7 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
           setPercentageIncrease(percentageIncrease)
         }
       } catch (error) {
-        console.error(error)
+        Logger.error('Error', error)
       }
     }
 

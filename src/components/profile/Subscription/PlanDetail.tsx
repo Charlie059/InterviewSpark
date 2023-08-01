@@ -53,7 +53,7 @@ export const PlanDetail = (planDetailInterface: PlanDetailInterface) => {
                 </Typography>
               </Grid>
             </Grid>
-            {userSubscription.planType === PlanType.Prime && (
+            {userSubscription.planType === PlanType.Premium && (
               <>
                 <Grid container spacing={4} sx={{ mb: 2.7 }}>
                   <Grid item>
@@ -94,8 +94,8 @@ export const PlanDetail = (planDetailInterface: PlanDetailInterface) => {
         </Grid>
         <Divider sx={{ m: '1 !important' }} />
         <Typography sx={{ fontWeight: 500, fontSize: '0.875rem', mt: 4 }}>
-          {userSubscription.planType === PlanType.Prime
-            ? `Thanks for being a Prime member${
+          {userSubscription.planType === PlanType.Premium
+            ? `Thanks for being a Premium member${
                 userSubscription.cancelAtPeriodEnd ? '. You are always welcome to come back anytime' : ''
               }`
             : 'Thanks for being a member'}

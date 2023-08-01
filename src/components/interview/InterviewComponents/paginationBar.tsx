@@ -41,7 +41,6 @@ const PaginationBar: FC<PaginationProps> = memo(({ totalPages, currentPage, onPa
   const handleDotClick = (page: number) => {
     if (!enable) return
     setActiveDot(page)
-    console.log('page', page)
     onPageChange(page)
   }
 

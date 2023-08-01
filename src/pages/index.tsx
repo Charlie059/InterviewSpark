@@ -16,7 +16,7 @@ import { useAuth } from 'src/hooks/useAuth'
 export const getHomeRoute = (role: string) => {
   if (role === 'guest') return '/interview'
   else if (role === 'admin') return '/admin'
-  else return '/home'
+  else return '/interview'
 }
 
 const Home = () => {

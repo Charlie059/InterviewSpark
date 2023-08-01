@@ -36,7 +36,6 @@ const DynamicWaveLoading: React.FC<DynamicWaveProps> = ({ size, paused = false }
   useEffect(() => {
     const interval = setInterval(() => {
       setCountdown(oldCountdown => {
-        // console.log('oldCountdown', oldCountdown)
         if (oldCountdown <= 1) {
           clearInterval(interval)
 

@@ -59,7 +59,7 @@ export const UserUpgradeDialog = (userUpgradeDialog: UserUpgradeDialogInterface)
     const result = await handleUserClickPlanUpgrade()
     setIsLoading(false)
     if (result.isSuccessful) {
-      toast.success('Plan upgraded successfully')
+      toast.success('Redirecting to Stripe payment page')
 
       // Redirect to the stripe payment page
       window.location.href = result.infoJSON.url
@@ -77,7 +77,7 @@ export const UserUpgradeDialog = (userUpgradeDialog: UserUpgradeDialogInterface)
           id='user-view-plans'
           sx={{ textAlign: 'center', fontSize: '2rem !important', color: 'primary.main' }}
         >
-          Prime
+          Premium
         </DialogTitle>
         <DialogContent
           sx={{

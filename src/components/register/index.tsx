@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { ReactNode, useState, Fragment } from 'react'
+import React, { ReactNode, useState, Fragment, useEffect } from 'react'
 
 // ** Next Import
 import Link from 'next/link'
@@ -43,8 +43,8 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 import toast from 'react-hot-toast'
-import { useRouter } from 'next/router'
 import TermsDialog from 'src/components/register/termsDialog'
+import Logger from 'src/middleware/loggerMiddleware'
 
 interface FormData {
   email: string
@@ -108,20 +108,21 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 
 interface Props {
   onRegister: (username: string) => void
+  emailParam: string
 }
 
-const Register = ({ onRegister }: Props) => {
+const Register = ({ onRegister, emailParam }: Props) => {
   // ** States
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [open, setOpen] = React.useState(false)
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper')
+  const [defaultEmail, setEmail] = useState<string>(emailParam)
 
   // ** Hooks
   const theme = useTheme()
   const { register } = useAuth()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const router = useRouter()
 
   // ** Vars
   const { skin } = settings
@@ -135,7 +136,7 @@ const Register = ({ onRegister }: Props) => {
       .required('Password is required'),
     username: yup
       .string()
-      .matches(/^[^\s_]+$/, 'Username cannot contain spaces or underscores')
+      .matches(/^[a-zA-Z0-9]+$/, 'Username can only contain letters and numbers')
       .min(3, 'Username must be at least 3 characters long')
       .required('Username is required'),
     email: yup.string().email().required(),
@@ -145,7 +146,7 @@ const Register = ({ onRegister }: Props) => {
   })
 
   const defaultValues = {
-    email: '',
+    email: defaultEmail,
     username: '',
     password: '',
     terms: false,
@@ -169,16 +170,14 @@ const Register = ({ onRegister }: Props) => {
     const err = await new Promise<any>(resolve => {
       register({ email, username, password, fName, lName }, err => {
         if (err.name !== 'success') {
-          console.log(err)
+          Logger.error('error registering user', err)
           resolve(err)
         } else {
-          console.log('success')
           resolve(undefined)
         }
       })
     })
-    console.log(err) // Access the err value here
-    console.log(err?.name)
+
     if (err) {
       //general err handling
       setError('email', {
@@ -187,7 +186,10 @@ const Register = ({ onRegister }: Props) => {
       })
     } else {
       onRegister(email)
-      toast.success('registered')
+      toast.success('Email sent! Please check your inbox or spam folder', {
+        duration: 5000,
+        position: 'top-center'
+      })
     }
   }
 
@@ -212,15 +214,26 @@ const Register = ({ onRegister }: Props) => {
     }
   }, [open])
 
+  useEffect(() => {
+    // When the component mounts, set the "email" state with the value from the URL parameter
+    setEmail(emailParam)
+  }, [emailParam])
+  console.log(defaultEmail)
+
   return (
     <Box className='content-right'>
       {!hidden ? (
-        <Grid container sx={{alignItems: 'center'}}>
-          <Grid item xs={12} sx={{mt:30, ml: 20, textAlign: 'center'}}>
-            <TypographyStyled variant='h4' color='primary.main'> Accelerate Your Interview Success</TypographyStyled>
+        <Grid container sx={{ alignItems: 'center' }}>
+          <Grid item xs={12} sx={{ mt: 30, ml: 20, textAlign: 'center' }}>
+            <TypographyStyled variant='h4' color='primary.main'>
+              {' '}
+              Accelerate Your Interview Success
+            </TypographyStyled>
           </Grid>
           <Grid item xs={12}>
-            <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}
+            >
               <RegisterIllustrationWrapper>
                 <RegisterIllustration
                   alt='register-illustration'
@@ -265,12 +278,34 @@ const Register = ({ onRegister }: Props) => {
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
-                  name='username'
+                  name='email'
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
                       autoFocus
+                      value={value}
+                      label='Email'
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={Boolean(errors.email)}
+                      placeholder='user@email.com'
+                      data-testid='email-input'
+                      autoComplete='username'
+                    />
+                  )}
+                />
+                {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
+              </FormControl>
+              <input type='hidden' value='prayer' />{' '}
+              {/* DO NOT DELETE. FIXES AUTOFILL ON CHROME. IDK WHY IT WORKS IT JUST DOES. */}
+              <FormControl fullWidth sx={{ mb: 4 }}>
+                <Controller
+                  name='username'
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
                       value={value}
                       onBlur={onBlur}
                       label='Username'
@@ -278,32 +313,14 @@ const Register = ({ onRegister }: Props) => {
                       placeholder='johndoe'
                       error={Boolean(errors.username)}
                       data-testid='username-input'
+                      autoComplete='name'
                     />
                   )}
-                />
+                />{' '}
+                {/* DO NOT DELETE autoComplete. FIXES AUTOFILL ON CHROME. IDK WHY IT WORKS IT JUST DOES.*/}
                 {errors.username && (
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.username.message}</FormHelperText>
                 )}
-              </FormControl>
-              <FormControl fullWidth sx={{ mb: 4 }}>
-                <Controller
-                  name='email'
-                  control={control}
-                  rules={{ required: true }}
-                  render={({ field: { value, onChange, onBlur } }) => (
-                    <TextField
-                      value={value}
-                      label='Email'
-                      onBlur={onBlur}
-                      defaultValue={router.query?.email}
-                      onChange={onChange}
-                      error={Boolean(errors.email)}
-                      placeholder='user@email.com'
-                      data-testid='email-input'
-                    />
-                  )}
-                />
-                {errors.email && <FormHelperText sx={{ color: 'error.main' }}>{errors.email.message}</FormHelperText>}
               </FormControl>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
@@ -343,7 +360,6 @@ const Register = ({ onRegister }: Props) => {
                 />
                 {errors.lName && <FormHelperText sx={{ color: 'error.main' }}>{errors.lName.message}</FormHelperText>}
               </FormControl>
-
               <FormControl fullWidth>
                 <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
                   Password
@@ -380,7 +396,6 @@ const Register = ({ onRegister }: Props) => {
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.password.message}</FormHelperText>
                 )}
               </FormControl>
-
               <FormControl sx={{ my: 0 }} error={Boolean(errors.terms)}>
                 <Controller
                   name='terms'

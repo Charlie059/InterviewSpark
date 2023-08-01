@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 
-enum LogLevel {
+export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
   WARN = 2,
@@ -10,7 +10,11 @@ enum LogLevel {
 let logLevel = LogLevel.DEBUG
 
 export function setLogLevel(level: LogLevel): void {
-  logLevel = level
+  if (process.env.NODE_ENV === 'production') {
+    logLevel = LogLevel.ERROR
+  } else {
+    logLevel = level
+  }
 }
 
 function log(level: LogLevel, levelStr: string, color: (s: string) => string, ...messages: any[]): void {
@@ -40,15 +44,21 @@ export function error(...messages: any[]): void {
 }
 
 function getFunctionName(): string {
-  const error = new Error()
-  const stack = error.stack?.split('\n')
-  if (stack) {
-    const functionName = stack[3].trim().split(' ')[1]
-
-    return functionName ? functionName : ''
-  } else {
-    return ''
+  const originalPrepareStackTrace = Error.prepareStackTrace
+  Error.prepareStackTrace = function (_, stack) {
+    return stack
   }
+
+  const error = new Error()
+  Error.captureStackTrace(error, getFunctionName)
+
+  const stack: NodeJS.CallSite[] = error.stack as any
+
+  const functionName = stack[2].getFunctionName()
+
+  Error.prepareStackTrace = originalPrepareStackTrace
+
+  return functionName ? functionName : ''
 }
 
 export default {

@@ -10,6 +10,9 @@ import themeConfig from 'src/configs/themeConfig'
 // ** Types Import
 import { Skin, Mode, AppBar, Footer, ThemeColor, ContentWidth, VerticalNavToggle } from 'src/@core/layouts/types'
 
+// ** Logger
+import Logger from 'src/middleware/loggerMiddleware'
+
 export type Settings = {
   skin: Skin
   mode: Mode
@@ -91,7 +94,7 @@ const restoreSettings = (): Settings | null => {
       settings = initialSettings
     }
   } catch (err) {
-    console.error(err)
+    Logger.error(err)
   }
 
   return settings

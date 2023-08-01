@@ -2,6 +2,7 @@ import { API, graphqlOperation } from 'aws-amplify'
 import { useState, useEffect } from 'react'
 import { PlanPeriod, PlanType, UserSubscriptionProductsList } from 'src/context/types'
 import { getUserCurrentActiveSubscriptionAndProducts } from 'src/graphql/queries'
+import Logger from 'src/middleware/loggerMiddleware'
 
 // Init Subscription and Products List
 const initUserSubscriptionProductsList: UserSubscriptionProductsList = {
@@ -54,7 +55,7 @@ export const useFetchSubscription = (userEmailAddress: string | null | undefined
           setUserSubscriptionProductsList(response.data.getUserCurrentActiveSubscriptionAndProducts)
         }
       } catch (error) {
-        console.error('Error fetching data: ', error)
+        Logger.error('An error occurred while fetching data:', error)
         setError(error instanceof Error ? error : new Error('An unknown error occurred.'))
       }
     }

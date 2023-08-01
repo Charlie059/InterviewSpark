@@ -16,32 +16,11 @@ const navigation = (): VerticalNavItemsType => {
       icon: 'mdi:account-group-outline'
     },
     {
-      title: 'Learning',
-      path: '/learning',
-      action: 'read',
-      subject: 'learning-page',
-      icon: 'mdi:book-open-outline'
-    },
-    {
       title: 'Profile',
       path: '/user-profile/' + userName,
       action: 'read',
       subject: 'profile-page',
       icon: 'mdi:account-outline'
-    },
-    {
-      title: 'Resume',
-      path: '/resume/list/',
-      action: 'read',
-      subject: 'resume-page',
-      icon: 'mdi:book-open-outline'
-    },
-    {
-      title: 'MetaHire',
-      path: '/metaHire',
-      action: 'read',
-      subject: 'metahire-page',
-      icon: 'mdi:account-search-outline'
     }
   ]
 }

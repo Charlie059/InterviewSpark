@@ -57,8 +57,6 @@ export default function useVideoRecording(audioInput: string) {
 
       // Check if webcam is available
       if (!webcamRef.current || !webcamRef.current.stream) {
-        console.log('Webcam not available, falling back to audio')
-
         // Fall back to audio if webcam is not available
         const mediaStreamConstraints = {
           audio: {
@@ -79,11 +77,9 @@ export default function useVideoRecording(audioInput: string) {
           })
           .catch(err => {
             setVideoRecordingError({ type: 'Recording-Error', message: err.message })
-            Logger.error(err)
+            Logger.error('Error: ' + err)
           })
       } else {
-        console.log('webcamRef.current: ' + webcamRef.current)
-
         const mediaRecorder = new MediaRecorder(webcamRef.current.stream, {
           mimeType: VIDEO_MIME_TYPE
         })
@@ -95,7 +91,7 @@ export default function useVideoRecording(audioInput: string) {
       }
     } catch (err: any) {
       setVideoRecordingError({ type: 'Recording-Error', message: err.message })
-      Logger.error(err)
+      Logger.error('Error: ' + err)
     }
   }
 
@@ -103,7 +99,6 @@ export default function useVideoRecording(audioInput: string) {
   const handleDataAvailable = (e: BlobEvent) => {
     if (e.data.size > 0) {
       recordedChunksRef.current = [...recordedChunksRef.current, e.data]
-      console.log('e.data: ' + e.data)
     }
   }
 
@@ -117,8 +112,6 @@ export default function useVideoRecording(audioInput: string) {
       mediaRecorderRef.current.stop()
       setCapturing(false)
 
-      console.log('recordedChunks: ' + recordedChunksRef)
-
       // Check the mimeType of the MediaRecorder to determine whether to save as video or audio
       const blobType = mediaRecorderRef.current.mimeType.includes('audio') ? AUDIO_MIME_TYPE : VIDEO_MIME_TYPE
 
@@ -129,14 +122,12 @@ export default function useVideoRecording(audioInput: string) {
       // Calculate the length of the video or audio
       const endTime = new Date()
 
-      console.log('startTime: ' + startTimeRef.current!.getTime())
       const length = (endTime.getTime() - startTimeRef.current!.getTime()) / 1000
-      console.log('Recording length: ' + length + 's')
 
       return length
     } catch (err: any) {
       setVideoRecordingError({ type: 'Recording-Error', message: err.message })
-      Logger.error(err)
+      Logger.error('Error: ' + err)
     }
   }
 

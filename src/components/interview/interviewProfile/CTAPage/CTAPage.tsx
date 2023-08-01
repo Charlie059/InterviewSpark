@@ -1,14 +1,32 @@
 import React from 'react'
 import { Box, Grid, Button, Typography } from '@mui/material'
 import Link from 'next/link'
+import { useAuth } from 'src/hooks/useAuth'
 
 interface CTAPagePropsInterface {
-  isTutorial?: boolean;
-  selectedTopic?: string;
+  isTutorial?: boolean
+  selectedTopic?: string
 }
 
-const CTAPage = (CTAPageProps : CTAPagePropsInterface) => {
-  const {isTutorial, selectedTopic} = CTAPageProps
+const CTAPage = (CTAPageProps: CTAPagePropsInterface) => {
+  const { isTutorial, selectedTopic } = CTAPageProps
+  const auth = useAuth()
+  const mixPanelEventTracker = (info: object) => {
+    //Transfer the object to JSON
+    const infoJSON = JSON.stringify(info)
+
+    // Log the event
+    auth.trackEvent('UserClickTutorial', {
+      action: 'User Clicked CTA Button',
+      info: infoJSON
+    })
+
+    // Log the event user
+    auth.setMixpanelPeople({
+      action: 'User Clicked CTA Button',
+      info: infoJSON
+    })
+  }
 
   return (
     <Box
@@ -44,20 +62,25 @@ const CTAPage = (CTAPageProps : CTAPagePropsInterface) => {
 
         {/* Button */}
         <Grid item xs={12}>
-          {isTutorial? (
-            <Link href={`/interview/practice-interview?topicTag=${selectedTopic}`} passHref>
+          {isTutorial ? (
+            <Link
+              href={`/interview/practice-interview?topicTag=${selectedTopic}`}
+              passHref
+              onClick={() => {
+                mixPanelEventTracker({ selectedTopic: selectedTopic })
+              }}
+            >
               <Button variant='contained' color='primary' size='large'>
                 Practice Now
               </Button>
-            </Link>) : (
+            </Link>
+          ) : (
             <Link href='/interview/practice-interview' passHref>
               <Button variant='contained' color='primary' size='large'>
                 Practice Now
               </Button>
             </Link>
-            )
-          }
-
+          )}
         </Grid>
       </Grid>
     </Box>

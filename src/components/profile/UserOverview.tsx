@@ -29,18 +29,36 @@ import Button from '@mui/material/Button'
 import { updateUserProfile } from '../../graphql/mutations'
 import { InferGetServerSidePropsType } from 'next/types'
 import { getServerSideProps } from '../../pages/user-profile/[user]'
-
-// interface UserOverview {
-
-// }
+import Logger from '../../middleware/loggerMiddleware'
 
 const UserOverview = ({ user, data, type }: { user: any; data: any; type?: string }) => {
+  // ** Industry List
+  const industryList = [
+    'Agriculture',
+    'Arts and Entertainment',
+    'Construction',
+    'Education',
+    'Finance and Insurance',
+    'Government',
+    'Healthcare',
+    'Hospitality and Food Services',
+    'Information and Technology',
+    'Manufacturing',
+    'Professional Services',
+    'Real Estate and Rental and Leasing',
+    'Retail Trade',
+    'Transportation and Warehousing',
+    'Wholesale Trade',
+    'Other'
+  ]
+
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
   const [profileData, setProfileData] = useState(data)
   const [educations, setEducations] = useState<Education[]>()
   const [workHistories, setWorkHistories] = useState<WorkHistory[]>()
   const [refresh, setRefresh] = useState(false)
+  const [industry] = useState(industryList)
 
   const auth = useAuth()
   const emailAddress = auth.user?.userEmailAddress
@@ -53,14 +71,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   const handleEditSubmit = async (formData: any) => {
     setOpenEdit(false)
-    console.log('formData', formData)
     setProfileData(formData)
     updateProfile(formData)
       .then(response => {
-        console.log(response)
+        Logger.info('Profile updated successfully', response)
       })
       .catch(e => {
-        console.log(e)
+        Logger.error('Error updating profile', e)
       })
   }
 
@@ -69,7 +86,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
   const { control, handleSubmit } = useForm({ defaultValues })
 
   const updateProfile = async (data: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-    console.log('updateProfile data', data)
     try {
       const input = {
         emailAddress: data.userEmailAddress,
@@ -85,7 +101,9 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
         postalCode: data.postalCode,
         resumeKey: data.resumeKey,
         state: data.state,
-        isPublic: data.isPublic
+        isPublic: data.isPublic,
+        userIndustry: data.userIndustry,
+        userDreamJob: data.userDreamJob
       }
 
       const result = await API.graphql(graphqlOperation(updateUserProfile, input))
@@ -99,7 +117,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
       return result
     } catch (error) {
-      console.log(error)
+      Logger.error('Error updating profile', error)
     }
   }
 
@@ -126,7 +144,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
         emailAddress
       })
     )
-    console.log('Result:', workHistoryResponse)
 
     //setEducations
     if ('data' in workHistoryResponse) {
@@ -146,7 +163,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12} sm={12} md={type === "tutorial" ? 12 : 5} lg={type === "tutorial" ? 12 : 5}>
+      <Grid item xs={12} sm={12} md={type === 'tutorial' ? 12 : 5} lg={type === 'tutorial' ? 12 : 5}>
         <Card>
           <CardContent>
             <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -173,7 +190,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   <Typography variant='body2'>{profileData.userEmailAddress}</Typography>
                 </Box>
               </Grid>
-
               <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Contact:</Typography>
@@ -191,6 +207,26 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Country:</Typography>
                   <Typography variant='body2'>{profileData.country}</Typography>
                 </Box>
+              </Grid>
+            </Grid>
+            <Grid sx={{ mt: 6 }}>
+              <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant='h6'>Career Goal</Typography>
+              </Box>
+              <Divider sx={{ mt: 4 }} />
+              <Grid container spacing={4}>
+                <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
+                  <Box sx={{ display: 'flex' }}>
+                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Dream Job: </Typography>
+                    <Typography variant='body2'>{profileData.userDreamJob}</Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
+                  <Box sx={{ display: 'flex' }}>
+                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>My Industry: </Typography>
+                    <Typography variant='body2'>{profileData.userIndustry}</Typography>
+                  </Box>
+                </Grid>
               </Grid>
             </Grid>
           </CardContent>
@@ -330,6 +366,48 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                       />
                     </FormControl>
                   </Grid>
+                </Grid>
+                <Grid container sx={{ mt: 1 }} spacing={6}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl>
+                      <Controller
+                        name='userDreamJob'
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <TextField
+                            fullWidth
+                            label='My Dream Job'
+                            defaultValue={profileData.userDreamJob}
+                            value={value}
+                            onChange={onChange}
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth>
+                      <InputLabel>Industry</InputLabel>
+                      <Controller
+                        name='userIndustry'
+                        control={control}
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            label='industry'
+                            defaultValue={profileData.userIndustry}
+                            onChange={onChange}
+                            value={value}
+                          >
+                            {industry.map(industry => (
+                              <MenuItem key={industry} value={industry}>
+                                {industry}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
                   <Grid item xs={12} sx={{ justifyContent: 'center' }}>
                     <DialogActions sx={{ justifyContent: 'center' }}>
                       <Button variant='contained' type='submit' sx={{ mr: 1 }}>
@@ -346,25 +424,35 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
           </Dialog>
         </Card>
       </Grid>
-      <Grid item xs={12} sm={12} md={7} lg={7}>
-        <Grid container spacing={6}>
-          <Grid item xs={12}>
-            {educations && type !== 'tutorial' && (
-              <EducationCard type='private' eduDatas={educations} setEduDatas={setEducations} refresh={handleRefresh} />
-            )}
-          </Grid>
-          <Grid item xs={12}>
-            {workHistories && type !== 'tutorial' && (
-              <WorkHistoryCard
-                type='private'
-                workDatas={workHistories}
-                setWorkDatas={setWorkHistories}
-                refresh={handleRefresh}
-              />
-            )}
+
+      {type !== 'tutorial' ? (
+        <Grid item xs={12} sm={12} md={7} lg={7}>
+          <Grid container spacing={6}>
+            <Grid item xs={12}>
+              {educations && type !== 'tutorial' && (
+                <EducationCard
+                  type='private'
+                  eduDatas={educations}
+                  setEduDatas={setEducations}
+                  refresh={handleRefresh}
+                />
+              )}
+            </Grid>
+            <Grid item xs={12}>
+              {workHistories && type !== 'tutorial' && (
+                <WorkHistoryCard
+                  type='private'
+                  workDatas={workHistories}
+                  setWorkDatas={setWorkHistories}
+                  refresh={handleRefresh}
+                />
+              )}
+            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      ) : (
+        <> </>
+      )}
     </Grid>
   )
 }

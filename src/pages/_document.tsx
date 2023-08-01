@@ -21,8 +21,12 @@ class CustomDocument extends Document {
             rel='stylesheet'
             href='https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600&family=Poppins:wght@100;200;300;400;500;600;700&display=swap'
           />
-          <link rel='apple-touch-icon' sizes='180x180' href='/images/apple-touch-icon.png' />
-          <link rel='shortcut icon' href='/images/favicon.png' />
+          <link
+            rel='apple-touch-icon'
+            sizes='180x180'
+            href={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'spark.png'}
+          />
+          <link rel='shortcut icon' href={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'spark.png'} />
         </Head>
         <body>
           <Main />

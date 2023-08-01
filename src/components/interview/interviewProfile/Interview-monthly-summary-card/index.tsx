@@ -106,7 +106,7 @@ const InterviewUsageSummaryThisMonth = () => {
           setInterviewTotalCount(interviewList.length)
         }
       } catch (error) {
-        Logger.error(error)
+        Logger.error('Interview monthly summary error: ', error)
       }
     }
 

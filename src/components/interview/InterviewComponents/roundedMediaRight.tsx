@@ -15,10 +15,8 @@ import { useSpring, animated } from 'react-spring' // 引入react-spring
 import SkipNextSharpIcon from '@mui/icons-material/SkipNextSharp'
 import CaptionIconButton from './captionButton'
 import DynamicWave from './DynamicWave'
-import {
-  Card
-} from '@mui/material'
-import Typography from "@mui/material/Typography";
+import { Card } from '@mui/material'
+import Typography from '@mui/material/Typography'
 
 enum InterviewStatus {
   Interviewing = 'INTERVIEWING',
@@ -199,7 +197,6 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
   const [showQuestion, setShowQuestion] = useState(false)
   const [openTranscript, setOpenTranscript] = useState(false)
 
-  // 添加动画状态
   const tapAnimation = useSpring({
     transform: showQuestion ? 'scale(1.2)' : 'scale(1)',
     config: { tension: 100, friction: 50 }
@@ -221,52 +218,66 @@ export const RoundedMediaRight: React.FC<RoundedMediaRightProps> = ({
   return (
     <Card onClick={() => status === InterviewStatus.NotStarted && !showQuestion && setShowQuestion(!showQuestion)}>
       <RoundedDiv>
-      <WaveContainer>
-        <DynamicWave paused={!isReading} />
-      </WaveContainer>
-      {status === InterviewStatus.NotStarted && (
-        <FrostedGlassEffect blurValue={blurValue} status={status} showQuestion={showQuestion}>
-          {!showQuestion && (
-            <CenteredTextContainer>
-              <UnselectableSpan style={tapAnimation}><Typography variant={"h4"}>Tap to preview question</Typography></UnselectableSpan>
-            </CenteredTextContainer>
-          )}
-          {showQuestion && (
-            <QuestionContainer onClick={() => setShowQuestion(!showQuestion)}>
-            <QuestionTagSpan> <Typography variant={"h4"}>Question</Typography></QuestionTagSpan>
-              <QuestionSpan><Typography variant={"h6"}>{questionText}</Typography></QuestionSpan>
-              <ActionButtonContainer>
-                <ActionButton
-                  style={skipAnimation}
-                  onClick={() => {
-                    skipQuestion()
-                  }}
-                >
-                  <SkipNextSharpIcon />
-                  <SkipButtonText><Typography variant={"body1"} color={"#ffffff"}> Skip this question</Typography> </SkipButtonText>
-                </ActionButton>
-              </ActionButtonContainer>
-            </QuestionContainer>
-          )}
-        </FrostedGlassEffect>
-      )}
-      {(status === InterviewStatus.Interviewing || status === InterviewStatus.FinishedQuestion) && (
-        <>
-          {openTranscript && (
-            <FrostedGlassEffect blurValue={blurValue} status={status} showQuestion={showQuestion}>
-              <CaptionSpan><Typography variant={"h6"}>{caption}</Typography></CaptionSpan>
-            </FrostedGlassEffect>
-          )}
-          <Layer>
-            <CaptionIconButton
-              onButtonClick={function (): void {
-                setOpenTranscript(!openTranscript)
-              }}
-            />
-          </Layer>
-        </>
-      )}
-      {(status === InterviewStatus.SavedQuestion || status === InterviewStatus.Reviewing) && <></>}
+        <WaveContainer>
+          <DynamicWave paused={!isReading} />
+        </WaveContainer>
+        {status === InterviewStatus.NotStarted && (
+          <FrostedGlassEffect blurValue={blurValue} status={status} showQuestion={showQuestion}>
+            {!showQuestion && (
+              <CenteredTextContainer>
+                <UnselectableSpan style={tapAnimation}>
+                  <Typography variant={'h4'}>Tap to preview question</Typography>
+                </UnselectableSpan>
+              </CenteredTextContainer>
+            )}
+            {showQuestion && (
+              <QuestionContainer onClick={() => setShowQuestion(!showQuestion)}>
+                <QuestionTagSpan>
+                  {' '}
+                  <Typography variant={'h4'}>Question</Typography>
+                </QuestionTagSpan>
+                <QuestionSpan>
+                  <Typography variant={'h6'}>{questionText}</Typography>
+                </QuestionSpan>
+                <ActionButtonContainer>
+                  <ActionButton
+                    style={skipAnimation}
+                    onClick={() => {
+                      skipQuestion()
+                    }}
+                  >
+                    <SkipNextSharpIcon />
+                    <SkipButtonText>
+                      <Typography variant={'body1'} color={'#ffffff'}>
+                        {' '}
+                        Skip this question
+                      </Typography>{' '}
+                    </SkipButtonText>
+                  </ActionButton>
+                </ActionButtonContainer>
+              </QuestionContainer>
+            )}
+          </FrostedGlassEffect>
+        )}
+        {(status === InterviewStatus.Interviewing || status === InterviewStatus.FinishedQuestion) && (
+          <>
+            {openTranscript && (
+              <FrostedGlassEffect blurValue={blurValue} status={status} showQuestion={showQuestion}>
+                <CaptionSpan>
+                  <Typography variant={'h6'}>{caption}</Typography>
+                </CaptionSpan>
+              </FrostedGlassEffect>
+            )}
+            <Layer>
+              <CaptionIconButton
+                onButtonClick={function (): void {
+                  setOpenTranscript(!openTranscript)
+                }}
+              />
+            </Layer>
+          </>
+        )}
+        {(status === InterviewStatus.SavedQuestion || status === InterviewStatus.Reviewing) && <></>}
       </RoundedDiv>
     </Card>
   )

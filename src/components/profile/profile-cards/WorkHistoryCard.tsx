@@ -24,14 +24,16 @@ import CustomInput from '../../date-picker/PickersCustomInput'
 import { useState } from 'react'
 
 // ** Types Import
-import {WorkHistory} from 'src/context/types'
+import { WorkHistory } from 'src/context/types'
 
 // ** Demo Components
 import WorkHistoryEntry from './WorkHistoryEntry'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { API, graphqlOperation } from 'aws-amplify'
-import {createUserWorkHistory, removeUserWorkHistoryByID, updateUserWorkHistory} from 'src/graphql/mutations'
-import {useAuth} from "../../../hooks/useAuth"
+import { createUserWorkHistory, removeUserWorkHistoryByID, updateUserWorkHistory } from 'src/graphql/mutations'
+import { useAuth } from '../../../hooks/useAuth'
+
+import Logger from 'src/middleware/loggerMiddleware'
 
 const WorkHistoryCard = ({
   workDatas,
@@ -41,19 +43,19 @@ const WorkHistoryCard = ({
 }: {
   workDatas: WorkHistory[]
   type: string
-  setWorkDatas?: React.Dispatch<React.SetStateAction<WorkHistory[]|undefined>>
+  setWorkDatas?: React.Dispatch<React.SetStateAction<WorkHistory[] | undefined>>
   refresh: () => void
 }) => {
   // States
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [workD, setWorkD] = useState<WorkHistory>()
-  const [isEmpty, setIsEmpty] = useState(workDatas.length==0);
+  const [isEmpty, setIsEmpty] = useState(workDatas.length == 0)
 
   const emptyWorkHistory: WorkHistory = {
-    workHistoryID: "",
-    workHistoryJobTitle: "",
-    workHistoryEmployer: "",
+    workHistoryID: '',
+    workHistoryJobTitle: '',
+    workHistoryEmployer: '',
     workHistoryStartDate: new Date(Date.now()),
     workHistoryEndDate: new Date(Date.now())
   }
@@ -73,15 +75,16 @@ const WorkHistoryCard = ({
   const handleEditOpen = (workData: WorkHistory) => {
     setOpenEdit(true)
     setWorkD(workData)
-    console.log('passing work data:', workData)
   }
 
-  const updateWorkHistoryProfile = async (workData : WorkHistory) => {
+  const updateWorkHistoryProfile = async (workData: WorkHistory) => {
     // Clone the workDatas array to avoid modifying the state directly
     const updatedWorkHistoryDatas = workDatas?.slice()
 
     // Find the index of the existing work history entry in workDatas
-    const existingWorkHistoryIndex = updatedWorkHistoryDatas.findIndex(workHistoryEntry => workHistoryEntry.workHistoryID === workData.workHistoryID)
+    const existingWorkHistoryIndex = updatedWorkHistoryDatas.findIndex(
+      workHistoryEntry => workHistoryEntry.workHistoryID === workData.workHistoryID
+    )
 
     if (existingWorkHistoryIndex !== -1) {
       // If an existing education entry is found, update it
@@ -92,7 +95,7 @@ const WorkHistoryCard = ({
         workPosition: workData.workHistoryJobTitle,
         workStartDate: workData.workHistoryStartDate.toISOString().split('T')[0],
         workEndDate: workData.workHistoryEndDate.toISOString().split('T')[0],
-        workDescription: workData.workHistoryJobDescription||'',
+        workDescription: workData.workHistoryJobDescription || '',
         workHistoryID: workData.workHistoryID
       }
       auth.trackEvent('User_Profile_Settings', {
@@ -109,7 +112,7 @@ const WorkHistoryCard = ({
         workPosition: workData.workHistoryJobTitle,
         workStartDate: workData.workHistoryStartDate.toISOString().split('T')[0],
         workEndDate: workData.workHistoryEndDate.toISOString().split('T')[0],
-        workDescription: workData.workHistoryJobDescription||''
+        workDescription: workData.workHistoryJobDescription || ''
       }
 
       try {
@@ -121,22 +124,20 @@ const WorkHistoryCard = ({
 
           workData.workHistoryID = createdWorkHistoryID
           updatedWorkHistoryDatas.push(workData)
-          console.log('updated edu data: ', updatedWorkHistoryDatas)
           auth.trackEvent('User_Profile_Settings', {
             action: 'Create_Work_History',
             ...workHistoryInput
           })
-        }else{
-          throw('no data found')
+        } else {
+          throw 'no data found'
         }
       } catch (err) {
-        console.error('Error creating work history entry:', err)
+        Logger.error('Error creating work history entry:', err)
       }
     }
 
     setWorkDatas?.(updatedWorkHistoryDatas)
     setIsEmpty(false)
-    console.log(updatedWorkHistoryDatas)
     refresh()
   }
 
@@ -148,7 +149,6 @@ const WorkHistoryCard = ({
       // If the education entry was found, remove it from the array
       if (index !== -1) {
         workDatas.splice(index, 1)
-        console.log(workDatas)
         setWorkDatas?.(workDatas)
 
         if (workDatas.length === 0) {
@@ -163,27 +163,24 @@ const WorkHistoryCard = ({
             query: removeUserWorkHistoryByID,
             variables: {
               emailAddress: auth.user?.userEmailAddress,
-              workHistoryID: ID,
-            },
-          });
+              workHistoryID: ID
+            }
+          })
 
           // Check the result of the mutation
           if ('data' in result) {
-            const {isSuccessful, error} = result.data.removeUserWorkHistoryByID;
+            const { isSuccessful, error } = result.data.removeUserWorkHistoryByID
             if (isSuccessful) {
-              console.log('Work History entry removed successfully from the database.');
             } else {
-              console.error('Failed to remove work history entry from the database:', error);
+              Logger.error('Failed to remove work history entry from the database:', error)
             }
           }
-
         } catch (error) {
-          console.error('An error occurred while executing the GraphQL mutation:', error);
-        }
+          Logger.error('An error occurred while executing the GraphQL mutation:', error)
         }
       }
     }
-
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target
@@ -192,21 +189,19 @@ const WorkHistoryCard = ({
     setWorkD(prevData => ({ ...prevData, [name]: value }))
   }
 
-  const handleEditSubmit = async (event:React.FormEvent<HTMLFormElement>) => {
+  const handleEditSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setOpenEdit(false)
-    console.log('bbb', workD)
     if (workD) {
       updateWorkHistoryProfile(workD)
         .then(response => {
-          console.log(response)
+          Logger.info('Successfully updated work history entry', response)
         })
         .catch(e => {
-          console.log(e)
+          Logger.error('Failed to update work history entry', e)
         })
     }
   }
-
 
   return (
     <Card>
@@ -215,7 +210,12 @@ const WorkHistoryCard = ({
           <Typography variant='h6'>Experience</Typography>
           {type != 'public' && (
             <Box>
-              <Fab aria-label='add' size='small' style={{ marginRight: !isEmpty?'10px':'0px'}} onClick={handleAddOpen}>
+              <Fab
+                aria-label='add'
+                size='small'
+                style={{ marginRight: !isEmpty ? '10px' : '0px' }}
+                onClick={handleAddOpen}
+              >
                 <Icon icon='mdi:plus' />
               </Fab>
               {!isEmpty && (
@@ -238,22 +238,20 @@ const WorkHistoryCard = ({
               />
             ))}
           </TableContainer>
-        ):(
-          <Grid container sx={{ml:2, mt:8, mb:5}} spacing={3}>
+        ) : (
+          <Grid container sx={{ ml: 2, mt: 8, mb: 5 }} spacing={3}>
             <Grid item xs={1.5}>
               <Icon fontSize='large' icon='majesticons:data-plus-line' />
             </Grid>
             <Grid item xs={10.5}>
-              <Typography variant='body1'>
-                No Experience Information Available
-              </Typography>
+              <Typography variant='body1'>No Experience Information Available</Typography>
             </Grid>
           </Grid>
         )}
 
         <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
           <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-            {!isEmpty ? ('Edit Work History'):('Add Work History')}
+            {!isEmpty ? 'Edit Work History' : 'Add Work History'}
           </DialogTitle>
           <DialogContent>
             <DialogContentText
@@ -262,89 +260,89 @@ const WorkHistoryCard = ({
               sx={{ textAlign: 'center', mb: 7 }}
             ></DialogContentText>
             <form onSubmit={handleEditSubmit}>
-            <Grid container spacing={6}>
-              <Grid item xs={12} sm={12}>
-                <Grid container spacing={3}>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      required
-                      name='workHistoryJobTitle'
-                      label='Job Title'
-                      value={workD?.workHistoryJobTitle}
-                      onChange={handleInputChange}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      required
-                      name='workHistoryEmployer'
-                      label='Employer'
-                      value={workD?.workHistoryEmployer}
-                      onChange={handleInputChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={3}
-                  name='workHistoryJobDescription'
-                  label='Description'
-                  value={workD?.workHistoryJobDescription}
-                  onChange={handleInputChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12}>
-                <DatePickerWrapper>
+              <Grid container spacing={6}>
+                <Grid item xs={12} sm={12}>
                   <Grid container spacing={3}>
                     <Grid item xs={6}>
-                      <DatePicker
-                        selected={new Date(workD?.workHistoryStartDate || Date.now())}
-                        id='month-picker'
-                        showMonthYearPicker
-                        dateFormat='MM/yyyy'
-                        popperPlacement='bottom-end'
-                        onChange={newDate => {
-                          if (workD) {
-                            setWorkD({...workD, ...(newDate && {workHistoryStartDate: newDate})})
-                          }
-                        }}
-                        customInput={<CustomInput label='Start Date' />}
+                      <TextField
+                        fullWidth
+                        required
+                        name='workHistoryJobTitle'
+                        label='Job Title'
+                        value={workD?.workHistoryJobTitle}
+                        onChange={handleInputChange}
                       />
                     </Grid>
                     <Grid item xs={6}>
-                      <DatePicker
-                        selected={new Date(workD?.workHistoryEndDate || Date.now())}
-                        id='month-picker'
-                        showMonthYearPicker
-                        dateFormat='MM/yyyy'
-                        popperPlacement='bottom-end'
-                        onChange={newDate => {
-                          if (workD) {
-                          setWorkD({ ...workD, ...(newDate && { workHistoryEndDate: newDate })})
-                          }
-                        }}
-                        customInput={<CustomInput label='End Date' />}
+                      <TextField
+                        fullWidth
+                        required
+                        name='workHistoryEmployer'
+                        label='Employer'
+                        value={workD?.workHistoryEmployer}
+                        onChange={handleInputChange}
                       />
                     </Grid>
                   </Grid>
-                </DatePickerWrapper>
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={3}
+                    name='workHistoryJobDescription'
+                    label='Description'
+                    value={workD?.workHistoryJobDescription}
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <DatePickerWrapper>
+                    <Grid container spacing={3}>
+                      <Grid item xs={6}>
+                        <DatePicker
+                          selected={new Date(workD?.workHistoryStartDate || Date.now())}
+                          id='month-picker'
+                          showMonthYearPicker
+                          dateFormat='MM/yyyy'
+                          popperPlacement='bottom-end'
+                          onChange={newDate => {
+                            if (workD) {
+                              setWorkD({ ...workD, ...(newDate && { workHistoryStartDate: newDate }) })
+                            }
+                          }}
+                          customInput={<CustomInput label='Start Date' />}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <DatePicker
+                          selected={new Date(workD?.workHistoryEndDate || Date.now())}
+                          id='month-picker'
+                          showMonthYearPicker
+                          dateFormat='MM/yyyy'
+                          popperPlacement='bottom-end'
+                          onChange={newDate => {
+                            if (workD) {
+                              setWorkD({ ...workD, ...(newDate && { workHistoryEndDate: newDate }) })
+                            }
+                          }}
+                          customInput={<CustomInput label='End Date' />}
+                        />
+                      </Grid>
+                    </Grid>
+                  </DatePickerWrapper>
+                </Grid>
+                <Grid item xs={12} sx={{ justifyContent: 'center' }}>
+                  <DialogActions sx={{ justifyContent: 'center' }}>
+                    <Button variant='contained' type='submit' sx={{ mr: 1 }}>
+                      Submit
+                    </Button>
+                    <Button variant='outlined' color='secondary' onClick={handleEditClose}>
+                      Discard
+                    </Button>
+                  </DialogActions>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sx={{ justifyContent: 'center' }}>
-                <DialogActions sx={{ justifyContent: 'center' }}>
-                  <Button variant='contained' type='submit' sx={{ mr: 1 }}>
-                    Submit
-                  </Button>
-                  <Button variant='outlined' color='secondary' onClick={handleEditClose}>
-                    Discard
-                  </Button>
-                </DialogActions>
-              </Grid>
-            </Grid>
             </form>
           </DialogContent>
         </Dialog>

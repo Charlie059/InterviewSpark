@@ -73,6 +73,9 @@ import 'src/iconify-bundle/icons-bundle-react'
 // ** Global css styles
 import '../../styles/globals.css'
 
+// ** Set log level
+import { setLogLevel, LogLevel } from 'src/middleware/loggerMiddleware'
+
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
   Component: NextPage
@@ -128,12 +131,14 @@ const App = (props: ExtendedAppProps) => {
 
   const aclAbilities = Component.acl ?? defaultACLObj
 
+  setLogLevel(LogLevel.ERROR)
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>{`HireBeat`}</title>
-        <meta name='description' content={`${themeConfig.templateName} – HireBeat.Interview`} />
-        <meta name='keywords' content='HireBeat.Interview' />
+        <title>{`InterviewSpark`}</title>
+        <meta name='description' content={`${themeConfig.templateName} – InterviewSpark.Interview`} />
+        <meta name='keywords' content='InterviewSpark.Interview' />
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
 

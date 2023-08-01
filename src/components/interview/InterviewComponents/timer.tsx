@@ -14,7 +14,7 @@ import styled, { keyframes } from 'styled-components'
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp'
 import ControlPointSharpIcon from '@mui/icons-material/ControlPointSharp'
 
-import Typography from "@mui/material/Typography";
+import Typography from '@mui/material/Typography'
 
 interface TimerProps {
   initialTime: number
@@ -196,7 +196,6 @@ const Timer = forwardRef((props: TimerProps, ref: any) => {
         return ans
       })
       setLastAction('subtract')
-      console.log(newCounter)
 
       return newCounter
     })
@@ -229,7 +228,6 @@ const Timer = forwardRef((props: TimerProps, ref: any) => {
         return ans
       })
       setLastAction('add')
-      console.log(newCounter)
 
       return newCounter
     })
@@ -266,7 +264,11 @@ const Timer = forwardRef((props: TimerProps, ref: any) => {
         </IconWrapper>
       )}
 
-      <TimerNumber><Typography variant={"h6"} color={"#FFFFFF"}>{formatTime(timeLeft)}</Typography></TimerNumber>
+      <TimerNumber>
+        <Typography variant={'h6'} color={'#FFFFFF'}>
+          {formatTime(timeLeft)}
+        </Typography>
+      </TimerNumber>
 
       {isMouseOver && props.status === InterviewStatus.NotStarted && (
         <IconWrapper>

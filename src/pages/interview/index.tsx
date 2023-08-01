@@ -8,8 +8,11 @@ import InterviewPromotion from 'src/components/interview/interviewProfile/interv
 import InterviewTotalSummaryCard from 'src/components/interview/interviewProfile/interview-total-summary-card/index'
 import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import { UserInterviewUsageMetaData } from 'src/context/types'
-import { getUserInterviewUsageMetaData } from 'src/graphql/queries'
+import { getUserInterviewUsageMetaData, getUserProfile } from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
+import Tutorial from 'src/components/tutorial/Tutorial'
+import { updateNewUserStatus } from 'src/graphql/mutations'
+import Logger from 'src/middleware/loggerMiddleware'
 
 const InterviewPage = () => {
   const auth = useAuth()
@@ -19,6 +22,7 @@ const InterviewPage = () => {
   const [userInterviewUsageMetaData, setUserInterviewUsageMetaData] = React.useState<UserInterviewUsageMetaData | null>(
     null
   )
+  const [tutorialDialogOpen, setTutorialDialogOpen] = React.useState(false)
 
   React.useEffect(() => {
     const fetchUserInterviewUsageMetaData = async () => {
@@ -27,13 +31,11 @@ const InterviewPage = () => {
           graphqlOperation(getUserInterviewUsageMetaData, { emailAddress: auth.user?.userEmailAddress })
         )
 
-        console.log(userInterviewUsageMetaData)
-
         if ('data' in userInterviewUsageMetaData) {
           setUserInterviewUsageMetaData(userInterviewUsageMetaData.data.getUserInterviewUsageMetaData)
         }
       } catch (error) {
-        console.error('Error fetching user interview usage meta data', error)
+        Logger.error('Error fetching user interview usage meta data', error)
       }
     }
 
@@ -67,8 +69,38 @@ const InterviewPage = () => {
     }
   }, [cardRef])
 
+  React.useEffect(() => {
+    const fetchUserProfile = async () => {
+      const data = await API.graphql(graphqlOperation(getUserProfile, { emailAddress: auth.user?.userEmailAddress }))
+      if ('data' in data) {
+        setTutorialDialogOpen(data.data.getUserProfile.isNewUser)
+      }
+    }
+
+    const resetResult = async () => {
+      const data = await API.graphql(
+        graphqlOperation(updateNewUserStatus, { userEmail: auth.user?.userEmailAddress, isNewUser: false })
+      )
+      if ('data' in data) {
+        if (!data.data.updateNewUserStatus.isSuccessful) {
+          Logger.error('Error resetting isNewUser to false in DB', data.data.updateNewUserStatus.error)
+        }
+      }
+    }
+
+    fetchUserProfile()
+
+    // Reset isNewUser to false in DB
+    resetResult()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div>
+      {tutorialDialogOpen && (
+        <Tutorial tutorialDialogOpen={tutorialDialogOpen} setTutorialDialogOpen={setTutorialDialogOpen} />
+      )}
       {!userInterviewUsageMetaData || userInterviewUsageMetaData.userInterviewNumTotalCount !== 0 ? (
         <>
           <UserProfileHeader data={userProfileData} />
