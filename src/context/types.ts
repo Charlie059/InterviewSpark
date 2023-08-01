@@ -36,6 +36,7 @@ export type UserDataType =
       userRole?: string | null
       userIndustry?: string | null
       userDreamJob?: string | null
+      isNewUser?: boolean | null
     }
   | null
   | undefined
