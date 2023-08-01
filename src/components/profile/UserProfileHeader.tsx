@@ -99,7 +99,10 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     setDialogType('cover')
   }
 
-  const handleProPicClose = () => setOpenProfilePicture(false)
+  const handleProPicClose = () => {
+    setOpenProfilePicture(false)
+    setFiles([])
+  }
   const handleProPicSubmit = async () => {
     if (!files[0]) {
       toast.error('no image selected')
@@ -125,6 +128,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
               setCoverPicUrl(newUrl)
             }
             setOpenProfilePicture(false)
+            setFiles([])
           })
         })
         .catch(error => {
@@ -307,8 +311,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         aria-labelledby='user-view-edit'
         sx={{
           '& .MuiPaper-root': {
-            width: '100%',
-            p: [2, 10]
+            width: '100%'
           }
         }}
         aria-describedby='user-view-edit-description'
@@ -316,13 +319,19 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleProPicClose}>
           <Close />
         </IconButton>
-        <DialogContent>
-          <DocumentUpload type='image' files={files} setFiles={setFiles} />
+        <DialogContent sx={{ justifyContent: 'center', overflow: 'hidden' }}>
+          <Grid sx={{ justifyContent: 'center', mt: '20px', ml: '45px', mb: '20px' }} container spacing={3}>
+            <Grid item xs={12}>
+              <DocumentUpload type='image' files={files} setFiles={setFiles} />
+            </Grid>
+          </Grid>
         </DialogContent>
         {files[0] && (
-          <Button size='large' variant='contained' onClick={handleProPicSubmit}>
-            Submit
-          </Button>
+          <DialogActions sx={{ justifyContent: 'center' }}>
+            <Button size='large' variant='contained' onClick={handleProPicSubmit}>
+              Submit
+            </Button>
+          </DialogActions>
         )}
       </Dialog>
       <Dialog open={share} onClose={handleShareClose} fullWidth={true}>
