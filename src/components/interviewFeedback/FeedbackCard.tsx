@@ -75,6 +75,7 @@ export default function InterviewFeedbackCard(props: Props) {
       setContainerWidth(containerRef.current.clientWidth)
     }
     console.log(containerWidth)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const shouldDisplayIcon = ['Volume', 'Lighting', 'Eye Contact', 'Smile', 'Calm'].includes(cardName)
