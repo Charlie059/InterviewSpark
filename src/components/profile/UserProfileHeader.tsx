@@ -168,7 +168,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   }
 
   return data !== null ? (
-    <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
+    <Card sx={showCover ? {} : { overflow: 'visible', bgcolor: 'transparent', boxShadow: 0 }}>
       {editable && (
         <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
           <Pencil />
@@ -186,6 +186,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
       )}
       <CardContent
         sx={{
+          overflow: 'visible',
           pt: 0,
           mt: showCover ? -10 : 6,
           marginLeft: showCover ? 0 : -5,
