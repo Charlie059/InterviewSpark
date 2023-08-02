@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
@@ -66,6 +66,16 @@ const calmHint =
 
 export default function InterviewFeedbackCard(props: Props) {
   const { cardName, cardText, cardValue, extraInfo, videoUrl, isDetailPage, handleClose } = props
+
+  const [containerWidth, setContainerWidth] = useState<number>(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerWidth(containerRef.current.clientWidth)
+    }
+    console.log(containerWidth)
+  }, [])
 
   const shouldDisplayIcon = ['Volume', 'Lighting', 'Eye Contact', 'Smile', 'Calm'].includes(cardName)
 
@@ -591,7 +601,7 @@ export default function InterviewFeedbackCard(props: Props) {
   }
 
   return (
-    <Card>
+    <Card sx={{ height: cardName == 'Video' ? '100%' : '100%' }}>
       <CardContent>
         <Typography variant='h5' color='text.secondary'>
           {cardName}
@@ -627,15 +637,15 @@ export default function InterviewFeedbackCard(props: Props) {
             )
           )}
           <Grid item xs={12} lg={videoUrl ? (isDetailPage ? 12 : 4) : 12}>
-            <div style={{ height: isDetailPage ? '' : videoUrl ? '300px' : '75px' }}>
-              {isDetailPage ? (
-                <Typography variant={'body1'}>
-                  {cardText}
-                  <br />
-                  <br />
-                  {getHintText()}
-                </Typography>
-              ) : (
+            {isDetailPage ? (
+              <Typography variant={'body1'}>
+                {cardText}
+                <br />
+                <br />
+                {getHintText()}
+              </Typography>
+            ) : (
+              <Box height={75}>
                 <Typography variant={videoUrl ? 'h6' : 'body1'}>
                   <ClampLines
                     buttons={false}
@@ -646,16 +656,20 @@ export default function InterviewFeedbackCard(props: Props) {
                     innerElement='p'
                   />
                 </Typography>
-              )}
-            </div>
-
-            <CardActions sx={{ justifyContent: 'center' }}>
-              {!isDetailPage && (
+              </Box>
+            )}
+            {videoUrl && (
+              <Box display={{ md: 'none', lg: 'block' }}>
+                <div style={{ height: isDetailPage ? '' : videoUrl ? '200px' : '75px' }}></div>
+              </Box>
+            )}
+            {!isDetailPage && (
+              <CardActions sx={{ justifyContent: 'center', mb: '-10px' }}>
                 <Button variant={'outlined'} onClick={props.onDetailClick}>
                   More
                 </Button>
-              )}
-            </CardActions>
+              </CardActions>
+            )}
           </Grid>
         </Grid>
       </CardContent>
