@@ -169,7 +169,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
             <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant='h6'>Details</Typography>
               <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
-                <Icon icon={'mdi:pencil'} />
+                <Icon icon={'mdi:pencil'} data-cy="pencil-icon"/>
               </Fab>
             </Box>
             <Divider sx={{ mt: 4 }} />
@@ -256,6 +256,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='fName'
                             fullWidth
                             label='First Name'
                             value={value}
@@ -273,6 +274,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='lName'
                             fullWidth
                             label='Last Name'
                             value={value}
@@ -290,6 +292,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='userName'
                             disabled
                             fullWidth
                             label='Username'
@@ -312,6 +315,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='contact'
                             fullWidth
                             label='Contact'
                             defaultValue={profileData.contact}
@@ -329,6 +333,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='city'
                             fullWidth
                             label='City'
                             defaultValue={profileData.city}
@@ -347,6 +352,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Select
+                            type='contact'
                             label='country'
                             defaultValue={profileData.country}
                             onChange={onChange}
@@ -375,6 +381,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='userDreamJob'
                             fullWidth
                             label='My Dream Job'
                             defaultValue={profileData.userDreamJob}
@@ -393,6 +400,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Select
+                            type='industry'
                             label='industry'
                             defaultValue={profileData.userIndustry}
                             onChange={onChange}
@@ -413,7 +421,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                       <Button variant='contained' type='submit' sx={{ mr: 1 }}>
                         Submit
                       </Button>
-                      <Button variant='outlined' color='secondary' onClick={handleEditClose}>
+                      <Button variant='outlined' type='reset' color='secondary' onClick={handleEditClose}>
                         Discard
                       </Button>
                     </DialogActions>

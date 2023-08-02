@@ -267,6 +267,7 @@ const Tutorial = (tutorialProps: TutorialProps) => {
               Welcome to the InterviewSpark
             </Typography>
             <IconButton
+              data-cy="close-icon"
               edge='end'
               color='inherit'
               onClick={() => {
