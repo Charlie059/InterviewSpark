@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, LinearProgress, Typography } from '@mui/material'
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ProductTotalNumUsage, UserSubscriptionProduct } from 'src/context/types'
 
 interface ProductDetailInterface {
