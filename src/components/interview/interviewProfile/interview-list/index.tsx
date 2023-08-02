@@ -19,7 +19,6 @@ import {
 
 import TableHeader from '../../../table-header'
 import DeleteIcon from '@mui/icons-material/Delete'
-import VisibilityIcon from '@mui/icons-material/Visibility'
 import Log from 'src/middleware/loggerMiddleware'
 import { removeUserInterviewsByID } from 'src/graphql/mutations'
 import router from 'next/router'
@@ -77,17 +76,17 @@ const InterviewList = () => {
   const getColumnWidths = () => {
     if (!containerWidth || isNaN(containerWidth)) {
       // Default column widths when containerWidth is not ready
-      return [70, 300, 95, 100, 85]
+      return [70, 300, 95, 60, 125]
     }
 
     let columnRatios: number[] = []
 
-    if (containerWidth < 400) {
+    if (containerWidth < 450) {
       columnRatios = [0, 6, 0, 0, 3]
     } else if (containerWidth < 800) {
       columnRatios = [0, 6, 3, 0, 3]
     } else {
-      columnRatios = [2, 6, 2.2, 2, 2]
+      columnRatios = [1, 7, 2.2, 1, 3]
     }
     const totalRatios = columnRatios.reduce((acc, ratio) => acc + ratio, 0)
     const columnWidths = columnRatios.map(ratio => Math.floor((containerWidth * ratio) / totalRatios))
@@ -118,7 +117,7 @@ const InterviewList = () => {
       field: 'interviewDateTime',
       headerName: 'DateTime',
       width: qDateWidth,
-      hide: containerWidth < 400,
+      hide: containerWidth < 450,
       valueFormatter: (params: any) => {
         const date = new Date(params.value)
 
@@ -161,7 +160,8 @@ const InterviewList = () => {
       disableColumnMenu: true,
       renderCell: (params: GridRenderCellParams) => (
         <>
-          <IconButton
+          <Button
+            variant='outlined'
             color='primary'
             onClick={() => {
               Log.info('View button clicked for interview ID:', params.row.interviewID)
@@ -179,8 +179,8 @@ const InterviewList = () => {
               })
             }}
           >
-            <VisibilityIcon color='disabled' />
-          </IconButton>
+            {containerWidth < 1050 ? 'View' : 'View Feedback'}
+          </Button>
           <IconButton
             color='secondary'
             onClick={() => {
@@ -227,6 +227,7 @@ const InterviewList = () => {
     try {
       const emailAddress = auth.user?.userEmailAddress
       const result = await API.graphql(graphqlOperation(getUserInterviewList, { emailAddress }))
+      console.log(result)
 
       if ('data' in result) {
         // Set the id field to the interviewList based on the interviewDateTime start from 1
@@ -332,7 +333,7 @@ const InterviewList = () => {
           selectedRows={selectedRows}
           handleFilter={handleSort}
           onDelete={handleDelete}
-          buttonText={'New Interview'}
+          buttonText={containerWidth < 450 ? 'New' : 'New Interview'}
           buttonLink={'/interview/practice-interview'}
           disableSearch={false}
         />
