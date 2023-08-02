@@ -25,7 +25,7 @@ describe('User Registration', () => {
     cy.wait(1500)
 
     // Make sure the confirmation page is displayed
-    cy.wait(10000)
+    cy.wait(6000)
     cy.get('[data-testid="confirmation-page"]').should('exist')
 
     // Check the email for the verification code
@@ -49,20 +49,20 @@ describe('User Registration', () => {
       })
 
       // Wait 5 seconds for the verification code to be submitted
-      cy.wait(5000)
+      cy.wait(10000)
 
       // Verify that the user is redirected to the login page
-      cy.url().should('include', '/login', { timeout: 400000})
+      cy.url().should('include', '/login', { timeout: 40000})
 
       // Enter the username and password on the login page
 
       cy.get('[data-testid="email-input"]').type(testEmail)
       cy.get('input[type="password"]').type(testPassword)
       cy.get('button[type="submit"]').click()
-      cy.wait(50000)
+      cy.wait(10000)
 
       // Verify that the user is redirected to the home
-      cy.url().should('include', '/interview', { timeout: 400000 })
+      cy.url().should('include', '/interview', { timeout: 40000 })
     })
   })
   //
@@ -634,7 +634,8 @@ describe('User Registration', () => {
           expect(email.subject).to.equal('Welcome to InterviewSpark! Verify your email address')
 
           // Get the verification code from the email
-          const verificationCode = email.html.body.match(/(\d{6})/)[1]
+          // const verificationCode = email.html.body.match(/(\d{6})/)[1]
+          const verificationCode = email.html.body.match(/<span class="code">(\d{6})<\/span>/)[1]
           cy.log(`Verification code: ${verificationCode}`)
 
       })
@@ -653,7 +654,8 @@ describe('User Registration', () => {
           expect(email.subject).to.equal('Welcome to InterviewSpark! Verify your email address')
 
           // Get the verification code from the email
-          const verificationCode = email.html.body.match(/(\d{6})/)[1]
+          // const verificationCode = email.html.body.match(/(\d{6})/)[1]
+          const verificationCode = email.html.body.match(/<span class="code">(\d{6})<\/span>/)[1]
           cy.log(`Verification code: ${verificationCode}`)
 
           // Input the verification code on the confirmation page
@@ -691,10 +693,10 @@ describe('User Registration', () => {
       // cy.get('input[type="password"]').type(password)
       cy.get('form').contains('Forgot Password?').click();
 
-      cy.wait(2000)
+      cy.wait(5000)
 
       // Change this to a URL your app navigates to after successful login
-      cy.url().should('include', '/password-reset-validation/', { timeout: 100000 })
+      cy.url().should('include', '/forgot-password', { timeout: 100000 })
 
       // Find the email input by its type and type the email
       cy.get('form')
@@ -711,8 +713,7 @@ describe('User Registration', () => {
       cy.wait(2000)
 
       // // Make sure the confirmation page is displayed
-      cy.visit('http://localhost:3000/password-reset-validation');
-      cy.url().should('eq', 'http://localhost:3000/password-reset-validation/', { timeout: 100000 })
+      cy.url().should('include', '/password-reset-validation', { timeout: 100000 })
 
       // Check the email for the verification code
       cy.mailosaurGetMessage(serverId, {
@@ -723,7 +724,8 @@ describe('User Registration', () => {
           expect(email.subject).to.equal('Welcome to InterviewSpark! Verify your email address')
 
           // Get the verification code from the email
-          const verificationCode = email.html.body.match(/(\d{6})/)[1]
+          // const verificationCode = email.html.body.match(/(\d{6})/)[1]
+          const verificationCode = email.html.body.match(/<span class="code">(\d{6})<\/span>/)[1]
           cy.log(`Verification code: ${verificationCode}`)
 
           // Create the incorrect verification code by adding 1 to each digit
