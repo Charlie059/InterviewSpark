@@ -242,7 +242,9 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   >
                     <Icon icon='mdi:map-marker-outline' />
                     <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                      {data.city}, {data.country}
+                      {data.city}
+                      {data.city && data.country && ','}
+                      {data.country}
                     </Typography>
                   </Box>
                 )}
