@@ -103,7 +103,7 @@ const InterviewDetails = () => {
           if (!haveAnalysis) {
             // If isDisableInterviewAnalysis false, toasts the user that the analysis is not ready yet
             if (!result.data.getUserInterviewMetaData.isDisableInterviewAnalysis) {
-              toast.error(
+              toast.loading(
                 'Analysis is not ready yet. Please try again later. It may take up to 30 minutes to process the video.',
                 {
                   duration: 10000,
