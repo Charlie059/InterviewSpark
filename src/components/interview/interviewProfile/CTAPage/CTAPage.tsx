@@ -42,7 +42,11 @@ const CTAPage = (CTAPageProps: CTAPagePropsInterface) => {
       <Grid container spacing={10}>
         {/* Image section */}
         <Grid item xs={12}>
-          <img src='/images/banners/interviewCTA.svg' alt='AI-powered Interview' style={{ maxWidth: '30%' }} />
+          <img
+            src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'interviewCTA.svg'}
+            alt='AI-powered Interview'
+            style={{ maxWidth: '30%' }}
+          />
         </Grid>
 
         {/* Text section */}
