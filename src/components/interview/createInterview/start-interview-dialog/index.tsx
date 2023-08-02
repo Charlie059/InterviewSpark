@@ -64,7 +64,7 @@ const SelectModule = (props: {
 
 const stepContent = [
   {
-    content: `Please select the number of interview questions for the practice interview and indicate whether you would like to generate questions based on resume.`,
+    content: `Please select the number of interview questions for the practice interview`,
     selectors: [
       {
         title: 'Choose Number of Questions',
