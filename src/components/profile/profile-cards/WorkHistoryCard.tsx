@@ -50,7 +50,7 @@ const WorkHistoryCard = ({
   const [edit, setEdit] = useState(false)
   const [openEdit, setOpenEdit] = useState(false)
   const [workD, setWorkD] = useState<WorkHistory>()
-  const [isEmpty, setIsEmpty] = useState(workDatas.length == 0)
+  const [isEmpty, setIsEmpty] = useState<boolean>(workD !== undefined)
 
   const emptyWorkHistory: WorkHistory = {
     workHistoryID: '',
@@ -251,7 +251,7 @@ const WorkHistoryCard = ({
 
         <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
           <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-            {!isEmpty ? 'Edit Work History' : 'Add Work History'}
+            {workD?.workHistoryJobTitle ? 'Edit Work History' : 'Add Work History'}
           </DialogTitle>
           <DialogContent>
             <DialogContentText

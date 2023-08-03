@@ -30,6 +30,8 @@ import { updateUserProfile } from '../../graphql/mutations'
 import { InferGetServerSidePropsType } from 'next/types'
 import { getServerSideProps } from '../../pages/user-profile/[user]'
 import Logger from '../../middleware/loggerMiddleware'
+import { Autocomplete } from '@mui/material'
+import { countries } from 'src/components/profile/countries'
 
 const UserOverview = ({ user, data, type }: { user: any; data: any; type?: string }) => {
   // ** Industry List
@@ -71,7 +73,9 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   const handleEditSubmit = async (formData: any) => {
     setOpenEdit(false)
+    formData.country = formData.country.label
     setProfileData(formData)
+
     updateProfile(formData)
       .then(response => {
         Logger.info('Profile updated successfully', response)
@@ -239,6 +243,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
           </CardContent>
 
           <Dialog
+            scroll='body'
             open={openEdit}
             onClose={handleEditClose}
             aria-labelledby='user-view-edit'
@@ -246,7 +251,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
             aria-describedby='user-view-edit-description'
           >
             <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-              Edit User Information
+              Edit Basic Information
             </DialogTitle>
             <DialogContent>
               <DialogContentText
@@ -257,7 +262,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
               <form onSubmit={handleSubmit(handleEditSubmit)}>
                 <Grid container spacing={6}>
                   <Grid item xs={12} sm={6}>
-                    <FormControl>
+                    <FormControl sx={{ display: 'flex', width: '100%' }}>
                       <Controller
                         name='fName'
                         control={control}
@@ -275,7 +280,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <FormControl>
+                    <FormControl sx={{ display: 'flex', width: '100%' }}>
                       <Controller
                         name='lName'
                         control={control}
@@ -293,7 +298,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <FormControl>
+                    <FormControl sx={{ display: 'flex', width: '100%' }}>
                       <Controller
                         name='userName'
                         control={control}
@@ -353,28 +358,44 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
-                      <InputLabel id='user-view-country-label'>Country</InputLabel>
                       <Controller
-                        name='country'
+                        name='country' // The name for the field, which will be used in the onSubmit callback
                         control={control}
+                        defaultValue={profileData.country} // Set the initial value to null or your default value
                         render={({ field: { value, onChange } }) => (
-                          <Select
-                            type='contact'
-                            label='country'
-                            defaultValue={profileData.country}
-                            onChange={onChange}
-                            id='user-view-country'
-                            labelId='user-view-country-label'
-                            value={value}
-                          >
-                            <MenuItem value='USA'>USA</MenuItem>
-                            <MenuItem value='UK'>UK</MenuItem>
-                            <MenuItem value='Spain'>Spain</MenuItem>
-                            <MenuItem value='Russia'>Russia</MenuItem>
-                            <MenuItem value='France'>France</MenuItem>
-                            <MenuItem value='Germany'>Germany</MenuItem>
-                            <MenuItem value='China'>China</MenuItem>
-                          </Select>
+                          <Autocomplete
+                            options={countries}
+                            autoHighlight
+                            getOptionLabel={option => option.label}
+                            value={value} // Important to bind the selected value to the Controller's value prop
+                            onChange={(event, newValue) => {
+                              onChange(newValue) // Updates the value in the Controller
+                            }}
+                            renderOption={(props, option) => (
+                              <Box component='li' sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                                <img
+                                  loading='lazy'
+                                  width='20'
+                                  src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                                  srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                                  alt=''
+                                />
+                                {option.label}
+                              </Box>
+                            )}
+                            renderInput={params => (
+                              <TextField
+                                {...params}
+                                label='Country & Region'
+                                defaultValue={profileData.country && 'United States'}
+                                inputProps={{
+                                  ...params.inputProps,
+                                  autoComplete: 'new-password' // disable autocomplete and autofill
+                                }}
+                              />
+                            )}
+                          />
+
                         )}
                       />
                     </FormControl>
@@ -382,7 +403,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                 </Grid>
                 <Grid container sx={{ mt: 1 }} spacing={6}>
                   <Grid item xs={12} sm={6}>
-                    <FormControl>
+                    <FormControl sx={{ display: 'flex', width: '100%' }}>
                       <Controller
                         name='userDreamJob'
                         control={control}
