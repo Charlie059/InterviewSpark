@@ -71,7 +71,12 @@ const TutorialTopicCard = (tutorialTopicProps: TutorialTopicPropsInterface) => {
         <form onSubmit={handleSubmit(handleEditSubmit)}>
           <Grid container spacing={6} sx={{ p: 5 }}>
             <Grid item xs={12} sm={12}>
-              <Select fullWidth defaultValue='' onChange={handleInputChange}>
+              <Select
+                data-cy='select-topic'
+                fullWidth
+                defaultValue=''
+                onChange={handleInputChange}
+              >
                 {topicsList.map(topic => (
                   <MenuItem key={topic.title} value={topic.title}>
                     {topic.title}

@@ -165,6 +165,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Get the user's name without '_' suffix
+  const filterUserName = (name: string) => {
+    const nameArray = name.split('_')
+
+    return nameArray[0]
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12} sm={12} md={type === 'tutorial' ? 12 : 5} lg={type === 'tutorial' ? 12 : 5}>
@@ -173,7 +180,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
             <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant='h6'>Details</Typography>
               <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
-                <Icon icon={'mdi:pencil'} />
+                <Icon icon={'mdi:pencil'} data-cy="pencil-icon"/>
               </Fab>
             </Box>
             <Divider sx={{ mt: 4 }} />
@@ -183,7 +190,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Username:
                   </Typography>
-                  <Typography variant='body2'>{user}</Typography>
+                  <Typography variant='body2'>{filterUserName(user)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
@@ -261,6 +268,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='fName'
                             fullWidth
                             label='First Name'
                             value={value}
@@ -278,6 +286,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='lName'
                             fullWidth
                             label='Last Name'
                             value={value}
@@ -295,6 +304,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='userName'
                             disabled
                             fullWidth
                             label='Username'
@@ -317,6 +327,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='contact'
                             fullWidth
                             label='Contact'
                             defaultValue={profileData.contact}
@@ -334,6 +345,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='city'
                             fullWidth
                             label='City'
                             defaultValue={profileData.city}
@@ -383,6 +395,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                               />
                             )}
                           />
+
                         )}
                       />
                     </FormControl>
@@ -396,6 +409,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <TextField
+                            type='userDreamJob'
                             fullWidth
                             label='My Dream Job'
                             defaultValue={profileData.userDreamJob}
@@ -414,6 +428,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                         control={control}
                         render={({ field: { value, onChange } }) => (
                           <Select
+                            type='industry'
                             label='industry'
                             defaultValue={profileData.userIndustry}
                             onChange={onChange}
@@ -434,7 +449,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                       <Button variant='contained' type='submit' sx={{ mr: 1 }}>
                         Submit
                       </Button>
-                      <Button variant='outlined' color='secondary' onClick={handleEditClose}>
+                      <Button variant='outlined' type='reset' color='secondary' onClick={handleEditClose}>
                         Discard
                       </Button>
                     </DialogActions>

@@ -49,6 +49,7 @@ const UserProfileHeader = () => {
   return data !== null ? (
     <Card
       sx={{
+        overflow: 'auto',
         width: '100%', // Add this to take the full width
         backgroundColor: 'transparent', // Add this to remove the background color
         boxShadow: 'none' // Add this to remove the shadow around the card

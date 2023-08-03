@@ -99,7 +99,10 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     setDialogType('cover')
   }
 
-  const handleProPicClose = () => setOpenProfilePicture(false)
+  const handleProPicClose = () => {
+    setOpenProfilePicture(false)
+    setFiles([])
+  }
   const handleProPicSubmit = async () => {
     if (!files[0]) {
       toast.error('no image selected')
@@ -125,6 +128,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
               setCoverPicUrl(newUrl)
             }
             setOpenProfilePicture(false)
+            setFiles([])
           })
         })
         .catch(error => {
@@ -168,7 +172,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   }
 
   return data !== null ? (
-    <Card sx={showCover ? {} : { bgcolor: 'customColors.bodyBg', boxShadow: 0 }}>
+    <Card sx={showCover ? {} : { overflow: 'visible', bgcolor: 'transparent', boxShadow: 0 }}>
       {editable && (
         <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
           <Pencil />
@@ -186,6 +190,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
       )}
       <CardContent
         sx={{
+          overflow: 'visible',
           pt: 0,
           mt: showCover ? -10 : 6,
           marginLeft: showCover ? 0 : -5,
@@ -241,7 +246,9 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   >
                     <Icon icon='mdi:map-marker-outline' />
                     <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                      {data.city}, {data.country}
+                      {data.city}
+                      {data.city && data.country && ','}
+                      {data.country}
                     </Typography>
                   </Box>
                 )}
@@ -307,8 +314,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         aria-labelledby='user-view-edit'
         sx={{
           '& .MuiPaper-root': {
-            width: '100%',
-            p: [2, 10]
+            width: '100%'
           }
         }}
         aria-describedby='user-view-edit-description'
@@ -316,13 +322,19 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         <IconButton sx={{ position: 'absolute', right: '10px', top: '10px' }} onClick={handleProPicClose}>
           <Close />
         </IconButton>
-        <DialogContent>
-          <DocumentUpload type='image' files={files} setFiles={setFiles} />
+        <DialogContent sx={{ justifyContent: 'center', overflow: 'hidden' }}>
+          <Grid sx={{ justifyContent: 'center', mt: '20px', ml: '45px', mb: '20px' }} container spacing={3}>
+            <Grid item xs={12}>
+              <DocumentUpload type='image' files={files} setFiles={setFiles} />
+            </Grid>
+          </Grid>
         </DialogContent>
         {files[0] && (
-          <Button size='large' variant='contained' onClick={handleProPicSubmit}>
-            Submit
-          </Button>
+          <DialogActions sx={{ justifyContent: 'center' }}>
+            <Button size='large' variant='contained' onClick={handleProPicSubmit}>
+              Submit
+            </Button>
+          </DialogActions>
         )}
       </Dialog>
       <Dialog open={share} onClose={handleShareClose} fullWidth={true}>

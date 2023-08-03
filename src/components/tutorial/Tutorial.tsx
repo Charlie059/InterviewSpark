@@ -27,10 +27,10 @@ import CTAPage from '../../components/interview/interviewProfile/CTAPage/CTAPage
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
-import { Education, UserProfileViewTypes } from '../../context/types'
+import { Education, UserDataType, UserProfileViewTypes } from '../../context/types'
 import { Profile } from '../../API'
 import UserOverview from '../../components/profile/UserOverview'
-import { createUserEducation } from 'src/graphql/mutations'
+import { createUserEducation, updateNewUserStatus } from 'src/graphql/mutations'
 import { Dialog, IconButton } from '@mui/material'
 import Logger from 'src/middleware/loggerMiddleware'
 
@@ -75,10 +75,11 @@ const StepperHeaderContainer = styled(CardContent)(({ theme }) => ({
 interface TutorialProps {
   tutorialDialogOpen: boolean
   setTutorialDialogOpen: (open: boolean) => void
+  userProfileData: UserDataType
 }
 const Tutorial = (tutorialProps: TutorialProps) => {
   // ** Props
-  const { tutorialDialogOpen, setTutorialDialogOpen } = tutorialProps
+  const { tutorialDialogOpen, setTutorialDialogOpen, userProfileData } = tutorialProps
 
   // ** States
   const [activeStep, setActiveStep] = useState(0)
@@ -111,6 +112,23 @@ const Tutorial = (tutorialProps: TutorialProps) => {
 
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  // Reset isNewUser to false in DB
+  const resetIsNewUserInUserProfile = async () => {
+    // Check if the userProfileData exist or user is already set isNewUser to false
+    if (!userProfileData || !userProfileData.isNewUser) {
+      return
+    }
+
+    const data = await API.graphql(
+      graphqlOperation(updateNewUserStatus, { userEmail: auth.user?.userEmailAddress, isNewUser: false })
+    )
+    if ('data' in data) {
+      if (!data.data.updateNewUserStatus.isSuccessful) {
+        Logger.error('Error resetting isNewUser to false in DB', data.data.updateNewUserStatus.error)
+      }
+    }
+  }
 
   // Handle Stepper
   const handleNext = () => {
@@ -184,6 +202,9 @@ const Tutorial = (tutorialProps: TutorialProps) => {
       case 3:
         setStepContent(<CTAPage isTutorial={true} selectedTopic={selectedTopic} />)
 
+        // Reset isNewUser to false in DB
+        resetIsNewUserInUserProfile()
+
         // Log the event
         mixPanelEventTracker(step, { selectedTopic: selectedTopic })
 
@@ -243,13 +264,17 @@ const Tutorial = (tutorialProps: TutorialProps) => {
         <Grid item xs={12} sm={12} md={12} lg={12}>
           <Box display='flex' justifyContent='center' position='relative'>
             <Typography variant='h4' marginTop={'40px'} padding={'20px'} style={{ lineHeight: '1.5' }}>
-              Welcome to the InterviewSpark
+              Welcome to InterviewSpark
             </Typography>
             <IconButton
+              data-cy="close-icon"
               edge='end'
               color='inherit'
               onClick={() => {
                 setTutorialDialogOpen(false)
+
+                // Reset isNewUser to false in DB
+                resetIsNewUserInUserProfile()
               }}
               sx={{ position: 'absolute', right: '20px', top: '10px' }}
             >
