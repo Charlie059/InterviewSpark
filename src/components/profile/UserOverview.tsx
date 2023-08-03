@@ -375,6 +375,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                               <TextField
                                 {...params}
                                 label='Country & Region'
+                                defaultValue={profileData.country && 'United States'}
                                 inputProps={{
                                   ...params.inputProps,
                                   autoComplete: 'new-password' // disable autocomplete and autofill
