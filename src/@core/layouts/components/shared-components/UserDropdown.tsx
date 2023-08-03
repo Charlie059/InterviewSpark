@@ -81,6 +81,14 @@ const UserDropdown = (props: Props) => {
     handleDropdownClose()
   }
 
+  // Get the user's name without '_' suffix
+  const filterUserName = (name: string | null | undefined) => {
+    if (!name) return ''
+    const nameArray = name.split('_')
+
+    return nameArray[0]
+  }
+
   // @ts-ignore
   return (
     <Fragment>
@@ -98,7 +106,10 @@ const UserDropdown = (props: Props) => {
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
           alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}
-          src={(process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL ||'') + (user?.photoImgKey ||'' )|| 'public/images/avatars/1.png'}
+          src={
+            (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (user?.photoImgKey || '') ||
+            'public/images/avatars/1.png'
+          }
         />
       </Badge>
       <Menu
@@ -121,11 +132,15 @@ const UserDropdown = (props: Props) => {
             >
               <Avatar
                 alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}
-                src={(process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL ||'') + (user?.photoImgKey ||'' )|| 'public/images/avatars/1.png'}
-                sx={{ width: '2.5rem', height: '2.5rem' }} />
+                src={
+                  (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (user?.photoImgKey || '') ||
+                  'public/images/avatars/1.png'
+                }
+                sx={{ width: '2.5rem', height: '2.5rem' }}
+              />
             </Badge>
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>{user!.userName}</Typography>
+              <Typography sx={{ fontWeight: 600 }}>{filterUserName(user!.userName)}</Typography>
             </Box>
           </Box>
         </Box>

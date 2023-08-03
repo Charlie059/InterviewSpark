@@ -161,6 +161,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Get the user's name without '_' suffix
+  const filterUserName = (name: string) => {
+    const nameArray = name.split('_')
+
+    return nameArray[0]
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12} sm={12} md={type === 'tutorial' ? 12 : 5} lg={type === 'tutorial' ? 12 : 5}>
@@ -179,7 +186,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                   <Typography variant='subtitle2' sx={{ mr: 2, color: 'text.primary' }}>
                     Username:
                   </Typography>
-                  <Typography variant='body2'>{user}</Typography>
+                  <Typography variant='body2'>{filterUserName(user)}</Typography>
                 </Box>
               </Grid>
               <Grid item xs={12} lg={type !== 'tutorial' ? 12 : 6}>
