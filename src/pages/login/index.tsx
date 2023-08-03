@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ReactNode } from 'react'
+import { useState, ReactNode, useEffect } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -74,19 +74,26 @@ const schema = yup.object().shape({
   password: yup.string().min(8).required()
 })
 
-const defaultValues = {
-  password: '',
-  email: ''
-}
-
 interface FormData {
   email: string
   password: string
 }
 
+function processProp(prop: string[] | string | undefined): string {
+  if (typeof prop === 'string') {
+    return decodeURIComponent(prop) // prop is already a string, so return it as is
+  } else if (Array.isArray(prop)) {
+    return decodeURIComponent(prop.join(',')) // prop is an array, join its elements into a string
+  } else {
+    return ''
+  }
+}
+
 const LoginPage = () => {
+  const router = useRouter()
   const [rememberMe, setRememberMe] = useState<boolean>(true)
   const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [emailPassThrough, setEmailPassThrough] = useState<string>(processProp(router.query?.email) || '')
 
   // ** Hooks
   const auth = useAuth()
@@ -96,6 +103,15 @@ const LoginPage = () => {
 
   // ** Vars
   const { skin } = settings
+
+  useEffect(() => {
+    setEmailPassThrough(processProp(router.query?.email))
+  }, [router.query?.email])
+
+  const defaultValues = {
+    password: '',
+    email: emailPassThrough
+  }
 
   const {
     control,
@@ -108,8 +124,6 @@ const LoginPage = () => {
     resolver: yupResolver(schema)
   })
 
-  const router = useRouter()
-
   const onSubmit = async (data: FormData) => {
     const { email, password } = data
     auth.login({ email, password, rememberMe }, async err => {
@@ -119,9 +133,9 @@ const LoginPage = () => {
       })
       if (err.name == 'UserNotConfirmedException') {
         await Auth.resendSignUp(email)
-        router.push(`/register?email=${email}&registered=true`)
+        router.push(`/register?email=${encodeURIComponent(email)}&registered=true`)
       } else if (err.name == 'UserNotFoundException') {
-        router.push(`/register?email=${email}`)
+        router.push(`/register?email=${encodeURIComponent(email)}`)
       }
     })
   }
@@ -186,6 +200,7 @@ const LoginPage = () => {
                       onChange={onChange}
                       error={Boolean(errors.email)}
                       data-testid='email-input'
+                      autoComplete='email'
                     />
                   )}
                 />
