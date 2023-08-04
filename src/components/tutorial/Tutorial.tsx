@@ -264,9 +264,10 @@ const Tutorial = (tutorialProps: TutorialProps) => {
         <Grid item xs={12} sm={12} md={12} lg={12}>
           <Box display='flex' justifyContent='center' position='relative'>
             <Typography variant='h4' marginTop={'40px'} padding={'20px'} style={{ lineHeight: '1.5' }}>
-              Welcome to the InterviewSpark
+              Welcome to InterviewSpark
             </Typography>
             <IconButton
+              data-cy="close-icon"
               edge='end'
               color='inherit'
               onClick={() => {

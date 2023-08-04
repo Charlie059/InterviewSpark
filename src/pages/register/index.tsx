@@ -12,9 +12,9 @@ export default function RegisterPage() {
   const router = useRouter()
   function processProp(prop: string[] | string | undefined): string {
     if (typeof prop === 'string') {
-      return prop // prop is already a string, so return it as is
+      return decodeURIComponent(prop) // prop is already a string, so return it as is
     } else if (Array.isArray(prop)) {
-      return prop.join(',') // prop is an array, join its elements into a string
+      return decodeURIComponent(prop.join(',')) // prop is an array, join its elements into a string
     } else {
       return ''
     }

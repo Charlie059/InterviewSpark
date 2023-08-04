@@ -103,6 +103,14 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Get the user's name without '_' suffix
+  const filterUserName = (name: string | null | undefined) => {
+    if (!name) return ''
+    const nameArray = name.split('_')
+
+    return nameArray[0]
+  }
+
   return (
     <StyledCard height={height} style={{ borderRadius: '25px' }}>
       <CardContent sx={{ p: theme => `${theme.spacing(6.75, 7.5)} !important` }}>
@@ -111,7 +119,7 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
             <Typography variant='h5' sx={{ mb: 4.5 }}>
               {percentageIncrease >= 0 ? 'Keep up the great work,' : "It's okay,"}{' '}
               <Box component='span' sx={{ fontWeight: 'bold' }}>
-                {auth.user?.userName}
+                {filterUserName(auth.user?.userName)}
               </Box>
               {percentageIncrease >= 0 ? ' 🚀' : ' 🙌'}
             </Typography>

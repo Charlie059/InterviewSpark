@@ -84,7 +84,7 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
 
       // Wait 2 seconds and redirect to login page
       setTimeout(() => {
-        router.replace('/login')
+        router.replace(`/login?email=${encodeURIComponent(username)}`)
       }, 2000)
     } catch (err) {
       setError('Error confirming sign up')
