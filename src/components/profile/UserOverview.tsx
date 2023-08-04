@@ -73,7 +73,12 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   const handleEditSubmit = async (formData: any) => {
     setOpenEdit(false)
-    formData.country = formData.country.label
+    if (formData.country?.label) {
+      formData.country = formData.country.label
+    } else {
+      formData.country = ''
+    }
+    console.log(formData)
     setProfileData(formData)
 
     updateProfile(formData)
@@ -180,7 +185,7 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
             <Box sx={{ mr: 2, mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant='h6'>Details</Typography>
               <Fab size='small' aria-label='edit' onClick={handleEditClickOpen}>
-                <Icon icon={'mdi:pencil'} data-cy="pencil-icon"/>
+                <Icon icon={'mdi:pencil'} data-cy='pencil-icon' />
               </Fab>
             </Box>
             <Divider sx={{ mt: 4 }} />
@@ -318,7 +323,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                     </FormControl>
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField disabled fullWidth type='email' label='Email' defaultValue={data.userEmailAddress} />
+                    <TextField
+                      disabled
+                      fullWidth
+                      type='email'
+                      label='Email'
+                      defaultValue={profileData.userEmailAddress}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControl fullWidth>
@@ -361,13 +372,13 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                       <Controller
                         name='country' // The name for the field, which will be used in the onSubmit callback
                         control={control}
-                        defaultValue={profileData.country} // Set the initial value to null or your default value
+                        defaultValue={{ label: profileData.country }} // Set the initial value to null or your default value
                         render={({ field: { value, onChange } }) => (
                           <Autocomplete
                             options={countries}
                             autoHighlight
-                            getOptionLabel={option => option.label}
-                            value={value} // Important to bind the selected value to the Controller's value prop
+                            getOptionLabel={option => option.label || option}
+                            value={value ? value : { label: 'United States', code: 'US' }} // Important to bind the selected value to the Controller's value prop
                             onChange={(event, newValue) => {
                               onChange(newValue) // Updates the value in the Controller
                             }}
@@ -387,7 +398,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                               <TextField
                                 {...params}
                                 label='Country & Region'
-                                defaultValue={profileData.country && 'United States'}
                                 inputProps={{
                                   ...params.inputProps,
                                   autoComplete: 'new-password' // disable autocomplete and autofill
@@ -395,7 +405,6 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                               />
                             )}
                           />
-
                         )}
                       />
                     </FormControl>
