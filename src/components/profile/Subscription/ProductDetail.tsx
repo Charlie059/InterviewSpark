@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, LinearProgress, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ProductTotalNumUsage, UserSubscriptionProduct } from 'src/context/types'
 
 interface ProductDetailInterface {
@@ -13,7 +13,13 @@ export const ProductDetail = (productDetailInterface: ProductDetailInterface) =>
   // ** Constants
   const linearGradient = 'linear-gradient(45deg, blue, purple)' // ** Premium Linear Progression
 
-  const [productUsagePercent] = useState<number>((product.productNumUsage / product.productTotalNumUsage) * 100)
+  const [productUsagePercent, setProductUsagePercent] = useState<number>(
+    (product.productNumUsage / product.productTotalNumUsage) * 100
+  )
+
+  useEffect(() => {
+    setProductUsagePercent((product.productNumUsage / product.productTotalNumUsage) * 100)
+  }, [product])
 
   return (
     <Card>

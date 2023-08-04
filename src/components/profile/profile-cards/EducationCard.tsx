@@ -259,9 +259,9 @@ const EducationCard = ({
           </Grid>
         )}
 
-        <Dialog onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
+        <Dialog scroll='body' onClose={handleEditClose} aria-labelledby='simple-dialog-title' open={openEdit}>
           <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-            Edit User Information
+            {eduD?.eduSchool ? 'Edit Education' : 'Add Education'}
           </DialogTitle>
           <DialogContent>
             <DialogContentText

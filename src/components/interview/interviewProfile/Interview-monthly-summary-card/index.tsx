@@ -12,7 +12,14 @@ import { getUserInterviewsByMonth } from 'src/graphql/queries'
 import Logger from 'src/middleware/loggerMiddleware'
 import React from 'react'
 
-const InterviewUsageSummaryThisMonth = () => {
+interface InterviewUsageSummaryThisMonthProps {
+  cardHeight: number
+  setCardHeight: React.Dispatch<React.SetStateAction<number>>
+}
+const InterviewUsageSummaryThisMonth = (interviewUsageSummaryThisMonthProps: InterviewUsageSummaryThisMonthProps) => {
+  // ** Props
+  const { cardHeight, setCardHeight } = interviewUsageSummaryThisMonthProps
+
   // ** Hook
   const cardRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
@@ -21,7 +28,6 @@ const InterviewUsageSummaryThisMonth = () => {
   const auth = useAuth()
 
   // ** State
-  const [cardHeight, setCardHeight] = useState(0)
   const [textHeight, setTextHeight] = useState(0)
 
   // Store the interview count data in the state
@@ -44,6 +50,7 @@ const InterviewUsageSummaryThisMonth = () => {
     return () => {
       window.removeEventListener('resize', updateCardHeight)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // update the text height when the window resizes

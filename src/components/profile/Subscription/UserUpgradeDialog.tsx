@@ -185,7 +185,7 @@ export const UserUpgradeDialog = (userUpgradeDialog: UserUpgradeDialogInterface)
                 sx={{ m: 4, width: '90%' }}
                 disabled={isLoading}
               >
-                {isLoading ? 'Upgrading...' : 'Redirect to Stripe'}
+                {isLoading ? 'Upgrading...' : 'Subscribe'}
               </Button>
             </Grid>
           </Grid>
