@@ -1,10 +1,11 @@
 import { Button, CardHeader, Grid, CircularProgress, Chip } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DialogSelectParam, PlanType, UserSubscription } from 'src/context/types'
 import { useSubscription } from 'src/hooks/useSubscription'
 import Logger from 'src/middleware/loggerMiddleware'
 import { toast } from 'react-hot-toast'
 import { useAuth } from 'src/hooks/useAuth'
+import data from 'src/@fake-db/components/data'
 
 interface PlanHeaderInterface {
   userSubscription: UserSubscription
@@ -73,14 +74,6 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
               ...dialogParams,
               upgrade: true
             })
-            trackEvent('User_view_plan', {
-              category: 'Upgrade Plan',
-              action: 'Click Upgrade Plan Button',
-              label: 'Upgrade Plan Button Clicked'
-            })
-            setMixpanelPeople({
-              plan: 'free'
-            })
           }}
           sx={{ mr: 6 }}
           disabled={isLoading}
@@ -90,6 +83,28 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
       )
     }
   }
+
+  // Define the mixPanel event tracker
+  useEffect(() => {
+    const tracker = () => {
+      trackEvent('SubscriptionInteraction', {
+        action: 'View Plan',
+        desc: 'User viewed the plan',
+        data: {
+          currentSubscription: userSubscription
+        }
+      })
+      setMixpanelPeople({
+        action: 'View Plan',
+        desc: 'User viewed the plan',
+        data: {
+          currentSubscription: userSubscription
+        }
+      })
+    }
+    tracker()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Grid container alignItems='center' justifyContent='space-between'>
