@@ -1,6 +1,5 @@
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import React, { useState, useEffect } from 'react'
-import { toast } from 'react-hot-toast'
 
 type DeviceSelectorProps = {
   deviceType: 'videoinput' | 'audioinput' | 'audiooutput'
