@@ -1,0 +1,41 @@
+import { useState } from 'react'
+import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
+import AlertComponent from './Alert'
+import Button from '@mui/material/Button'
+
+<Meta title='Components/AlertComponent' component={AlertComponent} />
+
+# AlertComponent
+
+The `AlertComponent` is a highly reusable component that displays an alert dialog with a title and message. It includes buttons for confirming or canceling the action and can be easily customized according to the needs of the interface.
+
+## Usage
+
+Use this component wherever you need to get confirmation from the user or inform them about important information.
+
+- `open`: Controls whether the dialog is open or closed.
+- `title`: Sets the title of the dialog.
+- `message`: Defines the message inside the dialog.
+- `onClose`: A callback function that is triggered when the dialog is closed.
+- `onConfirm`: A callback function that is triggered when the user confirms the action.
+- `onCancel`: A callback function that is triggered when the user cancels the action.
+
+<ArgsTable of={AlertComponent} />
+
+<Canvas>
+  <Story name='PrimaryAlert' args={{ open: false, title: 'Sample Title', message: 'Sample message for the alert.' }}>
+    {args => {
+      const [open, setOpen] = useState(false)
+      const handleOpen = () => setOpen(true)
+      const handleClose = () => setOpen(false)
+
+      return (
+        <>
+          <Button onClick={handleOpen}>Show Alert</Button>
+          <AlertComponent {...args} open={open} onClose={handleClose} />
+        </>
+      )
+    }}
+
+  </Story>
+</Canvas>
