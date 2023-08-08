@@ -42,16 +42,16 @@ export function useSubscription(userSubscription: UserSubscription | null) {
           const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
 
           // Log the event
-          auth.trackEvent('UserCreateNewSubscriptionRequest', {
-            action: 'User Clicked Plan Upgrade',
-            currentPlan: 'Free',
+          auth.trackEvent('SubscriptionInteraction', {
+            action: 'RequestNewSubscription',
+            currentPlan: userSubscription?.planType,
             newPlan: 'Premium'
           })
 
           // Log the event user
           auth.setMixpanelPeople({
-            action: 'User Clicked Plan Upgrade',
-            currentPlan: 'Free',
+            action: 'RequestNewSubscription',
+            currentPlan: userSubscription?.planType,
             newPlan: 'Premium'
           })
 
@@ -84,16 +84,16 @@ export function useSubscription(userSubscription: UserSubscription | null) {
 
       if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccessful) {
         // Log the event
-        auth.trackEvent('UserCreateNewCancelSubscriptionRequest', {
-          action: 'User Clicked Plan Cancel',
-          currentPlan: 'Premium',
+        auth.trackEvent('SubscriptionInteraction', {
+          action: 'RequestCancellation',
+          currentPlan: userSubscription?.planType,
           newPlan: 'Free'
         })
 
         // Log the event user
         auth.setMixpanelPeople({
-          action: 'User Clicked Plan Cancel',
-          currentPlan: 'Premium',
+          action: 'RequestCancellation',
+          currentPlan: userSubscription?.planType,
           newPlan: 'Free'
         })
 
