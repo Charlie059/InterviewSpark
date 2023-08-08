@@ -68,6 +68,7 @@ export function useSubscription(userSubscription: UserSubscription | null) {
 
       return { isSuccessful: false }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth])
 
   const handleUserConfirmCancelSubscription = useCallback(async () => {

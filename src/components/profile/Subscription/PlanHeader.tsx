@@ -5,7 +5,6 @@ import { useSubscription } from 'src/hooks/useSubscription'
 import Logger from 'src/middleware/loggerMiddleware'
 import { toast } from 'react-hot-toast'
 import { useAuth } from 'src/hooks/useAuth'
-import data from 'src/@fake-db/components/data'
 
 interface PlanHeaderInterface {
   userSubscription: UserSubscription
