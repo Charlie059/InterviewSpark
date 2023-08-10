@@ -100,9 +100,8 @@ const UserSecurity = () => {
               showConfirmNewPassword: false
             })
 
-            trackEvent('User_Profile_Settings', {
-              action: 'Password_Changed',
-              status: 'Success'
+            trackEvent('UserProfileUpdateEvent', {
+              action: 'Change_Password'
             })
 
             toast.success('Password changed successfully')

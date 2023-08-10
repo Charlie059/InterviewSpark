@@ -16,7 +16,7 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
   // ** Destructure the props
   const { userSubscription, dialogParams, setDialogParams } = planHeaderInterface
   const [isLoading, setIsLoading] = useState(false)
-  const { trackEvent, setMixpanelPeople } = useAuth()
+  const { trackEvent } = useAuth()
 
   // Hooks
   const { handleUserConfirmResumeSubscription } = useSubscription(userSubscription)
@@ -86,19 +86,10 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
   // Define the mixPanel event tracker
   useEffect(() => {
     const tracker = () => {
-      trackEvent('SubscriptionInteraction', {
-        action: 'View Plan',
+      trackEvent('SubscriptionUpdateEvent', {
+        action: 'Viewed_Plan',
         desc: 'User viewed the plan',
-        data: {
-          currentSubscription: userSubscription
-        }
-      })
-      setMixpanelPeople({
-        action: 'View Plan',
-        desc: 'User viewed the plan',
-        data: {
-          currentSubscription: userSubscription
-        }
+        currentSubscription: userSubscription
       })
     }
     tracker()

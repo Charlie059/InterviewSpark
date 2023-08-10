@@ -42,15 +42,9 @@ export function useSubscription(userSubscription: UserSubscription | null) {
           const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
 
           // Log the event
-          auth.trackEvent('SubscriptionInteraction', {
-            action: 'RequestNewSubscription',
-            currentPlan: userSubscription?.planType,
-            newPlan: 'Premium'
-          })
-
-          // Log the event user
-          auth.setMixpanelPeople({
-            action: 'RequestNewSubscription',
+          auth.trackEvent('SubscriptionUpdateEvent', {
+            action: 'Click_Plans_Upgrade',
+            desc: 'User clicked plan upgrade',
             currentPlan: userSubscription?.planType,
             newPlan: 'Premium'
           })
@@ -85,15 +79,9 @@ export function useSubscription(userSubscription: UserSubscription | null) {
 
       if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccessful) {
         // Log the event
-        auth.trackEvent('SubscriptionInteraction', {
-          action: 'RequestCancellation',
-          currentPlan: userSubscription?.planType,
-          newPlan: 'Free'
-        })
-
-        // Log the event user
-        auth.setMixpanelPeople({
-          action: 'RequestCancellation',
+        auth.trackEvent('SubscriptionUpdateEvent', {
+          action: 'Click_Plans_Cancel',
+          desc: 'User clicked plan cancel',
           currentPlan: userSubscription?.planType,
           newPlan: 'Free'
         })
@@ -120,15 +108,9 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       )
 
       // Log the event
-      auth.trackEvent('UserCreateNewResumeSubscriptionRequest', {
-        action: 'User Clicked Plan Resume',
-        currentPlan: 'Free',
-        newPlan: 'Premium'
-      })
-
-      // Log the event user
-      auth.setMixpanelPeople({
-        action: 'User Clicked Plan Resume',
+      auth.trackEvent('SubscriptionUpdateEvent', {
+        action: 'Click_Plans_Resume',
+        desc: 'User clicked plan resume',
         currentPlan: 'Free',
         newPlan: 'Premium'
       })

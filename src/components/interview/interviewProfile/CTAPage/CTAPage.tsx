@@ -20,12 +20,6 @@ const CTAPage = (CTAPageProps: CTAPagePropsInterface) => {
       action: 'User Clicked CTA Button',
       info: infoJSON
     })
-
-    // Log the event user
-    auth.setMixpanelPeople({
-      action: 'User Clicked CTA Button',
-      info: infoJSON
-    })
   }
 
   return (

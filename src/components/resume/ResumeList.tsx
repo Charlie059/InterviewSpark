@@ -141,7 +141,7 @@ const ResumeList = () => {
           resumeScanID: resumeIdToDelete
         })
       )
-      auth.trackEvent('Resume_Functionality_Used', {
+      auth.trackEvent('ResumeScanEvent', {
         type: 'Resume_result_deleted',
         resume_id: resumeIdToDelete
       })
@@ -226,7 +226,7 @@ const ResumeList = () => {
                         onClick={() => {
                           setOpenResume(true)
                           setResumeResult(item.resumeResults)
-                          auth.trackEvent('Resume_Functionality_Used', {
+                          auth.trackEvent('ResumeScanEvent', {
                             type: 'View_Scan_Result',
                             resumeResult: item.resumeResults,
                             resumeName: item.resumeName,

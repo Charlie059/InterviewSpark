@@ -18,12 +18,6 @@ function FinishedInterviewPage() {
       action: 'Finish_Interview',
       desc: 'User finished a interview.'
     })
-
-    // User tracking
-    auth.setMixpanelPeople({
-      action: 'Finish_Interview',
-      desc: 'User finished a interview.'
-    })
   }
 
   const handleGoToHomePage = () => {
