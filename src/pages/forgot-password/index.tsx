@@ -41,16 +41,6 @@ const ForgotPasswordIllustrationWrapper = styled(Box)<BoxProps>(({ theme }) => (
   }
 }))
 
-const ForgotPasswordIllustration = styled('img')(({ theme }) => ({
-  maxWidth: '48rem',
-  [theme.breakpoints.down('xl')]: {
-    maxWidth: '38rem'
-  },
-  [theme.breakpoints.down('lg')]: {
-    maxWidth: '30rem'
-  }
-}))
-
 const RightWrapper = styled(Box)<BoxProps>(({ theme }) => ({
   width: '100%',
   [theme.breakpoints.up('md')]: {
