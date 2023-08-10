@@ -16,8 +16,8 @@ const CTAPage = (CTAPageProps: CTAPagePropsInterface) => {
     const infoJSON = JSON.stringify(info)
 
     // Log the event
-    auth.trackEvent('UserClickTutorial', {
-      action: 'User Clicked CTA Button',
+    auth.trackEvent('TutorialEvent', {
+      action: 'User_Clicked_CTA',
       info: infoJSON
     })
   }
