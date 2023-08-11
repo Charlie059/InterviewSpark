@@ -122,6 +122,24 @@ const AuthProvider = ({ children }: Props) => {
             return
           }
 
+          // Mixpanel event
+          try {
+            await API.graphql(
+              graphqlOperation(handleMixpanelEvent, {
+                userEmail: user?.userEmailAddress,
+                data: JSON.stringify({
+                  eventName: 'UserLoginEvent',
+                  eventParams: {
+                    desc: 'User logged in'
+                  }
+                }),
+                eventType: 'trackEvent'
+              })
+            )
+          } catch (err: any) {
+            console.log(err)
+          }
+
           // Get the return URL from the router query, if it exists, and redirect the user to the specified URL or to the root URL if no return URL was specified.
           const redirectURL = router.query.returnUrl || '/'
           router.replace(redirectURL as string)
@@ -140,6 +158,25 @@ const AuthProvider = ({ children }: Props) => {
     // Use the Auth.signOut method to sign out the current user.
     Auth.signOut()
       .then(() => {
+        // Mixpanel event
+        const userEmailAddress = user?.userEmailAddress
+        try {
+          API.graphql(
+            graphqlOperation(handleMixpanelEvent, {
+              userEmail: userEmailAddress,
+              data: JSON.stringify({
+                eventName: 'UserLoginEvent',
+                eventParams: {
+                  desc: 'User logged out'
+                }
+              }),
+              eventType: 'trackEvent'
+            })
+          )
+        } catch (err: any) {
+          console.log(err)
+        }
+
         // Set the user to null
         setUser(null)
 

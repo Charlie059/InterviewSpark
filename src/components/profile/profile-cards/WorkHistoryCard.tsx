@@ -98,7 +98,7 @@ const WorkHistoryCard = ({
         workDescription: workData.workHistoryJobDescription || '',
         workHistoryID: workData.workHistoryID
       }
-      auth.trackEvent('User_Profile_Settings', {
+      auth.trackEvent('UserProfileUpdateEvent', {
         action: 'Update_Work_History',
         ...workHistoryInput
       })
@@ -124,7 +124,7 @@ const WorkHistoryCard = ({
 
           workData.workHistoryID = createdWorkHistoryID
           updatedWorkHistoryDatas.push(workData)
-          auth.trackEvent('User_Profile_Settings', {
+          auth.trackEvent('UserProfileUpdateEvent', {
             action: 'Create_Work_History',
             ...workHistoryInput
           })

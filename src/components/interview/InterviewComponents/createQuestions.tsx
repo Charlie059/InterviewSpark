@@ -102,7 +102,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
   const handleChooseJobTitle = (title: string) => {
     setSelectedTag(title)
     setStartDialogOpen(true)
-    auth.trackEvent('User_Interview_Functionality_Used', {
+    auth.trackEvent('InterviewEvent', {
       action: 'Start_Interview_Dialog',
       desc: 'User clicked on a title and previewed to start the interview.',
       title: title
@@ -177,18 +177,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     }
 
     function mixPanelTracker(isDisableInterviewAnalysis: boolean) {
-      auth.trackEvent('User_Interview_Functionality_Used', {
-        action: 'Start_Interview',
-        desc: 'User started a interview.',
-        ...info,
-        isDisableInterviewAnalysis: isDisableInterviewAnalysis,
-        numOfBQ: numOfBQ,
-        numOfTech: numOfTech,
-        questionTag: info.interviewTopic
-      })
-
-      // User tracking
-      auth.setMixpanelPeople({
+      auth.trackEvent('InterviewEvent', {
         action: 'Start_Interview',
         desc: 'User started a interview.',
         ...info,

@@ -69,7 +69,6 @@ const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterfac
     // Update user cancel subscription survey to graphql
 
     try {
-      // Use graphql to crate a new interview
       await API.graphql(
         graphqlOperation(updateUserSubscriptionCancelReason, {
           userEmail: auth.user?.userEmailAddress,
@@ -79,6 +78,12 @@ const UserSuspendDialog = (userSuspendDialogInterface: UserSuspendDialogInterfac
           cancelReason: JSON.stringify(survey)
         })
       )
+
+      auth.trackEvent('SubscriptionUpdateEvent', {
+        action: 'User_Cancel_Subscription_Survey',
+        desc: 'User cancelled subscription and filled out the survey',
+        survey: survey
+      })
     } catch (error) {
       Logger.error('Error updateUserSubscriptionCancelReason', error)
     }

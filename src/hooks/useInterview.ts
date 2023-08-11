@@ -197,14 +197,7 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
 
   // Define the mixPanel event tracker
   function mixPanelTracker(data: object, action: string, desc: string) {
-    auth.trackEvent('User_Interview_Functionality_Used', {
-      action: action,
-      desc: desc,
-      ...data
-    })
-
-    // User tracking
-    auth.setMixpanelPeople({
+    auth.trackEvent('InterviewEvent', {
       action: action,
       desc: desc,
       ...data
@@ -282,7 +275,11 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     end()
 
     // Mixpanel tracking
-    mixPanelTracker(interviews[interviewState.currentQuestionIndex], 'Start Interview', 'User started a interview.')
+    mixPanelTracker(
+      interviews[interviewState.currentQuestionIndex],
+      'Start_Interview_Question',
+      'User started a interview question.'
+    )
 
     dispatch({ type: START_QUESTION })
   }
@@ -290,7 +287,11 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
   // Define a function to start the review
   const startReview = async () => {
     // Mixpanel tracking
-    mixPanelTracker(interviews[interviewState.currentQuestionIndex], 'Start Review', 'User started a interview review.')
+    mixPanelTracker(
+      interviews[interviewState.currentQuestionIndex],
+      'Start_Review_Question',
+      'User started a interview review question.'
+    )
 
     dispatch({ type: START_REVIEW })
   }
@@ -329,7 +330,7 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     // Mixpanel tracking
     mixPanelTracker(
       { interviewInfo: interviews[interviewState.currentQuestionIndex], interviewAnswer: interviewAnswer },
-      'Finish Question',
+      'Finish_Interview_Question',
       'User finished a interview question and listened to the response.'
     )
 
@@ -349,7 +350,7 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     // Mixpanel tracking
     mixPanelTracker(
       interviews[interviewState.currentQuestionIndex],
-      'Retry Question',
+      'Retry_Interview_Question',
       'User retried a interview question'
     )
 
