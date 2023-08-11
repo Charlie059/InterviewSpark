@@ -148,8 +148,8 @@ const VerticalNavLink = ({
               e.preventDefault()
               e.stopPropagation()
             } else {
-              auth.trackEvent('User_Mouse_Click', {
-                category: 'Left_Navigation',
+              auth.trackEvent('UserMouseClickEvent', {
+                action: 'User_Clicked_On_Left_Navigation_List',
                 desc: 'User clicked on left navigation list',
                 destination: item.path
               })

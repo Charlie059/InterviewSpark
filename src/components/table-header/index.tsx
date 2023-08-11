@@ -26,14 +26,7 @@ const TableHeader = (props: TableHeaderProps) => {
 
   // Define the mixPanel event tracker
   function mixPanelTracker(data: object, action: string, desc: string) {
-    auth.trackEvent('User_Interview_Functionality_Used', {
-      action: action,
-      desc: desc,
-      ...data
-    })
-
-    // User tracking
-    auth.setMixpanelPeople({
+    auth.trackEvent('InterviewEvent', {
       action: action,
       desc: desc,
       ...data

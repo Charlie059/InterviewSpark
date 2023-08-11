@@ -167,15 +167,8 @@ const Tutorial = (tutorialProps: TutorialProps) => {
     const infoJSON = JSON.stringify(info)
 
     // Log the event
-    auth.trackEvent('UserClickTutorial', {
-      action: 'User Clicked Tutorial',
-      currentStep: step,
-      info: infoJSON
-    })
-
-    // Log the event user
-    auth.setMixpanelPeople({
-      action: 'User Clicked Tutorial',
+    auth.trackEvent('TutorialEvent', {
+      action: 'User_Clicked_Tutorial',
       currentStep: step,
       info: infoJSON
     })
@@ -267,7 +260,7 @@ const Tutorial = (tutorialProps: TutorialProps) => {
               Welcome to InterviewSpark
             </Typography>
             <IconButton
-              data-cy="close-icon"
+              data-cy='close-icon'
               edge='end'
               color='inherit'
               onClick={() => {

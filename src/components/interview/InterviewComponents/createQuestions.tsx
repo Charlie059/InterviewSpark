@@ -21,49 +21,6 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 // import Carousel from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 
-// import Select from 'react-select'
-// import { CSSObject } from '@emotion/react'
-
-// const responsive = {
-//   superLargeDesktop: {
-//     // these breakpoint values can cover screen widths with devices like large screens, 4k TVs
-//     breakpoint: { max: 4000, min: 2600 },
-//     items: 6
-//   },
-//   largeDesktop: {
-//     // these breakpoint values can cover screen widths with devices like laptops, desktops
-//     breakpoint: { max: 2600, min: 1800 },
-//     items: 5
-//   },
-//   desktop: {
-//     breakpoint: { max: 1800, min: 1200 },
-//     items: 5
-//   },
-//   laptop: {
-//     breakpoint: { max: 1200, min: 900 },
-//     items: 3
-//   },
-//   tablet: {
-//     breakpoint: { max: 900, min: 600 },
-//     items: 2
-//   },
-//   mobileL: {
-//     // large mobile devices like iPhone X, etc.
-//     breakpoint: { max: 600, min: 375 },
-//     items: 1
-//   },
-//   mobileM: {
-//     // medium mobile devices like iPhone 6/7, etc.
-//     breakpoint: { max: 375, min: 320 },
-//     items: 1
-//   },
-//   mobileS: {
-//     // small mobile devices like iPhone 5, etc.
-//     breakpoint: { max: 320, min: 0 },
-//     items: 1
-//   }
-// }
-
 interface Info {
   questionNum: number
   videoinput: string
@@ -142,34 +99,10 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     fetchInterviewTags()
   }, [])
 
-  // const options = allTags.map(tag => ({
-  //   value: tag.title,
-  //   label: tag.title
-  // }))
-
-  // const customStyles = {
-  //   control: (provided: CSSObject) => ({
-  //     ...provided,
-  //     marginTop: '20px',
-  //     marginBottom: '10px',
-  //     borderRadius: '10px',
-  //     boxShadow: 'none'
-  //   }),
-  //   option: (provided: CSSObject, state: any) => ({
-  //     ...provided,
-  //     color: state.isSelected ? 'white' : 'black',
-  //     backgroundColor: state.isSelected ? 'blue' : 'white'
-  //   })
-  // }
-
-  // const handleChange = (selectedOption: any) => {
-  //   handleChooseJobTitle(selectedOption.value)
-  // }
-
   const handleChooseJobTitle = (title: string) => {
     setSelectedTag(title)
     setStartDialogOpen(true)
-    auth.trackEvent('User_Interview_Functionality_Used', {
+    auth.trackEvent('InterviewEvent', {
       action: 'Start_Interview_Dialog',
       desc: 'User clicked on a title and previewed to start the interview.',
       title: title
@@ -244,18 +177,7 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
     }
 
     function mixPanelTracker(isDisableInterviewAnalysis: boolean) {
-      auth.trackEvent('User_Interview_Functionality_Used', {
-        action: 'Start_Interview',
-        desc: 'User started a interview.',
-        ...info,
-        isDisableInterviewAnalysis: isDisableInterviewAnalysis,
-        numOfBQ: numOfBQ,
-        numOfTech: numOfTech,
-        questionTag: info.interviewTopic
-      })
-
-      // User tracking
-      auth.setMixpanelPeople({
+      auth.trackEvent('InterviewEvent', {
         action: 'Start_Interview',
         desc: 'User started a interview.',
         ...info,
@@ -287,37 +209,8 @@ const CreateQuestionsComponent = (createQuestionsComponentProps: CreateQuestions
           />
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
             <Typography variant={'h4'}>Practice Interview Topic</Typography>
-            {/*<Avatar*/}
-            {/*  sx={{ width: 40, height: 40 }}*/}
-            {/*  alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}*/}
-            {/*  src={*/}
-            {/*    (process?.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL || '') + (user?.photoImgKey || '') ||*/}
-            {/*    'public/images/avatars/1.png'*/}
-            {/*  }*/}
-            {/*/>*/}
           </Box>
-          {/* <Box sx={{ width: '100%' }}>
-            <Select
-              options={options}
-              isSearchable
-              onChange={handleChange}
-              placeholder='Search by topic name'
-              styles={customStyles}
-            />
-          </Box> */}
-          {/* <Typography sx={{ fontSize: 20, mt: 6, mb: 6 }}>Recommendations</Typography>
-          <Carousel responsive={responsive}>
-            {recommendations.map((item, index) => (
-              <div key={index}>
-                <InterviewCard
-                  sx={{ width: '260px' }}
-                  title={item.title}
-                  imageSrc={item.imageSrc}
-                  onClick={handleChooseJobTitle}
-                />
-              </div>
-            ))}
-          </Carousel> */}
+
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 4 }}>
             <Typography variant={'h6'}>All Topics</Typography>
           </Box>

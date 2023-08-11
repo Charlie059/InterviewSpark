@@ -15,7 +15,8 @@ import {
   LinearProgress,
   Typography,
   useTheme,
-  ButtonBase
+  ButtonBase,
+  Link
 } from '@mui/material'
 import ArticleIcon from '@mui/icons-material/Article'
 import CameraAltIcon from '@mui/icons-material/CameraAlt'
@@ -30,6 +31,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useFetchSubscription } from 'src/hooks/useFetchSubscription'
 import toast from 'react-hot-toast'
 import { useSubscription } from 'src/hooks/useSubscription'
+import AlertComponent from 'src/components/Alert/Alert'
 
 interface Info {
   questionNum: number
@@ -105,6 +107,17 @@ const stepContent = [
   }
 ]
 
+const ToastContent = () => (
+  <div>
+    No Microphone Found: Please allow access to your microphone to start interview and refresh the page. Please refer to
+    the{' '}
+    <Link href={process.env.NEXT_PUBLIC_FAQ_LINK}>
+      <a>FAQ</a>
+    </Link>{' '}
+    for more information.
+  </div>
+)
+
 const StartInterviewDialog = (props: {
   interviewTopic: string
   open: boolean
@@ -124,6 +137,7 @@ const StartInterviewDialog = (props: {
   const auth = useAuth()
   const { userSubscriptionProductsList } = useFetchSubscription(auth.user?.userEmailAddress || null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
 
   // Hooks
   const { handleUserClickPlanUpgrade } = useSubscription(null)
@@ -148,6 +162,46 @@ const StartInterviewDialog = (props: {
     fetchUsage()
   }, [userSubscriptionProductsList])
 
+  // Get device list
+  useEffect(() => {
+    toast.loading('Loading Devices', {
+      duration: 3000
+    })
+    const getDeviceList = async () => {
+      try {
+        // Request both permissions
+        await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      } catch (initialError) {
+        console.log('Error when requesting both permissions:', initialError)
+
+        // If both permissions are denied, try requesting only audio
+        try {
+          await navigator.mediaDevices.getUserMedia({ audio: true })
+        } catch (audioError) {
+          console.log('Audio error:', audioError)
+          toast.error(<ToastContent />, {
+            duration: 8000
+          })
+        }
+
+        // If both permissions are denied, try requesting only video
+        try {
+          await navigator.mediaDevices.getUserMedia({ video: true })
+        } catch (videoError) {
+          console.log('Video error:', videoError)
+          toast.error(
+            'No Camera Found: You can do the interview without a camera. If you want to use one, allow camera access and refresh the page.',
+            {
+              duration: 8000
+            }
+          )
+        }
+      }
+    }
+
+    getDeviceList()
+  }, [])
+
   const handleNext = () => {
     if (currentStep === stepContent.length - 1) {
       const Info = {
@@ -159,24 +213,10 @@ const StartInterviewDialog = (props: {
       }
 
       // If user is not guarantee microphone then don't start the interview
-      if (audioinput === '') {
-        toast.error(
-          'Please select a microphone to start the interview. If you cannot see your microphone, please refer to the FAQ section.',
-          {
-            position: 'top-center',
-            duration: 10000
-          }
-        )
+      if (audioinput === '' || !audioinput || audiooutput === '' || !audiooutput) {
+        setIsAlertOpen(true)
 
         return
-      } else if (audiooutput === '') {
-        toast.error(
-          'Please select a speaker to start the interview. If you cannot see your speaker, please refer to the FAQ section.',
-          {
-            position: 'top-center',
-            duration: 10000
-          }
-        )
       }
 
       props.startInterview(Info)
@@ -241,200 +281,226 @@ const StartInterviewDialog = (props: {
   }
 
   return (
-    <Box>
-      <Dialog
-        open={props.open}
-        scroll='body'
-        disableEscapeKeyDown
-        maxWidth='md'
-        fullWidth={true}
-        onClose={(event, reason) => {
-          if (reason !== 'backdropClick') {
-            handleClose()
-          }
+    <>
+      <AlertComponent
+        open={isAlertOpen}
+        title={'Cannot Start Interview'}
+        message={
+          <>
+            Please make sure you have a microphone and speaker connected to your computer. If you cannot access a
+            microphone, please refer to our{' '}
+            <Link href={process.env.NEXT_PUBLIC_FAQ_LINK}>
+              <a>FAQ Page</a>
+            </Link>{' '}
+            for more information.
+          </>
+        }
+        onClose={function (): void {
+          setIsAlertOpen(false)
         }}
-      >
-        <Box>
-          <DialogTitle>
-            <Grid container justifyContent='flex-end'>
-              <IconButton onClick={handleClose}>
-                <CloseIcon />
-              </IconButton>
-            </Grid>
-            <Typography variant={'body1'} align='center' sx={{ fontSize: '35px', fontWeight: 600 }}>
-              {`Start Interview: ${props.interviewTopic}`}
-            </Typography>
-            <Typography sx={{ fontSize: 18, mt: 2, color: 'black', fontWeight: 600 }} align='center'>
-              <Button
-                variant='contained'
-                disabled={true}
-                style={{
-                  marginLeft: '8px',
-                  color: 'white',
-                  backgroundColor: planType === 'Free' ? '#6c757d' : '#3f51b5',
-                  textTransform: 'none'
-                }}
-              >
-                {planType}
-              </Button>
-            </Typography>
-          </DialogTitle>
+        onCancel={function (): void {
+          setIsAlertOpen(false)
+        }}
+        onConfirm={function (): void {
+          setIsAlertOpen(false)
+        }}
+      />
 
-          <DialogContent sx={{ mr: 5, ml: 15 }}>
-            <Typography sx={{ fontSize: 24, mt: 2 }}>{stepContent[currentStep].content}</Typography>
-            <Box sx={{ mt: 10, mb: 2 }}>
-              {stepContent[currentStep].selectors.map((s, i) => {
-                let selector
-                switch (s.type) {
-                  case 'questionNum':
-                    selector = (
-                      <Select
-                        sx={{ width: '100%' }}
-                        value={questionNum}
-                        onChange={e => {
-                          setQuestionNum(e.target.value as number)
-                        }}
-                      >
-                        {questionNumChoice.map(n => (
-                          <MenuItem key={n} value={n}>
-                            {`${n} Questions`}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    )
-                    break
-                  case 'usage':
-                    selector = (
-                      <Grid container direction='column' justifyContent='center'>
-                        <Grid item style={{ position: 'relative', height: '28px' }}>
-                          {planType === 'Free' && (
-                            <LinearProgress
-                              style={{ height: '100%' }}
-                              variant='determinate'
-                              value={(currentUsage / totalUsage) * 100}
-                            />
-                          )}
-                          {planType === 'Premium' && (
-                            <LinearProgress style={{ height: '100%' }} variant='determinate' value={0} />
-                          )}
-                          <Typography
-                            sx={{
-                              position: 'absolute',
-                              top: '50%',
-                              left: '50%',
-                              transform: 'translate(-50%, -50%)',
-                              fontSize: '13px',
-                              color: '#D4D4D4',
-                              fontWeight: 600
-                            }}
-                            align='center'
-                          >
-                            {planType === 'Free' ? `${currentUsage} / ${totalUsage}` : 'Infinite'}
-                          </Typography>
-                        </Grid>
-                        <Grid item>
-                          <Typography
-                            variant={'body2'}
-                            sx={{
-                              fontSize: 14,
-                              marginTop: '8px',
-                              fontWeight: 500,
-                              color:
-                                planType === 'Free'
-                                  ? theme.palette.mode === 'light'
-                                    ? theme.palette.error.light
-                                    : theme.palette.error.dark
-                                  : theme.palette.mode === 'light'
-                                  ? theme.palette.info.light
-                                  : theme.palette.info.light
-                            }}
-                            align='center'
-                          >
-                            {planType === 'Free'
-                              ? currentUsage / totalUsage !== 1
-                                ? 'Limited AI practices available on Free Tier.'
-                                : 'AI feedback depleted! '
-                              : 'Enjoy unlimited interviews with AI feedback.'}
-                            {planType === 'Free' && currentUsage / totalUsage === 1 && (
-                              <ButtonBase onClick={handleClickToSubscribe} disabled={isLoading}>
-                                <Typography
-                                  variant='body2'
-                                  sx={{
-                                    color: '#3f51b5',
-                                    textDecoration: 'underline',
-                                    cursor: 'pointer',
-                                    fontSize: 11,
-                                    fontWeight: 800
-                                  }}
-                                >
-                                  Click here to upgrade.
-                                </Typography>
-                              </ButtonBase>
+      <Box>
+        <Dialog
+          open={props.open}
+          scroll='body'
+          disableEscapeKeyDown
+          maxWidth='md'
+          fullWidth={true}
+          onClose={(event, reason) => {
+            if (reason !== 'backdropClick') {
+              handleClose()
+            }
+          }}
+        >
+          <Box>
+            <DialogTitle>
+              <Grid container justifyContent='flex-end'>
+                <IconButton onClick={handleClose}>
+                  <CloseIcon />
+                </IconButton>
+              </Grid>
+              <Typography variant={'body1'} align='center' sx={{ fontSize: '35px', fontWeight: 600 }}>
+                {`Start Interview: ${props.interviewTopic}`}
+              </Typography>
+              <Typography sx={{ fontSize: 18, mt: 2, color: 'black', fontWeight: 600 }} align='center'>
+                <Button
+                  variant='contained'
+                  disabled={true}
+                  style={{
+                    marginLeft: '8px',
+                    color: 'white',
+                    backgroundColor: planType === 'Free' ? '#6c757d' : '#3f51b5',
+                    textTransform: 'none'
+                  }}
+                >
+                  {planType}
+                </Button>
+              </Typography>
+            </DialogTitle>
+
+            <DialogContent sx={{ mr: 5, ml: 15 }}>
+              <Typography sx={{ fontSize: 24, mt: 2 }}>{stepContent[currentStep].content}</Typography>
+              <Box sx={{ mt: 10, mb: 2 }}>
+                {stepContent[currentStep].selectors.map((s, i) => {
+                  let selector
+                  switch (s.type) {
+                    case 'questionNum':
+                      selector = (
+                        <Select
+                          sx={{ width: '100%' }}
+                          value={questionNum}
+                          onChange={e => {
+                            setQuestionNum(e.target.value as number)
+                          }}
+                        >
+                          {questionNumChoice.map(n => (
+                            <MenuItem key={n} value={n}>
+                              {`${n} Questions`}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )
+                      break
+                    case 'usage':
+                      selector = (
+                        <Grid container direction='column' justifyContent='center'>
+                          <Grid item style={{ position: 'relative', height: '28px' }}>
+                            {planType === 'Free' && (
+                              <LinearProgress
+                                style={{ height: '100%' }}
+                                variant='determinate'
+                                value={(currentUsage / totalUsage) * 100}
+                              />
                             )}
-                          </Typography>
+                            {planType === 'Premium' && (
+                              <LinearProgress style={{ height: '100%' }} variant='determinate' value={0} />
+                            )}
+                            <Typography
+                              sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                fontSize: '13px',
+                                color: '#D4D4D4',
+                                fontWeight: 600
+                              }}
+                              align='center'
+                            >
+                              {planType === 'Free' ? `${currentUsage} / ${totalUsage}` : 'Infinite'}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <Typography
+                              variant={'body2'}
+                              sx={{
+                                fontSize: 14,
+                                marginTop: '8px',
+                                fontWeight: 500,
+                                color:
+                                  planType === 'Free'
+                                    ? theme.palette.mode === 'light'
+                                      ? theme.palette.error.light
+                                      : theme.palette.error.dark
+                                    : theme.palette.mode === 'light'
+                                    ? theme.palette.info.light
+                                    : theme.palette.info.light
+                              }}
+                              align='center'
+                            >
+                              {planType === 'Free'
+                                ? currentUsage / totalUsage !== 1
+                                  ? 'Limited AI practices available on Free Tier.'
+                                  : 'AI feedback depleted! '
+                                : 'Enjoy unlimited interviews with AI feedback.'}
+                              {planType === 'Free' && currentUsage / totalUsage === 1 && (
+                                <ButtonBase onClick={handleClickToSubscribe} disabled={isLoading}>
+                                  <Typography
+                                    variant='body2'
+                                    sx={{
+                                      color: '#3f51b5',
+                                      textDecoration: 'underline',
+                                      cursor: 'pointer',
+                                      fontSize: 11,
+                                      fontWeight: 800
+                                    }}
+                                  >
+                                    Click here to upgrade.
+                                  </Typography>
+                                </ButtonBase>
+                              )}
+                            </Typography>
+                          </Grid>
                         </Grid>
-                      </Grid>
-                    )
-                    break
-                  case 'videoinput':
-                    selector = (
-                      <DeviceSelector
-                        deviceType='videoinput'
-                        onChange={id => {
-                          setVideoinput(id)
-                        }}
-                        defaultDevice={videoinput}
-                      />
-                    )
-                    break
-                  case 'audioinput':
-                    selector = (
-                      <DeviceSelector
-                        deviceType='audioinput'
-                        onChange={id => {
-                          setAudioinput(id)
-                        }}
-                        defaultDevice={audioinput}
-                      />
-                    )
-                    break
-                  case 'audiooutput':
-                    selector = (
-                      <DeviceSelector
-                        deviceType='audiooutput'
-                        onChange={id => {
-                          setAudiooutput(id)
-                        }}
-                        defaultDevice={audiooutput}
-                      />
-                    )
-                    break
-                  default:
-                    selector = <div>Default selector</div>
-                }
+                      )
+                      break
+                    case 'videoinput':
+                      selector = (
+                        <DeviceSelector
+                          deviceType='videoinput'
+                          onChange={id => {
+                            setVideoinput(id)
+                          }}
+                          defaultDevice={videoinput}
+                        />
+                      )
+                      break
+                    case 'audioinput':
+                      selector = (
+                        <DeviceSelector
+                          deviceType='audioinput'
+                          onChange={id => {
+                            setAudioinput(id)
+                          }}
+                          defaultDevice={audioinput}
+                        />
+                      )
+                      break
+                    case 'audiooutput':
+                      selector = (
+                        <DeviceSelector
+                          deviceType='audiooutput'
+                          onChange={id => {
+                            setAudiooutput(id)
+                          }}
+                          defaultDevice={audiooutput}
+                        />
+                      )
+                      break
+                    default:
+                      selector = <div>Default selector</div>
+                  }
 
-                return (
-                  <Box sx={{ mb: 4 }} key={i}>
-                    <SelectModule title={s.title} subtitle={s.subtitle} icon={s.icon} selectElement={selector} />
-                  </Box>
-                )
-              })}
-            </Box>
-          </DialogContent>
+                  return (
+                    <Box sx={{ mb: 4 }} key={i}>
+                      <SelectModule title={s.title} subtitle={s.subtitle} icon={s.icon} selectElement={selector} />
+                    </Box>
+                  )
+                })}
+              </Box>
+            </DialogContent>
 
-          <DialogActions className='dialog-actions-dense'>
-            <Box sx={{ my: 6, mx: 15, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-              <Button onClick={handleBack} variant='contained' color='secondary'>
-                {currentStep === 0 ? 'Cancel' : 'Back'}
-              </Button>
-              <Button onClick={handleNext} variant='contained'>
-                {currentStep === 0 ? 'Next' : 'Start Interview'}
-              </Button>
-            </Box>
-          </DialogActions>
-        </Box>
-      </Dialog>
-    </Box>
+            <DialogActions className='dialog-actions-dense'>
+              <Box sx={{ my: 6, mx: 15, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                <Button onClick={handleBack} variant='contained' color='secondary'>
+                  {currentStep === 0 ? 'Cancel' : 'Back'}
+                </Button>
+                <Button onClick={handleNext} variant='contained'>
+                  {currentStep === 0 ? 'Next' : 'Start Interview'}
+                </Button>
+              </Box>
+            </DialogActions>
+          </Box>
+        </Dialog>
+      </Box>
+    </>
   )
 }
 

@@ -14,13 +14,7 @@ function FinishedInterviewPage() {
   const auth = useAuth()
 
   function mixPanelTracker() {
-    auth.trackEvent('User_Interview_Functionality_Used', {
-      action: 'Finish_Interview',
-      desc: 'User finished a interview.'
-    })
-
-    // User tracking
-    auth.setMixpanelPeople({
+    auth.trackEvent('InterviewEvent', {
       action: 'Finish_Interview',
       desc: 'User finished a interview.'
     })
