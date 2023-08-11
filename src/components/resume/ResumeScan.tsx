@@ -174,7 +174,7 @@ const ResumeScan: React.FC<ResumeScanProps> = ({ nocollapse, reload, type }) => 
     const name = resume.name
     const docType = name.slice(-3)
 
-    trackEvent('Resume_Functionality_Used', {
+    trackEvent('ResumeScanEvent', {
       type: 'Resume_Submitted',
       resume_name: name
     })

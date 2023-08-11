@@ -97,7 +97,7 @@ const EducationCard = ({
       }
 
       await API.graphql(graphqlOperation(updateUserEducation, eduInput))
-      auth.trackEvent('User_Profile_Settings', {
+      auth.trackEvent('UserProfileUpdateEvent', {
         action: 'Edit_Education_History',
         ...eduInput
       })
@@ -120,7 +120,7 @@ const EducationCard = ({
 
           eduData.eduID = createdEduID
           updatedEduDatas.push(eduData)
-          auth.trackEvent('User_Profile_Settings', {
+          auth.trackEvent('UserProfileUpdateEvent', {
             action: 'Create_Education_History',
             ...eduInput
           })

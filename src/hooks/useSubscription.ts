@@ -42,16 +42,10 @@ export function useSubscription(userSubscription: UserSubscription | null) {
           const infoJSON = JSON.parse(result.data.createUserSubscriptionRequest.info)
 
           // Log the event
-          auth.trackEvent('UserCreateNewSubscriptionRequest', {
-            action: 'User Clicked Plan Upgrade',
-            currentPlan: 'Free',
-            newPlan: 'Premium'
-          })
-
-          // Log the event user
-          auth.setMixpanelPeople({
-            action: 'User Clicked Plan Upgrade',
-            currentPlan: 'Free',
+          auth.trackEvent('SubscriptionUpdateEvent', {
+            action: 'Click_Plans_Upgrade',
+            desc: 'User clicked plan upgrade',
+            currentPlan: userSubscription?.planType,
             newPlan: 'Premium'
           })
 
@@ -68,6 +62,7 @@ export function useSubscription(userSubscription: UserSubscription | null) {
 
       return { isSuccessful: false }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth])
 
   const handleUserConfirmCancelSubscription = useCallback(async () => {
@@ -84,16 +79,10 @@ export function useSubscription(userSubscription: UserSubscription | null) {
 
       if ('data' in result && result.data.cancelUserSubscriptionRequest.isSuccessful) {
         // Log the event
-        auth.trackEvent('UserCreateNewCancelSubscriptionRequest', {
-          action: 'User Clicked Plan Cancel',
-          currentPlan: 'Premium',
-          newPlan: 'Free'
-        })
-
-        // Log the event user
-        auth.setMixpanelPeople({
-          action: 'User Clicked Plan Cancel',
-          currentPlan: 'Premium',
+        auth.trackEvent('SubscriptionUpdateEvent', {
+          action: 'Click_Plans_Cancel',
+          desc: 'User clicked plan cancel',
+          currentPlan: userSubscription?.planType,
           newPlan: 'Free'
         })
 
@@ -119,15 +108,9 @@ export function useSubscription(userSubscription: UserSubscription | null) {
       )
 
       // Log the event
-      auth.trackEvent('UserCreateNewResumeSubscriptionRequest', {
-        action: 'User Clicked Plan Resume',
-        currentPlan: 'Free',
-        newPlan: 'Premium'
-      })
-
-      // Log the event user
-      auth.setMixpanelPeople({
-        action: 'User Clicked Plan Resume',
+      auth.trackEvent('SubscriptionUpdateEvent', {
+        action: 'Click_Plans_Resume',
+        desc: 'User clicked plan resume',
         currentPlan: 'Free',
         newPlan: 'Premium'
       })

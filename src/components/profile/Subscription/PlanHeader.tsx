@@ -1,5 +1,5 @@
 import { Button, CardHeader, Grid, CircularProgress, Chip } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DialogSelectParam, PlanType, UserSubscription } from 'src/context/types'
 import { useSubscription } from 'src/hooks/useSubscription'
 import Logger from 'src/middleware/loggerMiddleware'
@@ -16,7 +16,7 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
   // ** Destructure the props
   const { userSubscription, dialogParams, setDialogParams } = planHeaderInterface
   const [isLoading, setIsLoading] = useState(false)
-  const { trackEvent, setMixpanelPeople } = useAuth()
+  const { trackEvent } = useAuth()
 
   // Hooks
   const { handleUserConfirmResumeSubscription } = useSubscription(userSubscription)
@@ -73,14 +73,6 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
               ...dialogParams,
               upgrade: true
             })
-            trackEvent('User_view_plan', {
-              category: 'Upgrade Plan',
-              action: 'Click Upgrade Plan Button',
-              label: 'Upgrade Plan Button Clicked'
-            })
-            setMixpanelPeople({
-              plan: 'free'
-            })
           }}
           sx={{ mr: 6 }}
           disabled={isLoading}
@@ -90,6 +82,19 @@ export const PlanHeader = (planHeaderInterface: PlanHeaderInterface) => {
       )
     }
   }
+
+  // Define the mixPanel event tracker
+  useEffect(() => {
+    const tracker = () => {
+      trackEvent('SubscriptionUpdateEvent', {
+        action: 'Viewed_Plan',
+        desc: 'User viewed the plan',
+        currentSubscription: userSubscription
+      })
+    }
+    tracker()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Grid container alignItems='center' justifyContent='space-between'>
