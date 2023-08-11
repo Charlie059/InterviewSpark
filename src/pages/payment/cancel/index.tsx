@@ -14,11 +14,11 @@ const PaymentCancel = () => {
       <Grid item xs={12}>
         <Grid container direction='column' justifyContent='center' alignItems='center'>
           <Typography variant='h4' color='palette.success.main' sx={{ mt: 5, mb: 5 }}>
-            Subscription Cancelled
+            Transaction Cancelled
           </Typography>
           <Typography variant='body1' color='palette.success.main' sx={{ mb: 5 }}>
-            We're sorry to see you go, but we'd love to have you back whenever you're ready. Click here to return to the
-            home page.{' '}
+            We're sorry the transaction is cancelled, but we'd love to assist you whenever you're ready. Click here to
+            return to the home page.{' '}
           </Typography>
           <Button
             variant='contained'
