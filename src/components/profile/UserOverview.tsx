@@ -32,6 +32,8 @@ import { getServerSideProps } from '../../pages/user-profile/[user]'
 import Logger from '../../middleware/loggerMiddleware'
 import { Autocomplete } from '@mui/material'
 import { countries } from 'src/components/profile/countries'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
 
 const UserOverview = ({ user, data, type }: { user: any; data: any; type?: string }) => {
   // ** Industry List
@@ -53,6 +55,12 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
     'Wholesale Trade',
     'Other'
   ]
+
+  // ** Schema for yup
+  const schema = yup.object().shape({
+    fName: yup.string().required(),
+    lName: yup.string().required()
+  })
 
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
@@ -92,8 +100,15 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
 
   const defaultValues = data
 
-  const { control, handleSubmit } = useForm({ defaultValues })
-
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    defaultValues,
+    mode: 'onBlur',
+    resolver: yupResolver(schema)
+  })
   const updateProfile = async (data: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     try {
       const input = {
@@ -286,10 +301,12 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                           <TextField
                             type='fName'
                             fullWidth
-                            label='First Name'
+                            label='First Name*'
                             value={value}
                             defaultValue={profileData.fName}
                             onChange={onChange}
+                            error={errors.fName ? true : false}
+                            helperText={errors.fName ? 'First Name cannot be empty' : ''}
                           />
                         )}
                       />
@@ -304,10 +321,12 @@ const UserOverview = ({ user, data, type }: { user: any; data: any; type?: strin
                           <TextField
                             type='lName'
                             fullWidth
-                            label='Last Name'
+                            label='Last Name*'
                             value={value}
                             defaultValue={profileData.lName}
                             onChange={onChange}
+                            error={errors.lName ? true : false}
+                            helperText={errors.lName ? 'Last Name cannot be empty' : ''}
                           />
                         )}
                       />
