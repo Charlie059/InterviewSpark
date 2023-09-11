@@ -54,7 +54,6 @@ const Error404 = () => {
           Back to Home
         </Button>
       </Box>
-      <FooterIllustrations image='/images/pages/misc-404-object.png' />
     </Box>
   )
 }
