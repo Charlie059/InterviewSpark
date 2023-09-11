@@ -101,11 +101,11 @@ const InterviewButton: FC<InterviewButtonProps> = ({ status, isReading, onButton
       )
       buttonText = isReading ? (
         <Typography variant={'h6'} color={'#F3F3F3'} sx={{ marginRight: '20px' }}>
-          Stop
+          Finish
         </Typography>
       ) : (
         <Typography variant={'h6'} color={'#FF6C4B'} sx={{ marginRight: '20px' }}>
-          Stop
+          Finish
         </Typography>
       )
       ButtonCardColor = isReading ? '#E2E2E2' : '#DFDFDF'
