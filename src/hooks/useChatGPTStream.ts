@@ -37,6 +37,7 @@ const handleStreamReading = async (
   callback: (value: string) => void,
   end: () => void
 ) => {
+  let res = ''
   try {
     while (true) {
       const { done, value } = await reader.read()
@@ -44,6 +45,7 @@ const handleStreamReading = async (
         break
       }
       const decodedValue = new TextDecoder().decode(value)
+      res += decodedValue
       callback(decodedValue)
     }
   } catch (error) {
@@ -51,6 +53,8 @@ const handleStreamReading = async (
   } finally {
     reader.releaseLock()
     end()
+
+    return res
   }
 }
 
@@ -129,7 +133,9 @@ const useChatGPTStream = (addToQueue: (sentence: string) => void, start: () => v
       if (!stream) return
       const reader = stream.getReader()
       start()
-      handleStreamReading(reader, addToQueueIfSentenceComplete, end)
+      const outputFeedback = await handleStreamReading(reader, addToQueueIfSentenceComplete, end)
+
+      return outputFeedback
     } catch (error: any) {
       setStreamError({ type: 'ChatGPT-Error', message: error })
       Logger.error('An error occurred while generating the response:', error)

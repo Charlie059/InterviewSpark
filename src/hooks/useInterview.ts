@@ -234,6 +234,7 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
   const updateVideoToDynamoDB = async (uniqueFileName: string, filePath: string) => {
     try {
       const currInterview = interviews[interviewState.currentQuestionIndex]
+      console.log('currInterview: ', currInterview)
 
       await API.graphql(
         graphqlOperation(updateUserInterview, {
@@ -244,7 +245,8 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
           interviewVideoKey: uniqueFileName,
           interviewFeedback: currInterview.interviewFeedback,
           interviewVideoLength: interviewVideoLength.current,
-          interviewVideoPath: filePath
+          interviewVideoPath: filePath,
+          interviewAnalysis: ''
         })
       )
 
@@ -325,7 +327,8 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     const interviewAnswer = transcribedText.current
 
     Logger.info('Interview Answer: ', interviewAnswer)
-    generateResponse(interviewQuestion, interviewAnswer)
+    const feedback = await generateResponse(interviewQuestion, interviewAnswer)
+    interviews[interviewState.currentQuestionIndex].interviewFeedback = feedback ? feedback : ''
 
     // Mixpanel tracking
     mixPanelTracker(
