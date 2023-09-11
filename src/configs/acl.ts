@@ -25,11 +25,9 @@ const defineRulesFor = (role: string, subject: string) => {
     // Define guest rules here
     can(['read'], 'acl-page')
     can(['read'], 'home-page')
-    can(['read'], 'discuss-page')
     can(['read'], 'interview-page')
     can(['read'], 'profile-page')
-    can(['read'], 'resume-page')
-    can(['read'], 'metahire-page')
+    can(['read'], 'upgrade-page')
   } else {
     can(['read'], 'acl-page')
     can(['read', 'create', 'update', 'delete'], subject)
