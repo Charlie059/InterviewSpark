@@ -20,6 +20,8 @@ interface Props {
   videoUrl?: string
   isDetailPage?: boolean
   handleClose?: () => void
+  interviewRealTimeFeedback?: string
+  interviewPostFeedback?: string
 }
 
 const videoTranscriptionHint =
@@ -573,7 +575,7 @@ export default function InterviewFeedbackCard(props: Props) {
         return umCounterHint
       case 'Vocabulary':
         return vocabularyHint
-      case 'Power Word':
+      case 'Power Words':
         return powerWordHint
       case 'Answer Relevance':
         return answerRelevanceHint
@@ -639,12 +641,37 @@ export default function InterviewFeedbackCard(props: Props) {
           )}
           <Grid item xs={12} lg={videoUrl ? (isDetailPage ? 12 : 4) : 12}>
             {isDetailPage ? (
-              <Typography variant={'body1'}>
-                {cardText}
+              <>
+                {cardName === 'Video' && <Typography variant={'h6'}>Question</Typography>}
+
+                <Typography variant={'body1'}>{cardText}</Typography>
+                {props.interviewRealTimeFeedback && !props.interviewPostFeedback && (
+                  <>
+                    <br />
+                    <Typography variant={'h6'}>Real Time Feedback</Typography>
+                    <Typography variant={'body1'}>{props.interviewRealTimeFeedback}</Typography>
+                    <br />
+                  </>
+                )}
+
+                {props.interviewPostFeedback && (
+                  <>
+                    <br />
+                    <Typography variant={'h6'}>Interview Feedback</Typography>
+                    <Typography variant={'body1'}>{props.interviewPostFeedback}</Typography>
+                    <br />
+                  </>
+                )}
                 <br />
-                <br />
-                {getHintText()}
-              </Typography>
+
+                {getHintText() && (
+                  <>
+                    <Typography variant={'h6'}>Hint</Typography>
+                    <Typography variant={'body1'}>{getHintText()}</Typography>
+                    <br />
+                  </>
+                )}
+              </>
             ) : (
               <Box height={75}>
                 <Typography variant={videoUrl ? 'h6' : 'body1'}>

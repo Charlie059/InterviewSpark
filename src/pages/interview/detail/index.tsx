@@ -9,7 +9,6 @@ import { Storage } from '@aws-amplify/storage'
 import FeedbackAnalysisPage from 'src/components/interviewFeedback/Feedback404Page'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-hot-toast'
-import Logger from 'src/middleware/loggerMiddleware'
 
 type CardDataType = {
   cardName: string
@@ -19,6 +18,8 @@ type CardDataType = {
   onDetailClick?: () => void
   videoUrl?: string
   isDetailPage?: boolean
+  interviewRealTimeFeedback?: string
+  interviewPostFeedback?: string
 }
 
 const InterviewDetails = () => {
@@ -67,6 +68,7 @@ const InterviewDetails = () => {
 
       // Fetch interview from the router query
       try {
+        console.log('interviewID: ', interviewID)
         const result = await API.graphql(
           graphqlOperation(getUserInterviewMetaData, {
             emailAddress: userEmailAddress,
@@ -75,6 +77,8 @@ const InterviewDetails = () => {
             interviewQuestionType: interviewQuestionType
           })
         )
+
+        console.log('result: ', result)
         if ('data' in result) {
           const videoKey = result.data.getUserInterviewMetaData.interviewVideoKey
 
@@ -110,13 +114,15 @@ const InterviewDetails = () => {
                 position: 'top-center'
               })
             }
+
             setCardData([
               {
                 cardName: 'Video',
                 cardText: result.data.getUserInterviewMetaData.interviewQuestion,
                 cardValue: null,
                 extraInfo: null,
-                videoUrl: videoUrl
+                videoUrl: videoUrl,
+                interviewRealTimeFeedback: result.data.getUserInterviewMetaData.interviewFeedback
               }
             ])
           } else {
@@ -127,16 +133,10 @@ const InterviewDetails = () => {
                 cardText: result.data.getUserInterviewMetaData.interviewQuestion,
                 cardValue: null,
                 extraInfo: null,
-                videoUrl: videoUrl
+                videoUrl: videoUrl,
+                interviewRealTimeFeedback: result.data.getUserInterviewMetaData.interviewFeedback,
+                interviewPostFeedback: interviewDetails.interviewFeedback
               },
-
-              // {
-              //   cardName: 'UM Counter',
-              //   cardText: interviewDetails.umFeedback,
-              //   cardValue: interviewDetails.umCounter,
-              //   extraInfo: null
-              // },
-
               {
                 cardName: 'Vocabulary',
                 cardText: interviewDetails.vocabularyFeedback,
@@ -185,38 +185,12 @@ const InterviewDetails = () => {
                 cardValue: interviewDetails.paceOfSpeech,
                 extraInfo: null
               }
-
-              // {
-              //   cardName: 'Lighting',
-              //   cardText: interviewDetails.rekognitionScores.brightness_score_feedback,
-              //   cardValue: interviewDetails.rekognitionScores.brightness_score,
-              //   extraInfo: null
-              // },
-              // {
-              //   cardName: 'Eye Contact',
-              //   cardText: interviewDetails.rekognitionScores.eye_contact_score_feedback,
-              //   cardValue: interviewDetails.rekognitionScores.eye_contact_score,
-              //   extraInfo: null
-              // },
-
-              // {
-              //   cardName: 'Smile',
-              //   cardText: interviewDetails.rekognitionScores.smile_score_feedback,
-              //   cardValue: interviewDetails.rekognitionScores.smile_score,
-              //   extraInfo: null
-              // },
-              // {
-              //   cardName: 'Calm',
-              //   cardText: interviewDetails.rekognitionScores.emotions_feedback,
-              //   cardValue: null,
-              //   extraInfo: interviewDetails.rekognitionScores.emotions
-              // }
             ])
           }
         }
       } catch (error) {
         setShowLoadingPage(true)
-        Logger.error('Error in fetching interview details', error)
+        console.error('Error fetching interview details: ', error)
       }
     }
 
@@ -224,7 +198,7 @@ const InterviewDetails = () => {
       fetchInterviewDetails()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth.user?.userEmailAddress, router.query.interview, showLoadingPage])
+  }, [auth.user?.userEmailAddress, router.query.interview])
 
   return (
     <>
