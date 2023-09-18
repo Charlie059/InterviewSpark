@@ -23,6 +23,7 @@ import HorizontalAppBarContent from './components/horizontal/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { Grid, Typography } from '@mui/material'
 
 interface Props {
   children: ReactNode
@@ -59,11 +60,23 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
       contentHeightFixed={contentHeightFixed}
       verticalLayoutProps={{
         navMenu: {
-          navItems: VerticalNavItems()
+          navItems: VerticalNavItems(),
+          afterContent: props => {
+            console.log(props)
+
+            return (
+              <Grid container direction='column' justifyContent='flex-end' alignItems='center'>
+                <Typography variant='h6' sx={{ mb: 5 }}>
+                  {props.navHover ? '66' : '55'}
+                </Typography>
+              </Grid>
+            )
+          }
 
           // Uncomment the below line when using server-side menu in vertical layout and comment the above line
           // navItems: verticalMenuItems
         },
+
         appBar: {
           content: props => (
             <VerticalAppBarContent
@@ -90,7 +103,6 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
       })}
     >
       {children}
-
     </Layout>
   )
 }
