@@ -1,3 +1,6 @@
+
+[//]: # (TODO improve this readme)
+
 # HireBeat Job Seeker with AWS Amplify
 
 HireBeat Job Seeker is a web application that helps job seekers find job opportunities and prepare for job interviews. This project is built using React and is powered by AWS Amplify. It includes a variety of UI components, pages, and plugins to help job seekers navigate the job search process.
