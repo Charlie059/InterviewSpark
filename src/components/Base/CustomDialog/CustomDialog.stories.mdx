@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
 import CustomDialog from './CustomDialog'
 import Button from '@mui/material/Button'
+import Rating from "../../rating"
+import Typography from '@mui/material/Typography'
+import Chip from '@mui/material/Chip'
 
 <Meta title='Components/CustomDialog' component={CustomDialog} />
 
@@ -9,19 +12,22 @@ import Button from '@mui/material/Button'
 
 The `CustomDialog` is a highly reusable component that displays a dialog with a title and message. It includes buttons for confirming or canceling the action and can be easily customized according to the needs of the interface.
 
-## Usage
+## Props
 
 Use this component wherever you need to get confirmation from the user or inform them about important information.
 
 - `open`: Indicates whether the dialog is open or not.
 - `onClose`: Callback function invoked when the dialog needs to be closed.
-- `title`: Sets the title of the dialog.
-- `content`: Defines the content inside the dialog.
+- `contentList`: List of react components that will be displayed in the CustomDialogue
 - `actions`: The actions displayed at the bottom of the dialog.
 - `sx`: The sx props for the dialog.
 
 <ArgsTable of={CustomDialog} />
 
+## Usage
+
+
+Here is the default dialogue:
 <Canvas>
   <Story name='PrimaryDialog' args={{ title: 'Title' }}>
     {args => {
@@ -31,11 +37,61 @@ Use this component wherever you need to get confirmation from the user or inform
 
       return (
         <>
-          <Button onClick={handleOpen}>Show Dialog</Button>
+          <Button onClick={handleOpen}>Show Default Dialogue</Button>
           <CustomDialog {...args} open={open} onClose={handleClose} />
         </>
       )
     }}
 
+  </Story>
+</Canvas>
+
+In order to embed more components, we should modify the componentList.
+For example, if a list of header is required to be displayed through the Custom Dialogue,
+the prop `contentList` was modified as
+
+you can try the example below:
+<Canvas>
+  <Story name='Example1' args={{ title: 'Title' }}>
+    {args => {
+      const [open, setOpen] = useState(false)
+      const handleOpen = () => setOpen(true)
+      const handleClose = () => setOpen(false)
+
+      return (
+        <>
+          <Button onClick={handleOpen}>Show Custom Dialogue</Button>
+          <CustomDialog {...args} open={open} onClose={handleClose}
+          contentList={[
+            <Typography>Header 1</Typography>,
+            <Chip label="Chip Filled 1" />,
+            <Button>button3</Button>
+            ]}/>
+        </>
+      )
+    }}
+  </Story>
+</Canvas>
+
+
+Here is another example about a rating dialogue:
+
+<Canvas>
+  <Story name='Example2' args={{ title: 'Title' }}>
+    {args => {
+      const [open, setOpen] = useState(false)
+      const handleOpen = () => setOpen(true)
+      const handleClose = () => setOpen(false)
+
+      return (
+        <>
+          <Button onClick={handleOpen}>Show Rating Dialogue</Button>
+          <CustomDialog {...args} open={open} onClose={handleClose}
+                        contentList={[
+                          <Rating/>
+                        ]}/>
+        </>
+      )
+    }}
   </Story>
 </Canvas>
