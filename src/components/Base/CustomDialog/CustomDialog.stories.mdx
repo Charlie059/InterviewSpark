@@ -1,0 +1,41 @@
+import { useState } from 'react'
+import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
+import CustomDialog from './CustomDialog'
+import Button from '@mui/material/Button'
+
+<Meta title='Components/CustomDialog' component={CustomDialog} />
+
+# CustomDialog
+
+The `CustomDialog` is a highly reusable component that displays a dialog with a title and message. It includes buttons for confirming or canceling the action and can be easily customized according to the needs of the interface.
+
+## Usage
+
+Use this component wherever you need to get confirmation from the user or inform them about important information.
+
+- `open`: Indicates whether the dialog is open or not.
+- `onClose`: Callback function invoked when the dialog needs to be closed.
+- `title`: Sets the title of the dialog.
+- `content`: Defines the content inside the dialog.
+- `actions`: The actions displayed at the bottom of the dialog.
+- `sx`: The sx props for the dialog.
+
+<ArgsTable of={CustomDialog} />
+
+<Canvas>
+  <Story name='PrimaryDialog' args={{ title: 'Title' }}>
+    {args => {
+      const [open, setOpen] = useState(false)
+      const handleOpen = () => setOpen(true)
+      const handleClose = () => setOpen(false)
+
+      return (
+        <>
+          <Button onClick={handleOpen}>Show Dialog</Button>
+          <CustomDialog {...args} open={open} onClose={handleClose} />
+        </>
+      )
+    }}
+
+  </Story>
+</Canvas>
