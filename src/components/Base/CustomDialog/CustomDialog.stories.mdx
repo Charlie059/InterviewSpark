@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
 import CustomDialog from './CustomDialog'
 import Button from '@mui/material/Button'
-import Rating from "../../rating"
+import Rating from '../../rating'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
 
@@ -18,7 +18,7 @@ Use this component wherever you need to get confirmation from the user or inform
 
 - `open`: Indicates whether the dialog is open or not.
 - `onClose`: Callback function invoked when the dialog needs to be closed.
-- `contentList`: List of react components that will be displayed in the CustomDialogue
+- `children`: The content to be displayed in the dialog.
 - `actions`: The actions displayed at the bottom of the dialog.
 - `sx`: The sx props for the dialog.
 
@@ -26,8 +26,8 @@ Use this component wherever you need to get confirmation from the user or inform
 
 ## Usage
 
-
 Here is the default dialogue:
+
 <Canvas>
   <Story name='PrimaryDialog' args={{ title: 'Title' }}>
     {args => {
@@ -51,6 +51,7 @@ For example, if a list of header is required to be displayed through the Custom 
 the prop `contentList` was modified as
 
 you can try the example below:
+
 <Canvas>
   <Story name='Example1' args={{ title: 'Title' }}>
     {args => {
@@ -62,17 +63,19 @@ you can try the example below:
         <>
           <Button onClick={handleOpen}>Show Custom Dialogue</Button>
           <CustomDialog {...args} open={open} onClose={handleClose}
-          contentList={[
-            <Typography>Header 1</Typography>,
-            <Chip label="Chip Filled 1" />,
-            <Button>button3</Button>
-            ]}/>
+          children={
+            <>
+              <Typography>Header 1</Typography>
+              <Chip label="Chip Filled 1" />
+              <Button>button3</Button>
+            </>
+            }/>
         </>
       )
     }}
+
   </Story>
 </Canvas>
-
 
 Here is another example about a rating dialogue:
 
@@ -87,11 +90,20 @@ Here is another example about a rating dialogue:
         <>
           <Button onClick={handleOpen}>Show Rating Dialogue</Button>
           <CustomDialog {...args} open={open} onClose={handleClose}
-                        contentList={[
+                        children={
+                          <>
                           <Rating/>
-                        ]}/>
-        </>
-      )
-    }}
+                          <Button sx={{
+    display: 'block',
+    margin: 'auto'
+
+}} onClick={console}>Submit</Button>
+
+</>
+}/>
+</>
+)
+}}
+
   </Story>
 </Canvas>

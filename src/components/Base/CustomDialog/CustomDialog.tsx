@@ -1,9 +1,6 @@
 /* eslint-disable lines-around-comment */
 import React from 'react'
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, SxProps, Theme } from '@mui/material'
-import Typography from '@mui/material/Typography';
-import { Box } from 'mdi-material-ui';
-import Rating from '../../rating';
+import { Dialog, DialogContent, DialogActions, Button, SxProps, Theme } from '@mui/material'
 
 /**
  * Properties for the CustomDialogProps.
@@ -15,8 +12,8 @@ export interface CustomDialogProps {
   /** Callback function invoked when the dialog needs to be closed. */
   onClose: () => void
 
-  /** List of React components to be displayed in the content section. */
-  contentList?: React.ReactNode[];
+  /** The content to be displayed in the dialog. */
+  children?: React.ReactNode
 
   /** The actions displayed at the bottom of the dialog. */
   actions?: React.ReactNode
@@ -26,15 +23,11 @@ export interface CustomDialogProps {
 }
 
 const CustomDialog = (props: CustomDialogProps) => {
-  const { open, onClose, contentList , actions, sx } = props
+  const { open, onClose, children, actions, sx } = props
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth sx={sx}>
-      <DialogContent>
-        {contentList?.map((component, index) => (
-          <React.Fragment key={index}>{component}</React.Fragment>
-        ))}
-      </DialogContent>
+      <DialogContent>{children}</DialogContent>
       {actions || (
         <DialogActions>
           <Button onClick={onClose} color='primary'>
@@ -52,10 +45,7 @@ CustomDialog.defaultProps = {
   onClose: () => {
     console.log('onClose')
   },
-  contentList:[
-    <div>Default content</div>,
-    ]
+  children: <div>Default content</div>
 }
 
-
-export default CustomDialog;
+export default CustomDialog

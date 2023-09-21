@@ -1,4 +1,3 @@
-import { Button } from '@mui/material'
 import { useState } from 'react'
 import CustomDialog from 'src/components/Base/CustomDialog/CustomDialog'
 
@@ -12,8 +11,6 @@ const Playground = () => {
         onClose={() => {
           setOpen(false)
         }}
-        title='Test'
-        content='Test'
       />
     </>
   )
