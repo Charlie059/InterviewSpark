@@ -1,0 +1,348 @@
+import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
+
+<Meta title='Back End/Database and Schema'/>
+
+
+# Database and Schema
+
+## Database Design Chart
+
+[https://lucid.app/documents/view/e8aa0a8f-ce37-4074-9104-76a5679b9da3](https://lucid.app/documents/view/e8aa0a8f-ce37-4074-9104-76a5679b9da3)
+
+## Types
+
+### Education
+
+Fields associated with an individual's educational background.
+
+```graphql
+type Education {
+    eduDegree: String
+    eduFieldStudy: String
+    eduSchool: String
+    eduStartDate: AWSDate
+    eduEndDate: AWSDate
+}
+```
+
+#### Educations
+
+A list of Education entries.
+
+```graphql
+type Educations {
+    educations: [Education]
+}
+
+```
+
+#### Interview
+
+Fields associated with an interview.
+
+```graphql
+type Interview {
+    interviewID: String
+    interviewDateTime: AWSDateTime
+    interviewQuestionID: String
+    interviewVideoKey: String
+    interviewQuestion: String
+    interviewQuestionTitle: String
+    interviewQuestionType: String
+    interviewFeedback: String
+}
+
+```
+
+#### InterviewList
+
+A list of Interview entries.
+
+```graphql
+type InterviewList {
+    interviewList: [Interview]
+}
+```
+
+#### OperationResult
+
+Result of an operation, indicating success or failure, with an error string for failure cases.
+
+```graphql
+type OperationResult {
+    isSuccessful: Boolean!
+    error: String
+}
+```
+
+#### PaginatedInterviewList
+
+A paginated list of Interview entries.
+
+```graphql
+type PaginatedInterviewList {
+    interviewList: [Interview]
+    nextToken: String
+    totalRecords: Int
+}
+```
+
+#### PaginatedQuestionList
+
+A paginated list of Question entries.
+
+```graphql
+type PaginatedQuestionList {
+    questionList: [Question]
+    nextToken: String
+    totalRecords: Int
+}
+```
+
+#### Profile
+
+Fields associated with a user's profile.
+
+```graphql
+type Profile {
+    fName: String
+    lName: String
+    photoImgURL: String
+    coverImgURL: String
+    resumeKey: String
+    addressLine1: String
+    addressLine2: String
+    city: String
+    state: String
+    postalCode: String
+    country: String
+    joiningDate: String
+    contact: String
+    isPublic: Boolean
+    userName: String
+    userEmailAddress: String
+    userRole: String
+}
+```
+
+#### Question
+
+Fields associated with an interview question.
+
+```graphql
+type Question {
+    GSI1PK: String
+    interviewQuestion: String
+    interviewQuestionSampleAns: String
+    interviewQuestionType: String
+    interviewQuestionTitle: String
+    QuestionID: String
+    difficulty: String
+    estimatedSecond: Int
+}
+
+```
+
+#### QuestionList
+
+A list of Question entries.
+
+```graphql
+type QuestionList {
+    questionList: [Question]
+}
+```
+
+#### QuestionUsageMetaData
+
+Metadata related to the usage of questions.
+
+```graphql
+type QuestionUsageMetaData {
+    totalNumOfQuestion: Int
+}
+
+```
+
+#### ResumeScan
+
+Fields associated with a resume scan.
+
+```graphql
+type ResumeScan {
+    displayName: String
+    jobName: String
+    resumeName: String
+    resumeResults: String
+    resumeUrl: String
+    resumeScanID: String!
+}
+
+```
+
+#### ResumeScanList
+
+A list of ResumeScan entries.
+
+```graphql
+type ResumeScanList {
+    resumeScanList: [ResumeScan]
+}
+
+```
+
+#### UserInterviewUsageMetaData
+
+Metadata related to a user's interview usage.
+
+```graphql
+type UserInterviewUsageMetaData {
+    userInterviewNumCount: Int
+    userInterviewQuestionSet: [Int]
+    userInterviewQuestionMap: AWSJSON
+}
+```
+
+#### WorkHistory
+
+Fields associated with a user's work history.
+
+```graphql
+type WorkHistory {
+    workHistoryJobTitle: String
+    workHistoryEmployer: String
+    workHistoryStartDate: AWSDate
+    workHistoryEndDate: AWSDate
+    workHistoryJobDescription: String
+}
+
+```
+
+#### WorkHistories
+
+A list of WorkHistory entries.
+
+```graphql
+type WorkHistories {
+    workHistory: [WorkHistory]
+}
+
+```
+
+### Enums
+
+#### ModelAttributeTypes
+
+Types of attributes a model can have.
+
+```graphql
+enum ModelAttributeTypes {
+    binary
+    binarySet
+    bool
+    list
+    map
+    number
+    numberSet
+    string
+    stringSet
+    _null
+}
+
+```
+
+#### ModelSortDirection
+
+Directions to sort a model.
+
+```graphql
+enum ModelSortDirection {
+    ASC
+    DESC
+}
+
+```
+
+### Mutations
+
+```graphql
+type Mutation {
+    createNewGuestUser(
+        emailAddress: AWSEmail!,
+        userName: String,
+        fName: String!,
+        lName: String!
+    ): OperationResult!
+    createUserInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+    createInterviewWithQuestion(emailAddress: AWSEmail!, questionID: String!): Interview!
+    updateInterviewVideoKey(
+        emailAddress: AWSEmail!,
+        interviewID: String!,
+        questionID: String!,
+        interviewVideoKey: String!,
+        interviewFeedback: String!
+    ): Interview!
+    updateUserProfile(
+        emailAddress: AWSEmail!,
+        addressLine1: String,
+        addressLine2: String,
+        city: String,
+        contact: String,
+        country: String,
+        coverImgURL: String,
+        fName: String,
+        lName: String,
+        photoImgURL: String,
+        postalCode: String,
+        resumeKey: String,
+        state: String,
+        isPublic: String
+    ): OperationResult!
+    removeUserInterviewsByID(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): OperationResult!
+    removeUserResumeScanByID(emailAddress: AWSEmail!, resumeScanID: String!): OperationResult!
+    createUserResumeScan(
+        emailAddress: AWSEmail!,
+        resumeUrl: String!,
+        displayName: String!,
+        jobName: String!,
+        resumeName: String!,
+        resumeResults: String!
+    ): ResumeScan!
+    updateUserResumeScanURL(emailAddress: AWSEmail!, resumeID: String, resumeUrl: String!): ResumeScan!
+}
+```
+
+### Query
+
+```graphql
+type Query {
+    getUser(emailAddress: AWSEmail!): User!
+    getUserProfile(emailAddress: AWSEmail!): Profile!
+    getUserProfileByUsername(userName: String!): Profile!
+    getUserWorkHistories(emailAddress: AWSEmail!): WorkHistories!
+    getUserEducations(emailAddress: AWSEmail!): Educations!
+    getUserInterviewsPaginated(emailAddress: AWSEmail!, limit: Int, nextToken: String): PaginatedInterviewList!
+    getUserInterviewsByMonth(emailAddress: AWSEmail!): InterviewList!
+    getUserInterviewMetaData(emailAddress: AWSEmail!, interviewID: String!, interviewQuestionID: String!): Interview!
+    searchUserInterviews(emailAddress: AWSEmail!, keyword: String!): InterviewList!
+    searchUserInterviewsPaginated(emailAddress: AWSEmail!, keyword: String!): PaginatedInterviewList!
+    getUserInterviewUsageMetaData(emailAddress: AWSEmail!): UserInterviewUsageMetaData!
+    getQuestionUsageMetaData: QuestionUsageMetaData!
+    getQuestionMetaData(questionID: String!): Question!
+    getQuestionsPaginated(limit: Int, nextToken: String): PaginatedQuestionList!
+    searchQuestions(keyword: String!): QuestionList!
+    searchQuestionsPaginated(keyword: String!, limit: Int!, nextToken: String): PaginatedQuestionList!
+    getUserInterviewsByQuestionID(emailAddress: AWSEmail!, questionID: String!): InterviewList!
+    getUserResumeScans(emailAddress: AWSEmail!): ResumeScanList!
+}
+```
+
+1: Deprecated
+
+2: Change Name
+
+3: Result
+
+4: Deprecated
+
+5:

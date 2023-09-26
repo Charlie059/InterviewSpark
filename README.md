@@ -1,63 +1,74 @@
 
-[//]: # (TODO improve this readme)
+# InterviewSpark with AWS Amplify
 
-# HireBeat Job Seeker with AWS Amplify
-
-HireBeat Job Seeker is a web application that helps job seekers find job opportunities and prepare for job interviews. This project is built using React and is powered by AWS Amplify. It includes a variety of UI components, pages, and plugins to help job seekers navigate the job search process.
+InterviewSpark is an AI-powered mock interview tool that assists job seekers in honing their interview skills and boosting their confidence. Developed using React, it's underpinned by AWS Amplify and incorporates a wide range of UI components, pages, and plugins to provide a comprehensive mock interview experience.
 
 ## Getting Started
 
-To get started with HireBeat Job Seeker, you'll need to have Node.js and yarn installed on your system. You'll also need to set up an AWS account and create an AWS Amplify app. Once you have those installed, follow these steps:
+To dive into InterviewSpark, ensure Node.js and npm are installed on your system. Setting up an AWS account is essential, along with initializing an AWS Amplify app. Once set, follow these steps:
 
 1. Clone the repository:
+   git clone <https://github.com/Charlie059/InterviewSpark.git>
 
-   ```bash
-   git clone https://github.com/Charlie059/HireBeat_JobSeeker.git
-   ```
+1. Install dependencies:
+   npm install
 
-2. Install dependencies:
+1. Set up Amplify:
 
-   ```bash
-   yarn install
-   ```
+```bash
+amplify pull --appId d38e770jlxdzpa --envName staging
+```
 
-3. Initialize Amplify:
+1. Start the development server:
 
-   ```bash
-   amplify init
-   ```
+```bash
+npm run dev
+```
 
-4. Deploy the backend:
+1. Navigate to `http://localhost:3000` in your web browser.
 
-   ```bash
-   amplify push
-   ```
+## Documentation
 
-5. Start the development server:
+All backend documentation for InterviewSpark is available on [Github](https://github.com/Charlie059/InterviewSpark/docs). This encompasses installation, setup, customization, FAQs, and troubleshooting advice.
 
-   ```bash
-   yarn dev
-   ```
+### Frontend Docs in Storybook
 
-6. Open your web browser and navigate to `http://localhost:3000`
+Storybook is a powerful tool for developing and documenting UI components in isolation. It allows you to visualize different states of your components, develop them interactively, and organize them hierarchically based on atomic design principles.
 
-Once the development server is running, you should see the HireBeat Job Seeker homepage in your web browser. You can then start using the platform to search for job opportunities and prepare for job interviews.
+#### How to run Storybook?
 
-## Features
+- **Installation**: If you haven't already set up Storybook in your project, you can add it using npm or yarn:
 
-The HireBeat Job Seeker includes the following features:
+  ```bash
+  npx sb init
+  ```
 
-- Job search functionality with filters
-- Job application tracker
-- Interview preparation tools
-- Interview scheduling and email notifications
-- Resume and cover letter builder
+This command sets up the necessary configuration and installs dependencies. Storybook supports various frameworks like React, Vue, Angular, etc. It will try to detect the framework you're using.
 
-## Documentations
+- **Running Storybook:**:
 
-Check GraphQL DOCS: https://charile059s-organization.gitbook.io/api-docs/
-For more information about using the HireBeat Job Seeker with AWS Amplify, check out the [official documentation](https://hirebeat-job-seeker.example.com/docs/). The documentation includes information on installation, configuration, and customization, as well as a list of frequently asked questions and troubleshooting tips.
+  ```bash
+  npm run storybook
+  ```
+
+  This command will start the Storybook server and open it in your default web browser. By default, it will run on <http://localhost:6006/>.
 
 ## Support
 
-If you run into any issues while using the HireBeat Job Seeker, you can contact the project team for support. You can also submit bug reports and feature requests through the project's GitHub repository.
+For any hiccups with InterviewSpark, please contact our project team. Bug reports and feature suggestions are welcome on the Jira.
+
+## Important Notes
+
+- Ensure sensitive data like passwords or API keys are never hard-coded.
+- Exercise caution regarding potential security threats, especially when managing user input.
+- Refrain from uploading `.env` files to git.
+- Execute a npm build and ensure no errors exist before any push.
+- Do not use amplify push unless you have permission
+
+## Code Review and Best Practices
+
+- Every pull request needs scrutiny from at least one other developer.
+- Address all feedback before concluding the merge.
+- Prefix commit messages with the corresponding Jira ticket number.
+- Employ Cypress E2E for frontend tests. To activate in npm, utilize the appropriate command.
+- SAM is the chosen tool for backend processes, currently in transition.
