@@ -1,3 +1,4 @@
+
 # InterviewSpark with AWS Amplify
 
 InterviewSpark is an AI-powered mock interview tool that assists job seekers in honing their interview skills and boosting their confidence. Developed using React, it's underpinned by AWS Amplify and incorporates a wide range of UI components, pages, and plugins to provide a comprehensive mock interview experience.
