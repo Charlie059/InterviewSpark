@@ -1,0 +1,101 @@
+import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
+
+<Meta title='Get Started/Workflow'/>
+
+# Company Communication and Workflow Guidelines
+
+## Issues and Jira
+
+Instead of using Github issues, the workflow requires the programmer to submit issues through Jira.
+
+## Create issue and branch
+
+<img src="/images/docs/createIssue.png" />
+<img src="/images/docs/createIssue2.png" />
+
+🔴❗**IMPORTANT**❗Branch names should be structured as `[Jira Ticket Number]-short-description`. E.g., `JIRA-123-fix-login-bug`.
+
+🔴❗**IMPORTANT**❗All code changes should be committed to GitHub with meaningful commit messages. Every commit should reference the corresponding Jira ticket number.
+
+🔴❗**IMPORTANT**❗Upon committing or merging any changes, the corresponding Jira ticket should be updated with the status and any necessary comments.
+
+## Pull Request and Issue Status
+
+Pull requests in GitHub should be reviewed by at least one other team member. Once reviewed and approved, changes can be merged to the main branch.
+
+<img src="/images/docs/pullrequest.png" />
+
+
+## Communication in English
+
+**Purpose:** Slack is our primary platform for internal communication. All team members are required to communicate in English on Slack to ensure a unified and clear understanding among team members from different backgrounds.
+
+**Guidelines:**
+
+- **Channels:** Use designated channels for specific discussions. For instance, `#marketing` for marketing-related conversations and `#dev` for development-related topics.
+- **Direct Messages:** Use DMs for one-on-one conversations or discussions that don't pertain to the entire team.
+- **Response Time:** While instant responses are not expected, please do your best to respond within 24 hours during weekdays.
+
+## Slack Daily Check-In Using Standup Bot / Standup Meeting
+
+**Purpose:** Utilize the Slack Standup Bot to automate and streamline our daily check-in process. This ensures consistent updates and eases the management of daily standups.
+
+**Guidelines:**
+
+- **Set Up:** Ensure every team member has the Standup Bot integrated into their Slack.
+- **Frequency:** Every weekday.
+- **Time:** The bot will prompt every team member for their updates at 10:30 AM [Your Time Zone] and reminders will be sent every 15 minutes until 10:30 AM for those who haven't responded.
+- **Channel:** Standup Bot will consolidate all the updates and post a summarized report in the `#daily-standup` channel by 10:30 AM.
+- **Format:** When prompted by the bot, please provide your updates in the following structure:
+- What I did yesterday
+- What I will do today
+- Any blockers or challenges
+- **Bot Commands:** Familiarize yourself with the bot commands:
+- `/standup_configure`: Set or change your standup settings.
+- `/standup_status`: Check the status of your standup for the day.
+- (Any other relevant bot commands you wish to include.)
+
+## Weekly Meeting
+
+**Purpose:** Weekly meetings serve as a platform to discuss broader team objectives, align on goals, and address any significant challenges.
+
+**Guidelines:**
+
+- **Frequency:** Once a week.
+- **Time:** Every Friday at 3:00 PM [Your Time Zone].
+- **Platform:** Google Meeting. [Link]
+- **Agenda:** To be shared 24 hours before the meeting. Team members are encouraged to add any items they wish to discuss.
+
+
+## Code Requirements
+
+**Purpose:** To ensure the quality, maintainability, and consistency of our codebase, we've set forth the following coding standards and practices:
+
+**Guidelines:**
+
+- **Coding Style:** Adhere to the style guide provided for the specific programming language. E.g., for Python, follow PEP 8.
+- **Documentation:**
+- **Inline Comments:** Use them sparingly to explain complex pieces of code or algorithms.
+- **Docstrings:** Required for all functions, methods, and classes to describe their purpose and any parameters/returns.
+- **Testing:**
+- Every piece of new functionality must come with relevant unit tests or E2E test.
+- Ensure that all tests pass before pushing code or creating a pull request.
+- **Commit Messages:**
+- Write clear and concise commit messages that explain the purpose and context of the change.
+- If related to a Jira ticket, include the ticket number at the beginning of the commit message.
+- **Error Handling:**
+- Always handle potential errors or exceptions gracefully.
+- Provide informative error messages to help in debugging.
+- **Dependencies:**
+- Avoid adding unnecessary libraries or packages.
+- If a new dependency is essential, ensure it is added to the relevant dependency management file (e.g., `requirements.txt` for Python) and provide justification in your pull request.
+- **Performance:**
+- Write efficient code. Avoid nested loops or recursive functions where they can impact performance.
+- Profile and optimize resource-intensive sections of the codebase.
+- **Security:**
+- Never hard-code sensitive information like passwords or API keys.
+- Be wary of potential security vulnerabilities, especially when dealing with user input.
+- Never upload `.env` file to git
+- **Code Reviews:**
+- Every pull request should be reviewed by at least one other developer.
+- Address all feedback and concerns before merging.

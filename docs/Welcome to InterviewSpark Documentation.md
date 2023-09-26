@@ -21,9 +21,6 @@ Welcome to InterviewSpark Documentation! This guide provides an in-depth overvie
     - [FAQs](#faqs)
     - [Support](#support)
 
-### Quick Start
-
-A step-by-step guide to setting up and getting started with InterviewSpark. [Begin Here](#quick-start)
 
 ### System Architecture
 
@@ -32,10 +29,6 @@ An overview of the platform's design, including data flow diagrams, architectura
 ### Mixpanel API Integration
 
 Details on integrating and leveraging Mixpanel's analytics capabilities. [Learn More](#mixpanel-api-integration)
-
-### Frontend Storybook
-
-Visualize UI components of InterviewSpark using Storybook. [Browse Components](#frontend-storybook)
 
 ### Next.js Integration
 
