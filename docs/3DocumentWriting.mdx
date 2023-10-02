@@ -1,0 +1,94 @@
+import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
+
+<Meta title='Get Started/Document Writing'/>
+
+# Document Writing
+Every function and configuration are necessary to be documented.
+Descriptive docs(without components) are located in `~/docs/`,
+with `*.mdx` . Stories that required **addon** are located within
+each folder of the component/function definition, with
+`*.stories.mdx`.
+
+## Storybook Configuration
+To edit your storybook, please
+refer to the following files:
+```bash
+.
+├── .storybook
+   ├── main.ts
+   └── preview.ts
+...
+
+```
+
+For example, if it requires Storybook to find more
+story files in additional folder,
+please edit `stories` and add more locations below
+```ts
+const config: StorybookConfig = {
+  stories: ['../src/**/*.mdx','../docs/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  ...
+```
+## Front End Component Docs
+This is the file structure example of Front-end Component: `<YourComponent>`.
+To write the doc for component `YourComponent.tsx`,
+you are responsible for writing `YourComponent.stories.mdx`.
+```bash
+.
+├── Component
+│   └── YourComponent
+│       ├── YourComponent.stories.mdx
+│       ├── YourComponent.test.tsx
+│       └── YourComponent.tsx
+```
+
+MDX allows markdown mixing with jsx/tsx, each document
+files that can be found by Storybook requires you to add the following import
+and meta to your `.mdx` file:
+```tsx
+import { Meta, ArgsTable, Canvas, Story } from '@storybook/addon-docs/blocks'
+
+<Meta title='Components/YourComponent' component={YourComponent} />
+
+```
+
+Each doc must contain the following 3 parts:
+
+- **Title**: with description about the summary of the component
+- **Props**: all props of the component, arg table, and it's purpose
+- **Usage**: include all possible code and stories to illustrate how to use the component
+
+To include arg table in **Props**:
+```tsx
+<ArgsTable of={YourComponent} />
+```
+
+To display and test your component in the doc:
+```tsx
+<Canvas>
+    <Story name='YourComponentName' args={{ title: 'Title' }}>
+{
+ //your react component defination
+}
+    </Story>
+</Canvas>
+```
+It's also possible to include several Stories in one doc.
+
+## Descriptive Docs
+This is the file structure example of general documentation
+that is purely descriptive. It does not involve any displacement
+of function or component. It should only contain the docs for configurations,
+general processes, introductions, and precautions.
+```bash
+.
+├── docs
+   ├── 1Intro.mdx
+   └── 2QuickStart.mdx
+...
+
+```
+
+Writing descriptive docs has no difference in writing markdown files,
+but you are more than welcome to include your own defined component
+for better illustration.
