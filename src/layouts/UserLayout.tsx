@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { Dispatch, ReactNode, SetStateAction } from 'react'
 
 // ** MUI Imports
 import { Theme } from '@mui/material/styles'
@@ -18,19 +18,22 @@ import HorizontalNavItems from 'src/navigation/horizontal'
 // import ServerSideVerticalNavItems from './components/vertical/ServerSideNavItems'
 // import ServerSideHorizontalNavItems from './components/horizontal/ServerSideNavItems'
 
+import FeedbackIcon from '@mui/icons-material/Feedback'
+
 import VerticalAppBarContent from './components/vertical/AppBarContent'
 import HorizontalAppBarContent from './components/horizontal/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
-import { Grid, Typography } from '@mui/material'
+import { Box, Divider, Grid, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 
 interface Props {
   children: ReactNode
   contentHeightFixed?: boolean
+  setShowFeedback?: Dispatch<SetStateAction<boolean>>
 }
 
-const UserLayout = ({ children, contentHeightFixed }: Props) => {
+const UserLayout = ({ children, contentHeightFixed, setShowFeedback }: Props) => {
   // ** Hooks
   const { settings, saveSettings } = useSettings()
 
@@ -52,58 +55,85 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
     settings.layout = 'vertical'
   }
 
-  return (
-    <Layout
-      hidden={hidden}
-      settings={settings}
-      saveSettings={saveSettings}
-      contentHeightFixed={contentHeightFixed}
-      verticalLayoutProps={{
-        navMenu: {
-          navItems: VerticalNavItems(),
-          afterContent: props => {
-            console.log(props)
+  const toggleFeedback = () => {
+    if (setShowFeedback) setShowFeedback(prevState => !prevState)
+  }
 
-            return (
-              <Grid container direction='column' justifyContent='flex-end' alignItems='center'>
-                <Typography variant='h6' sx={{ mb: 5 }}>
-                  {props.navHover ? '66' : '55'}
-                </Typography>
-              </Grid>
+  const CollapseButton = () => {
+    return (
+      <Box sx={{ width: '95%' }}>
+        <ListItem>
+          <ListItemButton sx={{ borderRadius: '10px' }} onClick={toggleFeedback}>
+            <ListItemIcon>
+              <FeedbackIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary='Feedback'
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
+      </Box>
+    )
+  }
+
+  return (
+    <>
+      <Layout
+        hidden={hidden}
+        settings={settings}
+        saveSettings={saveSettings}
+        contentHeightFixed={contentHeightFixed}
+        verticalLayoutProps={{
+          navMenu: {
+            navItems: VerticalNavItems(),
+            afterContent: () => {
+              return (
+                <>
+                  <Divider />
+                  <Grid container direction='column' justifyContent='flex-end' alignItems='center'>
+                    {<CollapseButton />}
+                  </Grid>
+                </>
+              )
+            }
+
+            // Uncomment the below line when using server-side menu in vertical layout and comment the above line
+            // navItems: verticalMenuItems
+          },
+
+          appBar: {
+            content: props => (
+              <VerticalAppBarContent
+                hidden={hidden}
+                settings={settings}
+                saveSettings={saveSettings}
+                toggleNavVisibility={props.toggleNavVisibility}
+              />
             )
           }
+        }}
+        {...(settings.layout === 'horizontal' && {
+          horizontalLayoutProps: {
+            navMenu: {
+              navItems: HorizontalNavItems()
 
-          // Uncomment the below line when using server-side menu in vertical layout and comment the above line
-          // navItems: verticalMenuItems
-        },
-
-        appBar: {
-          content: props => (
-            <VerticalAppBarContent
-              hidden={hidden}
-              settings={settings}
-              saveSettings={saveSettings}
-              toggleNavVisibility={props.toggleNavVisibility}
-            />
-          )
-        }
-      }}
-      {...(settings.layout === 'horizontal' && {
-        horizontalLayoutProps: {
-          navMenu: {
-            navItems: HorizontalNavItems()
-
-            // Uncomment the below line when using server-side menu in horizontal layout and comment the above line
-            // navItems: horizontalMenuItems
-          },
-          appBar: {
-            content: () => <HorizontalAppBarContent settings={settings} saveSettings={saveSettings} />
+              // Uncomment the below line when using server-side menu in horizontal layout and comment the above line
+              // navItems: horizontalMenuItems
+            },
+            appBar: {
+              content: () => <HorizontalAppBarContent settings={settings} saveSettings={saveSettings} />
+            }
           }
-        }
-      })}
-    >
-      {children}
-    </Layout>
+        })}
+      >
+        {children}
+      </Layout>
+    </>
   )
 }
 
