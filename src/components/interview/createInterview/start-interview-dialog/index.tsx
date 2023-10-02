@@ -31,7 +31,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useFetchSubscription } from 'src/hooks/useFetchSubscription'
 import toast from 'react-hot-toast'
 import { useSubscription } from 'src/hooks/useSubscription'
-import AlertComponent from 'src/components/Alert/Alert'
+import AlertComponent from 'src/components/Base/Alert/Alert'
 
 interface Info {
   questionNum: number

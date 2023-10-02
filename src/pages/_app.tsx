@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 
 // ** Next Imports
 import Head from 'next/head'
@@ -75,6 +75,7 @@ import '../../styles/globals.css'
 
 // ** Set log level
 import { setLogLevel, LogLevel } from 'src/middleware/loggerMiddleware'
+import FeedbackForm from 'src/components/Features/FeedbackForm/FeedbackForm'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -117,10 +118,18 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
 const App = (props: ExtendedAppProps) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
+  // States
+  const [isDisplayFeedback, setIsDisplayFeedback] = useState(false)
+
   // Variables
   const contentHeightFixed = Component.contentHeightFixed ?? false
   const getLayout =
-    Component.getLayout ?? (page => <UserLayout contentHeightFixed={contentHeightFixed}>{page}</UserLayout>)
+    Component.getLayout ??
+    (page => (
+      <UserLayout contentHeightFixed={contentHeightFixed} setShowFeedback={setIsDisplayFeedback}>
+        {page}
+      </UserLayout>
+    ))
 
   const setConfig = Component.setConfig ?? undefined
 
@@ -152,6 +161,12 @@ const App = (props: ExtendedAppProps) => {
                     <Guard authGuard={authGuard} guestGuard={guestGuard}>
                       <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} isPublic={isPublic}>
                         {getLayout(<Component {...pageProps} />)}
+                        <FeedbackForm
+                          open={isDisplayFeedback}
+                          onClose={() => {
+                            setIsDisplayFeedback(false)
+                          }}
+                        />
                       </AclGuard>
                     </Guard>
                   </WindowWrapper>

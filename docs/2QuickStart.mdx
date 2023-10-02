@@ -1,0 +1,48 @@
+import { Meta, ArgsTable, Canvas, Story,} from '@storybook/addon-docs/blocks'
+
+import LinkTo from '@storybook/addon-links/react';
+
+<Meta title='Get Started/Quick Start'/>
+
+# Quick Start
+
+Before you Begin:
+
+1. Ensure you have `Node.js` and `npm` installed on your computer. If not, you can download and install them from the [official Node.js website](https://nodejs.org/).
+2. An active AWS account is crucial. If you don't have one, sign up at the [AWS Management Console](https://aws.amazon.com/console/).
+3. Familiarize yourself with AWS Amplify. It will be instrumental in deploying and managing InterviewSpark.
+
+And use the following command to clone the InterviewSpark Repository to your local machine:
+
+```bash
+git clone https://github.com/Charlie059/InterviewSpark.git
+   ```
+
+Navigating into the cloned directory and install the required dependencies by `npm insall`:
+
+```bash
+cd InterviewSpark
+npm install
+   ```
+
+Pull the Amplify configurations from the cloud:
+
+🔴❗**NOTE**❗**You might require the `accessKey` and `secretAccessKey` to gain access to the cloud! Please contact the team!**
+
+```bash
+amplify pull --appId d38e770jlxdzpa --envName staging
+   ```
+If any error occurred, it's worth considering to delete the `~/amplify`
+folder and pull the amplify again from the cloud using command above.
+For more information about Amplify, please refer to [AWS Amplify Docs](https://docs.amplify.aws/cli/start/install/).
+
+🔴❗**IMPORTANT**❗**In any circumstances, DO NOT use command `amplify delete`**
+
+
+Then use the following command to start the server
+```bash
+npm run dev
+   ```
+Now you can open a browser and navigate to: [http://localhost:3000](http://localhost:3000)
+
+To work with git and issues with the team, please refer to [Workflow](?path=/docs/get-started-workflow--docs)

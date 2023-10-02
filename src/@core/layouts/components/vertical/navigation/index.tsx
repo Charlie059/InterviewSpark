@@ -138,7 +138,7 @@ const Navigation = (props: Props) => {
       {(beforeVerticalNavMenuContentPosition === 'static' || !beforeNavMenuContent) && (
         <StyledBoxForShadow ref={shadowRef} sx={{ background: shadowBgColor() }} />
       )}
-      <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+      <Box sx={{ position: 'relative', overflow: 'hidden', height: '100%' }}>
         {/* @ts-ignore */}
         <ScrollWrapper
           {...(hidden
@@ -169,10 +169,14 @@ const Navigation = (props: Props) => {
               />
             </List>
           )}
-          {afterNavMenuContent && afterVerticalNavMenuContentPosition === 'static' ? afterNavMenuContent(props) : null}
+          {afterNavMenuContent && afterVerticalNavMenuContentPosition === 'static'
+            ? afterNavMenuContent({ ...props, navHover })
+            : null}
         </ScrollWrapper>
       </Box>
-      {afterNavMenuContent && afterVerticalNavMenuContentPosition === 'fixed' ? afterNavMenuContent(props) : null}
+      {afterNavMenuContent && afterVerticalNavMenuContentPosition === 'fixed'
+        ? afterNavMenuContent({ ...props, navHover })
+        : null}
     </Drawer>
   )
 }
