@@ -19,8 +19,10 @@ interface ErrorState {
 }
 
 // Constants
-const VIDEO_MIME_TYPE = 'video/webm' // MIME type for the recorded video
-const AUDIO_MIME_TYPE = 'audio/webm' // MIME type for the recorded audio
+// If browser is safari, use video/mp4
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+const VIDEO_MIME_TYPE = isSafari ? 'video/mp4' : 'video/webm' // MIME type for the recorded video
+const AUDIO_MIME_TYPE = 'audio/mp4' // MIME type for the recorded audio
 const MEDIA_RECORDER_INTERVAL = 1000 // Interval for MediaRecorder's start method
 
 export default function useVideoRecording(audioInput: string) {
