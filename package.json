@@ -59,6 +59,7 @@
     "memoize-one": "^6.0.0",
     "microphone-stream": "^6.0.1",
     "next": "13.4.4",
+    "nextjs-google-analytics": "^2.3.3",
     "nprogress": "0.2.0",
     "prismjs": "1.29.0",
     "prop-types": "^15.8.1",

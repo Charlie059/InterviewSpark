@@ -213,7 +213,14 @@ const StartInterviewDialog = (props: {
       }
 
       // If user is not guarantee microphone then don't start the interview
-      if (audioinput === '' || !audioinput || audiooutput === '' || !audiooutput) {
+      if (
+        (audioinput === '' || !audioinput || audiooutput === '' || !audiooutput) &&
+        navigator.userAgent.indexOf('Firefox') == -1
+      ) {
+        setIsAlertOpen(true)
+
+        return
+      } else if ((navigator.userAgent.indexOf('Firefox') != -1 && audioinput === '') || !audioinput) {
         setIsAlertOpen(true)
 
         return
