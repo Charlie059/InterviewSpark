@@ -6,6 +6,7 @@ import Head from 'next/head'
 import { Router } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import { GoogleAnalytics } from 'nextjs-google-analytics'
 
 // * Amplify
 import { Amplify } from 'aws-amplify'
@@ -151,6 +152,7 @@ const App = (props: ExtendedAppProps) => {
         <meta name='viewport' content='initial-scale=1, width=device-width' />
       </Head>
 
+      <GoogleAnalytics trackPageViews />
       <AuthProvider>
         <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
           <SettingsConsumer>
