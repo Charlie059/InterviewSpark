@@ -22,19 +22,39 @@ const DeviceSelector: React.FC<DeviceSelectorProps> = ({ deviceType, onChange, d
       // If the device is videoInput, we want to add a default option for the user to select no camera
       if (deviceType === 'videoinput') {
         filteredDevices.push({
-          deviceId: '',
-          groupId: '',
+          deviceId: 'No Camera',
+          groupId: 'No Camera',
           kind: 'videoinput',
           label: 'No Camera',
           toJSON: () => {
             return {
-              deviceId: '',
-              groupId: '',
+              deviceId: 'No Camera',
+              groupId: 'No Camera',
               kind: 'videoinput',
               label: 'No Camera'
             }
           }
         })
+      }
+
+      // If the device is audioOutput and there are no devices, we want to add a default option and set it as selected
+      if (deviceType === 'audiooutput' && filteredDevices.length === 0) {
+        filteredDevices.push({
+          deviceId: 'Default Speakers',
+          groupId: 'Default Speakers',
+          kind: 'audiooutput',
+          label: 'Default Speakers',
+          toJSON: () => {
+            return {
+              deviceId: 'Default Speakers',
+              groupId: 'Default Speakers',
+              kind: 'audiooutput',
+              label: 'Default Speakers'
+            }
+          }
+        })
+        setSelectedDeviceId('Default Speakers')
+        onChange('Default Speakers')
       }
 
       if (filteredDevices.length > 0 && !selectedDeviceId) {
