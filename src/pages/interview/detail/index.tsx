@@ -83,9 +83,21 @@ const InterviewDetails = () => {
           const videoKey = result.data.getUserInterviewMetaData.interviewVideoKey
 
           // Get interview video URL from S3
-          const videoUrl = await Storage.get(videoKey, {
+          let videoUrl = await Storage.get(videoKey, {
             level: 'private'
           })
+
+          // Try to get .mp4 video from S3
+          try {
+            if (videoKey.includes('.webm')) {
+              const mp4VideoUrl = await Storage.get(videoKey.replace('.webm', '.mp4'), {
+                level: 'private'
+              })
+              videoUrl = mp4VideoUrl
+            }
+          } catch (error) {
+            console.log('Error fetching mp4 video from S3: ', error)
+          }
 
           haveAnalysis = result.data.getUserInterviewMetaData.interviewAnalysis
 

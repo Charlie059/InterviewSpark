@@ -18,12 +18,12 @@ interface ErrorState {
   message?: string
 }
 
-// Constants
-const VIDEO_MIME_TYPE = 'video/webm' // MIME type for the recorded video
-const AUDIO_MIME_TYPE = 'audio/webm' // MIME type for the recorded audio
-const MEDIA_RECORDER_INTERVAL = 1000 // Interval for MediaRecorder's start method
+export default function useVideoRecording(audioInput: string, browserType: string) {
+  // Constants
+  const VIDEO_MIME_TYPE = browserType == 'Safari' ? 'video/mp4' : 'video/webm' // MIME type for the recorded video
+  const AUDIO_MIME_TYPE = browserType == 'Safari' ? 'audio/mp4' : 'audio/webm' // MIME type for the recorded audio
+  const MEDIA_RECORDER_INTERVAL = 1000 // Interval for MediaRecorder's start method
 
-export default function useVideoRecording(audioInput: string) {
   // States
   const [capturing, setCapturing] = useState(false)
   const [videoEnabled, setVideoEnabled] = useState(true)
