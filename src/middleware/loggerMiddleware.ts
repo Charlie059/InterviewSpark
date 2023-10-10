@@ -50,8 +50,10 @@ function getFunctionName(): string {
   }
 
   const error = new Error()
+  if (typeof Error.captureStackTrace !== 'function') {
+    return ''
+  }
   Error.captureStackTrace(error, getFunctionName)
-
   const stack: NodeJS.CallSite[] = error.stack as any
 
   const functionName = stack[2].getFunctionName()
