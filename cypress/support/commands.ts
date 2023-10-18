@@ -35,12 +35,3 @@
 //     }
 //   }
 // }
-Cypress.Commands.add('createTestUser', () => {
-  const serverId = Cypress.env('SERVER_ID')
-  const uniqueSeed = Date.now().toString()
-  const getUniqueId = () => Cypress._.uniqueId(uniqueSeed)
-  const testUsername = 'testuser' + getUniqueId()
-  const testEmail = `${testUsername}@${serverId}.mailosaur.net`
-
-  return { username: testUsername, email: testEmail }
-})
