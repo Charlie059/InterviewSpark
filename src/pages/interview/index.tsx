@@ -9,9 +9,10 @@ import Logger from 'src/middleware/loggerMiddleware'
 import { useState,useEffect } from 'react'
 import { useUserProfile } from 'src/hooks/useUserProfile'
 import InterviewPageLoading from 'src/components/loading/InterviewPageLoading'
-import InterviewPageInterviewContent from 'src/components/interview/InterviewPageInterviewContent'
+
 import { useGraphQLQuery } from 'src/hooks/useGraphQLQuery'
 import { GetUserInterviewUsageMetaDataVariables } from 'src/types/graphqlTypes'
+import InterviewAssembled from 'src/components/AssembledUI/interview/InterviewAssembled'
 
 const InterviewPage = () => {
   const auth = useAuth()
@@ -46,7 +47,7 @@ const InterviewPage = () => {
               setTutorialDialogOpen={setTutorialDialogOpen}
               userProfileData={userProfile}/>)}
           {!userInterviewUsageMetaData || userInterviewUsageMetaData.userInterviewNumTotalCount !== 0 ? (
-          <InterviewPageInterviewContent userProfile={userProfile}/>
+          <InterviewAssembled userProfile={userProfile}/>
           ) : (<CTAPage />)}
         </>
       )}

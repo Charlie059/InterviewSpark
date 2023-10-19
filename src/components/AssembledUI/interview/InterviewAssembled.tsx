@@ -1,20 +1,20 @@
 import {Box, Card, Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React, {useEffect, useRef, useState } from 'react';
-import UserProfileHeader from 'src/components/profile/UserProfileHeader'
-import InterviewUsageSummaryThisMonth from 'src/components/interview/interviewProfile/Interview-monthly-summary-card'
-import InterviewTotalSummaryCard from 'src/components/interview/interviewProfile/interview-total-summary-card/index'
-import InterviewPromotion from 'src/components/interview/interviewProfile/interview-promotion'
-import InterviewList from 'src/components/interview/interviewProfile/interview-list'
+import UserProfileHeader from '../../profile/UserProfileHeader'
+import InterviewUsageSummaryThisMonth from '../../interview/interviewProfile/Interview-monthly-summary-card'
+import InterviewTotalSummaryCard from '../../interview/interviewProfile/interview-total-summary-card'
+import InterviewPromotion from '../../interview/interviewProfile/interview-promotion'
+import InterviewList from '../../interview/interviewProfile/interview-list'
 
-import { UserDataType } from 'src/context/types';
-import RectangularCard from '../BaseUI/RectangularCard/RectangularCard';
+import { UserDataType } from '../../../context/types';
+import RectangularCard from '../../BaseUI/RectangularCard/RectangularCard';
 
 interface InterviewContentProps{
   userProfile: UserDataType
 }
 
 
-const InterviewPageInterviewContent:React.FC<InterviewContentProps> = ({userProfile}) => {
+const InterviewAssembled:React.FC<InterviewContentProps> = ({userProfile}) => {
   const theme = useTheme()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
   const isXSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
@@ -53,4 +53,4 @@ const InterviewPageInterviewContent:React.FC<InterviewContentProps> = ({userProf
   );
 };
 
-export default InterviewPageInterviewContent;
+export default InterviewAssembled;
