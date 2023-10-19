@@ -37,6 +37,7 @@ import * as React from 'react'
 
 import { useAuth } from 'src/hooks/useAuth'
 import Logger from 'src/middleware/loggerMiddleware'
+import { useUserProfile } from 'src/hooks/useUserProfile'
 
 const ProfilePicture = styled(Avatar)(({ theme }) => ({
   width: 120,
@@ -51,9 +52,10 @@ const ProfilePicture = styled(Avatar)(({ theme }) => ({
 
 type diagTypes = 'profile' | 'cover'
 
-const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
+const UserProfileHeader = ({type}: {type?: string }) => {
+  const {profile: userProfile, email: emailAddress, error: userProfileError} = useUserProfile()
   // ** State
-  const joiningDate = format(new Date(data.joiningDate), 'PP')
+  const joiningDate = userProfile?.joiningDate? format(new Date(userProfile.joiningDate), 'PP'): "";
 
   const [showCover, setShowCover] = useState<boolean>(false)
   const designationIcon = 'mdi:briefcase-outline'
@@ -80,9 +82,11 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
       setEditable(false)
       setShowCover(false)
     }
-    const proPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.photoImgKey
-    const coverPicUrl = process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + data.coverImgKey
-    data.emailAddress = data.userEmailAddress
+    const proPicUrl = (process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL ?? '') + (userProfile?.photoImgKey ?? 'defaultProPic.png');
+    const coverPicUrl = (process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL ?? '') + (userProfile?.coverImgKey ?? 'defaultCoverPic.png');
+    if(userProfile){
+      userProfile.userEmailAddress = userProfile?.userEmailAddress ?? ''
+    }
     setProPicUrl(proPicUrl)
     setCoverPicUrl(coverPicUrl)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,6 +108,8 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     setFiles([])
   }
   const handleProPicSubmit = async () => {
+    if (!userProfile) return;
+
     if (!files[0]) {
       toast.error('no image selected')
     } else {
@@ -115,12 +121,14 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
         .then(async result => {
           Logger.info('Upload successful:', result)
           if (dialogType == 'profile') {
-            data.photoImgKey = key
+            userProfile.photoImgKey = key
           } else {
-            data.coverImgKey = key
+            userProfile.coverImgKey = key
           }
-          data.emailAddress = data.userEmailAddress
-          await API.graphql(graphqlOperation(updateUserProfile, data))
+          if(userProfile){
+            userProfile.userEmailAddress = userProfile?.userEmailAddress ?? ''
+          }
+          await API.graphql(graphqlOperation(updateUserProfile, userProfile))
           await Storage.get(key, { level: 'public' }).then(newUrl => {
             if (dialogType == 'profile') {
               setProPicUrl(newUrl)
@@ -138,11 +146,12 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
   }
 
   const toggle = async () => {
+    if (!userProfile) return;
     //use state to refresh component
     setRefresh(Date.now())
-    data.isPublic = !data.isPublic
-    await API.graphql(graphqlOperation(updateUserProfile, data))
-    auth.trackEvent('UserProfileUpdateEvent', { action: 'Toggle_Profile_Public_Status', isPublic: data.isPublic })
+    userProfile.isPublic = !userProfile.isPublic
+    await API.graphql(graphqlOperation(updateUserProfile, userProfile))
+    auth.trackEvent('UserProfileUpdateEvent', { action: 'Toggle_Profile_Public_Status', isPublic: userProfile.isPublic })
   }
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -171,7 +180,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
     }
   }
 
-  return data !== null ? (
+  return userProfile !== null ? (
     <Card sx={showCover ? {} : { overflow: 'visible', bgcolor: 'transparent', boxShadow: 0 }}>
       {editable && (
         <IconButton sx={{ position: 'absolute', zIndex: 1 }} onClick={handleCoverPicOpen}>
@@ -223,7 +232,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           <Grid item xs={12} sm={12} md={7} lg={7}>
             <Box sx={{ mb: [6, 0], display: 'flex', flexDirection: 'column', alignItems: ['center', 'flex-start'] }}>
               <Typography variant='h5' sx={{ mb: 4, fontSize: '1.375rem' }}>
-                {data.fName} {data.lName}
+                {userProfile?.fName ?? ''} {userProfile?.lName ?? ''}
               </Typography>
               <Box
                 sx={{
@@ -232,23 +241,23 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   justifyContent: ['center', 'flex-start']
                 }}
               >
-                {data.position && (
-                  <Box
-                    sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}
-                  >
-                    <Icon icon={designationIcon} />
-                    <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{data.position}</Typography>
-                  </Box>
-                )}
-                {data.country && (
+                {/*{userProfile?.position && (*/}
+                {/*  <Box*/}
+                {/*    sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}*/}
+                {/*  >*/}
+                {/*    <Icon icon={designationIcon} />*/}
+                {/*    <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>{userProfile.position}</Typography>*/}
+                {/*  </Box>*/}
+                {/*)}*/}
+                {userProfile?.country && (
                   <Box
                     sx={{ mr: 4, display: 'flex', alignItems: 'center', '& svg': { mr: 1, color: 'text.secondary' } }}
                   >
                     <Icon icon='mdi:map-marker-outline' />
                     <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>
-                      {data.city}
-                      {data.city && data.country && ','}
-                      {data.country}
+                      {userProfile.city}
+                      {userProfile.city && userProfile.country && ','}
+                      {userProfile.country}
                     </Typography>
                   </Box>
                 )}
@@ -262,7 +271,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
           <Grid item xs={12} sm={12} md={5} lg={5} sx={{ textAlign: { xs: 'center', md: 'right' } }}>
             {type == 'Profile' && (
               <div style={{ display: 'none' }}>
-                {data.isPublic && (
+                {userProfile?.isPublic && (
                   <Button
                     variant='outlined'
                     onClick={handleShareOpen}
@@ -273,7 +282,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   </Button>
                 )}
                 <FormControlLabel
-                  control={<Switch checked={data.isPublic} onChange={toggle} />}
+                  control={<Switch checked={userProfile?.isPublic ?? false} onChange={toggle} />}
                   label='Public'
                   aria-owns={open ? 'mouse-over-popover' : undefined}
                   aria-haspopup='true'
@@ -299,7 +308,7 @@ const UserProfileHeader = ({ data, type }: { data: any; type?: string }) => {
                   disableRestoreFocus
                 >
                   <Typography sx={{ p: 1 }}>
-                    {data.isPublic ? 'Turn off your profile information' : 'Turn on your profile information'}{' '}
+                    {userProfile?.isPublic ? 'Turn off your profile information' : 'Turn on your profile information'}{' '}
                   </Typography>
                 </Popover>
               </div>

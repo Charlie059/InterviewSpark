@@ -1,3 +1,12 @@
+/***********************************************************************************************
+ * Interview Page
+ *
+ * Author: Yuxuan Yang
+ * Contact: yyx980325@hotmail.com
+ * Create Date:
+ * Update Date: 19/10/2023
+ * Copyright: © 2023 HireBeat Inc. All rights reserved.
+ ************************************************************************************************/
 import { Box, CircularProgress, Grid, Typography } from '@mui/material'
 import { API, graphqlOperation } from 'aws-amplify'
 import CTAPage from 'src/components/interview/interviewProfile/CTAPage/CTAPage'
@@ -15,46 +24,28 @@ import { GetUserInterviewUsageMetaDataVariables } from 'src/types/graphqlTypes'
 import InterviewAssembled from 'src/components/AssembledUI/interview/InterviewAssembled'
 
 const InterviewPage = () => {
-  const auth = useAuth()
-  const emailAddress=auth.user?.userEmailAddress
+  /* States */
   const [tutorialDialogOpen, setTutorialDialogOpen] = useState(false)
 
-  const { data: userInterviewUsageMetaData, error: interviewMetaDataError } =
-    useGraphQLQuery<GetUserInterviewUsageMetaDataVariables>(
-    getUserInterviewUsageMetaData,
-    { emailAddress }
-  );
-
-  const { profile: userProfile, error: pError } = emailAddress
-    ? useUserProfile(emailAddress)
-    : { profile: null as UserDataType|null, error: null };
-
-  useEffect(()=>{
-      if(userProfile && userProfile.isNewUser){
-        setTutorialDialogOpen(true);
-      }
-  },[userProfile])
-
-
+  /* Hooks */
+  const {profile: userProfile, email: emailAddress, error: userProfileError} = useUserProfile()
+  const { data: userInterviewUsageMetaData, error: interviewMetaDataError } = useGraphQLQuery
+  <GetUserInterviewUsageMetaDataVariables>(getUserInterviewUsageMetaData, { emailAddress });
   return (
     <div>
       {!userProfile||!userInterviewUsageMetaData ? (
         <InterviewPageLoading/>
       ) : (
         <>
-          {tutorialDialogOpen && (<Tutorial
-              tutorialDialogOpen={tutorialDialogOpen}
-              setTutorialDialogOpen={setTutorialDialogOpen}
-              userProfileData={userProfile}/>)}
+          <Tutorial/>
           {!userInterviewUsageMetaData || userInterviewUsageMetaData.userInterviewNumTotalCount !== 0 ? (
-          <InterviewAssembled userProfile={userProfile}/>
+          <InterviewAssembled/>
           ) : (<CTAPage />)}
         </>
       )}
     </div>
   )
 }
-
 InterviewPage.acl = {
   action: 'read',
   subject: 'acl-page'

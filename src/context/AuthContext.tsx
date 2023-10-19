@@ -54,11 +54,15 @@ const defaultProvider: AuthValuesType = {
   setMixpanelPeople: () => Promise.resolve()
 }
 
+/* context */
+
 const AuthContext = createContext(defaultProvider)
 
 type Props = {
   children: ReactNode
 }
+
+/* provider */
 
 const AuthProvider = ({ children }: Props) => {
   // ** States
@@ -98,6 +102,7 @@ const AuthProvider = ({ children }: Props) => {
     initAuth().catch(err => {
       Logger.info(err)
       setLoading(false)
+      console.error(err)
     })
   }, [])
 

@@ -33,6 +33,7 @@ import UserOverview from '../../components/profile/UserOverview'
 import { createUserEducation, updateNewUserStatus } from 'src/graphql/mutations'
 import { Dialog, IconButton } from '@mui/material'
 import Logger from 'src/middleware/loggerMiddleware'
+import { useUserProfile } from 'src/hooks/useUserProfile'
 
 const steps = [
   {
@@ -72,14 +73,11 @@ const StepperHeaderContainer = styled(CardContent)(({ theme }) => ({
   }
 }))
 
-interface TutorialProps {
-  tutorialDialogOpen: boolean
-  setTutorialDialogOpen: (open: boolean) => void
-  userProfileData: UserDataType
-}
-const Tutorial = (tutorialProps: TutorialProps) => {
+
+const Tutorial = () => {
   // ** Props
-  const { tutorialDialogOpen, setTutorialDialogOpen, userProfileData } = tutorialProps
+  const [tutorialDialogOpen, setTutorialDialogOpen] = useState(false)
+  const {profile: userProfile, email: emailAddress, error: userProfileError} = useUserProfile()
 
   // ** States
   const [activeStep, setActiveStep] = useState(0)
@@ -93,6 +91,11 @@ const Tutorial = (tutorialProps: TutorialProps) => {
 
   // ** Ref
   const gridRef = useRef<HTMLDivElement>(null)
+  useEffect(()=>{
+    if(userProfile && userProfile.isNewUser){
+      setTutorialDialogOpen(true);
+    }
+  },[userProfile])
 
   useEffect(() => {
     if (gridRef.current) {
@@ -116,12 +119,12 @@ const Tutorial = (tutorialProps: TutorialProps) => {
   // Reset isNewUser to false in DB
   const resetIsNewUserInUserProfile = async () => {
     // Check if the userProfileData exist or user is already set isNewUser to false
-    if (!userProfileData || !userProfileData.isNewUser) {
+    if (!userProfile || !userProfile.isNewUser) {
       return
     }
 
     const data = await API.graphql(
-      graphqlOperation(updateNewUserStatus, { userEmail: auth.user?.userEmailAddress, isNewUser: false })
+      graphqlOperation(updateNewUserStatus, { userEmail: emailAddress, isNewUser: false })
     )
     if ('data' in data) {
       if (!data.data.updateNewUserStatus.isSuccessful) {
@@ -138,7 +141,7 @@ const Tutorial = (tutorialProps: TutorialProps) => {
   const updateEduProfile = async (eduData: Education) => {
     // If no existing education entry is found, create a new one
     const eduInput = {
-      emailAddress: auth.user?.userEmailAddress,
+      emailAddress: emailAddress,
       eduDegree: eduData && eduData.eduDegree ? eduData.eduDegree : '',
       eduFieldStudy: eduData && eduData.eduFieldStudy ? eduData.eduFieldStudy : '',
       eduSchool: eduData && eduData.eduSchool ? eduData.eduSchool : '',
@@ -242,6 +245,8 @@ const Tutorial = (tutorialProps: TutorialProps) => {
   }
 
   return (
+    <>
+    {tutorialDialogOpen && (
     <Dialog
       open={tutorialDialogOpen}
       scroll='body'
@@ -317,7 +322,8 @@ const Tutorial = (tutorialProps: TutorialProps) => {
           {renderFooter()}
         </Grid>
       </Grid>
-    </Dialog>
+    </Dialog>)}
+  </>
   )
 }
 

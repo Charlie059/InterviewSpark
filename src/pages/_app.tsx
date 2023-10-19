@@ -75,6 +75,7 @@ import '../../styles/globals.css'
 
 // ** Set log level
 import { setLogLevel, LogLevel } from 'src/middleware/loggerMiddleware'
+import { UserProfileProvider } from 'src/context/UserProfileContext'
 
 // ** Extend App Props with Emotion
 type ExtendedAppProps = AppProps & {
@@ -151,7 +152,9 @@ const App = (props: ExtendedAppProps) => {
                   <WindowWrapper>
                     <Guard authGuard={authGuard} guestGuard={guestGuard}>
                       <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} isPublic={isPublic}>
-                        {getLayout(<Component {...pageProps} />)}
+                        <UserProfileProvider>
+                          {getLayout(<Component {...pageProps} />)}
+                        </UserProfileProvider>
                       </AclGuard>
                     </Guard>
                   </WindowWrapper>
