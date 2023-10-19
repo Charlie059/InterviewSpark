@@ -1,127 +1,73 @@
-import Card from '@mui/material/Card'
-import { useTheme } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import CardContent from '@mui/material/CardContent'
-import { useAuth } from 'src/hooks/useAuth'
-import { ApexOptions } from 'apexcharts'
-import ReactApexcharts from 'src/@core/components/react-apexcharts'
-import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 import { useEffect, useRef, useState } from 'react'
+import {CardContent,Typography, useTheme,useMediaQuery} from '@mui/material'
 import { API, graphqlOperation } from 'aws-amplify'
+import { useAuth } from 'src/hooks/useAuth'
+import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { getUserInterviewsByMonth } from 'src/graphql/queries'
 import Logger from 'src/middleware/loggerMiddleware'
-import React from 'react'
+import { useGraphQLQuery } from 'src/hooks/useGraphQLQuery'
+import { GetUserInterviewsByMonthVariables } from 'src/types/graphqlTypes'
+import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
+import { ApexOptions } from 'apexcharts'
 
-interface InterviewUsageSummaryThisMonthProps {
-  cardHeight: number
-  setCardHeight: React.Dispatch<React.SetStateAction<number>>
-}
-const InterviewUsageSummaryThisMonth = (interviewUsageSummaryThisMonthProps: InterviewUsageSummaryThisMonthProps) => {
-  // ** Props
-  const { cardHeight, setCardHeight } = interviewUsageSummaryThisMonthProps
 
-  // ** Hook
-  const cardRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLDivElement>(null)
-
-  const theme = useTheme()
-  const auth = useAuth()
-
-  // ** State
-  const [textHeight, setTextHeight] = useState(0)
-
+const InterviewUsageSummaryThisMonth = () => {
   // Store the interview count data in the state
   const [data, setData] = useState<number[]>([])
   const [interviewTotalCount, setInterviewTotalCount] = useState<number>(0)
 
-  // Update the card height when the window resizes
-  useEffect(() => {
-    const updateCardHeight = () => {
-      if (cardRef.current) {
-        const height = cardRef.current.offsetHeight
-        setCardHeight(height)
-      }
-    }
+  // ** Hook
+  const cardContentRef= useRef<HTMLDivElement>(null)
+  const textRef = useRef<HTMLDivElement>(null)
+  const theme = useTheme()
+  const auth = useAuth()
+  const emailAddress = auth.user?.userEmailAddress;
 
-    updateCardHeight()
+  const { data: queryData, error:InterviewsByMonthError } =
+    useGraphQLQuery<GetUserInterviewsByMonthVariables>(
+    getUserInterviewsByMonth,
+    { emailAddress }
+  );
 
-    window.addEventListener('resize', updateCardHeight)
+  interface Interview {
+    interviewDateTime: string;
+  }
 
-    return () => {
-      window.removeEventListener('resize', updateCardHeight)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  useEffect(()=>{
+    if (queryData && queryData.getUserInterviewsByMonth) {
+      const interviewList = queryData.getUserInterviewsByMonth.interviewList;
 
-  // update the text height when the window resizes
-  useEffect(() => {
-    const updateTextHeight = () => {
-      if (textRef.current) {
-        const height = textRef.current.offsetHeight
-        setTextHeight(height)
-      }
-    }
+      // Count the number of interviews per day
+      const maxDaysInMonth = 31;
+      const interviewCounts = Array.from({ length: maxDaysInMonth }, () => 0);
 
-    updateTextHeight()
+      interviewList.forEach((interview:Interview) => {
+        const interviewDate = new Date(interview.interviewDateTime);
+        const dayOfMonth = interviewDate.getDate();
+        interviewCounts[dayOfMonth - 1] += 1;
+      });
 
-    window.addEventListener('resize', updateTextHeight)
-
-    return () => {
-      window.removeEventListener('resize', updateTextHeight)
-    }
-  }, [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Get the email address of the current user
-        const emailAddress = auth.user?.userEmailAddress
-
-        // Fetch the interview list for the user
-        const result = await API.graphql(
-          graphqlOperation(getUserInterviewsByMonth, {
-            emailAddress
-          })
-        )
-
-        if ('data' in result) {
-          // Get the list of interviews from the result data
-          const interviewList = result.data.getUserInterviewsByMonth.interviewList
-
-          // Count the number of interviews per day
-          const maxDaysInMonth = 31
-          const interviewCounts = Array.from({ length: maxDaysInMonth }, () => 0)
-
-          interviewList.forEach((interview: { interviewDateTime: string }) => {
-            const interviewDate = new Date(interview.interviewDateTime)
-            const dayOfMonth = interviewDate.getDate()
-            interviewCounts[dayOfMonth - 1] += 1
-          })
-
-          // Calculate the sum of every 3 consecutive viewCounts
-          const interviewCountsSum = interviewCounts.reduce((acc: number[], curr: number, index: number) => {
-            if (index % 3 === 0) {
-              // Add up the current count and the counts of the next two days (or 0 if there are no more days)
-              acc.push(curr + (interviewCounts[index + 1] || 0) + (interviewCounts[index + 2] || 0))
-            }
-
-            return acc
-          }, [])
-
-          // Update the state with the interview count data
-          setData(interviewCountsSum)
-          setInterviewTotalCount(interviewList.length)
+      // Calculate the sum of every 3 consecutive interviewCounts
+      const interviewCountsSum = interviewCounts.reduce((acc: number[], curr: number, index: number) => {
+        if (index % 3 === 0) {
+          acc.push(curr + (interviewCounts[index + 1] || 0) + (interviewCounts[index + 2] || 0));
         }
-      } catch (error) {
-        Logger.error('Interview monthly summary error: ', error)
-      }
+        return acc;
+      }, []);
+
+      // Update the state with the interview count data
+      setData(interviewCountsSum);
+      setInterviewTotalCount(interviewList.length);
     }
+  },[queryData,InterviewsByMonthError])
 
-    // Fetch the data on component mount
-    fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
+  // Set the height of the chart
+  let chartHeight = '40%'
+  // if (textHeight && cardHeight) {
+  //   if (cardHeight - 55 < textHeight) chartHeight = '0%' // hide the chart if there is not enough space
+  //   else chartHeight = `${(1 - textHeight / cardHeight) * 50}%`
+  // }
   const options: ApexOptions = {
     chart: {
       parentHeightOffset: 0,
@@ -130,7 +76,7 @@ const InterviewUsageSummaryThisMonth = (interviewUsageSummaryThisMonthProps: Int
         top: 14,
         blur: 4,
         left: 0,
-        enabled: true,
+        enabled: false,
         opacity: 0.12,
         color: theme.palette.primary.main
       }
@@ -166,28 +112,15 @@ const InterviewUsageSummaryThisMonth = (interviewUsageSummaryThisMonthProps: Int
       labels: { show: false }
     }
   }
-
-  // Set the height of the chart
-  let chartHeight = '40%'
-  if (textHeight && cardHeight) {
-    if (cardHeight - 55 < textHeight) chartHeight = '0%' // hide the chart if there is not enough space
-    else chartHeight = `${(1 - textHeight / cardHeight) * 50}%`
-  }
-
   return (
-    <Card ref={cardRef} style={{ borderRadius: '25px', aspectRatio: '1' }}>
-      <CardContent>
-        <div ref={textRef}>
+      <CardContent ref={cardContentRef}>
           <Typography variant='h6' sx={{ mb: 2.5 }}>
             This Month
           </Typography>
-          <Typography variant='body2'>Total Questions This Month</Typography>
+          <Typography variant='body2'>Monthly Total Questions:</Typography>
           <Typography variant='h5'>{interviewTotalCount}</Typography>
-        </div>
-
-        <ReactApexcharts height={chartHeight} type='line' options={options} series={[{ data: data }]} />
+        <ReactApexcharts height='40%' type='line' options={options} series={[{ data: data }]} />
       </CardContent>
-    </Card>
   )
 }
 

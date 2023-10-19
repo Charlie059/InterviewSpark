@@ -12,7 +12,6 @@ import { getUserInterviewsByMonth } from 'src/graphql/queries'
 import Logger from 'src/middleware/loggerMiddleware'
 
 interface InterviewPromotionProps {
-  height: number
 }
 
 // Styled Grid component
@@ -24,14 +23,6 @@ const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
   }
 }))
 
-// Styled Card component
-const StyledCard = styled(Card)<{ height: number }>(({ theme, height }) => ({
-  position: 'relative',
-  height: `${height}px`,
-  [theme.breakpoints.down('sm')]: {
-    height: '100%'
-  }
-}))
 
 // Styled component for the image
 const Img = styled('img')(({ theme }) => ({
@@ -45,7 +36,7 @@ const Img = styled('img')(({ theme }) => ({
   }
 }))
 
-const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
+const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ }) => {
   // ** Hook
   const auth = useAuth()
   const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
@@ -104,7 +95,6 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
   }, [])
 
   return (
-    <StyledCard height={height} style={{ borderRadius: '25px' }}>
       <CardContent sx={{ p: theme => `${theme.spacing(6.75, 7.5)} !important` }}>
         <Grid container>
           <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -122,7 +112,6 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ height }) => {
           </StyledGrid>
         </Grid>
       </CardContent>
-    </StyledCard>
   )
 }
 

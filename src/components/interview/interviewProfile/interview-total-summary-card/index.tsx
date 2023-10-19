@@ -97,13 +97,6 @@ const useQuestionData = () => {
 }
 
 const InterviewTotalSummaryCard = () => {
-  // ** Hook
-  const cardRef = useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLDivElement>(null)
-
-  // ** State
-  const [cardHeight, setCardHeight] = useState(0)
-  const [textHeight, setTextHeight] = useState(0)
 
   // Store the interview count data in the state
   const { interviewHotMapData, interviewTotalCount, totalQuestionUserDid } = useInterviewData()
@@ -151,50 +144,20 @@ const InterviewTotalSummaryCard = () => {
     }
   }
 
-  useEffect(() => {
-    const updateCardHeight = () => {
-      if (cardRef.current) {
-        const height = cardRef.current.offsetHeight
-        setCardHeight(height)
-      }
-    }
-    updateCardHeight()
-    window.addEventListener('resize', updateCardHeight)
 
-    return () => {
-      window.removeEventListener('resize', updateCardHeight)
-    }
-  }, [])
-
-  // update the text height when the window resizes
-  useEffect(() => {
-    const updateTextHeight = () => {
-      if (textRef.current) {
-        const height = textRef.current.offsetHeight
-        setTextHeight(height)
-      }
-    }
-    updateTextHeight()
-    window.addEventListener('resize', updateTextHeight)
-
-    return () => {
-      window.removeEventListener('resize', updateTextHeight)
-    }
-  }, [])
 
   // Set the height of the chart
   let chartHeight = '40%'
-  if (textHeight && cardHeight) {
-    if (cardHeight - 100 < textHeight) chartHeight = '0%' // hide the chart if there is not enough space
-    else if (cardHeight - textHeight > 150) chartHeight = '100%'
-    else chartHeight = `${(1 - textHeight / cardHeight) * 115}%`
-  }
+  // if (textHeight && cardHeight) {
+  //   if (cardHeight - 100 < textHeight) chartHeight = '0%' // hide the chart if there is not enough space
+  //   else if (cardHeight - textHeight > 150) chartHeight = '100%'
+  //   else chartHeight = `${(1 - textHeight / cardHeight) * 115}%`
+  // }
 
   return (
-    <Card ref={cardRef} style={{ borderRadius: '25px', aspectRatio: '1' }}>
       <CardContent>
         <Grid container direction='column'>
-          <Grid item ref={textRef}>
+          <Grid item>
             <Typography variant='h6' sx={{ mr: 1.5 }}>
               Total Practice
             </Typography>
@@ -203,6 +166,7 @@ const InterviewTotalSummaryCard = () => {
           {chartHeight === '0%' ? null : (
             <Grid container direction='row'>
               <Grid item xs={8} sx={{ marginTop: '-10px' }}>
+                {/* If grid sx, %. If grid md, lg, display*/}
                 <ReactApexcharts
                   type='radialBar'
                   series={
@@ -245,7 +209,6 @@ const InterviewTotalSummaryCard = () => {
           )}
         </Grid>
       </CardContent>
-    </Card>
   )
 }
 

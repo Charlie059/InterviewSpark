@@ -14,7 +14,8 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
+  Typography
 } from '@mui/material'
 
 import TableHeader from '../../../table-header'
@@ -326,6 +327,10 @@ const InterviewList = () => {
   }
 
   return (
+    <>
+      <Typography variant='h6' sx={{ marginTop: '20px', marginBottom: '15px' }}>
+        Interview History
+      </Typography>
     <Card>
       <div>
         <TableHeader
@@ -404,6 +409,7 @@ const InterviewList = () => {
         </DialogActions>
       </Dialog>
     </Card>
+    </>
   )
 }
 

@@ -1,116 +1,53 @@
 import { Box, CircularProgress, Grid, Typography } from '@mui/material'
 import { API, graphqlOperation } from 'aws-amplify'
-import React from 'react'
 import CTAPage from 'src/components/interview/interviewProfile/CTAPage/CTAPage'
-import InterviewList from 'src/components/interview/interviewProfile/interview-list'
-import InterviewUsageSummaryThisMonth from 'src/components/interview/interviewProfile/Interview-monthly-summary-card'
-import InterviewPromotion from 'src/components/interview/interviewProfile/interview-promotion'
-import InterviewTotalSummaryCard from 'src/components/interview/interviewProfile/interview-total-summary-card/index'
-import UserProfileHeader from 'src/components/profile/UserProfileHeader'
 import { UserDataType, UserInterviewUsageMetaData } from 'src/context/types'
 import { getUserInterviewUsageMetaData, getUserProfile } from 'src/graphql/queries'
 import { useAuth } from 'src/hooks/useAuth'
 import Tutorial from 'src/components/tutorial/Tutorial'
 import Logger from 'src/middleware/loggerMiddleware'
+import { useState,useEffect } from 'react'
+import { useUserProfile } from 'src/hooks/useUserProfile'
+import InterviewPageLoading from 'src/components/loading/InterviewPageLoading'
+import InterviewPageInterviewContent from 'src/components/interview/InterviewPageInterviewContent'
+import { useGraphQLQuery } from 'src/hooks/useGraphQLQuery'
+import { GetUserInterviewUsageMetaDataVariables } from 'src/types/graphqlTypes'
 
 const InterviewPage = () => {
   const auth = useAuth()
-  const [cardHeight, setCardHeight] = React.useState(0)
-  const [userProfileData] = React.useState<UserDataType>(auth.user)
-  const [userInterviewUsageMetaData, setUserInterviewUsageMetaData] = React.useState<UserInterviewUsageMetaData | null>(
-    null
-  )
-  const [tutorialDialogOpen, setTutorialDialogOpen] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(true)
+  const emailAddress=auth.user?.userEmailAddress
+  const [tutorialDialogOpen, setTutorialDialogOpen] = useState(false)
 
-  React.useEffect(() => {
-    const fetchUserInterviewUsageMetaData = async () => {
-      try {
-        const userInterviewUsageMetaData = await API.graphql(
-          graphqlOperation(getUserInterviewUsageMetaData, { emailAddress: auth.user?.userEmailAddress })
-        )
+  const { data: userInterviewUsageMetaData, error: interviewMetaDataError } =
+    useGraphQLQuery<GetUserInterviewUsageMetaDataVariables>(
+    getUserInterviewUsageMetaData,
+    { emailAddress }
+  );
 
-        if ('data' in userInterviewUsageMetaData) {
-          setUserInterviewUsageMetaData(userInterviewUsageMetaData.data.getUserInterviewUsageMetaData)
-        }
-      } catch (error) {
-        Logger.error('Error fetching user interview usage meta data', error)
+  const { profile: userProfile, error: pError } = emailAddress
+    ? useUserProfile(emailAddress)
+    : { profile: null as UserDataType|null, error: null };
+
+  useEffect(()=>{
+      if(userProfile && userProfile.isNewUser){
+        setTutorialDialogOpen(true);
       }
-    }
+  },[userProfile])
 
-    fetchUserInterviewUsageMetaData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  React.useEffect(() => {
-    setIsLoading(true)
-
-    const fetchUserProfile = async () => {
-      const data = await API.graphql(graphqlOperation(getUserProfile, { emailAddress: auth.user?.userEmailAddress }))
-      if ('data' in data) {
-        setTutorialDialogOpen(data.data.getUserProfile.isNewUser)
-      }
-
-      // Wait for 1 second to show the tutorial dialog
-      setTimeout(() => {
-        setIsLoading(false)
-      }, 1000)
-    }
-
-    fetchUserProfile()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <div>
-      {isLoading ? (
-        <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-          <CircularProgress sx={{ mb: 4 }} />
-          <Typography>Loading...</Typography>
-        </Box>
+      {!userProfile||!userInterviewUsageMetaData ? (
+        <InterviewPageLoading/>
       ) : (
         <>
-          {tutorialDialogOpen && (
-            <Tutorial
+          {tutorialDialogOpen && (<Tutorial
               tutorialDialogOpen={tutorialDialogOpen}
               setTutorialDialogOpen={setTutorialDialogOpen}
-              userProfileData={userProfileData}
-            />
-          )}
+              userProfileData={userProfile}/>)}
           {!userInterviewUsageMetaData || userInterviewUsageMetaData.userInterviewNumTotalCount !== 0 ? (
-            <>
-              <UserProfileHeader data={userProfileData} />
-              <Grid container spacing={3.5}>
-                <Grid item xs={6} sm={3.8} md={2.3} lg={2.4}>
-                  <Box sx={{ position: 'relative', paddingBottom: '100%' }}>
-                    <Box sx={{ position: 'absolute', width: '100%', height: '100%' }}>
-                      <InterviewUsageSummaryThisMonth cardHeight={cardHeight} setCardHeight={setCardHeight} />
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid item xs={6} sm={3.8} md={2.3} lg={2.4}>
-                  <Box sx={{ position: 'relative', paddingBottom: '100%' }}>
-                    <Box sx={{ position: 'absolute', width: '100%', height: '100%' }}>
-                      <InterviewTotalSummaryCard />
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={4.4} md={7.4} lg={7.2}>
-                  <InterviewPromotion height={cardHeight} />
-                </Grid>
-
-                <Grid item xs={12} sm={12} md={12} lg={12}>
-                  <Typography variant='h6' sx={{ marginTop: '20px', marginBottom: '15px' }}>
-                    Interview History
-                  </Typography>
-                  <InterviewList />
-                </Grid>
-              </Grid>
-            </>
-          ) : (
-            <CTAPage />
-          )}
+          <InterviewPageInterviewContent userProfile={userProfile}/>
+          ) : (<CTAPage />)}
         </>
       )}
     </div>
