@@ -10,6 +10,8 @@ import { useState, useEffect } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewsByMonth } from 'src/graphql/queries'
 import Logger from 'src/middleware/loggerMiddleware'
+import { useGraphQLQuery } from 'src/hooks/useGraphQLQuery'
+import { GetUserInterviewsByMonthVariables } from 'src/types/graphqlTypes'
 
 interface InterviewPromotionProps {
 }
@@ -41,63 +43,48 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ }) => {
   const auth = useAuth()
   const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
 
+  const { data, error } = useGraphQLQuery<GetUserInterviewsByMonthVariables>(
+    getUserInterviewsByMonth,
+    { emailAddress: auth.user?.userEmailAddress }
+  );
+
   // Determine the appropriate encouragement message
-  const encouragementMessage = (() => {
-    const goal = 10
+  // ** Encouragement message determination
+  const getEncouragementMessage = (percentage: number): string => {
+    const goal = 10;
 
-    if (percentageIncrease >= 100) {
-      return `Congratulations! 🎉 You've reached or surpassed your goal of ${goal} interviews this month. Keep up the great work!`
-    } else if (percentageIncrease >= 75) {
-      return `You're almost there! You've completed ${percentageIncrease}% of your goal of ${goal} interviews this month. Keep pushing forward! 💪`
-    } else if (percentageIncrease > 0) {
-      return `You're making progress! You've completed ${percentageIncrease}% of your goal of ${goal} interviews this month. Stay focused and keep going! 💪`
+    if (percentage >= 100) {
+      return `Congratulations! 🎉 You've reached or surpassed your goal of ${goal} interviews this month. Keep up the great work!`;
+    } else if (percentage >= 75) {
+      return `You're almost there! You've completed ${percentage}% of your goal of ${goal} interviews this month. Keep pushing forward! 💪`;
+    } else if (percentage > 0) {
+      return `You're making progress! You've completed ${percentage}% of your goal of ${goal} interviews this month. Stay focused and keep going! 💪`;
     } else {
-      return `Let's get started! Your goal is to complete ${goal} interviews this month. You can do it! 💪`
+      return `Let's get started! Your goal is to complete ${goal} interviews this month. You can do it! 💪`;
     }
-  })()
+  };
 
+
+  const calculatePercentageProgress = (currentValue: number, goal: number): number => {
+    return goal === 0 ? 0 : Math.round((currentValue / goal) * 100);
+  };
   useEffect(() => {
-    const calculatePercentageProgress = (currentValue: number, goal: number): number => {
-      if (goal === 0) return 0
-
-      return Math.round((currentValue / goal) * 100)
+    if (data && 'getUserInterviewsByMonth' in data) {
+      const interviewListInCurrentMonth = data.getUserInterviewsByMonth.interviewList;
+      const goal = 10;
+      const newPercentageIncrease = calculatePercentageProgress(interviewListInCurrentMonth.length, goal);
+      setPercentageIncrease(newPercentageIncrease);
     }
 
-    const fetchData = async () => {
-      try {
-        // Get the email address of the current user
-        const emailAddress = auth.user?.userEmailAddress
-
-        // Fetch the interview list for the user
-        const result = await API.graphql(
-          graphqlOperation(getUserInterviewsByMonth, {
-            emailAddress
-          })
-        )
-
-        if ('data' in result) {
-          const interviewListInCurrentMonth = result.data.getUserInterviewsByMonth.interviewList
-          const goal = 10
-
-          // Calculate the percentage increase
-          const percentageIncrease = calculatePercentageProgress(interviewListInCurrentMonth.length, goal)
-
-          // Update state with the calculated percentage increase
-          setPercentageIncrease(percentageIncrease)
-        }
-      } catch (error) {
-        Logger.error('Error', error)
-      }
+    if (error) {
+      Logger.error('Error', error); // Ensure Logger is imported or define how you handle errors
     }
-
-    fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [data, error]);
 
   return (
       <CardContent sx={{ p: theme => `${theme.spacing(6.75, 7.5)} !important` }}>
         <Grid container>
-          <Grid item xs={12} sm={12} md={12} lg={12}>
+          <Grid item xs={12}>
             <Typography variant='h5' sx={{ mb: 4.5 }}>
               {percentageIncrease >= 0 ? 'Keep up the great work,' : "It's okay,"}{' '}
               <Box component='span' sx={{ fontWeight: 'bold' }}>
@@ -105,9 +92,9 @@ const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ }) => {
               </Box>
               {percentageIncrease >= 0 ? ' 🚀' : ' 🙌'}
             </Typography>
-            <Typography variant='body2'>{encouragementMessage}</Typography>
+            <Typography variant='body2'>{getEncouragementMessage(percentageIncrease)}</Typography>
           </Grid>
-          <StyledGrid item xs={0} sm={0} md={0} lg={0}>
+          <StyledGrid item xs={0}>
             <Img alt='Encouragement Illustration' src={'/images/certification/Medallions.png'} />
           </StyledGrid>
         </Grid>

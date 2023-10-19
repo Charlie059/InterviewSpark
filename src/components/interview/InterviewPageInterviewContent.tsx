@@ -17,7 +17,11 @@ interface InterviewContentProps{
 const InterviewPageInterviewContent:React.FC<InterviewContentProps> = ({userProfile}) => {
   const theme = useTheme()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
+  const isXSmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+
   const squareAspectRatio = isSmallScreen?2:1
+  const rectangleAspectRatio = isXSmallScreen?1.5:7.2/2.3
+
   return (
     <>
       <UserProfileHeader data={userProfile} />
@@ -36,7 +40,7 @@ const InterviewPageInterviewContent:React.FC<InterviewContentProps> = ({userProf
         </Grid>
 
         <Grid item xs={12} sm={12}  md={7.2} lg={7.2}>
-          <RectangularCard aspectRatio={7.2/2.3}>
+          <RectangularCard aspectRatio={rectangleAspectRatio}>
             <InterviewPromotion/>
           </RectangularCard>
         </Grid>
