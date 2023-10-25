@@ -23,6 +23,7 @@ import { Interview } from 'src/types/types'
 // import { usePollyByQueue } from './usePollyByQueue'
 import useChatGPTStream from './useChatGPTStream'
 import { usePollyQueue } from './usePollyQueue'
+import { getBrowserType } from 'src/utils/getBrowserType'
 
 // Define states for the interview process
 enum InterviewStatus {
@@ -185,7 +186,7 @@ const useInterview = (interviewHookProps: InterviewHookProps) => {
     handleStopCapture,
     getVideoBlob,
     videoRecordingError
-  } = useVideoRecording(info.audioinput) // Use the custom hook for video recording
+  } = useVideoRecording(info.audioinput, getBrowserType()) // Use the custom hook for video recording
   const { save, s3Error } = useS3Video() // Use the custom s3 saver hook for uploading video to S3
   const { generateResponse, chatGPTStreamError } = useChatGPTStream(addToQueue, start, end) // Use the useChatGPTStream Hook here
 

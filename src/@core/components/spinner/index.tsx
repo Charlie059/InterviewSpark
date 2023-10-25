@@ -19,10 +19,8 @@ const FallbackSpinner = ({ sx }: { sx?: BoxProps['sx'] }) => {
           src={process.env.NEXT_PUBLIC_S3_BUCKET_PUBLIC_URL + 'Logo.svg'}
           alt='Logo'
           style={{
-            width: '200%',
-            maxWidth: '1000px',
-            height: '150px',
-            objectFit: 'cover',
+            minWidth: '20%',
+            maxWidth: '60%',
             objectPosition: 'center'
           }}
         />

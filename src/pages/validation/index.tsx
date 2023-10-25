@@ -159,6 +159,10 @@ export default function VerifyCode({ username }: VerifyCodeProps) {
                           </Typography>
                           <span>&nbsp;</span>
                           <Typography variant='body2'>to resend verification code.</Typography>
+
+                          <Typography variant='body2' sx={{ mt: '5px' }}>
+                            Check your spam folder if you do not hear from us after a while.
+                          </Typography>
                         </div>
 
                         <br />
