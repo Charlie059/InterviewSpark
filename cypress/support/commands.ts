@@ -35,3 +35,12 @@
 //     }
 //   }
 // }
+
+Cypress.Commands.add('loginApp', (email: string, password: string) => {
+  cy.visit('/login')
+  cy.get('[data-testid="email-input"]').type(email)
+  cy.get('input[type="password"]').type(password)
+  cy.get('button[type="submit"]').click()
+  cy.wait(10000)
+  cy.url().should('include', '/interview', { timeout: 40000 })
+})

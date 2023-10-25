@@ -14,7 +14,7 @@ describe('User Registration', () => {
     cy.visit('/register');
   });
 
-  it('Fills out and submits the registration form and fill the code', () => {
+  it.only('Fills out and submits the registration form and fill the code', () => {
     cy.get('[data-testid="username-input"]', { timeout: 10000 }).type('testUser')
     cy.get('[data-testid="email-input"]').type(testEmail)
     cy.get('[data-testid="fName-input"]').type('Charlie')
@@ -64,6 +64,7 @@ describe('User Registration', () => {
 
       // Verify that the user is redirected to the home
       cy.url().should('include', '/interview', { timeout: 40000 })
+      cy.loginApp(testEmail, testPassword)
     })
   })
 

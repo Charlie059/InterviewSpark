@@ -8,8 +8,7 @@ describe('User Login', () => {  // const testEmail = `${testUsername}@${serverId
 
   });
 
-  it.only('Logs in using the registered username and password', () => {
-    console.log(testEmail1);
+  it('Logs in using the registered username and password', () => {
     cy.get('[data-testid="email-input"]').type('shenyf1124@outlook.com')
     cy.get('input[type="password"]').type('111111Ss!');
     cy.get('button[type="submit"]').click();
