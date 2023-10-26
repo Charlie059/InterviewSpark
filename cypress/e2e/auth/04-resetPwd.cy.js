@@ -1,9 +1,6 @@
+import { serverId, testEmail, newPassword } from '../../support/userUtils';
 
 describe('Reset Password with Resend', () => {
-  let serverId = Cypress.env('SERVER_ID');
-  const testEmail = 'testuser16976056294711674@pirc3bnk.mailosaur.net';
-  const newPassword = 'Newpassword123';
-
   beforeEach(() => {
     cy.viewport(1280, 720)
 
@@ -70,12 +67,13 @@ describe('Reset Password with Resend', () => {
     })
   })
 
-  it.only('Test Login with reset password', () => {
+  it('Test Login with reset password', () => {
     cy.get('[data-testid="email-input"]').type(testEmail)
     cy.get('input[type="password"]').type(newPassword)
     cy.get('button[type="submit"]').click()
     cy.wait(10000);
     cy.url().should('include', '/interview', { timeout: 40000 });
   })
+
 });
 
