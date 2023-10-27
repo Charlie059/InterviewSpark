@@ -2,7 +2,7 @@
  * UserProfileContext context
  *
  * This file with useUserProfile(src/hooks/)defines the UserProfileContext and a custom hook
- * 'useUserProfile'for fetching and providing user profile data throughout the application.
+ * 'useUserProfile' for fetching and providing user profile data throughout the application.
  * The context maintains the state related to the user's profile, email, and any associated
  * errors during data fetching.
  *
@@ -79,13 +79,13 @@ const UserProfileProvider: React.FC<UserProfileProviderProps> = ({children})=>{
   useEffect(()=>{
     const fetchData = async () => {
       try {
-
         /* Check Email */
         if(!emailAddress){
-          const err =  new Error("Error fetching emailAddress from auth.user.userEmailAddress!");
-          throw err;
-          console.error(err);
-          setData(prevState =>({...prevState, email:emailAddress}))
+          const errMessage = "Error fetching emailAddress from auth.ser.serEmailAddress!"
+          console.error(errMessage);
+          setData(prevState =>({...prevState, email:emailAddress,error: new Error(errMessage)}))
+
+          return
         }
 
         /* Fetch GraphQL Data */
@@ -94,6 +94,7 @@ const UserProfileProvider: React.FC<UserProfileProviderProps> = ({children})=>{
         );
         if ('data' in result) {
           const fetchedProfile = result.data.getUserProfile;
+
           //Here we use fetchedProfile to replace defaultUser
           setData(prevState =>({...prevState, profile:{...defaultUser,...fetchedProfile}, error:null}))
         }
@@ -105,8 +106,12 @@ const UserProfileProvider: React.FC<UserProfileProviderProps> = ({children})=>{
         console.error(error);
       }
     };
+
       /* Execute */
-      fetchData();
+    (async ()=>{
+      await       fetchData();
+    })();
+
   },[emailAddress]);
 
   return(
