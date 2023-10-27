@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import CustomDialog from 'src/components/Base/CustomDialog/CustomDialog'
+import CustomDialog from 'src/components/BaseUI/CustomDialog/CustomDialog'
 
 const Playground = () => {
   const [open, setOpen] = useState(true)

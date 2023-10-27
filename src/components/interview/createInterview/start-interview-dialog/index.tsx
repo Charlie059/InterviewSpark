@@ -31,7 +31,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useFetchSubscription } from 'src/hooks/useFetchSubscription'
 import toast from 'react-hot-toast'
 import { useSubscription } from 'src/hooks/useSubscription'
-import AlertComponent from 'src/components/Base/Alert/Alert'
+import AlertComponent from 'src/components/BaseUI/Alert/Alert'
 
 interface Info {
   questionNum: number
@@ -251,7 +251,9 @@ const StartInterviewDialog = (props: {
 
       // Check if we have user's email
       if (!auth.user?.userEmailAddress) {
-        throw new Error('No user email found')
+        console.log("Cannot fetch userEmailAddress from Auth!")
+
+        return
       }
 
       Logger.debug('User email found', auth.user?.userEmailAddress)
