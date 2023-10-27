@@ -3,6 +3,7 @@ import { Box, Grid, Typography, Dialog, IconButton } from '@mui/material'
 import InterviewFeedbackCard from 'src/components/interviewFeedback/FeedbackCard'
 import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewMetaData } from 'src/graphql/queries'
+import { handleEvent } from 'src/graphql/mutations'
 import { useRouter } from 'next/router'
 import { useAuth } from 'src/hooks/useAuth'
 import { Storage } from '@aws-amplify/storage'
@@ -68,6 +69,23 @@ const InterviewDetails = () => {
 
       // Fetch interview from the router query
       try {
+        // Push event to SNS
+        try {
+          const res = await API.graphql(
+            graphqlOperation(handleEvent, {
+              operation: 'mutation',
+              name: 'InterviewEvent',
+              arguments: JSON.stringify({
+                action: 'Interview_Review_Page_Loaded'
+              }),
+              user: userEmailAddress!
+            })
+          )
+          console.log('res: ', res)
+        } catch (error) {
+          console.log('Error pushing event to SNS: ', error)
+        }
+
         console.log('interviewID: ', interviewID)
         const result = await API.graphql(
           graphqlOperation(getUserInterviewMetaData, {

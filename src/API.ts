@@ -618,6 +618,22 @@ export type HandleMixpanelEventMutation = {
   },
 };
 
+export type HandleEventMutationVariables = {
+  operation: string,
+  name: string,
+  arguments: string,
+  user: string,
+};
+
+export type HandleEventMutation = {
+  handleEvent:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};
+
 export type UpdateUserSubscriptionCancelReasonMutationVariables = {
   userEmail: string,
   subscriptionId: string,
