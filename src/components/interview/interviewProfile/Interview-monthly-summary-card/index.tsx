@@ -21,10 +21,7 @@ const InterviewUsageSummaryThisMonth = () => {
   const emailAddress = auth.user?.userEmailAddress;
 
   const { data: queryData, error:InterviewsByMonthError } =
-    useGraphQLQuery<GetUserInterviewsByMonthVariables>(
-    getUserInterviewsByMonth,
-    { emailAddress }
-  );
+    useGraphQLQuery<GetUserInterviewsByMonthVariables>(getUserInterviewsByMonth, { emailAddress });
 
   interface Interview {
     interviewDateTime: string;

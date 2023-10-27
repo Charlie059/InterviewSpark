@@ -10,7 +10,7 @@ interface GraphQLResult {
 
 
 //Garantee query not null or undefined
-export const useGraphQLQuery = <Variables>(query: string, variables: Variables):
+export const useGraphQLQuery = <Variables extends {} | undefined>(query: string, variables: Variables):
   { data: Record<string, any> | null, error: Error | null } => {
   const [data, setData] = useState<Record<string, any> | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -18,7 +18,7 @@ export const useGraphQLQuery = <Variables>(query: string, variables: Variables):
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = (await API.graphql(graphqlOperation({query, variables}))) as GraphQLResult;
+        const result = (await API.graphql(graphqlOperation(query, variables))) as GraphQLResult;
         if ('data' in result) {
           setData(result.data || null);
         }

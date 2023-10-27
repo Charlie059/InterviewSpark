@@ -20,11 +20,12 @@ import InterviewAssembled from 'src/components/AssembledUI/interview/InterviewAs
 const InterviewPage = () => {
   /* Hooks */
   const {profile: userProfile, email: emailAddress} = useUserProfile()
-  const { data: userInterviewUsageMetaData} = useGraphQLQuery <GetUserInterviewUsageMetaDataVariables>(getUserInterviewUsageMetaData, { emailAddress });
+  const { data: userInterviewUsageMetaData} = useGraphQLQuery <GetUserInterviewUsageMetaDataVariables>(getUserInterviewUsageMetaData,  {emailAddress} );
+
 
 return (
     <div>
-      {!userProfile||!userInterviewUsageMetaData ? (
+      {!userProfile || !userInterviewUsageMetaData ? (
         <InterviewPageLoading/>
       ) : (
         <>

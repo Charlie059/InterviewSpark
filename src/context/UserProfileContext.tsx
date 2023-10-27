@@ -77,6 +77,8 @@ const UserProfileProvider: React.FC<UserProfileProviderProps> = ({children})=>{
   const auth = useAuth();
   const emailAddress = auth.user?.userEmailAddress;
   useEffect(()=>{
+
+    console.log("userProfileContext:", emailAddress)
     const fetchData = async () => {
       try {
         /* Check Email */
@@ -84,8 +86,6 @@ const UserProfileProvider: React.FC<UserProfileProviderProps> = ({children})=>{
           const errMessage = "Error fetching emailAddress from auth.ser.serEmailAddress!"
           console.error(errMessage);
           setData(prevState =>({...prevState, email:emailAddress,error: new Error(errMessage)}))
-
-          return
         }
 
         /* Fetch GraphQL Data */
@@ -96,7 +96,7 @@ const UserProfileProvider: React.FC<UserProfileProviderProps> = ({children})=>{
           const fetchedProfile = result.data.getUserProfile;
 
           //Here we use fetchedProfile to replace defaultUser
-          setData(prevState =>({...prevState, profile:{...defaultUser,...fetchedProfile}, error:null}))
+          setData(prevState =>({...prevState, profile:{...defaultUser,...fetchedProfile},email:emailAddress, error:null}))
         }
 
         /* Catch Error */
@@ -107,10 +107,10 @@ const UserProfileProvider: React.FC<UserProfileProviderProps> = ({children})=>{
       }
     };
 
-      /* Execute */
-    (async ()=>{
-      await       fetchData();
-    })();
+    /* Execute */
+     (async ()=>{
+       await       fetchData();
+     })();
 
   },[emailAddress]);
 

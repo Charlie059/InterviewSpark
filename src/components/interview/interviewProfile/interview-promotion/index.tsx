@@ -38,11 +38,7 @@ const InterviewPromotion = () => {
   // ** Hook
   const auth = useAuth()
   const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
-
-  const { data, error } = useGraphQLQuery<GetUserInterviewsByMonthVariables>(
-    getUserInterviewsByMonth,
-    { emailAddress: auth.user?.userEmailAddress }
-  );
+  const { data, error } = useGraphQLQuery<GetUserInterviewsByMonthVariables>(getUserInterviewsByMonth, { emailAddress: auth.user?.userEmailAddress });
 
   // Determine the appropriate encouragement message
   // ** Encouragement message determination
