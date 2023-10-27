@@ -1,10 +1,13 @@
-import { serverId, testEmail, newPassword } from '../../support/userUtils';
+import { serverId, newPassword } from '../../support/userUtils'
 
 describe('Reset Password with Resend', () => {
+  let testEmail
   beforeEach(() => {
     cy.viewport(1280, 720)
+    cy.fixture('emailData.json').then(data => {
+      testEmail = data.email
+    })
 
-    // Change this to your app's login URL
     cy.visit('/login')
     cy.wait(2000)
     cy.url().should('include', '/login')
@@ -71,9 +74,7 @@ describe('Reset Password with Resend', () => {
     cy.get('[data-testid="email-input"]').type(testEmail)
     cy.get('input[type="password"]').type(newPassword)
     cy.get('button[type="submit"]').click()
-    cy.wait(10000);
-    cy.url().should('include', '/interview', { timeout: 40000 });
+    cy.wait(10000)
+    cy.url().should('include', '/interview', { timeout: 40000 })
   })
-
-});
-
+})
