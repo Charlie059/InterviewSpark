@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 // ** Next Imports
 import Head from 'next/head'
@@ -7,6 +7,7 @@ import { Router } from 'next/router'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { GoogleAnalytics } from 'nextjs-google-analytics'
+import TagManager from 'react-gtm-module'
 
 // * Amplify
 import { Amplify } from 'aws-amplify'
@@ -142,6 +143,13 @@ const App = (props: ExtendedAppProps) => {
   const aclAbilities = Component.acl ?? defaultACLObj
 
   setLogLevel(LogLevel.ERROR)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      TagManager.initialize({ gtmId: 'GTM-WTLSR3LF' })
+      console.log('TagManager initialized')
+    }
+  }, [])
 
   return (
     <CacheProvider value={emotionCache}>

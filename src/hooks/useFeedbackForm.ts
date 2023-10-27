@@ -15,6 +15,8 @@ import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useAuth } from './useAuth'
 import toast from 'react-hot-toast'
+import { API, graphqlOperation } from 'aws-amplify'
+import { handleEvent } from 'src/graphql/mutations'
 
 interface FormData {
   rating: number
@@ -38,13 +40,33 @@ export const useFeedbackForm = () => {
 
   const auth = useAuth()
 
+  const pushEvent = async () => {
+    const userEmailAddress = auth.user?.userEmailAddress
+
+    // Push event to SNS
+    try {
+      const res = await API.graphql(
+        graphqlOperation(handleEvent, {
+          operation: 'mutation',
+          name: 'FeedbackEvent',
+          arguments: JSON.stringify({
+            action: 'Leave_Feedback'
+          }),
+          user: userEmailAddress!
+        })
+      )
+      console.log('res: ', res)
+    } catch (error) {
+      console.log('Error pushing event to SNS: ', error)
+    }
+  }
   const onSubmit: SubmitHandler<FormData> = data => {
     try {
       auth.trackEvent('FeedbackEvent', {
         rating: data.rating,
         review: data.review
       })
-
+      pushEvent()
       setIsSubmitted(true)
     } catch (e: any) {
       console.error(e)

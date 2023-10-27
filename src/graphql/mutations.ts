@@ -33,6 +33,7 @@ export const createNewGuestUser = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -65,7 +66,9 @@ export const createUserInterviewQuestionList = /* GraphQL */ `
         interviewVideoLength
         interviewVideoPath
         isDisableInterviewAnalysis
+        __typename
       }
+      __typename
     }
   }
 `;
@@ -91,6 +94,7 @@ export const createUserInterviewWithQuestion = /* GraphQL */ `
       interviewVideoLength
       interviewVideoPath
       isDisableInterviewAnalysis
+      __typename
     }
   }
 `;
@@ -130,6 +134,7 @@ export const updateUserInterview = /* GraphQL */ `
       interviewVideoLength
       interviewVideoPath
       isDisableInterviewAnalysis
+      __typename
     }
   }
 `;
@@ -161,6 +166,7 @@ export const updateInterviewVideoKey = /* GraphQL */ `
       interviewVideoLength
       interviewVideoPath
       isDisableInterviewAnalysis
+      __typename
     }
   }
 `;
@@ -204,6 +210,7 @@ export const updateUserProfile = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -223,6 +230,7 @@ export const removeUserInterviewsByID = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -238,6 +246,7 @@ export const removeUserResumeScanByID = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -264,6 +273,7 @@ export const createUserResumeScan = /* GraphQL */ `
       resumeResults
       resumeUrl
       resumeScanID
+      __typename
     }
   }
 `;
@@ -284,6 +294,7 @@ export const updateUserResumeScanURL = /* GraphQL */ `
       resumeResults
       resumeUrl
       resumeScanID
+      __typename
     }
   }
 `;
@@ -312,6 +323,7 @@ export const createUserEducation = /* GraphQL */ `
       eduEndDate
       eduIcon
       eduActivity
+      __typename
     }
   }
 `;
@@ -342,6 +354,7 @@ export const updateUserEducation = /* GraphQL */ `
       eduEndDate
       eduIcon
       eduActivity
+      __typename
     }
   }
 `;
@@ -351,6 +364,7 @@ export const removeUserEducationByID = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -378,6 +392,7 @@ export const createUserWorkHistory = /* GraphQL */ `
       workHistoryEndDate
       workHistoryJobDescription
       workHistoryIcon
+      __typename
     }
   }
 `;
@@ -407,6 +422,7 @@ export const updateUserWorkHistory = /* GraphQL */ `
       workHistoryEndDate
       workHistoryJobDescription
       workHistoryIcon
+      __typename
     }
   }
 `;
@@ -422,6 +438,7 @@ export const removeUserWorkHistoryByID = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -434,6 +451,7 @@ export const createUserSubscriptionRequest = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -449,6 +467,7 @@ export const resumeUserSubscriptionRequest = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -464,6 +483,7 @@ export const cancelUserSubscriptionRequest = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -477,6 +497,7 @@ export const verifyAndUpdateInteractiveFeedbackWithVideoAnalysisUsage = /* Graph
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -494,6 +515,27 @@ export const handleMixpanelEvent = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
+    }
+  }
+`;
+export const handleEvent = /* GraphQL */ `
+  mutation HandleEvent(
+    $operation: String!
+    $name: String!
+    $arguments: AWSJSON!
+    $user: AWSEmail!
+  ) {
+    handleEvent(
+      operation: $operation
+      name: $name
+      arguments: $arguments
+      user: $user
+    ) {
+      isSuccessful
+      error
+      info
+      __typename
     }
   }
 `;
@@ -511,6 +553,7 @@ export const updateUserSubscriptionCancelReason = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
@@ -520,6 +563,7 @@ export const updateNewUserStatus = /* GraphQL */ `
       isSuccessful
       error
       info
+      __typename
     }
   }
 `;
