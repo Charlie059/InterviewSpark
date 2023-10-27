@@ -7,15 +7,9 @@
  * Update Date: 19/10/2023
  * Copyright: © 2023 HireBeat Inc. All rights reserved.
  ************************************************************************************************/
-import { Box, CircularProgress, Grid, Typography } from '@mui/material'
-import { API, graphqlOperation } from 'aws-amplify'
 import CTAPage from 'src/components/interview/interviewProfile/CTAPage/CTAPage'
-import { UserDataType, UserInterviewUsageMetaData } from 'src/context/types'
-import { getUserInterviewUsageMetaData, getUserProfile } from 'src/graphql/queries'
-import { useAuth } from 'src/hooks/useAuth'
+import { getUserInterviewUsageMetaData } from 'src/graphql/queries'
 import Tutorial from 'src/components/tutorial/Tutorial'
-import Logger from 'src/middleware/loggerMiddleware'
-import { useState,useEffect } from 'react'
 import { useUserProfile } from 'src/hooks/useUserProfile'
 import InterviewPageLoading from 'src/components/loading/InterviewPageLoading'
 
@@ -24,14 +18,11 @@ import { GetUserInterviewUsageMetaDataVariables } from 'src/types/graphqlTypes'
 import InterviewAssembled from 'src/components/AssembledUI/interview/InterviewAssembled'
 
 const InterviewPage = () => {
-  /* States */
-  const [tutorialDialogOpen, setTutorialDialogOpen] = useState(false)
-
   /* Hooks */
-  const {profile: userProfile, email: emailAddress, error: userProfileError} = useUserProfile()
-  const { data: userInterviewUsageMetaData, error: interviewMetaDataError } = useGraphQLQuery
-  <GetUserInterviewUsageMetaDataVariables>(getUserInterviewUsageMetaData, { emailAddress });
-  return (
+  const {profile: userProfile, email: emailAddress} = useUserProfile()
+  const { data: userInterviewUsageMetaData} = useGraphQLQuery <GetUserInterviewUsageMetaDataVariables>(getUserInterviewUsageMetaData, { emailAddress });
+
+return (
     <div>
       {!userProfile||!userInterviewUsageMetaData ? (
         <InterviewPageLoading/>

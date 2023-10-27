@@ -27,7 +27,7 @@ import CTAPage from '../../components/interview/interviewProfile/CTAPage/CTAPage
 // ** Styled Components
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import { useAuth } from 'src/hooks/useAuth'
-import { Education, UserDataType, UserProfileViewTypes } from '../../context/types'
+import { Education, UserProfileViewTypes } from '../../context/types'
 import { Profile } from '../../API'
 import UserOverview from '../../components/profile/UserOverview'
 import { createUserEducation, updateNewUserStatus } from 'src/graphql/mutations'
@@ -77,7 +77,7 @@ const StepperHeaderContainer = styled(CardContent)(({ theme }) => ({
 const Tutorial = () => {
   // ** Props
   const [tutorialDialogOpen, setTutorialDialogOpen] = useState(false)
-  const {profile: userProfile, email: emailAddress, error: userProfileError} = useUserProfile()
+  const {profile: userProfile, email: emailAddress} = useUserProfile()
 
   // ** States
   const [activeStep, setActiveStep] = useState(0)

@@ -8,15 +8,13 @@
  * Copyright: © 2023 HireBeat Inc. All rights reserved.
  ************************************************************************************************/
 
-import {Box, Card, Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
-import React, {useEffect, useRef, useState } from 'react';
+import {Grid, useMediaQuery, useTheme } from '@mui/material';
+import React from 'react';
 import UserProfileHeader from '../../profile/UserProfileHeader'
 import InterviewUsageSummaryThisMonth from '../../interview/interviewProfile/Interview-monthly-summary-card'
 import InterviewTotalSummaryCard from '../../interview/interviewProfile/interview-total-summary-card'
 import InterviewPromotion from '../../interview/interviewProfile/interview-promotion'
 import InterviewList from '../../interview/interviewProfile/interview-list'
-
-import { UserDataType } from '../../../context/types';
 import RectangularCard from '../../BaseUI/RectangularCard/RectangularCard';
 
 const InterviewAssembled= () => {

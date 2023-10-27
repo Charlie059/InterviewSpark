@@ -53,12 +53,14 @@ const ProfilePicture = styled(Avatar)(({ theme }) => ({
 type diagTypes = 'profile' | 'cover'
 
 const UserProfileHeader = ({type}: {type?: string }) => {
-  const {profile: userProfile, email: emailAddress, error: userProfileError} = useUserProfile()
+  const {profile: userProfile} = useUserProfile()
+
   // ** State
   const joiningDate = userProfile?.joiningDate? format(new Date(userProfile.joiningDate), 'PP'): "";
 
   const [showCover, setShowCover] = useState<boolean>(false)
-  const designationIcon = 'mdi:briefcase-outline'
+
+  //const designationIcon = 'mdi:briefcase-outline'
   const [openProfilePicture, setOpenProfilePicture] = useState<boolean>(false)
   const [dialogType, setDialogType] = useState<diagTypes>('profile')
   const [files, setFiles] = useState<File[]>([])
@@ -147,6 +149,7 @@ const UserProfileHeader = ({type}: {type?: string }) => {
 
   const toggle = async () => {
     if (!userProfile) return;
+
     //use state to refresh component
     setRefresh(Date.now())
     userProfile.isPublic = !userProfile.isPublic
