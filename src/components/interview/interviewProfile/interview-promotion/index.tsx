@@ -1,20 +1,16 @@
 // ** MUI Imports
 import Box from '@mui/material/Box'
-import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import Grid, { GridProps } from '@mui/material/Grid'
 import { styled } from '@mui/material/styles'
 import { useAuth } from 'src/hooks/useAuth'
 import { useState, useEffect } from 'react'
-import { API, graphqlOperation } from 'aws-amplify'
 import { getUserInterviewsByMonth } from 'src/graphql/queries'
 import Logger from 'src/middleware/loggerMiddleware'
 import { useGraphQLQuery } from 'src/hooks/useGraphQLQuery'
 import { GetUserInterviewsByMonthVariables } from 'src/types/graphqlTypes'
 
-interface InterviewPromotionProps {
-}
 
 // Styled Grid component
 const StyledGrid = styled(Grid)<GridProps>(({ theme }) => ({
@@ -38,15 +34,11 @@ const Img = styled('img')(({ theme }) => ({
   }
 }))
 
-const InterviewPromotion: React.FC<InterviewPromotionProps> = ({ }) => {
+const InterviewPromotion = () => {
   // ** Hook
   const auth = useAuth()
   const [percentageIncrease, setPercentageIncrease] = useState<number>(0)
-
-  const { data, error } = useGraphQLQuery<GetUserInterviewsByMonthVariables>(
-    getUserInterviewsByMonth,
-    { emailAddress: auth.user?.userEmailAddress }
-  );
+  const { data, error } = useGraphQLQuery<GetUserInterviewsByMonthVariables>(getUserInterviewsByMonth, { emailAddress: auth.user?.userEmailAddress });
 
   // Determine the appropriate encouragement message
   // ** Encouragement message determination

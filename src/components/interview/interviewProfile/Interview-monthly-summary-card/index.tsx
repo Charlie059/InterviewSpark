@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import {CardContent,Typography, useTheme,useMediaQuery} from '@mui/material'
-import { API, graphqlOperation } from 'aws-amplify'
+import {CardContent,Typography, useTheme} from '@mui/material'
 import { useAuth } from 'src/hooks/useAuth'
 import ReactApexcharts from 'src/@core/components/react-apexcharts'
 import { getUserInterviewsByMonth } from 'src/graphql/queries'
-import Logger from 'src/middleware/loggerMiddleware'
 import { useGraphQLQuery } from 'src/hooks/useGraphQLQuery'
 import { GetUserInterviewsByMonthVariables } from 'src/types/graphqlTypes'
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
@@ -18,16 +16,12 @@ const InterviewUsageSummaryThisMonth = () => {
 
   // ** Hook
   const cardContentRef= useRef<HTMLDivElement>(null)
-  const textRef = useRef<HTMLDivElement>(null)
   const theme = useTheme()
   const auth = useAuth()
   const emailAddress = auth.user?.userEmailAddress;
 
   const { data: queryData, error:InterviewsByMonthError } =
-    useGraphQLQuery<GetUserInterviewsByMonthVariables>(
-    getUserInterviewsByMonth,
-    { emailAddress }
-  );
+    useGraphQLQuery<GetUserInterviewsByMonthVariables>(getUserInterviewsByMonth, { emailAddress });
 
   interface Interview {
     interviewDateTime: string;
@@ -52,7 +46,8 @@ const InterviewUsageSummaryThisMonth = () => {
         if (index % 3 === 0) {
           acc.push(curr + (interviewCounts[index + 1] || 0) + (interviewCounts[index + 2] || 0));
         }
-        return acc;
+
+return acc;
       }, []);
 
       // Update the state with the interview count data
@@ -63,7 +58,8 @@ const InterviewUsageSummaryThisMonth = () => {
 
 
   // Set the height of the chart
-  let chartHeight = '40%'
+  const chartHeight = '40%'
+
   // if (textHeight && cardHeight) {
   //   if (cardHeight - 55 < textHeight) chartHeight = '0%' // hide the chart if there is not enough space
   //   else chartHeight = `${(1 - textHeight / cardHeight) * 50}%`
@@ -112,14 +108,15 @@ const InterviewUsageSummaryThisMonth = () => {
       labels: { show: false }
     }
   }
-  return (
+
+return (
       <CardContent ref={cardContentRef}>
           <Typography variant='h6' sx={{ mb: 2.5 }}>
             This Month
           </Typography>
           <Typography variant='body2'>Monthly Total Questions:</Typography>
           <Typography variant='h5'>{interviewTotalCount}</Typography>
-        <ReactApexcharts height='40%' type='line' options={options} series={[{ data: data }]} />
+        <ReactApexcharts height={chartHeight} type='line' options={options} series={[{ data: data }]} />
       </CardContent>
   )
 }

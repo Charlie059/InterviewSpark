@@ -25,12 +25,11 @@ const PublicProfile = ({ user, data }: { user: string; data: any }) => {
   const dashwidth = 12
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const defaultValues = data
 
   return (
     <Grid container spacing={5}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={'Public'} />
+        <UserProfileHeader type={'Public'} />
       </Grid>
       <Grid item xs={4}>
         {/*{isLoading ? (*/}

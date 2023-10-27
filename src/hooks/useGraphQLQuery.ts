@@ -8,12 +8,9 @@ interface GraphQLResult {
   errors?: Array<Error>;
 }
 
-function isGraphQLResult(result: any): result is GraphQLResult {
-  return result && (result.data || result.errors);
-}
 
 //Garantee query not null or undefined
-export const useGraphQLQuery = <Variables>(query: string, variables: Variables):
+export const useGraphQLQuery = <Variables extends {} | undefined>(query: string, variables: Variables):
   { data: Record<string, any> | null, error: Error | null } => {
   const [data, setData] = useState<Record<string, any> | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -32,7 +29,9 @@ export const useGraphQLQuery = <Variables>(query: string, variables: Variables):
       }
     };
 
-    fetchData();
+    (async ()=>{
+      await       fetchData();
+    })();
   }, [query, variables]);
 
   return { data, error };

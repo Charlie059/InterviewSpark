@@ -41,6 +41,17 @@ export type UserDataType =
   | null
   | undefined
 
+export type UserProfileContextProps = {
+  profile: UserDataType | null;
+  email?: string | null;
+  error: Error | null;
+}
+
+export type UserProfileProviderProps ={
+  children: React.ReactNode;
+}
+
+
 export type AuthValuesType = {
   loading: boolean
   logout: () => void

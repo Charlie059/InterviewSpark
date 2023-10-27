@@ -1,5 +1,4 @@
 // ** MUI Imports
-import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import CardContent from '@mui/material/CardContent'
 import CalendarHeatmap from '../react-calendar-heatmap/src'
@@ -12,7 +11,7 @@ import ReactApexcharts from 'src/@core/components/react-apexcharts'
 
 // ** Util Import
 import { Grid } from '@mui/material'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { API, graphqlOperation } from 'aws-amplify'
 import { useAuth } from 'src/hooks/useAuth'
 import { getQuestionUsageMetaData, getUserInterviewUsageMetaData, getUserInterviewsByMonth } from 'src/graphql/queries'
@@ -147,7 +146,8 @@ const InterviewTotalSummaryCard = () => {
 
 
   // Set the height of the chart
-  let chartHeight = '40%'
+  const chartHeight = '40%'
+
   // if (textHeight && cardHeight) {
   //   if (cardHeight - 100 < textHeight) chartHeight = '0%' // hide the chart if there is not enough space
   //   else if (cardHeight - textHeight > 150) chartHeight = '100%'
@@ -163,7 +163,8 @@ const InterviewTotalSummaryCard = () => {
             </Typography>
             <Typography variant='h5'>{interviewTotalCount}</Typography>
           </Grid>
-          {chartHeight === '0%' ? null : (
+          {/*chartHeight === 0%*/}
+          {chartHeight  ? null : (
             <Grid container direction='row'>
               <Grid item xs={8} sx={{ marginTop: '-10px' }}>
                 {/* If grid sx, %. If grid md, lg, display*/}

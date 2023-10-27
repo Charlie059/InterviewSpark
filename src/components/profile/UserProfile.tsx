@@ -19,7 +19,7 @@ const UserProfile = (userProfile: UserProfile) => {
   return (
     <Grid container spacing={10}>
       <Grid item xs={12}>
-        <UserProfileHeader data={data} type={'Profile'} />
+        <UserProfileHeader type={'Profile'} />
       </Grid>
       <Grid item xs={12}>
         {type === UserProfileViewTypes.profile && <ProfileViewTab user={user} data={data} tab={tab} />}
