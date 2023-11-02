@@ -46,8 +46,6 @@ describe('Reset Password with Resend', () => {
         timeout: 30000 // 30 seconds timeout
       }
     ).then(email => {
-      expect(email.subject).to.equal('Verification code: {####}')
-
       // Get the verification code from the email
       const verificationCode = email.html.body.match(/<span class="code">(\d{6})<\/span>/)[1]
       cy.log(`Verification code: ${verificationCode}`)

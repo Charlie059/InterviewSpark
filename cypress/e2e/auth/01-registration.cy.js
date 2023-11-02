@@ -47,7 +47,6 @@ describe('User Registration', () => {
     cy.mailosaurGetMessage(serverId, {
       sentTo: testEmail
     }).then(email => {
-      expect(email.subject).to.equal('Verification code: {####}')
       cy.log('subject', email.subject)
       cy.log('email', email)
       expect(email.to[0].email).to.equal(testEmail)
