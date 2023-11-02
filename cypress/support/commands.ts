@@ -35,3 +35,14 @@
 //     }
 //   }
 // }
+
+Cypress.Commands.add('loginApp', (email: string, password: string) => {
+  cy.get('[data-testid="email-input"]').type(email)
+  cy.get('[data-testid="email-input"]').find('input').clear().type(email)
+  cy.get('input[type="password"]').type(password)
+  cy.get('button[type="submit"]').click()
+  cy.wait(5000)
+
+  // Verify that the user is redirected to the home
+  cy.url().should('include', '/interview')
+})

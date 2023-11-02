@@ -431,6 +431,7 @@ const Register = ({ onRegister, emailParam }: Props) => {
                               component={Link}
                               sx={{ color: 'primary.main', textDecoration: 'none' }}
                               onClick={handleClickOpen('paper')}
+                              data-testid='term-link'
                             >
                               privacy policy & terms
                             </Typography>
