@@ -6,7 +6,8 @@ module.exports = {
   trailingSlash: true,
   reactStrictMode: false,
   experimental: {
-    esmExternals: false
+    esmExternals: false,
+    serverActions: true
   },
   webpack: config => {
     config.experiments = {
