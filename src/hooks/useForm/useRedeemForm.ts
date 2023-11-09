@@ -5,7 +5,7 @@ import ReCAPTCHA from 'react-google-recaptcha'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { verifyRedeemCode } from 'src/graphql/queries'
-import * as Yup from 'yup'
+import * as yup from "yup";
 
 // Define form data type
 interface FormData {
@@ -20,9 +20,12 @@ export const useRedeemForm = (
   const [code, setCode] = useState('')
 
   // Constants
-  const REDEEM_FROM_SCHEMA = Yup.object().shape({
-    redeemCode: Yup.string().required('Code is required')
-  })
+  const REDEEM_FROM_SCHEMA = yup.object(
+    {
+      redeemCode: yup.string()
+        .required('Code is required!')
+        .matches(/^[A-Z0-9]{8}$/, 'Code must be exactly 8 characters long and include only uppercase letters and numbers!')
+    }).required();
 
   // States
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -75,5 +78,5 @@ export const useRedeemForm = (
     setCode(data.redeemCode)
   }
 
-  return { code, control, errors, handleSubmit, isSubmitted, onSubmit }
+  return { code,control, errors, handleSubmit, isSubmitted, onSubmit }
 }
