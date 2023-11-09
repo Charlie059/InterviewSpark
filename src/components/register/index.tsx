@@ -45,6 +45,7 @@ import { useSettings } from 'src/@core/hooks/useSettings'
 import toast from 'react-hot-toast'
 import TermsDialog from 'src/components/register/termsDialog'
 import Logger from 'src/middleware/loggerMiddleware'
+import { useRouter } from 'next/router'
 
 interface FormData {
   email: string
@@ -117,12 +118,22 @@ const Register = ({ onRegister, emailParam }: Props) => {
   const [open, setOpen] = React.useState(false)
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper')
   const [defaultEmail, setEmail] = useState<string>(emailParam)
+  const [redeemCode, setRedeemCode] = useState<string>('')
 
   // ** Hooks
   const theme = useTheme()
   const { register } = useAuth()
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
+  const router = useRouter()
+
+  // Get redeem code from query params by nextjs router
+  useEffect(() => {
+    const { redeemCode } = router.query
+    if (redeemCode) {
+      setRedeemCode(redeemCode as string)
+    }
+  }, [router])
 
   // ** Vars
   const { skin } = settings
@@ -168,7 +179,7 @@ const Register = ({ onRegister, emailParam }: Props) => {
   const onSubmit = async (data: FormData) => {
     const { username, email, password, fName, lName } = data
     const err = await new Promise<any>(resolve => {
-      register({ email, username, password, fName, lName }, err => {
+      register({ email, username, password, fName, lName, redeemCode }, err => {
         if (err.name !== 'success') {
           Logger.error('error registering user', err)
           resolve(err)
@@ -431,6 +442,7 @@ const Register = ({ onRegister, emailParam }: Props) => {
                               component={Link}
                               sx={{ color: 'primary.main', textDecoration: 'none' }}
                               onClick={handleClickOpen('paper')}
+                              data-testid='term-link'
                             >
                               privacy policy & terms
                             </Typography>

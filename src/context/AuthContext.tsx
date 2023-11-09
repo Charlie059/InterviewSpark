@@ -189,6 +189,8 @@ const AuthProvider = ({ children }: Props) => {
   }
 
   const handleRegister = async (params: RegisterParams, errorCallback?: ErrCallbackType) => {
+    console.log(params)
+
     // Use the Auth.signUp method to register a new user with the provided username, password, and email address.
     try {
       await Auth.signUp({
@@ -198,7 +200,8 @@ const AuthProvider = ({ children }: Props) => {
           'custom:emailAddress': params.email,
           'custom:fName': params.fName,
           'custom:lName': params.lName,
-          'custom:userName': params.username
+          'custom:userName': params.username,
+          'custom:redeemCode': params.redeemCode
         }
       }).then(async user => {
         Logger.info('Verify email sent', user)

@@ -474,3 +474,13 @@ export const getUserCurrentActiveSubscriptionAndProducts = /* GraphQL */ `
     }
   }
 `;
+export const verifyRedeemCode = /* GraphQL */ `
+  query VerifyRedeemCode($redeemCode: String!) {
+    verifyRedeemCode(redeemCode: $redeemCode) {
+      isSuccessful
+      error
+      info
+      __typename
+    }
+  }
+`;

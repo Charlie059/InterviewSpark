@@ -1,5 +1,6 @@
 import { defineConfig } from 'cypress'
 import dotenv from 'dotenv'
+import { writeFileSync } from 'fs'
 
 // Load environment variables from .env.local
 dotenv.config({ path: '.env.local' })
@@ -14,7 +15,16 @@ export default defineConfig({
 
   e2e: {
     baseUrl: 'http://localhost:3000',
-    setupNodeEvents(on, config) {}
+    setupNodeEvents(on, config) {
+      on('task', {
+        writeEmailToFile(email) {
+          const emailDataPath = 'cypress/fixtures/emailData.json'
+          writeFileSync(emailDataPath, JSON.stringify({ email }))
+
+          return null
+        }
+      })
+    }
   },
 
   env: {

@@ -103,6 +103,7 @@ const UserDropdown = (props: Props) => {
         }}
       >
         <Avatar
+          data-testid='nav-avatar'
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
           alt={(user?.fName || '') + (user?.lName || '') || 'john doe'}

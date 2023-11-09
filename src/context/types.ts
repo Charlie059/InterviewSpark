@@ -12,6 +12,7 @@ export type RegisterParams = {
   password: string
   fName: string
   lName: string
+  redeemCode?: string
 }
 
 export type UserDataType =
