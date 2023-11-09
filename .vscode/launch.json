@@ -1,0 +1,11 @@
+{
+  "name": "Attach",
+  "port": 9229,
+  "request": "attach",
+  "webRoot": "${workspaceFolder}", // mine had another subfolder here
+  "cwd": "${workspaceFolder}", // and here
+  "skipFiles": [
+    "<node_internals>/**"
+  ],
+  "type": "pwa-node"
+}
