@@ -1162,3 +1162,16 @@ export type GetUserCurrentActiveSubscriptionAndProductsQuery = {
     } | null >,
   },
 };
+
+export type VerifyRedeemCodeQueryVariables = {
+  redeemCode: string,
+};
+
+export type VerifyRedeemCodeQuery = {
+  verifyRedeemCode:  {
+    __typename: "OperationResult",
+    isSuccessful: boolean,
+    error?: string | null,
+    info?: string | null,
+  },
+};

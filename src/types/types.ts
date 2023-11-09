@@ -22,3 +22,8 @@ export interface Interview {
   interviewVideoKey: string
   interviewEstimatedSeconds: number
 }
+
+
+export interface AppsumoFormType {
+  code: string;
+}
