@@ -10,14 +10,14 @@
  * Copyright: © 2023 HireBeat Inc. All rights reserved.
  ************************************************************************************************/
 
-import {ReactNode} from "react";
-import BlankLayout from "../../@core/layouts/BlankLayout";
-import AppsomoAssembled from "../../components/AssembledUI/AppsomoAssembled";
+import { ReactNode } from 'react'
+import BlankLayoutWithAppBar from '../../@core/layouts/BlankLayoutWithAppBar'
+import AppsomoAssembled from '../../components/AssembledUI/AppsomoAssembled'
 
 const AppsumoPage = () => {
-  return <AppsomoAssembled/>
+  return <AppsomoAssembled />
 }
 
 AppsumoPage.guestGuard = true
-AppsumoPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
-export default AppsumoPage;
+AppsumoPage.getLayout = (page: ReactNode) => <BlankLayoutWithAppBar>{page}</BlankLayoutWithAppBar>
+export default AppsumoPage
